@@ -1,7 +1,6 @@
 <?php
 namespace org\csflu\isms\service\uam;
 
-
 use org\csflu\isms\dao\uam\UserManagementDaoDummyImpl as UserManagementDao;
 use org\csflu\isms\core\exceptions\DataAccessException as DataAccessException;
 

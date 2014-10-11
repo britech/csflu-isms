@@ -1,7 +1,7 @@
 <?php
 namespace org\csflu\isms\service\uam;
 
-use org\csflu\isms\models\Login as Login;
+use org\csflu\isms\models\uam\Login as Login;
 use org\csflu\isms\exceptions\ServiceException as ServiceException;
 
 

@@ -4,7 +4,7 @@ namespace org\csflu\isms\controllers;
 use org\csflu\isms\core\Controller as Controller;
 use org\csflu\isms\core\ApplicationConstants as ApplicationConstants;
 
-use org\csflu\isms\models\Login as Login;
+use org\csflu\isms\models\uam\Login as Login;
 
 use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl as UserManagementService;
 use org\csflu\isms\exceptions\ServiceException as ServiceException;

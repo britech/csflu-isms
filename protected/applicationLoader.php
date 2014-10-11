@@ -16,7 +16,7 @@ require_once 'exception/DataAccessException.php';
 require_once 'exception/ServiceException.php';
 
 #models
-require_once 'models/Login.php';
+require_once 'models/uam/Login.php';
 
 #dao-interfaces
 require_once 'dao/uam/UserManagementDao.php';

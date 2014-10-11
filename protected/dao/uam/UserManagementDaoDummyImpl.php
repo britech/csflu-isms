@@ -4,7 +4,7 @@ namespace org\csflu\isms\dao\uam;
 use org\csflu\isms\dao\uam\UserManagementDao as UserManagementDao;
 use org\csflu\isms\exceptions\DataAccessException as DataAccessException;
 
-use org\csflu\isms\models\Login as Login;
+use org\csflu\isms\models\uam\Login as Login;
 
 class UserManagementDaoDummyImpl implements UserManagementDao{
 	

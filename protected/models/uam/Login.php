@@ -1,5 +1,5 @@
 <?php
-namespace org\csflu\isms\models;
+namespace org\csflu\isms\models\uam;
 
 /**
  * @property String $username
