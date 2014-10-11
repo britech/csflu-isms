@@ -1,5 +1,5 @@
 <?php
-namespace org\csflu\isms\core\exceptions;
+namespace org\csflu\isms\exceptions;
 
 class DataAccessException extends \Exception{
 	public function __construct($message, $code, $previous=null){

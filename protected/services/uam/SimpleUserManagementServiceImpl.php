@@ -6,7 +6,7 @@ use org\csflu\isms\dao\uam\UserManagementDaoDummyImpl as UserManagementDao;
 use org\csflu\isms\core\exceptions\DataAccessException as DataAccessException;
 
 use org\csflu\isms\service\uam\UserManagementService as UserManagementService;
-use org\csflu\isms\core\exceptions\ServiceException as ServiceException;
+use org\csflu\isms\exceptions\ServiceException as ServiceException;
 
 class SimpleUserManagementServiceImpl implements UserManagementService {
 	

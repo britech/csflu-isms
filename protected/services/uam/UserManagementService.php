@@ -2,7 +2,7 @@
 namespace org\csflu\isms\service\uam;
 
 use org\csflu\isms\models\Login as Login;
-use org\csflu\isms\core\exceptions\ServiceException as ServiceException;
+use org\csflu\isms\exceptions\ServiceException as ServiceException;
 
 
 interface UserManagementService {
