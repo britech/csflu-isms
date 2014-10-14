@@ -11,14 +11,10 @@ use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
         <title><?php echo $this->title; ?></title>
     </head>
     <body style="background-color: #eee;">
-        <?php 
-        if(!empty($_SESSION['user']) && empty($params['exception'])):?>
         <div id="navbar">
             <div class="ink-navigation ink-grid">
                 <ul class="menu horizontal green flat push-left">
-                    <li><?php
-                        echo ApplicationUtils::generateLink(array('site/index'), 'City of San Fernando, La Union - Integrated Strategy Management System', array('style' => 'font-weight: bold; padding-left: 0px;'))
-                        ?></li>
+                    <li><?php echo ApplicationUtils::generateLink(array('site/index'), 'City of San Fernando, La Union - Integrated Strategy Management System', array('style' => 'font-weight: bold;'));?></li>
                 </ul>
                 <ul class="menu horizontal green flat push-right">
                     <li>
@@ -69,11 +65,5 @@ use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
                 </div>
             </div>
         </div>
-        <?php else:?>
-        <div class="ink-grid" style="margin-top: 5%;">
-            <?php include_once $body; ?>
-        </div>
-        <?php endif;?>
-        
     </body>
 </html>

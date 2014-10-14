@@ -12,12 +12,14 @@ class SiteController extends Controller {
     private $userService;
 
     public function __construct() {
+        $this->layout = "simple";
         $this->userService = new UserManagementService();
     }
 
     public function index() {
         if (!empty($_SESSION['user'])) {
             $this->title = ApplicationConstants::APP_NAME . ' - Welcome';
+            $this->layout = 'main';
             $this->render('site/index');
         } else {
             $this->redirect(array('site/login'));
@@ -27,11 +29,15 @@ class SiteController extends Controller {
     public function login() {
         $this->title = ApplicationConstants::APP_NAME . ' - Login';
 
-        if (isset($_SESSION['login.notif'])) {
-            $this->render('site/login', array('login.notif' => $_SESSION['login.notif']));
-            unset($_SESSION['login.notif']);
+        if (!empty($_SESSION['user'])) {
+            $this->redirect(array('site/index'));
         } else {
-            $this->render('site/login');
+            if (isset($_SESSION['login.notif'])) {
+                $this->render('site/login', array('login.notif' => $_SESSION['login.notif']));
+                unset($_SESSION['login.notif']);
+            } else {
+                $this->render('site/login');
+            }
         }
     }
 
