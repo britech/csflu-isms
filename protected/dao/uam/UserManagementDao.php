@@ -2,10 +2,11 @@
 
 namespace org\csflu\isms\dao\uam;
 
-use org\csflu\isms\models\uam\Login as Login;
-use org\csflu\isms\models\uam\Employee as Employee;
-use org\csflu\isms\models\uam\Account as Account;
-use org\csflu\isms\exceptions\DataAccessException as DataAccessException;
+use org\csflu\isms\models\uam\Login;
+use org\csflu\isms\models\uam\Employee;
+use org\csflu\isms\models\uam\UserAccount;
+use org\csflu\isms\models\uam\SecurityRole;
+use org\csflu\isms\exceptions\DataAccessException;
 
 interface UserManagementDao {
 
@@ -19,8 +20,92 @@ interface UserManagementDao {
     
     /**
      * @param Integer $id
-     * @return Account[]
-     * @return DataAccessException
+     * @return UserAccount[]
+     * @throws DataAccessException
      */
     public function listAccounts($id);
+    
+    /**
+     * @return Employee[]
+     * @throws DataAccessException
+     */
+    public function listEmployees();
+
+    /**
+     * @return Employee
+     * @throws DataAccessException
+     */
+    public function getEmployeeData($id);
+    
+    /**
+     * @return Employee
+     * @throws DataAccessException
+     */
+    public function validateEmployee($id);
+    
+    /**
+     * @param Integer $excludeSecurityRoleId
+     * @return SecurityRole[]
+     * @throws DataAccessException
+     */
+    public function listSecurityRoles();
+    
+    /**
+     * @param UserAccount $account
+     * @return String
+     * @throws DataAccessException
+     */
+    public function insertAccount($account);
+    
+    /**
+     * @param Integer $id
+     * @return Integer
+     * @throws DataAccessException
+     */
+    public function getLoginAccountStatus($id);
+    
+    /**
+     * @param Integer $id
+     * @throws DataAccessException
+     */
+    public function resetPassword($id);
+    
+    /**
+     * @param Integer $id
+     * @param Integer $status
+     * @throws DataAccessException
+     */
+    public function updateLoginAccountStatus($id, $status);
+    
+    /**
+     * @param Integer $id
+     * @return UserAccount
+     * @throws DataAccessException
+     */
+    public function getUserAccount($id);
+    
+    /**
+     * @param Integer $id
+     * @throws DataAccessException
+     */
+    public function unlinkSecurityRole($id);
+    
+    /**
+     * @param Integer $id
+     * @return String
+     * @throws DataAccessException
+     */
+    public function getSecurityKey($id);
+    
+    /**
+     * @param Employee $employee
+     * @throws DataAccessException
+     */
+    public function updateSecurityKey($employee);
+    
+    /**
+     * @param UserAccount $userAccount
+     * @throws DataAccessException
+     */
+    public function linkSecurityRole($userAccount);
 }

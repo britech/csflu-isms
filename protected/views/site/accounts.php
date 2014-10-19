@@ -15,10 +15,10 @@ $accounts = $params['accounts'];
     ?>
     <div class="ink-alert basic info">Your account is linked on multiple security roles. Please select the role you want to use in the system.</div>
     <div class="control-group">
-        <?php echo Form::renderLabel("Security Role") ?>
+        <?php echo $form->renderLabel("Security Role") ?>
         <div class="control append-button">
-            <span><?php echo Form::renderDropDownList('userId', $accounts); ?></span>
-            <?php echo Form::renderSubmitButton('Proceed', array('class' => 'ink-button blue flat')) ?>
+            <span><?php echo $form->renderDropDownList('userId', $accounts); ?></span>
+            <?php echo $form->renderSubmitButton('Proceed', array('class' => 'ink-button blue flat')) ?>
         </div>
     </div>
     <?php echo $form->endComponent(); ?>

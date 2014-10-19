@@ -2,8 +2,7 @@
 
 namespace org\csflu\isms\models\commons;
 
-use org\csflu\isms\core\Model as Model;
-
+use org\csflu\isms\core\Model;
 /**
  * @property Integer $id
  * @property String $name
@@ -12,12 +11,18 @@ use org\csflu\isms\core\Model as Model;
  */
 class Position extends Model {
 
+    private $id;
+    private $name;
+    
     public function validate() {
         
     }
-
-    public function bindValuesUsingArray($valuesArray = []) {
-        
+    
+    public function __set($name, $value) {
+        $this->$name = $value;
     }
-
+    
+    public function __get($name) {
+        return $this->$name;
+    }
 }

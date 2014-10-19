@@ -12,17 +12,38 @@ use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
  */
 class Controller {
 
-    public $layout = "main";
-    
+    public $layout = "column-1";
+
+    /**
+     * 
+     * @param mixed $view
+     * @param array $params
+     * @throws \Exception
+     */
     public function render($view, $params = []) {
         $fileLocation = $this->generateFileName($view);
 
         if (file_exists($fileLocation)) {
             $body = $fileLocation;
         } else {
-            throw new \Exception('Resource does not exist');
+            throw new \Exception("Resource does not exist ({$view}.php)");
         }
+
         require_once "protected/views/layouts/{$this->layout}.php";
+    }
+    
+    public function renderPartial($view, $params=[]){
+        $fileLocation = $this->generateFileName($view);
+        
+        if(file_exists($fileLocation)){
+            include_once $fileLocation;
+        } else{
+            $this->viewWarningPage('Included File Does Not Exist', 'The defined file to be rendered cannot be found.');
+        }
+    }
+    
+    public function renderAjaxJsonResponse(array $response){
+        echo json_encode($response);
     }
 
     public function redirect(array $url) {
@@ -39,8 +60,7 @@ class Controller {
     }
 
     public function viewWarningPage($header, $message) {
-        $this->layout = "simple";
-        $this->render('commons/warning', array('header'=>$header, 'message' => $message));
+        $this->renderPartial('commons/warning', array('header'=>$header, 'message'=>$message));
     }
 
 }

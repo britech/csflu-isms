@@ -2,25 +2,23 @@
 
 namespace org\csflu\isms\models\uam;
 
-use org\csflu\isms\core\Model as Model;
-
+use org\csflu\isms\core\Model;
 /**
+ * Description of LoginAccount
+ *
  * @property String $username
  * @property String $password
+ * @property Integer $status
  * @author britech
- *
  */
-class Login extends Model {
-
+class LoginAccount extends Model{
+    
     private $username;
     private $password;
+    private $status;
     
     public function validate() {
-        if (empty($this->username) || empty($this->password)) {
-            return false;
-        } else {
-            return true;
-        }
+        
     }
     
     public function __set($name, $value) {

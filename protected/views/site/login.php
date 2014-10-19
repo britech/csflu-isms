@@ -19,16 +19,16 @@ use org\csflu\isms\core\ApplicationConstants as ApplicationConstants;
         <?php endif; ?>
 
         <div class="control-group column-group quarter-gutters">
-            <?php echo Form::renderLabel('Username', array('class' => 'all-20')); ?>
+            <?php echo $form->renderLabel('Username', array('class' => 'all-20')); ?>
             <div class="control all-80">
-                <?php echo Form::renderTextField('Login[username]'); ?>
+                <?php echo $form->renderTextField('Login[username]'); ?>
             </div>
         </div>
         <div class="control-group column-group quarter-gutters">
-            <?php echo Form::renderLabel('Password', array('class' => 'all-20')); ?>
+            <?php echo $form->renderLabel('Password', array('class' => 'all-20')); ?>
             <div class="control all-80">
-                <?php echo Form::renderPasswordField('Login[password]'); ?>
-                <?php echo Form::renderSubmitButton('Authenticate', array('class' => 'ink-button blue flat', 'style' => 'margin-top: 1em; margin-left:0px;')); ?>
+                <?php echo $form->renderPasswordField('Login[password]'); ?>
+                <?php echo $form->renderSubmitButton('Authenticate', array('class' => 'ink-button blue flat', 'style' => 'margin-top: 1em; margin-left:0px;')); ?>
             </div>
         </div>
         <?php echo $form->endComponent(); ?>

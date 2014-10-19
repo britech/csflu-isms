@@ -20,13 +20,17 @@ class FormGenerator extends Component {
     const PROPERTY_ACTION = "action";
     const PROPERTY_ENCTYPE = "enctype";
     const PROPERTY_FIELDSETENABLED = "hasFieldset";
+    const PROPERTY_READONLY = "readonly";
+    const PROPERTY_DISABLED = "disabled";
+    const PROPERTY_VALUE = "value";
 
     private $properties;
     private $fieldsetEnabled = false;
+    private $tabIndex = 0;
 
     public function __construct(array $properties) {
         $this->properties = $properties;
-
+        $this->tabIndex = 0;
         $fieldsetEnabledStatus = ApplicationUtils::getProperty($properties, self::PROPERTY_FIELDSETENABLED);
         $this->fieldsetEnabled = is_null($fieldsetEnabledStatus) ? false : $fieldsetEnabledStatus;
     }
@@ -54,7 +58,7 @@ class FormGenerator extends Component {
         return is_null($method) ? self::METHOD_POST : $method;
     }
 
-    public static function renderLabel($labelText, array $properties = null) {
+    public function renderLabel($labelText, array $properties = null) {
         if (!is_null($properties)) {
             $class = ApplicationUtils::getProperty($properties, parent::PROPERTY_CLASS);
             $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
@@ -66,36 +70,57 @@ class FormGenerator extends Component {
         }
     }
 
-    public static function renderTextField($fieldName, array $properties = null) {
+    public function renderTextField($fieldName, array $properties = null) {
+        $this->tabIndex+=1;
         if (!is_null($properties)) {
             $class = ApplicationUtils::getProperty($properties, parent::PROPERTY_CLASS);
             $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
             $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
-
-            return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\"/>";
+            $readOnly = ApplicationUtils::getProperty($properties, self::PROPERTY_READONLY);
+            $disabled = ApplicationUtils::getProperty($properties, self::PROPERTY_DISABLED);
+            
+            if(!empty($readOnly) && $readOnly==true){
+                return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" readonly tabindex=\"{$this->tabIndex}\"/>";
+            } elseif(!empty($disabled) && $disabled==true){
+                return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" disabled tabindex=\"{$this->tabIndex}\"/>";
+            } else {
+                return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\"/>";
+            }
+            
         } else {
-            return "<input type=\"text\" name=\"{$fieldName}\"/>";
+            return "<input type=\"text\" name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\"/>";
         }
     }
 
-    public static function renderPasswordField($fieldName, array $properties = null) {
+    public function renderPasswordField($fieldName, array $properties = null) {
+        $this->tabIndex+=1;
         if (!is_null($properties)) {
             $class = ApplicationUtils::getProperty($properties, parent::PROPERTY_CLASS);
             $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
             $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
 
-            return "<input type=\"password\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\"/>";
+            return "<input type=\"password\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\"/>";
         } else {
-            return "<input type=\"password\" name=\"{$fieldName}\"/>";
+            return "<input type=\"password\" name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\"/>";
         }
     }
     
-    public static function renderDropDownList($fieldName, array $data, array $properties = null) {
+    public function renderDropDownList($fieldName, array $data, array $properties = null) {
         $tag = "";
+        $this->tabIndex+=1;
         if(!is_null($properties)){
+            $class = ApplicationUtils::getProperty($properties, parent::PROPERTY_CLASS);
+            $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
+            $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
+            $disabled = ApplicationUtils::getProperty($properties, self::PROPERTY_DISABLED);
             
+            if(!empty($disabled) && $disabled==true){
+                $tag = "<select name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\" disabled>";
+            } else{
+                $tag = "<select name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\">";
+            }
         } else{
-            $tag = "<select name=\"{$fieldName}\">";
+            $tag = "<select name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\">";
         }
         foreach($data as $value => $text){
             if(is_array($text)){
@@ -109,15 +134,29 @@ class FormGenerator extends Component {
         return $tag;
     }
 
-    public static function renderSubmitButton($buttonName, array $properties = null) {
+    public function renderHiddenField($fieldName, array $properties = null){
+        if (!is_null($properties)) {
+            $class = ApplicationUtils::getProperty($properties, parent::PROPERTY_CLASS);
+            $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
+            $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
+            $value = ApplicationUtils::getProperty($properties, self::PROPERTY_VALUE);
+            
+            return "<input type=\"hidden\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" value=\"{$value}\"/>";
+        } else {
+            return "<input type=\"hidden\" name=\"{$fieldName}\"/>";
+        }
+    }
+
+    public function renderSubmitButton($buttonName, array $properties = null) {
+        $this->tabIndex+=1;
         if (!is_null($properties)) {
             $class = ApplicationUtils::getProperty($properties, parent::PROPERTY_CLASS);
             $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
             $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
 
-            return "<button type=\"submit\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\">{$buttonName}</button>";
+            return "<button type=\"submit\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\">{$buttonName}</button>";
         } else {
-            return "<button type=\"submit\">{$buttonName}</button>";
+            return "<button type=\"submit\" tabindex=\"{$this->tabIndex}\">{$buttonName}</button>";
         }
     }
 

@@ -19,8 +19,8 @@ class SiteController extends Controller {
     public function index() {
         if (!empty($_SESSION['user'])) {
             $this->title = ApplicationConstants::APP_NAME . ' - Welcome';
-            $this->layout = 'main';
-            $this->render('site/index');
+            $this->layout = 'column-1';
+            $this->render('site/index', array('breadcrumb'=>array('Home'=>'active')));
         } else {
             $this->redirect(array('site/login'));
         }
@@ -45,18 +45,18 @@ class SiteController extends Controller {
         $formValues = filter_input_array(INPUT_POST)['Login'];
 
         $login = new Login();
-        $login->bindValuesUsingArray($formValues);
+        $login->bindValuesUsingArray(array('login'=>$formValues), $login);
 
         if ($login->validate()) {
             $employee = $this->userService->authenticate($login);
 
-            if (!empty($employee->id)) {
+            if (!is_null($employee->id)) {
                 $_SESSION['employee'] = $employee->id;
                 $this->redirect(array('site/loadAccounts', 'employee' => $employee->id));
             } else {
                 $_SESSION['login.notif'] = "Access Denied";
                 $this->redirect(array('site/login'));
-            }
+            } 
         } else {
             $_SESSION['login.notif'] = "Username and password are required fields";
             $this->redirect(array('site/login'));
