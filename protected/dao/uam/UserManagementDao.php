@@ -44,7 +44,6 @@ interface UserManagementDao {
     public function validateEmployee($id);
     
     /**
-     * @param Integer $excludeSecurityRoleId
      * @return SecurityRole[]
      * @throws DataAccessException
      */
