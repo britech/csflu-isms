@@ -2,10 +2,18 @@ $(document).ready(function() {
     $("#btnSubmit").hide();
 
     $("[name=oldPassword]").blur(function() {
-        $.post('?r=user/checkPassword',
-                {password: $(this).val()},
-        function(data) {
-            try {
+        var password = $(this).val();
+        if (password.length === 0) {
+            $("#oldPassword-tip").html('<i class="fa fa-warning"></i>&nbsp;Please provide your current password');
+            $("[name=oldPassword]").focus();
+            $("[name=oldPassword]").prop('disabled', false);
+            $("[name=newPassword]").prop('disabled', true);
+            $("[name=confirmPassword]").prop('disabled', true);
+            $("#btnSubmit").hide();
+        } else {
+            $.post('?r=user/checkPassword',
+                    {password: $(this).val()},
+            function(data) {
                 var response = $.parseJSON(data);
                 if (response.respCode !== '00') {
                     $("#oldPassword-tip").html('<i class="fa fa-warning"></i>&nbsp;' + response.respMessage);
@@ -22,16 +30,8 @@ $(document).ready(function() {
                     $("#btnSubmit").show();
                     $("#btnSubmit").prop('disabled', true);
                 }
-            } catch (e) {
-                $("#oldPassword-tip").html('<i class="fa fa-warning"></i>&nbsp;Please provide your current password');
-                $("[name=oldPassword]").focus();
-                $("[name=oldPassword]").prop('disabled', false);
-                $("[name=newPassword]").prop('disabled', true);
-                $("[name=confirmPassword]").prop('disabled', true);
-                $("#btnSubmit").hide();
-            }
+            });
         }
-        );
     });
 
     $("[name=newPassword]").blur(function() {
