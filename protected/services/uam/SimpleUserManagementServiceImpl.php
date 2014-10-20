@@ -75,11 +75,15 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
     
     public function unlinkSecurityRole($id){
         $account = $this->daoSource->getUserAccount($id);
-        
+        $employee = $this->daoSource->getEmployeeData($account->employee->id);
         $accounts = $this->daoSource->listAccounts($account->employee->id);
         
+        if($account->employee->department->id == $employee->department->id){
+            throw new ServiceException('Default linked security role cannot be deleted');
+        }
+        
         if(count($accounts) == 1){
-            throw new ServiceException('At least one security role must be assigned to an account.');
+            throw new ServiceException('At least one security role must be assigned to an account');
         }
         $this->daoSource->unlinkSecurityRole($id);
     }
