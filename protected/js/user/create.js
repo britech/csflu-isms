@@ -9,6 +9,8 @@ $(document).ready(function() {
         $("#help-dialog").hide();
     });
 
+    $("[type=submit]").prop('disabled', true);
+    
     $("#empId").blur(function() {
         var id = $(this).val();
         $.post('?r=user/validateEmployee',
@@ -42,6 +44,7 @@ $(document).ready(function() {
                 $("[name*=password]").val($("[name*=username]").val());
                 $("#securityRole").prop('disabled', false);
                 $("#position").prop('disabled', false);
+                $("[type=submit]").prop('disabled', false);
             }
         });
 
