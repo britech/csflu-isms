@@ -15,7 +15,7 @@ use org\csflu\isms\util\FormGenerator as Form;
     <div class="ink-alert basic info"><?php echo $params['notif'];?></div>
     <?php endif;?>
     <div class="control-group column-group quarter-gutters">
-        <?php echo $form->renderLabel('Old Password', array('class'=>'all-25 align-right'));?>
+        <?php echo $form->renderLabel('Current Password', array('class'=>'all-25 align-right'));?>
         <div class="control all-75">
             <?php echo $form->renderPasswordField('oldPassword');?>
             <p class="tip" id="oldPassword-tip"></p>

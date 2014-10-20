@@ -98,8 +98,16 @@ class FormGenerator extends Component {
             $class = ApplicationUtils::getProperty($properties, parent::PROPERTY_CLASS);
             $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
             $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
-
-            return "<input type=\"password\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\"/>";
+            $readOnly = ApplicationUtils::getProperty($properties, self::PROPERTY_READONLY);
+            $disabled = ApplicationUtils::getProperty($properties, self::PROPERTY_DISABLED);
+            
+            if(!empty($readOnly) && $readOnly==true){
+                return "<input type=\"password\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" readonly tabindex=\"{$this->tabIndex}\"/>";
+            } elseif(!empty($disabled) && $disabled==true){
+                return "<input type=\"password\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" disabled tabindex=\"{$this->tabIndex}\"/>";
+            } else {
+                return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\"/>";
+            }
         } else {
             return "<input type=\"password\" name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\"/>";
         }
