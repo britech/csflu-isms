@@ -63,4 +63,10 @@ class Controller {
         $this->renderPartial('commons/warning', array('header'=>$header, 'message'=>$message));
     }
 
+    public function checkAuthorization(){
+        if(empty($_SESSION['employee']) || empty($_SESSION['user'])){
+            $_SESSION['login.notif']="Please enter your user credentials to continue.";
+            $this->redirect(array('site/login'));
+        }
+    }
 }

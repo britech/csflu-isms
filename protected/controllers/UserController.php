@@ -24,6 +24,7 @@ class UserController extends Controller {
     private $departmentService;
 
     public function __construct() {
+        $this->checkAuthorization();
         $this->layout = 'column-2';
         $this->userService = new UserManagementService();
         $this->positionService = new PositionService();
@@ -69,7 +70,7 @@ class UserController extends Controller {
     private function getSidebarData() {
         return array('header' => 'User Management',
             'links' => array('Account Maintenance' => array('user/index'),
-                'Security Role' => array('user/roles')));
+                'Security Role' => array('role/index')));
     }
 
     public function listEmployees() {

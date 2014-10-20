@@ -15,6 +15,7 @@ class DepartmentController extends Controller{
     private $departmentService;
     
     public function __construct() {
+        $this->checkAuthorization();
         $this->departmentService = new DepartmentService();
     }
     
