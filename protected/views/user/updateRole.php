@@ -15,11 +15,15 @@ $form = new Form(array(
 
 echo $form->startComponent();
 ?>
-<!--first form-->
+<script src="protected/js/user/updateRole.js" type="text/javascript"></script>
 <h3 style="text-align: right;">Update Security Role</h3>
 <?php if(isset($params['notif']) && !empty($params['notif'])):?>
 <div class="ink-alert basic info" style="margin-top: 0px;"><?php echo $params['notif'];?></div>
 <?php endif;?>
+<div id="validation-error" class="ink-alert block">
+    <h4>Validation Error/s. Please check your entries</h4>
+    <p id="content"></p>
+</div>
 <div class="control-group column-group quarter-gutters">
     <?php echo $form->renderLabel('Description', array('class' => 'all-20 align-right')); ?>
     <div class="control all-80">

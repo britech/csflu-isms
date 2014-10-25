@@ -73,6 +73,7 @@ class SecurityRoleDaoSqlImpl implements SecurityRoleDao {
                     $dbst->execute(array('module' => $allowableAction->module->module, 'actions' => $allowableAction->module->actions, 'type' => $securityRole->id));
                 }
             } else {
+                $whitelistModules = array();
                 foreach ($securityRole->allowableActions as $allowableAction) {
                     $found = false;
                     $id = 0;
@@ -86,11 +87,21 @@ class SecurityRoleDaoSqlImpl implements SecurityRoleDao {
 
                     if ($found) {
                         $dbst = $db->prepare('UPDATE user_actions SET actions=:actions WHERE action_id=:ref');
-                        $dbst->execute(array('actions'=>$allowableAction->module->actions, 'ref'=>$id));
+                        $dbst->execute(array('actions' => $allowableAction->module->actions, 'ref' => $id));
                     } else {
                         $dbst = $db->prepare('INSERT INTO user_actions(module_code, actions, type_ref) VALUES(:module, :actions, :type)');
                         $dbst->execute(array('module' => $allowableAction->module->module, 'actions' => $allowableAction->module->actions, 'type' => $securityRole->id));
                     }
+                    array_push($whitelistModules, $allowableAction->module->module);
+                }
+
+
+                //do cleanup
+                $blackListedModules = array_diff(ModuleAction::getModulesWithoutDescription(), $whitelistModules);
+
+                foreach ($blackListedModules as $module) {
+                    $dbst = $db->prepare('DELETE FROM user_actions WHERE module_code=:code AND type_ref=:ref');
+                    $dbst->execute(array('code' => $module, 'ref' => $securityRole->id));
                 }
             }
             $db->commit();
@@ -144,11 +155,11 @@ class SecurityRoleDaoSqlImpl implements SecurityRoleDao {
         $db = ConnectionManager::getConnectionInstance();
         try {
             $db->beginTransaction();
-            
+
             $dbst = $db->prepare('INSERT INTO user_types(type_desc) VALUES(:description)');
-            $dbst->execute(array('description'=>$securityRole->description));
+            $dbst->execute(array('description' => $securityRole->description));
             $id = $db->lastInsertId();
-            
+
             $db->commit();
             $securityRole->id = $id;
             $this->manageLinkedActions($securityRole);

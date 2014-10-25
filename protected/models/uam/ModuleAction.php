@@ -53,6 +53,18 @@ class ModuleAction {
         );
     }
     
+    public static function getModulesWithoutDescription(){
+        return array(
+            self::MODULE_SMAP,
+            self::MODULE_SCARD,
+            self::MODULE_INITIATIVE,
+            self::MODULE_UBT,
+            self::MODULE_IP,
+            self::MODULE_KM,
+            self::MODULE_SYS
+        );
+    }
+    
     public function getModuleName($module){
         return $this->getModules()[$module];
     }
