@@ -123,4 +123,19 @@ interface UserManagementService {
      * @throws ServiceException
      */
     public function linkSecurityRole($account);
+    
+    /**
+     * Gets the information of the selected Security Role
+     * @param Integer $id
+     * @return SecurityRole
+     * @throws ServiceException;
+     */
+    public function getSecurityRoleData($id);
+    
+    /**
+     * Update Security Role
+     * @param SecurityRole $securityRole
+     * @throws ServiceException
+     */
+    public function updateSecurityRole($securityRole);
 }

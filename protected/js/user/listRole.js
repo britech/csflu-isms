@@ -3,18 +3,26 @@ $(document).ready(function(){
         datatype: 'json',
         datafields:[
             {name: 'name'},
-            {name: 'action'}
+            {name: 'action'},
+            {name: 'id'}
         ],
+        id: 'id',
         url: '?r=role/renderSecurityRoleGrid'
     });
 
-    $("#securityRoleList").jqxGrid({
+    $("#securityRoleList").jqxDataTable({
         source: dataAdapter,
         columnsresize: false,
         theme: 'office',
         columns: [
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Security Role</span>', dataField: 'name'},
             {text: '', dataField: 'action', width: '20%'}
-        ]
+        ],
+        initRowDetails: function(id, row, element, rowinfo){
+            
+        },
+        rowDetails: true,
+        width: '100%',
+        pageable: true
     });
 });

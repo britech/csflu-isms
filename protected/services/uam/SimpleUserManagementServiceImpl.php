@@ -3,23 +3,26 @@
 namespace org\csflu\isms\service\uam;
 
 use org\csflu\isms\dao\uam\UserManagementDaoSqlImpl as UserManagementDao;
+use org\csflu\isms\dao\uam\SecurityRoleDaoSqlImpl as SecurityRoleDao;
 use org\csflu\isms\service\uam\UserManagementService;
 use org\csflu\isms\exceptions\ServiceException as ServiceException;
 
 class SimpleUserManagementServiceImpl implements UserManagementService {
 
-    private $daoSource;
+    private $userDaoSource;
+    private $securityRoleDaoSource;
 
     public function __construct() {
-        $this->daoSource = new UserManagementDao();
+        $this->userDaoSource = new UserManagementDao();
+        $this->securityRoleDaoSource = new SecurityRoleDao();
     }
 
     public function authenticate($login) {
-        return $this->daoSource->authenticate($login);
+        return $this->userDaoSource->authenticate($login);
     }
 
     public function listAccounts($id) {
-        $accounts = $this->daoSource->listAccounts($id);
+        $accounts = $this->userDaoSource->listAccounts($id);
         
         if(count($accounts) == 0){
             throw new ServiceException('Account Setup is invalid');
@@ -28,15 +31,15 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
     }
 
     public function listEmployees() {
-        return $this->daoSource->listEmployees();
+        return $this->userDaoSource->listEmployees();
     }
 
     public function getEmployeeData($id) {
-        return $this->daoSource->getEmployeeData($id);
+        return $this->userDaoSource->getEmployeeData($id);
     }
 
     public function listSecurityRoles() {
-        $roles = $this->daoSource->listSecurityRoles();
+        $roles = $this->securityRoleDaoSource->listSecurityRoles();
         
         if(count($roles) == 0){
             throw new ServiceException('Security Roles not defined');
@@ -45,15 +48,15 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
     }
 
     public function createAccount($account) {
-        $this->daoSource->insertAccount($account);
+        $this->userDaoSource->insertAccount($account);
     }
 
     public function validateEmployee($id) {
-        return $this->daoSource->validateEmployee($id);
+        return $this->userDaoSource->validateEmployee($id);
     }
 
     public function getLoginAccountStatus($id) {
-        $status = $this->daoSource->getLoginAccountStatus($id);
+        $status = $this->userDaoSource->getLoginAccountStatus($id);
         
         if(is_null($status)){
             throw new ServiceException('Account setup is invalid');
@@ -62,21 +65,21 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
     }
 
     public function resetPassword($id) {
-        $this->daoSource->resetPassword($id);
+        $this->userDaoSource->resetPassword($id);
     }
 
     public function updateLoginAccountStatus($id, $status) {
-        $this->daoSource->updateLoginAccountStatus($id, $status);
+        $this->userDaoSource->updateLoginAccountStatus($id, $status);
     }
 
     public function getAccountById($id) {
-        return $this->daoSource->getUserAccount($id);
+        return $this->userDaoSource->getUserAccount($id);
     }
     
     public function unlinkSecurityRole($id){
-        $account = $this->daoSource->getUserAccount($id);
-        $employee = $this->daoSource->getEmployeeData($account->employee->id);
-        $accounts = $this->daoSource->listAccounts($account->employee->id);
+        $account = $this->userDaoSource->getUserAccount($id);
+        $employee = $this->userDaoSource->getEmployeeData($account->employee->id);
+        $accounts = $this->userDaoSource->listAccounts($account->employee->id);
         
         if($account->employee->department->id == $employee->department->id){
             throw new ServiceException('Default linked security role cannot be deleted');
@@ -85,19 +88,27 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
         if(count($accounts) == 1){
             throw new ServiceException('At least one security role must be assigned to an account');
         }
-        $this->daoSource->unlinkSecurityRole($id);
+        $this->userDaoSource->unlinkSecurityRole($id);
     }
 
     public function getSecurityKey($id) {
-        return $this->daoSource->getSecurityKey($id);
+        return $this->userDaoSource->getSecurityKey($id);
     }
 
     public function updateSecurityKey($employee) {
-        $this->daoSource->updateSecurityKey($employee);
+        $this->userDaoSource->updateSecurityKey($employee);
     }
 
     public function linkSecurityRole($account) {
-        $this->daoSource->linkSecurityRole($account);
+        $this->userDaoSource->linkSecurityRole($account);
     }
 
+    public function getSecurityRoleData($id) {
+        return $this->securityRoleDaoSource->getSecurityRoleData($id);
+    }
+    
+    public function updateSecurityRole($securityRole) {
+        $this->securityRoleDaoSource->updateRoleDescription($securityRole);
+        $this->securityRoleDaoSource->manageLinkedActions($securityRole);
+    }
 }

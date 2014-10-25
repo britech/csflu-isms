@@ -2,40 +2,33 @@
 
 namespace org\csflu\isms\models\uam;
 
-use org\csflu\isms\core\Model as Model;
-use org\csflu\isms\exceptions\ModelException;
+use org\csflu\isms\core\Model;
+use org\csflu\isms\models\uam\ModuleAction;
 
 /**
  * @property Integer $id
- * @property String $module
- * @property String[] $actions;
+ * @property ModuleAction $module
  * @author britech
  *
  */
 class AllowableAction extends Model {
 
-    const MODULE_SMAP = "SMAP";
-    const MODULE_SCARD = "SCARD";
-    const MODULE_INITIATIVE = "INI";
-    const MODULE_UBT = "UBT";
-    const MODULE_IP = "IP";
-    const MODULE_KM = "KM";
-    const MODULE_SYS = "SYS";
-    
     private $id;
     private $module;
-    private $actions;
-
+    
     public function validate() {
         
     }
-
+    
     public function bindValuesUsingArray(array $valueArray) {
-        foreach($valueArray as $property=>$value){
-            if(!property_exists($this, $property)){
-                throw new ModelException('Data binding failure');
-            }
-            $this->$property = $value;
+        if(array_key_exists('allowableactions', $valueArray)){
+            parent::bindValuesUsingArray($valueArray, $this);
+        }
+        
+        if(array_key_exists('module', $valueArray)){
+            $this->module = new ModuleAction();
+            $this->module->module = $valueArray['module']['module'];
+            $this->module->actions = implode('/', $valueArray['module']['actions']);
         }
     }
     

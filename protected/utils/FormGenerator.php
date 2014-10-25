@@ -15,7 +15,6 @@ class FormGenerator extends Component {
     const METHOD_GET = "GET";
     const METHOD_DELETE = "DELETE";
     const METHOD_PUT = "PUT";
-    
     const PROPERTY_METHOD = "method";
     const PROPERTY_ACTION = "action";
     const PROPERTY_ENCTYPE = "enctype";
@@ -23,6 +22,7 @@ class FormGenerator extends Component {
     const PROPERTY_READONLY = "readonly";
     const PROPERTY_DISABLED = "disabled";
     const PROPERTY_VALUE = "value";
+    const PROPERTY_CHECKED = "checked";
 
     private $properties;
     private $fieldsetEnabled = false;
@@ -78,15 +78,15 @@ class FormGenerator extends Component {
             $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
             $readOnly = ApplicationUtils::getProperty($properties, self::PROPERTY_READONLY);
             $disabled = ApplicationUtils::getProperty($properties, self::PROPERTY_DISABLED);
-            
-            if(!empty($readOnly) && $readOnly==true){
-                return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" readonly tabindex=\"{$this->tabIndex}\"/>";
-            } elseif(!empty($disabled) && $disabled==true){
-                return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" disabled tabindex=\"{$this->tabIndex}\"/>";
+            $value = ApplicationUtils::getProperty($properties, self::PROPERTY_VALUE);
+
+            if (!empty($readOnly) && $readOnly == true) {
+                return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" readonly tabindex=\"{$this->tabIndex}\" value=\"{$value}\"/>";
+            } elseif (!empty($disabled) && $disabled == true) {
+                return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" disabled tabindex=\"{$this->tabIndex}\" value=\"{$value}\"/>";
             } else {
-                return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\"/>";
+                return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\" value=\"{$value}\"/>";
             }
-            
         } else {
             return "<input type=\"text\" name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\"/>";
         }
@@ -100,10 +100,10 @@ class FormGenerator extends Component {
             $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
             $readOnly = ApplicationUtils::getProperty($properties, self::PROPERTY_READONLY);
             $disabled = ApplicationUtils::getProperty($properties, self::PROPERTY_DISABLED);
-            
-            if(!empty($readOnly) && $readOnly==true){
+
+            if (!empty($readOnly) && $readOnly == true) {
                 return "<input type=\"password\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" readonly tabindex=\"{$this->tabIndex}\"/>";
-            } elseif(!empty($disabled) && $disabled==true){
+            } elseif (!empty($disabled) && $disabled == true) {
                 return "<input type=\"password\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" disabled tabindex=\"{$this->tabIndex}\"/>";
             } else {
                 return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\"/>";
@@ -112,46 +112,66 @@ class FormGenerator extends Component {
             return "<input type=\"password\" name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\"/>";
         }
     }
-    
+
     public function renderDropDownList($fieldName, array $data, array $properties = null) {
         $tag = "";
         $this->tabIndex+=1;
-        if(!is_null($properties)){
+        if (!is_null($properties)) {
             $class = ApplicationUtils::getProperty($properties, parent::PROPERTY_CLASS);
             $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
             $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
             $disabled = ApplicationUtils::getProperty($properties, self::PROPERTY_DISABLED);
-            
-            if(!empty($disabled) && $disabled==true){
+
+            if (!empty($disabled) && $disabled == true) {
                 $tag = "<select name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\" disabled>";
-            } else{
+            } else {
                 $tag = "<select name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\">";
             }
-        } else{
+        } else {
             $tag = "<select name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\">";
         }
-        foreach($data as $value => $text){
-            if(is_array($text)){
+        foreach ($data as $value => $text) {
+            if (is_array($text)) {
                 
-            } else{
+            } else {
                 $tag.="<option value=\"${value}\">{$text}</option>";
             }
         }
-        
+
         $tag.="</select>";
         return $tag;
     }
 
-    public function renderHiddenField($fieldName, array $properties = null){
+    public function renderHiddenField($fieldName, array $properties = null) {
         if (!is_null($properties)) {
             $class = ApplicationUtils::getProperty($properties, parent::PROPERTY_CLASS);
             $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
             $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
             $value = ApplicationUtils::getProperty($properties, self::PROPERTY_VALUE);
-            
+
             return "<input type=\"hidden\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" value=\"{$value}\"/>";
         } else {
             return "<input type=\"hidden\" name=\"{$fieldName}\"/>";
+        }
+    }
+
+    public function renderCheckBox($fieldName, $label, array $properties = null) {
+        $this->tabIndex+=1;
+        if (!is_null($properties)) {
+            $class = ApplicationUtils::getProperty($properties, parent::PROPERTY_CLASS);
+            $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
+            $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
+            $value = ApplicationUtils::getProperty($properties, self::PROPERTY_VALUE);
+            $checked = ApplicationUtils::getProperty($properties, self::PROPERTY_CHECKED);
+            
+            if(!empty($checked) && $checked==true){
+                return "<input type=\"checkbox\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" value=\"{$value}\" tabindex=\"{$this->tabIndex}\" checked/>&nbsp;".$this->renderLabel($label);
+            } else { 
+                return "<input type=\"checkbox\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" value=\"{$value}\" tabindex=\"{$this->tabIndex}\"/>&nbsp;".$this->renderLabel($label);
+            }
+            
+        } else {
+            return "<input type=\"checkbox\" name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\">&nbsp;".$this->renderLabel($label);
         }
     }
 

@@ -28,16 +28,19 @@ require_once 'models/uam/UserAccount.php';
 require_once 'models/uam/LoginAccount.php';
 require_once 'models/uam/SecurityRole.php';
 require_once 'models/uam/AllowableAction.php';
+require_once 'models/uam/ModuleAction.php';
 
 #dao-interfaces
 require_once 'dao/commons/DepartmentDao.php';
 require_once 'dao/commons/PositionDao.php';
 require_once 'dao/uam/UserManagementDao.php';
+require_once 'dao/uam/SecurityRoleDao.php';
 
 #dao-implementations
 require_once 'dao/commons/DepartmentDaoSqlImpl.php';
 require_once 'dao/commons/PositionDaoSqlImpl.php';
 require_once 'dao/uam/UserManagementDaoSqlImpl.php';
+require_once 'dao/uam/SecurityRoleDaoSqlImpl.php';
 
 #service-interfaces
 require_once 'services/commons/DepartmentService.php';
