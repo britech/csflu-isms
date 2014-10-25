@@ -41,6 +41,7 @@ echo $form->startComponent();
                     <td>
                         <?php
                            foreach($allowableActions as $allowableAction){
+                               $actions=array();
                                if($allowableAction->module->module == ModuleAction::MODULE_SMAP){
                                    $actions = explode('/', $allowableAction->module->actions);
                                    break;
@@ -67,6 +68,7 @@ echo $form->startComponent();
                     <td>
                         <?php
                            foreach($allowableActions as $allowableAction){
+                               $actions=array();
                                if($allowableAction->module->module == ModuleAction::MODULE_SCARD){
                                    $actions = explode('/', $allowableAction->module->actions);
                                    break;
@@ -93,6 +95,7 @@ echo $form->startComponent();
                     <td>
                         <?php
                            foreach($allowableActions as $allowableAction){
+                               $actions=array();
                                if($allowableAction->module->module == ModuleAction::MODULE_INITIATIVE){
                                    $actions = explode('/', $allowableAction->module->actions);
                                    break;
@@ -123,6 +126,7 @@ echo $form->startComponent();
                     <td>
                         <?php
                            foreach($allowableActions as $allowableAction){
+                               $actions=array();
                                if($allowableAction->module->module == ModuleAction::MODULE_UBT){
                                    $actions = explode('/', $allowableAction->module->actions);
                                    break;
@@ -149,6 +153,7 @@ echo $form->startComponent();
                     <td>
                         <?php
                            foreach($allowableActions as $allowableAction){
+                               $actions=array();
                                if($allowableAction->module->module == ModuleAction::MODULE_IP){
                                    $actions = explode('/', $allowableAction->module->actions);
                                    break;
@@ -175,6 +180,7 @@ echo $form->startComponent();
                     <td>
                         <?php
                            foreach($allowableActions as $allowableAction){
+                               $actions=array();
                                if($allowableAction->module->module == ModuleAction::MODULE_KM){
                                    $actions = explode('/', $allowableAction->module->actions);
                                    break;
@@ -205,6 +211,7 @@ echo $form->startComponent();
                     <td>
                         <?php
                            foreach($allowableActions as $allowableAction){
+                               $actions=array();
                                if($allowableAction->module->module == ModuleAction::MODULE_SYS){
                                    $actions = explode('/', $allowableAction->module->actions);
                                    break;
