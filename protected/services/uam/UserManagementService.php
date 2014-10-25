@@ -133,9 +133,16 @@ interface UserManagementService {
     public function getSecurityRoleData($id);
     
     /**
-     * Update Security Role
+     * Updates the Security Role
      * @param SecurityRole $securityRole
      * @throws ServiceException
      */
     public function updateSecurityRole($securityRole);
+    
+    /**
+     * Creates a new security role
+     * @param SecurityRole $securityRole
+     * @throws ServiceException
+     */
+    public function enlistSecurityRole($securityRole);
 }

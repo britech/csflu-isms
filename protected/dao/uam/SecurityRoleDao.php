@@ -41,4 +41,11 @@ interface SecurityRoleDao {
      * @throws DataAccessException
      */
     public function getLinkedActionsBySecurityRole($securityRole);
+    
+    /**
+     * @param SecurityRole $securityRole
+     * @return String
+     * @throws DataAccessException
+     */
+    public function enlistSecurityRole($securityRole);
 }

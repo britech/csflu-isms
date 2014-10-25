@@ -140,4 +140,23 @@ class SecurityRoleDaoSqlImpl implements SecurityRoleDao {
         }
     }
 
+    public function enlistSecurityRole($securityRole) {
+        $db = ConnectionManager::getConnectionInstance();
+        try {
+            $db->beginTransaction();
+            
+            $dbst = $db->prepare('INSERT INTO user_types(type_desc) VALUES(:description)');
+            $dbst->execute(array('description'=>$securityRole->description));
+            $id = $db->lastInsertId();
+            
+            $db->commit();
+            $securityRole->id = $id;
+            $this->manageLinkedActions($securityRole);
+            return $id;
+        } catch (\PDOException $ex) {
+            $db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }
