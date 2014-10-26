@@ -170,4 +170,28 @@ class SecurityRoleDaoSqlImpl implements SecurityRoleDao {
         }
     }
 
+    public function deleteSecurityRole($securityRole) {
+        $db = ConnectionManager::getConnectionInstance();
+        try {
+            $db->beginTransaction();
+            
+            //cleanup linked actions
+            $dbstActions = $db->prepare('DELETE FROM user_actions WHERE type_ref=:ref');
+            $dbstActions->execute(array('ref'=>$securityRole->id));
+            
+            // cleanup linked security roles
+            $dbstUsers = $db->prepare('DELETE FROM user_main WHERE type_ref=:ref');
+            $dbstUsers->execute(array('ref'=>$securityRole->id));
+            
+            // delete the security role
+            $dbstRole = $db->prepare('DELETE FROM user_types WHERE utype_id=:id');
+            $dbstRole->execute(array('id'=>$securityRole->id));
+            
+            $db->commit();
+        } catch (\PDOException $ex) {
+            $db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

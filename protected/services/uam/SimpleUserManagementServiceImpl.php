@@ -116,4 +116,8 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
         return $this->securityRoleDaoSource->enlistSecurityRole($securityRole);
     }
 
+    public function removeSecurityRole($securityRole) {
+        $this->securityRoleDaoSource->deleteSecurityRole($securityRole);
+    }
+
 }

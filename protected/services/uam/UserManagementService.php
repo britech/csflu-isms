@@ -145,4 +145,11 @@ interface UserManagementService {
      * @throws ServiceException
      */
     public function enlistSecurityRole($securityRole);
+    
+    /**
+     * Deletes the security role
+     * @param SecurityRole $securityRole
+     * @throws ServiceException
+     */
+    public function removeSecurityRole($securityRole);
 }

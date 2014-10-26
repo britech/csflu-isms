@@ -48,4 +48,10 @@ interface SecurityRoleDao {
      * @throws DataAccessException
      */
     public function enlistSecurityRole($securityRole);
+    
+    /**
+     * @param SecurityRole $securityRole
+     * @throws DataAccessException
+     */
+    public function deleteSecurityRole($securityRole);
 }

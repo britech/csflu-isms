@@ -29,7 +29,7 @@ class RoleController extends Controller {
         $this->title = ApplicationConstants::APP_NAME . ' - Security Role';
         $this->render('user/listRole', array(
             'breadcrumb' => array(
-                'Home' => array('site/index'), 
+                'Home' => array('site/index'),
                 'Security Roles' => 'active'),
             'sidebar' => array('data' => $this->getSidebarData()),
             'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""));
@@ -53,7 +53,7 @@ class RoleController extends Controller {
             array_push($data, array(
                 'id' => $role->id,
                 'name' => $role->description,
-                'action' => ApplicationUtils::generateLink(array('role/updateRole', 'id' => $role->id), 'Update Details')));
+                'action' => ApplicationUtils::generateLink(array('role/updateRole', 'id' => $role->id), 'Update Details').'&nbsp;|&nbsp;'.ApplicationUtils::generateLink(array('role/removeRole', 'id'=>$role->id), 'Remove')));
         }
         $this->renderAjaxJsonResponse($data);
     }
@@ -94,24 +94,24 @@ class RoleController extends Controller {
 
         $securityRole = new SecurityRole();
         $securityRole->bindValuesUsingArray(array('securityrole' => $securityRoleData, 'moduleactions' => $allowableActionRoleData));
-        
+
         $this->userService->updateSecurityRole($securityRole);
         $_SESSION['notif'] = "Security Role successfully updated";
-        $this->redirect(array('role/updateRole', 'id'=>$securityRole->id));
+        $this->redirect(array('role/updateRole', 'id' => $securityRole->id));
     }
-    
-    public function createRole(){
+
+    public function createRole() {
         $this->title = ApplicationConstants::APP_NAME . ' - Add Security Role';
         $this->render('user/createRole', array(
-            'breadcrumb' => array('Home' => array('site/index'), 
-                'Security Roles' => array('role/index'), 
+            'breadcrumb' => array('Home' => array('site/index'),
+                'Security Roles' => array('role/index'),
                 'Add Security Role' => 'active'),
             'sidebar' => array('data' => $this->getSidebarData()),
             'model' => new ModuleAction()
         ));
     }
-    
-    public function create(){
+
+    public function create() {
         $securityRoleData = filter_input_array(INPUT_POST)['SecurityRole'];
         $allowableActionRoleData = filter_input_array(INPUT_POST)['AllowableAction'];
 
@@ -125,7 +125,45 @@ class RoleController extends Controller {
         $securityRole->bindValuesUsingArray(array('securityrole' => $securityRoleData, 'moduleactions' => $allowableActionRoleData));
         $id = $this->userService->enlistSecurityRole($securityRole);
         $_SESSION['notif'] = "Security Role successfully enlisted";
-        $this->redirect(array('role/index', 'id'=>$id));
+        $this->redirect(array('role/index', 'id' => $id));
     }
 
+    public function removeRole() {
+        $id = filter_input(INPUT_GET, 'id');
+        
+        $this->title = ApplicationConstants::APP_NAME . ' - Security Role';
+        if(!isset($id) && empty($id)) {
+            throw new ValidationException('Another parameter is needed to process this request');
+        }
+        
+        $securityRole = $this->userService->getSecurityRoleData($id);
+        
+        $this->render('commons/confirm', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Security Roles' => 'active'),
+            'sidebar' => array('data' => $this->getSidebarData()),
+            'confirm' => array('class' => '',
+                    'header' => 'Confirm removal of Security Role',
+                    'text' => "Do you want to remove the security role <strong>{$securityRole->description}</strong>? Continuing this action will delete the linked accounts using this security role.",
+                    'accept.class' => 'red',
+                    'accept.text' => 'Yes',
+                    'accept.url' => array('role/remove', 'id' => $id),
+                    'deny.class' => 'green',
+                    'deny.text' => 'No',
+                    'deny.url' => array('role/index'))
+        ));
+    }
+
+    public function remove() {
+        $id = filter_input(INPUT_GET, 'id');
+        if(!isset($id) && empty($id)) {
+            throw new ValidationException('Another parameter is needed to process this request');
+        }
+        $securityRole = new SecurityRole();
+        $securityRole->id = $id;
+        $this->userService->removeSecurityRole($securityRole);
+        $_SESSION['notif'] = "Security Role successfully deleted";
+        $this->redirect(array('role/index', 'id' => $id));
+    }
 }
