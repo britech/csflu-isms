@@ -2,10 +2,10 @@
 
 namespace org\csflu\isms\dao\commons;
 
-use org\csflu\isms\core\ConnectionManager as ConnectionManager;
-use org\csflu\isms\exceptions\DataAccessException as DataAccessException;
-use org\csflu\isms\dao\commons\PositionDao as PositionDao;
-use org\csflu\isms\models\commons\Position as Position;
+use org\csflu\isms\core\ConnectionManager;
+use org\csflu\isms\exceptions\DataAccessException;
+use org\csflu\isms\dao\commons\PositionDao;
+use org\csflu\isms\models\commons\Position;
 /**
  * Description of PositionDaoSqlImpl
  *
@@ -30,4 +30,20 @@ class PositionDaoSqlImpl implements PositionDao{
             throw new DataAccessException($ex->getMessage());
         }
     }
+
+    public function enlistPosition($position) {
+        $db = ConnectionManager::getConnectionInstance();
+        try {
+            $db->beginTransaction();
+            
+            $dbst = $db->prepare('INSERT INTO positions(pos_desc) VALUES(:description)');
+            $dbst->execute(array('description'=>$position->name));
+            
+            $db->commit();
+        } catch (\PDOException $ex) {
+            $db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

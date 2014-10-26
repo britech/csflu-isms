@@ -12,16 +12,25 @@ use org\csflu\isms\exceptions\ServiceException;
  */
 class PositionServiceSimpleImpl implements PositionService{
     
-    private $db = null;
+    private $daoSource = null;
     public function __construct() {
-        $this->db = new PositionDao();
+        $this->daoSource = new PositionDao();
     }
     
     public function listPositions() {
-        $positions = $this->db->listPositions();
+        $positions = $this->daoSource->listPositions();
         if(count($positions) == 0){
             throw new ServiceException('Positions not defined properly.');
         }
         return $positions;
     }
+
+    public function managePosition($position) {
+        if(empty($position->id)){
+            $this->daoSource->enlistPosition($position);
+        } else {
+            
+        }
+    }
+
 }

@@ -2,8 +2,8 @@
 
 namespace org\csflu\isms\service\commons;
 
-use org\csflu\isms\exceptions\ServiceException as ServiceException;
-use org\csflu\isms\models\commons\Position as Position;
+use org\csflu\isms\exceptions\ServiceException;
+use org\csflu\isms\models\commons\Position;
 /**
  *
  * @author britech
@@ -15,4 +15,10 @@ interface PositionService {
      * @throws ServiceException
      */
     public function listPositions();
+    
+    /**
+     * @param Position $position
+     * @throws ServiceException
+     */
+    public function managePosition($position);
 }
