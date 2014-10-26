@@ -17,8 +17,20 @@ interface PositionDao {
     public function listPositions();
     
     /**
+     * @param Integer $id
+     * @return Position
+     */
+    public function getPositionData($id);
+    
+    /**
      * @param Position $position
      * @throws DataAccessException
      */
     public function enlistPosition($position);
+    
+    /**
+     * @param Position $position
+     * @throws DataAccessException
+     */
+    public function updatePosition($position);
 }

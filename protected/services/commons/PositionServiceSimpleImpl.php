@@ -26,11 +26,15 @@ class PositionServiceSimpleImpl implements PositionService{
     }
 
     public function managePosition($position) {
-        if(empty($position->id)){
+        if(is_null($position->id)){
             $this->daoSource->enlistPosition($position);
         } else {
-            
+            $this->daoSource->updatePosition($position);
         }
+    }
+
+    public function getPositionData($id) {
+        return $this->daoSource->getPositionData($id);
     }
 
 }

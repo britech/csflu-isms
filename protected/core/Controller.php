@@ -13,7 +13,7 @@ use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
  */
 class Controller {
 
-    protected $title;
+    public $title;
     public $layout = "column-1";
 
     /**

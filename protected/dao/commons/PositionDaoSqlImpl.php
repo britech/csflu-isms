@@ -46,4 +46,35 @@ class PositionDaoSqlImpl implements PositionDao{
         }
     }
 
+    public function getPositionData($id) {
+        try {
+            $db = ConnectionManager::getConnectionInstance();
+            $dbst = $db->prepare('SELECT pos_id, pos_desc FROM positions WHERE pos_id=:id');
+            $dbst->execute(array('id'=>$id));
+            
+            $position = new Position();
+            while($data = $dbst->fetch()){
+                list($position->id, $position->name) = $data;
+            }
+            return $position;
+        } catch (\PDException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function updatePosition($position) {
+        $db = ConnectionManager::getConnectionInstance();
+        try {
+            $db->beginTransaction();
+            
+            $dbst = $db->prepare('UPDATE positions SET pos_desc=:desc WHERE pos_id=:id');
+            $dbst->execute(array('desc'=>$position->name, 'id'=>$position->id));
+            
+            $db->commit();
+        } catch (\PDOException $ex) {
+            $db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }
