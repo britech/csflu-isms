@@ -22,6 +22,7 @@ require_once 'exception/ModelException.php';
 #models
 require_once 'models/commons/Department.php';
 require_once 'models/commons/Position.php';
+require_once 'models/commons/UnitOfMeasure.php';
 require_once 'models/uam/Login.php';
 require_once 'models/uam/Employee.php';
 require_once 'models/uam/UserAccount.php';
@@ -33,23 +34,27 @@ require_once 'models/uam/ModuleAction.php';
 #dao-interfaces
 require_once 'dao/commons/DepartmentDao.php';
 require_once 'dao/commons/PositionDao.php';
+require_once 'dao/commons/UnitOfMeasureDao.php';
 require_once 'dao/uam/UserManagementDao.php';
 require_once 'dao/uam/SecurityRoleDao.php';
 
 #dao-implementations
 require_once 'dao/commons/DepartmentDaoSqlImpl.php';
 require_once 'dao/commons/PositionDaoSqlImpl.php';
+require_once 'dao/commons/UnitOfMeasureDaoSqlImpl.php';
 require_once 'dao/uam/UserManagementDaoSqlImpl.php';
 require_once 'dao/uam/SecurityRoleDaoSqlImpl.php';
 
 #service-interfaces
 require_once 'services/commons/DepartmentService.php';
 require_once 'services/commons/PositionService.php';
+require_once 'services/commons/UnitOfMeasureService.php';
 require_once 'services/uam/UserManagementService.php';
 
 #service-implementations
 require_once 'services/commons/DepartmentServiceSimpleImpl.php';
 require_once 'services/commons/PositionServiceSimpleImpl.php';
+require_once 'services/commons/UnitOfMeasureSimpleImpl.php';
 require_once 'services/uam/SimpleUserManagementServiceImpl.php';
 
 
