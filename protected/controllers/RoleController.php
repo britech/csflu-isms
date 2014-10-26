@@ -166,4 +166,14 @@ class RoleController extends Controller {
         $_SESSION['notif'] = "Security Role successfully deleted";
         $this->redirect(array('role/index', 'id' => $id));
     }
+    
+    public function getSecurityRole() {
+        $id = filter_input(INPUT_POST, 'id');
+        
+        if(!isset($id) && empty($id)) {
+            throw new ValidationException('Another parameter is needed to process this request');
+        }
+        $securityRole = $this->userService->getSecurityRoleData($id);
+        $this->renderPartial('user/_roleDetail', array('actions' => $securityRole->allowableActions));
+    }
 }

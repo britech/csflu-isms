@@ -19,7 +19,12 @@ $(document).ready(function(){
             {text: '', dataField: 'action', width: '20%'}
         ],
         initRowDetails: function(id, row, element, rowinfo){
-            
+            rowinfo.detailsHeight = '500';
+            $.post('?r=role/getSecurityRole', 
+            {id:id},
+            function(data){
+                element.html(data);
+            });
         },
         rowDetails: true,
         width: '100%',

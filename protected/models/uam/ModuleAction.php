@@ -41,7 +41,7 @@ class ModuleAction {
         }
     }
 
-    public function getModules(){
+   public static function getModules(){
         return array(
             self::MODULE_SMAP => 'Strategy Map',
             self::MODULE_SCARD => 'Scorecard',
