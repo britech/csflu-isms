@@ -26,4 +26,11 @@ interface DepartmentService {
      * @throws ServiceException
      */
     public function listDepartments($excludeDepartmentId = null);
+    
+    /**
+     * Enlists a department
+     * @param Department $department
+     * @throws ServiceException
+     */
+    public function enlistDepartment($department);
 }

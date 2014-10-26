@@ -3,10 +3,12 @@
 namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
-use org\csflu\isms\exceptions\ValidationException as ValidationException;
+use org\csflu\isms\exceptions\ValidationException;
 use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl as DepartmentService;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
+use org\csflu\isms\models\commons\Department;
+use org\csflu\isms\core\Model;
 /**
  * Description of DepartmentController
  *
@@ -47,11 +49,14 @@ class DepartmentController extends Controller{
                 'data'=>array(
                     'header'=>'Actions',
                     'links'=>array(
-                        'Add New Department' => array('role/createDepartment')
-                    )
-                )
-            )
+                        'Add New Department' => array('department/createDepartment'))
+                )),
+            'notif'=>  isset($_SESSION['notif']) ? $_SESSION['notif'] : "" 
         ));
+        
+        if(isset($_SESSION['notif'])){
+            unset($_SESSION['notif']);
+        }
     }
     
     public function listDepartments(){
@@ -65,5 +70,49 @@ class DepartmentController extends Controller{
                         'Update Department')));
         }
         $this->renderAjaxJsonResponse($data);
+    }
+    
+    public function createDepartment() {
+        $this->layout = 'column-1';
+        $this->title = ApplicationConstants::APP_NAME.' - Enlist a Department';
+        $this->render('department/create', array(
+            'breadcrumb'=>array(
+                'Home'=>array('site/index'),
+                'Manage Departments'=>array('department/index'),
+                'Enlist a Department'=>'active'
+            ),
+            'validation'=> isset($_SESSION['validation']) ? $_SESSION['validation'] : "",
+            'data' => isset($_SESSION['data']) ? $_SESSION['data'] : ""
+        ));
+        
+        if(isset($_SESSION['validation'])){
+            unset($_SESSION['validation']);
+        }
+        
+        if(isset($_SESSION['data'])){
+            unset($_SESSION['data']);
+        }
+    }
+    
+    public function create() {
+        $departmentData = filter_input_array(INPUT_POST)['Department'];
+        
+        if(!isset($departmentData) && empty($departmentData)){
+            throw new ValidationException('Another parameter is needed to process this request'); 
+        }
+        
+        $department = new Department();
+        $department->bindValuesUsingArray(array('department'=>$departmentData), $department);
+        $department->validationMode = Model::VALIDATION_MODE_INITIAL;
+        
+        if($department->validate()){
+            $this->departmentService->enlistDepartment($department);
+            $_SESSION['notif'] = array('class'=>'success', 'message'=>'Department successfully added');
+            $this->redirect(array('department/index'));
+        } else {
+            $_SESSION['validation'] = $department->validationMessages;
+            $_SESSION['data'] = $departmentData;
+            $this->redirect(array('department/createDepartment'));
+        }
     }
 }

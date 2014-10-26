@@ -39,4 +39,8 @@ class DepartmentServiceSimpleImpl implements DepartmentService{
         return $departments;
     }
 
+    public function enlistDepartment($department) {
+        $this->daoSource->insertDepartment($department);
+    }
+
 }

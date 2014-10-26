@@ -69,4 +69,19 @@ class DepartmentDaoSqlImpl implements DepartmentDao {
         }
     }
 
+    public function insertDepartment($department) {
+        $db = ConnectionManager::getConnectionInstance();
+        try {
+            $db->beginTransaction();
+            
+            $dbst = $db->prepare('INSERT INTO departments(dept_code, dept_name) VALUES(:code, :name)');
+            $dbst->execute(array('code'=>$department->code, 'name'=>$department->name));
+            
+            $db->commit();
+        } catch (\PDOException $ex) {
+            $db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

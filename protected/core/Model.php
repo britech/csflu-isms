@@ -4,8 +4,17 @@ namespace org\csflu\isms\core;
 
 use org\csflu\isms\exceptions\ModelException;
 
+/**
+ * @property Integer $validationMode
+ * @property array $validationMessages
+ */
 abstract class Model {
 
+    const VALIDATION_MODE_INITIAL = 1;
+    const VALIDATION_MODE_UPDATE = 2;
+    
+    private $validationMode;
+    protected $validationMessages = array();
     /**
      * 
      * @return boolean
@@ -33,4 +42,11 @@ abstract class Model {
         return array();
     }
 
+    public function __set($name, $value) {
+        $this->$name = $value;
+    }
+    
+    public function __get($name) {
+        return $this->$name;
+    }
 }

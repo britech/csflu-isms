@@ -1,9 +1,9 @@
 <?php
 namespace org\csflu\isms\dao\commons;
 
-use org\csflu\isms\models\commons\Department as Department;
+use org\csflu\isms\models\commons\Department;
 
-use org\csflu\isms\exceptions\DataAccessException as DataAccessException;
+use org\csflu\isms\exceptions\DataAccessException;
 /**
  *
  * @author britech
@@ -30,4 +30,10 @@ interface DepartmentDao {
      * @throws DataAccessException
      */
     public function getDepartmentById($id);
+    
+    /**
+     * @param Department $department
+     * @throws DataAccessException
+     */
+    public function insertDepartment($department);
 }
