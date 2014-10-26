@@ -16,4 +16,19 @@ interface UnitOfMeasureService {
      * @throws ServiceException 
      */
     public function listUnitOfMeasures();
+    
+    /**
+     * Enlists or updates the selected UOM
+     * @param UnitOfMeasure $uom
+     * @throws ServiceException 
+     */
+    public function manageUnitOfMeasures($uom);
+    
+    /**
+     * Retrieves the information of a selected UOM
+     * @param UnitOfMeasure $id
+     * @return UnitOfMeasure
+     * @throws ServiceException
+     */
+    public function getUomInfo($id);
 }

@@ -25,7 +25,12 @@ class UnitOfMeasure extends Model{
     }
 
     public function validate() {
-        
+        if(empty($this->description)){
+            array_push($this->validationMessages, '- Description should not be empty!');
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }

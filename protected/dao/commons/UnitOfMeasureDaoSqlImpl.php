@@ -32,4 +32,47 @@ class UnitOfMeasureDaoSqlImpl implements UnitOfMeasureDao {
         }
     }
 
+    public function enlistUom($uom) {
+        $db = ConnectionManager::getConnectionInstance();
+        try {
+            $db->beginTransaction();
+            $dbst = $db->prepare('INSERT INTO uom(uom_symbol, uom_desc) VALUES(:symbol, :desc)');
+            $dbst->execute(array('symbol' => $uom->symbol, 'desc' => $uom->description));
+            $db->commit();
+        } catch (\PDOException $ex) {
+            $db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function updateUom($uom) {
+        $db = ConnectionManager::getConnectionInstance();
+        try {
+            $db->beginTransaction();
+            $dbst = $db->prepare('UPDATE uom SET uom_symbol=:symbol, uom_desc=:desc WHERE uom_id=:id');
+            $dbst->execute(array('symbol' => $uom->symbol, 'desc' => $uom->description, 'id' => $uom->id));
+            $db->commit();
+        } catch (\PDOException $ex) {
+            $db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getUomInfo($id) {
+        $db = ConnectionManager::getConnectionInstance();
+        try {
+            $dbst = $db->prepare('SELECT uom_id, uom_symbol, uom_desc FROM uom WHERE uom_id=:id');
+            $dbst->execute(array('id' => $id));
+
+            $uom = new UnitOfMeasure();
+
+            while ($data = $dbst->fetch()) {
+                list($uom->id, $uom->symbol, $uom->description) = $data;
+            }
+            return $uom;
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }
