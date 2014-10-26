@@ -10,7 +10,7 @@ $(document).ready(function() {
         url: '?r=user/listEmployees'
     });
 
-    $("#employeeList").jqxGrid({
+    $("#employeeList").jqxDataTable({
         source: dataAdapter,
         columnsresize: false,
         theme: 'office',
@@ -18,6 +18,8 @@ $(document).ready(function() {
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Name</span>', dataField: 'name', width: '60%'},
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Status</span>', dataField: 'status'},
             {text: '', dataField: 'action', width: '20%'}
-        ]
+        ],
+        width: '100%',
+        pageable: true
     });
 });

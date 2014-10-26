@@ -14,7 +14,7 @@ $(document).ready(function(){
         }
     });
 
-    $("#accountList").jqxGrid({
+    $("#accountList").jqxDataTable({
         source: dataAdapter,
         columnsresize: false,
         theme: 'office',
@@ -24,6 +24,7 @@ $(document).ready(function(){
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Position</span>', dataField: 'position', width: '20%'},
             {text: '', dataField: 'link',  width: '10%'}
         ],
-        width: '100%'
+        width: '100%',
+        pageable: true
     });
 });
