@@ -7,11 +7,13 @@ use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
 /**
  * 
  * @property String $title
+ * @property String $layout
  * @author britech
  *
  */
 class Controller {
 
+    protected $title;
     public $layout = "column-1";
 
     /**
