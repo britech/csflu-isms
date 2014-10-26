@@ -33,4 +33,11 @@ interface DepartmentService {
      * @throws ServiceException
      */
     public function enlistDepartment($department);
+    
+    /**
+     * Updates a department
+     * @param Department $department
+     * @throws ServiceException
+     */
+    public function updateDepartment($department);
 }

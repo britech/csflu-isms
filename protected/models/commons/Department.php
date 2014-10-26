@@ -17,21 +17,20 @@ class Department extends Model {
     private $id;
     private $code;
     private $name;
-    
+
     public function validate() {
         $validationCount = 0;
-        if ($this->validationMode == Model::VALIDATION_MODE_INITIAL) {
-            if(empty($this->code)){
-                $validationCount+=1;
-                array_push($this->validationMessages, '- Code should not be empty');
-            }
-            
-            if(empty($this->name)){
-                $validationCount+=1;
-                array_push($this->validationMessages, '- Name should not be empty!');
-            }
+
+        if (empty($this->code)) {
+            $validationCount+=1;
+            array_push($this->validationMessages, '- Code should not be empty');
         }
-        
+
+        if (empty($this->name)) {
+            $validationCount+=1;
+            array_push($this->validationMessages, '- Name should not be empty!');
+        }
+
         return $validationCount > 0 ? false : true;
     }
 

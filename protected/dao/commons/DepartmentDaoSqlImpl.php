@@ -40,6 +40,7 @@ class DepartmentDaoSqlImpl implements DepartmentDao {
             while ($data = $dbst->fetch()) {
                 list($department->id, $department->code, $department->name) = $data;
             }
+            return $department;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
@@ -76,6 +77,21 @@ class DepartmentDaoSqlImpl implements DepartmentDao {
             
             $dbst = $db->prepare('INSERT INTO departments(dept_code, dept_name) VALUES(:code, :name)');
             $dbst->execute(array('code'=>$department->code, 'name'=>$department->name));
+            
+            $db->commit();
+        } catch (\PDOException $ex) {
+            $db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function updateDepartment($department) {
+        $db = ConnectionManager::getConnectionInstance();
+        try {
+            $db->beginTransaction();
+            
+            $dbst = $db->prepare('UPDATE departments SET dept_code=:code, dept_name=:name WHERE dept_id=:id');
+            $dbst->execute(array('code'=>$department->code, 'name'=>$department->name, 'id'=>$department->id));
             
             $db->commit();
         } catch (\PDOException $ex) {
