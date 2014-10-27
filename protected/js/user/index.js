@@ -20,6 +20,8 @@ $(document).ready(function() {
             {text: '', dataField: 'action', width: '20%'}
         ],
         width: '100%',
-        pageable: true
+        pageable: true,
+        filterable: true,
+        filterMode: 'simple'
     });
 });

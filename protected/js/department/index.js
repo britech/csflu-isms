@@ -5,7 +5,7 @@ $(document).ready(function(){
             {name: 'name'},
             {name: 'action'}
         ],
-        url: '?r=department/listDepartments'
+        url: '?r=department/renderDepartmentGrid'
     });
 
     $("#departmentList").jqxDataTable({

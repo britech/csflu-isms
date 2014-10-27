@@ -176,4 +176,13 @@ class RoleController extends Controller {
         $securityRole = $this->userService->getSecurityRoleData($id);
         $this->renderPartial('user/_roleDetail', array('actions' => $securityRole->allowableActions));
     }
+    
+    public function listSecurityRoles(){
+        $roles = $this->userService->listSecurityRoles();
+        $data = array();
+        foreach($roles as $role) {
+            array_push($data, array('id'=>$role->id, 'name'=>'&nbsp;'.$role->description));
+        }
+        $this->renderAjaxJsonResponse($data);
+    }
 }

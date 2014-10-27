@@ -28,6 +28,8 @@ $(document).ready(function(){
         },
         rowDetails: true,
         width: '100%',
-        pageable: true
+        pageable: true,
+        filterable: true,
+        filterMode: 'simple'
     });
 });

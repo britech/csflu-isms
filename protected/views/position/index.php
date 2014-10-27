@@ -32,13 +32,16 @@ echo $form->constructHeader(isset($data) ? 'Update Position' : 'Add Position');
     <?php echo $form->renderLabel('Description', array('class'=>'all-20 align-right'));?>
     <div class="control all-80 append-button">
         <span><?php echo $form->renderTextField('Position[name]', array('value'=>  isset($data) ? $data->name : ''));?></span>
-        <?php echo $form->renderSubmitButton('Enlist', array('class'=>'ink-button green flat'));?>
-    </div>
-    <?php
-    if(isset($data)){
-        echo $form->renderHiddenField('Position[id]', array('value'=>$data->id));
-    }
+        <?php ?>
+        <?php
+        if(isset($data)){
+            echo $form->renderSubmitButton('Update', array('class'=>'ink-button blue flat'));
+            echo $form->renderHiddenField('Position[id]', array('value'=>$data->id));
+        } else {
+            echo $form->renderSubmitButton('Enlist', array('class'=>'ink-button green flat'));
+        }
     ?>
+    </div>
 </div>
 <?php echo $form->endComponent();?>
 <script type="text/javascript" src="protected/js/position/index.js"></script>

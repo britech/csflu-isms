@@ -94,7 +94,7 @@ class ModuleAction {
     }
 
     private function getAllowableActionsForAdminModule() {
-        return array('MU' => 'Manage Users', 'MS' => 'Manage Security Roles', 'MD' => 'Manage Departments', 'MM' => 'Manage UOM');
+        return array('MU' => 'Manage Users', 'MS' => 'Manage Security Roles', 'MD' => 'Manage Departments', 'MM' => 'Manage UOM', 'MP' => 'Manage Positions');
     }
 
     public function __set($name, $value) {

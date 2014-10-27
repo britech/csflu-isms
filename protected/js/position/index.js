@@ -5,7 +5,7 @@ $(document).ready(function(){
             {name: 'name'},
             {name: 'action'}
         ],
-        url: '?r=position/listPositions'
+        url: '?r=position/renderPositionGrid'
     });
 
     $("#positionList").jqxDataTable({

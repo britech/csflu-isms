@@ -19,12 +19,13 @@ $(document).ready(function(){
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Security Role</span>', dataField: 'role', width: '30%'},
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Department</span>', dataField: 'department', width: '40%'},
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Position</span>', dataField: 'position', width: '20%'},
-            {text: '', dataField: 'link',  width: '10%'}
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Security Role</span>', dataField: 'role', width: '20%'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Department</span>', dataField: 'department', width: '30%'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Position</span>', dataField: 'position', width: '30%'},
+            {text: '', dataField: 'link',  width: '20%'}
         ],
         width: '100%',
-        pageable: true
+        pageable: true,
+        sortable: true
     });
 });

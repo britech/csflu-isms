@@ -152,4 +152,11 @@ interface UserManagementService {
      * @throws ServiceException
      */
     public function removeSecurityRole($securityRole);
+    
+    /**
+     * Updates an account
+     * @param UserAccount $userAccount
+     * @throws ServiceException
+     */
+    public function updateAccount($userAccount);
 }

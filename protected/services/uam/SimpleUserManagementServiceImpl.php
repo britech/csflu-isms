@@ -120,4 +120,8 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
         $this->securityRoleDaoSource->deleteSecurityRole($securityRole);
     }
 
+    public function updateAccount($userAccount) {
+        $this->userDaoSource->updateUserAccount($userAccount);
+    }
+
 }

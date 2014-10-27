@@ -47,6 +47,8 @@ echo $form->startComponent();?>
         <?php echo $form->renderTextField('username', array('disabled'=>true));?>
         <?php echo $form->renderHiddenField('LoginAccount[username]');?>
         <?php echo $form->renderHiddenField('LoginAccount[password]');?>
+        <?php echo $form->renderHiddenField('SecurityRole[id]', array('id'=>'securityRole-id'));?>
+        <?php echo $form->renderHiddenField('Position[id]', array('id'=>'position-id'));?>
         <p class="tip">During initial registration, the default password is the username.</p>
     </div>
 </div>
@@ -54,15 +56,14 @@ echo $form->startComponent();?>
 <div class="control-group column-group half-gutters" style="margin-bottom: 0px; padding-bottom: 0px;">
     <?php echo $form->renderLabel('Initial Security Role', array('class'=>'all-20 align-right'));?>
     <div class="control all-80">
-        <?php echo $form->renderDropDownList('SecurityRole[id]', $params['roleList'], array('disabled'=>true, 'id'=>'securityRole'));?>
+        <div id="securityRole-list"></div>
     </div>
 </div>
 
 <div class="control-group column-group half-gutters" style="margin-bottom: 0px; padding-bottom: 0px;">
     <?php echo $form->renderLabel('Position', array('class'=>'all-20 align-right'));?>
     <div class="control all-80">
-        <?php echo $form->renderDropDownList('Position[id]', $params['positionList'], array('disabled'=>true, 'id'=>'position'));?>
-        <p class="tip">The position selected will be used only in the ISMS environment.</p>
+        <div id="position-list"></div>
         <?php echo $form->renderSubmitButton('Register', array('class'=>'ink-button green flat', 'style'=>'margin-top: 10px; margin-left: 0px;'));?>
     </div>
 </div>

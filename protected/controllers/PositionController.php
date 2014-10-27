@@ -40,7 +40,7 @@ class PositionController extends Controller {
         }
     }
 
-    public function listPositions() {
+    public function renderPositionGrid() {
         $positions = $this->positionService->listPositions();
         $data = array();
         foreach ($positions as $position) {
@@ -111,7 +111,19 @@ class PositionController extends Controller {
         } else {
             $_SESSION['validation'] = $position->validationMessages;
         }
-        $this->redirect(array('position/updatePosition', 'id'=>$position->id));
+        $this->redirect(array('position/index'));
+    }
+
+    public function listPositions() {
+        $positions = $this->positionService->listPositions();
+        $data = array();
+        foreach ($positions as $position) {
+            array_push($data, array(
+                'id' => $position->id,
+                'name' => '&nbsp;'.$position->name
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
 }

@@ -60,7 +60,7 @@ class DepartmentController extends Controller {
         }
     }
 
-    public function listDepartments() {
+    public function renderDepartmentGrid() {
         $departments = $this->departmentService->listDepartments();
         $data = array();
         foreach ($departments as $department) {
@@ -124,6 +124,11 @@ class DepartmentController extends Controller {
         
         $department = $this->departmentService->getDepartmentDetail(array('id'=>$id));
         
+        if(is_null($department->id)){
+            $_SESSION['notif'] = array('class'=>'', 'message'=>'Department not found');
+            $this->redirect(array('department/index'));
+        }
+        
         $this->layout = 'column-1';
         $this->title = ApplicationConstants::APP_NAME . ' - Enlist a Department';
         $this->render('department/update', array(
@@ -161,6 +166,17 @@ class DepartmentController extends Controller {
             $_SESSION['data'] = $departmentData;
             $this->redirect(array('department/updateDepartment', 'id'=>$department->id));
         }
+    }
+    
+    public function listDepartments(){
+        $departments = $this->departmentService->listDepartments();
+        $data = array();
+        foreach($departments as $department){
+            array_push($data, array(
+                'id'=>$department->id, 
+                'name'=>'&nbsp;'.$department->code.'&nbsp-&nbsp;'.$department->name));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
 }

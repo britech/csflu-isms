@@ -247,7 +247,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
     public function getUserAccount($id) {
         try {
             $db = ConnectionManager::getConnectionInstance();
-            $dbst = $db->prepare('SELECT emp_ref, type_ref, dept_ref, pos_ref, emp_lname, emp_fname, emp_stat, type_desc, dept_name, username'
+            $dbst = $db->prepare('SELECT umain_id, emp_ref, type_ref, dept_ref, pos_ref, emp_lname, emp_fname, emp_stat, type_desc, dept_name, username'
                     . ' FROM user_main'
                     . ' JOIN employees ON emp_ref = emp_id'
                     . ' JOIN user_types ON type_ref = utype_id'
@@ -263,7 +263,8 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
             $account->securityRole = new SecurityRole();
 
             while ($data = $dbst->fetch()) {
-                list($account->employee->id,
+                list($account->id,
+                        $account->employee->id,
                         $account->securityRole->id,
                         $account->employee->department->id,
                         $account->employee->position->id,
@@ -333,6 +334,23 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
                 'type' => $userAccount->securityRole->id,
                 'department' => $userAccount->employee->department->id,
                 'position' => $userAccount->employee->position->id));
+            $db->commit();
+        } catch (\PDOException $ex) {
+            $db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function updateUserAccount($userAccount) {
+        $db = ConnectionManager::getConnectionInstance();
+        try {
+            $db->beginTransaction();
+            $dbst = $db->prepare('UPDATE user_main SET type_ref=:type, pos_ref=:position WHERE umain_id=:id');
+            $dbst->execute(array(
+                'type'=>$userAccount->securityRole->id,
+                'position'=>$userAccount->employee->position->id,
+                'id'=>$userAccount->id));
+            
             $db->commit();
         } catch (\PDOException $ex) {
             $db->rollBack();

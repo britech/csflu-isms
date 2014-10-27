@@ -107,4 +107,10 @@ interface UserManagementDao {
      * @throws DataAccessException
      */
     public function linkSecurityRole($userAccount);
+    
+    /**
+     * @param UserAccount $userAccount
+     * @throws DataAccessException
+     */
+    public function updateUserAccount($userAccount);
 }

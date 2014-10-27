@@ -31,8 +31,8 @@ if(isset($params['validation']) && !empty($params['validation'])):?>
     <?php echo $form->renderLabel('Description', array('class'=>'all-20 align-right'));?>
     <div class="control all-80">
         <?php echo $form->renderTextField('UnitOfMeasure[description]', array('value'=>$data->description));?>
-        <?php echo $form->renderSubmitButton('Add', array(
-            'class'=>'ink-button green flat',
+        <?php echo $form->renderSubmitButton('Update', array(
+            'class'=>'ink-button blue flat',
             'style'=>'margin-top: 1em; margin-left: 0px;'
         ));?>
     </div>

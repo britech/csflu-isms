@@ -50,8 +50,60 @@ $(document).ready(function() {
                     $("#securityRole").prop('disabled', false);
                     $("#position").prop('disabled', false);
                     $("[type=submit]").prop('disabled', false);
+                    $("#securityRole-list").jqxComboBox({disabled: false});
+                    $("#position-list").jqxComboBox({disabled: false});
                 }
             });
         }
+    });
+    
+    $("#securityRole-list").jqxComboBox({
+        source: new $.jqx.dataAdapter({
+            datatype: 'json',
+            datafields: [
+                {name: 'id'},
+                {name: 'name'}
+            ],
+            url: '?r=role/listSecurityRoles'
+        }),
+        selectedIndex: 0,
+        displayMember: 'name',
+        valueMember: 'id',
+        width: '100%',
+        searchMode: 'containsignorecase',
+        autoComplete: true,
+        theme: 'office',
+        height: '35px',
+        disabled: true
+    });
+    $("#securityRole-list").on('select', function(event){
+       if(event.args){
+           $("#securityRole-id").val(event.args.item.value);
+       } 
+    });
+    
+    $("#position-list").jqxComboBox({
+        source: new $.jqx.dataAdapter({
+            datatype: 'json',
+            datafields: [
+                {name: 'id'},
+                {name: 'name'}
+            ],
+            url: '?r=position/listPositions'
+        }),
+        selectedIndex: 0,
+        displayMember: 'name',
+        valueMember: 'id',
+        width: '100%',
+        searchMode: 'containsignorecase',
+        autoComplete: true,
+        theme: 'office',
+        height: '35px',
+        disabled: true
+    });
+    $("#position-list").on('select', function(event){
+       if(event.args){
+           $("#position-id").val(event.args.item.value);
+       } 
     });
 });
