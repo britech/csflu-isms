@@ -50,6 +50,7 @@ class UomController extends Controller {
 
         foreach ($uoms as $uom) {
             array_push($data, array(
+                'id'=>$uom->id,
                 'symbol' => $uom->symbol,
                 'name' => $uom->description,
                 'action' => ApplicationUtils::generateLink(array('uom/updateUom', 'id' => $uom->id), 'Update Data')));

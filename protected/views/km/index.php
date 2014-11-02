@@ -1,17 +1,9 @@
 <div class="ink-alert block info" style="margin-top: 0px;">
 	<h4>Functions</h4>
 	<p>
-		* Governance Indicators
+		* Indicators
 		<br/>
-		&nbsp;&nbsp;&nbsp;-&nbsp;Describe Governance indicators
-
-		<!-- separator -->
-		<br/><br/>
-		<!-- separator -->
-
-		* Job Position Indicators
-		<br/>
-		&nbsp;&nbsp;&nbsp;-&nbsp;Describe Job Position indicators
+		&nbsp;&nbsp;&nbsp;-&nbsp;Describe Indicators
 
 		<!-- separator -->
 		<br/><br/>

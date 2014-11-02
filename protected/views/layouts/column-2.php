@@ -13,7 +13,7 @@
     </head>
     <body style="background-color: #eee;">
         <?php include_once '_navigation.php' ?>
-        <div class="ink-grid" style="margin-top: 5%;">
+        <div class="ink-grid" style="margin-top: 50px;">
             <?php include_once '_breadcrumb.php';?>
             <div class="column-group quarter-gutters">
                 <div class="all-20">

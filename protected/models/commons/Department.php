@@ -8,7 +8,7 @@ use org\csflu\isms\core\Model;
  * @property Integer $id
  * @property String $code
  * @property String $name
-
+ 
  * @author britech
  *
  */

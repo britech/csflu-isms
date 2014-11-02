@@ -26,7 +26,7 @@ class FormGenerator extends Component {
 
     private $properties;
     private $fieldsetEnabled = false;
-    private $tabIndex = 0;
+    public $tabIndex = 0;
 
     public function __construct(array $properties) {
         $this->properties = $properties;
@@ -121,20 +121,28 @@ class FormGenerator extends Component {
             $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
             $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
             $disabled = ApplicationUtils::getProperty($properties, self::PROPERTY_DISABLED);
+            $value = ApplicationUtils::getProperty($properties, self::PROPERTY_VALUE);
 
             if (!empty($disabled) && $disabled == true) {
-                $tag = "<select name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\" disabled>";
+                $tag = "<select name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\" value=\"{$value}\" disabled>";
             } else {
-                $tag = "<select name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\">";
+                $tag = "<select name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\" value=\"{$value}\">";
             }
         } else {
             $tag = "<select name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\">";
         }
         foreach ($data as $value => $text) {
+            /**
+             * @todo Handle the option-group property
+             */
             if (is_array($text)) {
                 
             } else {
-                $tag.="<option value=\"${value}\">{$text}</option>";
+                if(!is_null($properties) && ApplicationUtils::getProperty($properties, self::PROPERTY_VALUE) == $value){
+                    $tag.="<option value=\"${value}\" selected>{$text}</option>";
+                } else {
+                    $tag.="<option value=\"${value}\">{$text}</option>";
+                }
             }
         }
 
@@ -173,6 +181,32 @@ class FormGenerator extends Component {
         } else {
             return "<input type=\"checkbox\" name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\">&nbsp;".$this->renderLabel($label);
         }
+    }
+    
+    public function renderTextArea($fieldName, array $properties = null) {
+        $this->tabIndex+=1;
+        $tag = "";
+        if (!is_null($properties)) {
+            $class = ApplicationUtils::getProperty($properties, parent::PROPERTY_CLASS);
+            $id = ApplicationUtils::getProperty($properties, parent::PROPERTY_ID);
+            $style = ApplicationUtils::getProperty($properties, parent::PROPERTY_STYLE);
+            $readOnly = ApplicationUtils::getProperty($properties, self::PROPERTY_READONLY);
+            $disabled = ApplicationUtils::getProperty($properties, self::PROPERTY_DISABLED);
+            $value = ApplicationUtils::getProperty($properties, self::PROPERTY_VALUE);
+
+            if (!empty($readOnly) && $readOnly == true) {
+                $tag.="<textarea name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" readonly tabindex=\"{$this->tabIndex}\" value=\"{$value}\">";
+            } elseif (!empty($disabled) && $disabled == true) {
+                $tag.="<textarea name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" disabled tabindex=\"{$this->tabIndex}\" value=\"{$value}\">";
+            } else {
+                $tag.="<textarea name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\" value=\"{$value}\">";
+            }
+            $tag.=$value;
+        } else {
+            $tag.="<textarea name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\">";
+        }
+        $tag.='</textarea>';
+        return $tag;
     }
 
     public function renderSubmitButton($buttonName, array $properties = null) {

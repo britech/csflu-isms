@@ -9,7 +9,7 @@ namespace org\csflu\isms\exceptions;
  */
 class ValidationException extends \Exception {
 
-    public function __construct($message = null, $code = null, $previous = null) {
+    public function __construct($message, $code = null, $previous = null) {
         parent::__construct($message, $code, $previous);
     }
 
