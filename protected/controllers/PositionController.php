@@ -19,6 +19,7 @@ class PositionController extends Controller {
     private $positionService;
 
     public function __construct() {
+        $this->checkAuthorization();
         $this->positionService = new PositionService();
     }
 

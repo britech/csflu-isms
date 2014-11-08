@@ -19,6 +19,7 @@ class UomController extends Controller {
     private $uomService;
 
     public function __construct() {
+        $this->checkAuthorization();
         $this->layout = 'column-1';
         $this->uomService = new UnitOfMeasureService();
     }
