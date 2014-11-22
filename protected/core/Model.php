@@ -41,6 +41,15 @@ abstract class Model {
     public function getAttributeNames() {
         return array();
     }
+    
+    public function getModelTranslationAsNewEntity(){}
+    
+    public function getModelTranslationAsUpdatedEntity($oldModel){}
+    
+    public function getModelTranslationAsDeletedEntity(){}
+    
+    public function computePropertyChanges($oldModel){}
+    
 
     public function __set($name, $value) {
         $this->$name = $value;

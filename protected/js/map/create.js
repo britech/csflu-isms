@@ -49,6 +49,12 @@ $(document).ready(function() {
 
         $("[name*=startingPeriodDate]").val(startingDate.getFullYear() + "-" + (startingDate.getMonth() + 1) + "-" + startingDate.getDate());
         $("[name*=endingPeriodDate]").val(endingDate.getFullYear() + "-" + (endingDate.getMonth() + 1) + "-" + lastDayOfEndingDate);
-        $("[name*=name]").val(endingDate.getFullYear()+" Development Strategy");
+        $("[name*=name]").val(endingDate.getFullYear() + " Development Strategy");
+    });
+
+    $("[name*=missionStatement], [name*=valuesStatement]").tagEditor({
+        delimiter:'+;',
+        maxLength: -1,
+        forceLowercase: false
     });
 });

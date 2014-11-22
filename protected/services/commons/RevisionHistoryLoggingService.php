@@ -20,10 +20,18 @@ interface RevisionHistoryLoggingService {
     public function getRevisionHistoryList($moduleId);
     
     /**
-     * Logs the changes
+     * Logs initial registrations or Add actions
      * @param RevisionHistory $revisionHistory
      * @param Model $model
      * @throws ServiceException
      */
-    public function log($revisionHistory, $model);
+    public function logNewAction($revisionHistory, $model);
+    
+    /**
+     * Logs changes in a major entity
+     * @param RevisionHistory $revisionHistory
+     * @param Model $model
+     * @param Model $oldModel
+     */
+    public function logUpdateAction($revisionHistory, $model, $oldModel);
 }

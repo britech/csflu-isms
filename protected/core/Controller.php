@@ -3,6 +3,9 @@
 namespace org\csflu\isms\core;
 
 use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
+use org\csflu\isms\service\commons\RevisionHistoryLoggingServiceImpl as RevisionHistoryLoggingService;
+use org\csflu\isms\models\commons\RevisionHistory;
+use org\csflu\isms\models\uam\Employee;
 
 /**
  * 
@@ -15,13 +18,14 @@ class Controller {
 
     public $title;
     public $layout = "column-1";
+    private $loggingService;
 
-    /**
-     * 
+    /*
      * @param mixed $view
      * @param array $params
      * @throws \Exception
      */
+
     public function render($view, $params = []) {
         $fileLocation = $this->generateFileName($view);
 
@@ -33,23 +37,24 @@ class Controller {
 
         require_once "protected/views/layouts/{$this->layout}.php";
     }
-    
-    public function renderPartial($view, $params=[]){
+
+    public function renderPartial($view, $params = []) {
         $fileLocation = $this->generateFileName($view);
-        
-        if(file_exists($fileLocation)){
+
+        if (file_exists($fileLocation)) {
             include_once $fileLocation;
-        } else{
+        } else {
             $this->viewWarningPage('Included File Does Not Exist', 'The defined file to be rendered cannot be found.');
         }
     }
-    
-    public function renderAjaxJsonResponse(array $response){
+
+    public function renderAjaxJsonResponse(array $response) {
         echo json_encode($response);
     }
 
     public function redirect(array $url) {
         header("location: " . ApplicationUtils::resolveUrl($url));
+        die();
     }
 
     private function generateFileName($view) {
@@ -62,13 +67,33 @@ class Controller {
     }
 
     public function viewWarningPage($header, $message) {
-        $this->renderPartial('commons/warning', array('header'=>$header, 'message'=>$message));
+        $this->renderPartial('commons/warning', array('header' => $header, 'message' => $message));
     }
 
-    public function checkAuthorization(){
-        if(empty($_SESSION['employee']) || empty($_SESSION['user'])){
-            $_SESSION['login.notif']="Please enter your user credentials to continue.";
+    public function checkAuthorization() {
+        if (empty($_SESSION['employee']) || empty($_SESSION['user'])) {
+            $_SESSION['login.notif'] = "Please enter your user credentials to continue.";
             $this->redirect(array('site/login'));
         }
     }
+
+    public function logRevision($revisionType, $module, $referenceId, $model, $oldModel = null) {
+        $this->loggingService = new RevisionHistoryLoggingService();
+        $revision = new RevisionHistory();
+        $revision->employee = new Employee();
+        $revision->employee->id = $_SESSION['employee'];
+        $revision->module = $module;
+        $revision->referenceId = $referenceId;
+        $revision->revisionType = $revisionType;
+
+        switch ($revision->revisionType) {
+            case RevisionHistory::TYPE_INSERT:
+                $this->loggingService->logNewAction($revision, $model);
+                break;
+            case RevisionHistory::TYPE_UPDATE:
+                $this->loggingService->logUpdateAction($revision, $model, $oldModel);
+                break;
+        }
+    }
+
 }

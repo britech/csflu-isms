@@ -2,8 +2,8 @@
 
 namespace org\csflu\isms\util;
 
-use org\csflu\isms\util\Component as Component;
-use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
+use org\csflu\isms\util\Component;
+use org\csflu\isms\util\ApplicationUtils;
 
 /**
  *
@@ -23,6 +23,7 @@ class FormGenerator extends Component {
     const PROPERTY_DISABLED = "disabled";
     const PROPERTY_VALUE = "value";
     const PROPERTY_CHECKED = "checked";
+    const PROPERTY_ROWS = "rows";
 
     private $properties;
     private $fieldsetEnabled = false;
@@ -192,13 +193,14 @@ class FormGenerator extends Component {
             $readOnly = ApplicationUtils::getProperty($properties, self::PROPERTY_READONLY);
             $disabled = ApplicationUtils::getProperty($properties, self::PROPERTY_DISABLED);
             $value = ApplicationUtils::getProperty($properties, self::PROPERTY_VALUE);
+            $rows = ApplicationUtils::getProperty($properties, self::PROPERTY_ROWS);
 
             if (!empty($readOnly) && $readOnly == true) {
-                $tag.="<textarea name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" readonly tabindex=\"{$this->tabIndex}\" value=\"{$value}\">";
+                $tag.="<textarea name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" readonly tabindex=\"{$this->tabIndex}\" rows=\"{$rows}\" value=\"{$value}\">";
             } elseif (!empty($disabled) && $disabled == true) {
-                $tag.="<textarea name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" disabled tabindex=\"{$this->tabIndex}\" value=\"{$value}\">";
+                $tag.="<textarea name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" disabled tabindex=\"{$this->tabIndex}\" rows=\"{$rows}\" value=\"{$value}\">";
             } else {
-                $tag.="<textarea name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\" value=\"{$value}\">";
+                $tag.="<textarea name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\" rows=\"{$rows}\" value=\"{$value}\">";
             }
             $tag.=$value;
         } else {

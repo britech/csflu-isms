@@ -15,6 +15,10 @@ $form = new Form(array(
 echo $form->startComponent();
 echo $form->constructHeader('Create a Strategy Map - Initial Phase');
 ?>
+<link href="assets/flick/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
+<link href="assets/tag-editor/jquery.tag-editor.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="assets/jquery/jquery-ui-1.10.4.custom.js"></script>
+<script type="text/javascript" src="assets/tag-editor/jquery.tag-editor.js"></script>
 <script type="text/javascript" src="protected/js/map/create.js"></script>
 <div class="ink-alert basic info">Fields with * are required.</div>
 <?php

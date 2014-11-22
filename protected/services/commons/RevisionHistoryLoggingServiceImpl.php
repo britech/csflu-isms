@@ -4,7 +4,6 @@ namespace org\csflu\isms\service\commons;
 
 use org\csflu\isms\service\commons\RevisionHistoryLoggingService;
 use org\csflu\isms\dao\commons\RevisionHistoryLoggingDaoSqlImpl as RevisionHistoryLoggingDao;
-use org\csflu\isms\models\commons\RevisionHistory;
 
 /**
  * Description of RevisionHistoryLoggingServiceImpl
@@ -23,12 +22,13 @@ class RevisionHistoryLoggingServiceImpl implements RevisionHistoryLoggingService
         return $this->daoSource->getRevisionHistoryList($moduleId);
     }
 
-    public function log($revisionHistory, $model) {
-        if ($revisionHistory->revisionType == RevisionHistory::TYPE_UPDATE) {
-            $revisionHistory->notes = $model->getModelTranslationAsUpdatedEntity();
-        } else {
-            $revisionHistory->notes = $model->getModelTranslationAsNewEntity();
-        }
+    public function logNewAction($revisionHistory, $model) {
+        $revisionHistory->notes = $model->getModelTranslationAsNewEntity();
+        $this->daoSource->log($revisionHistory);
+    }
+    
+    public function logUpdateAction($revisionHistory, $model, $oldModel) {
+        $revisionHistory->notes = $model->getModelTranslationAsUpdatedEntity($oldModel);
         $this->daoSource->log($revisionHistory);
     }
 

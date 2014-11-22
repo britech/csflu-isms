@@ -88,7 +88,6 @@ class StrategyMap extends Model {
         $counter = 0;
         $interval = $this->endingPeriodDate->diff($this->startingPeriodDate, false);
         $monthLength = $interval->format('%y') > 0 ? $interval->format('%y') * 12 : $interval->format('%m');
-        echo $monthLength;
         switch ($this->strategyType) {
             case self::TYPE_SHORT:
                 if (!($monthLength >= self::LENGTH_SHORT_MIN && $monthLength <= self::LENGTH_MEDIUM_MAX)) {
@@ -145,4 +144,12 @@ class StrategyMap extends Model {
         return $this->$name;
     }
 
+    public function getModelTranslationAsNewEntity() {
+        return "[Strategy Map Added]\n\nStrategy Map:\t".$this->name
+                ."\nVision Statement:\t".$this->visionStatement
+                ."\nMission Statement:\t".$this->missionStatement
+                ."\nValues Statement:\t".$this->valuesStatement
+                ."\nStrategy Type:\t".self::getStrategyTypes()[$this->strategyType]
+                ."\nPeriod Dates:\t".$this->startingPeriodDate->format('F-Y').' - '.$this->endingPeriodDate->format('F-Y');
+    }
 }
