@@ -58,10 +58,6 @@ class Perspective extends Model {
                 . "Position Order:\t{$this->positionOrder}";
     }
 
-    /**
-     * 
-     * @param Perspective $oldModel
-     */
     public function getModelTranslationAsUpdatedEntity($oldModel) {
         $translation = "[Perspective updated]\n\n";
 
@@ -71,6 +67,10 @@ class Perspective extends Model {
         }
 
         return $translation . implode("\n", $changes);
+    }
+
+    public function getModelTranslationAsDeletedEntity() {
+        return "[Perspective deleted]\n\nDescription:\t{$this->description}";
     }
 
     public function computePropertyChanges($oldModel) {

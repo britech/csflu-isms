@@ -12,6 +12,7 @@ require_once 'core/ConnectionManager.php';
 #core util components
 require_once 'utils/Component.php';
 require_once 'utils/FormGenerator.php';
+require_once 'utils/ModelFormGenerator.php';
 require_once 'utils/ApplicationUtils.php';
 
 #custom exceptions

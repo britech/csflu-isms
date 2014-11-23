@@ -9,7 +9,7 @@
         
         <script src="assets/jquery/jquery-1.10.2.min.js" type="text/javascript"></script>
         <script src="assets/jqwidgets/jqx-all.js" type="text/javascript"></script>
-        <title><?php echo $this->title; ?></title>
+        <title><?php echo empty($this->title) ? org\csflu\isms\core\ApplicationConstants::APP_NAME : $this->title; ?></title>
     </head>
     <body style="background-color: #eee;">
         <?php include_once '_navigation.php' ?>

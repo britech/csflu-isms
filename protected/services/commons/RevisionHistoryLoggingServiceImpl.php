@@ -26,9 +26,14 @@ class RevisionHistoryLoggingServiceImpl implements RevisionHistoryLoggingService
         $revisionHistory->notes = $model->getModelTranslationAsNewEntity();
         $this->daoSource->log($revisionHistory);
     }
-    
+
     public function logUpdateAction($revisionHistory, $model, $oldModel) {
         $revisionHistory->notes = $model->getModelTranslationAsUpdatedEntity($oldModel);
+        $this->daoSource->log($revisionHistory);
+    }
+
+    public function logDeleteAction($revisionHistory, $model) {
+        $revisionHistory->notes = $model->getModelTranslationAsDeletedEntity();
         $this->daoSource->log($revisionHistory);
     }
 

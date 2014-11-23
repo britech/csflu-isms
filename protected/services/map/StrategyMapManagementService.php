@@ -25,13 +25,13 @@ interface StrategyMapManagementService {
      * @param StrategyMap $strategyMap
      * @return String auto-generated ID after insertion
      */
-    public function insert($strategyMap);
+    public function insert(StrategyMap $strategyMap);
     
     /**
      * Updates a Strategy Map entity
      * @param StrategyMap $strategyMap
      */
-    public function update($strategyMap);
+    public function update(StrategyMap $strategyMap);
 
     /**
      * Retrieves the information about a Strategy Map
@@ -41,14 +41,14 @@ interface StrategyMapManagementService {
      * @param Theme $theme Optional
      * @return StrategyMap
      */
-    public function getStrategyMap($id = null, $perspective = null, $objective = null, $theme = null);
+    public function getStrategyMap($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null);
 
     /**
      * Retrieves the list of perspectives
      * @param StrategyMap $strategyMap optional
      * @return Perspective[]
      */
-    public function listPerspectives($strategyMap = null);
+    public function listPerspectives(StrategyMap $strategyMap = null);
 
     /**
      * Insert the perspective in the selected strategy map
@@ -56,14 +56,14 @@ interface StrategyMapManagementService {
      * @param StrategyMap $strategyMap
      * @throws ServiceException
      */
-    public function insertPerspective($perspective, $strategyMap);
+    public function insertPerspective(Perspective $perspective, StrategyMap $strategyMap);
     
     /**
      * Updates the perspective entity
      * @param Perspective $perspective
      * @throws ServiceException
      */
-    public function updatePerspective($perspective);
+    public function updatePerspective(Perspective $perspective);
     
     /**
      * Deletes the perspective entity
@@ -77,4 +77,32 @@ interface StrategyMapManagementService {
      * @return Perspective
      */
     public function getPerspective($id);
+    
+    /**
+     * Retrieves the list of Strategic Themes
+     * @param StrategyMap $strategyMap
+     * @return Theme[]
+     */
+    public function listThemes(StrategyMap $strategyMap = null);
+    
+    /**
+     * Manage insertion/update of a Strategic Theme
+     * @param Theme $theme
+     * @param StrategyMap $strategyMap
+     * @throws ServiceException
+     */
+    public function manageTheme(Theme $theme, StrategyMap $strategyMap);
+    
+    /**
+     * Deletes the Strategic theme
+     * @param String $id
+     */
+    public function deleteTheme($id);
+    
+    /**
+     * Retrieves the information of a selected Theme
+     * @param String $id
+     * @return Theme
+     */
+    public function getTheme($id);
 }

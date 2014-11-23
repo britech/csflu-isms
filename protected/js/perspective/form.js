@@ -28,7 +28,7 @@ $(document).ready(function() {
             success: function(data) {
                 try {
                     response = $.parseJSON(data);
-                    if(response.respCode === '00'){
+                    if (response.respCode === '00') {
                         $("#description").val($("#description-input").val());
                         $("#positionOrder").val($("#position-order").val());
                     }
@@ -62,4 +62,7 @@ $(document).ready(function() {
         }
     });
 
+    $("#description-input").change(function() {
+        $("#description").val($(this).val());
+    });
 });

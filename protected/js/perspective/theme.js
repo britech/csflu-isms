@@ -1,11 +1,11 @@
-$(document).ready(function(){
+$(document).ready(function() {
     $("#description-input").jqxComboBox({
         source: new $.jqx.dataAdapter({
             datatype: 'json',
             datafields: [
                 {name: 'description'}
             ],
-            url: '?r=map/listEnlistedPerspectives'
+            url: '?r=map/listEnlistedThemes'
         }),
         displayMember: 'description',
         width: '100%',
@@ -18,11 +18,15 @@ $(document).ready(function(){
         if (event.args) {
             $("#description").val(event.args.item.label);
         }
-    }).on("bindingComplete", function(){
+    }).on("bindingComplete", function() {
         $("#description-input").val($("#description").val());
     });
-    
-    $("#description-input").change(function(){
+
+    $("#description-input").change(function() {
+        $("#description").val($(this).val());
+    }).blur(function(){
         $("#description").val($(this).val());
     });
 });
+
+

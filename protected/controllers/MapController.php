@@ -11,6 +11,8 @@ use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapService;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Perspective;
+use org\csflu\isms\models\map\Theme;
+use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
 
@@ -214,7 +216,7 @@ class MapController extends Controller {
             'perspectives' => $this->mapService->listPerspectives($strategyMap),
             'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""
         ));
-        
+
         if (isset($_SESSION['notif'])) {
             unset($_SESSION['notif']);
         }
@@ -270,7 +272,7 @@ class MapController extends Controller {
             try {
                 $this->mapService->insertPerspective($perspective, $strategyMap);
                 $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SMAP, $strategyMap->id, $perspective);
-                $_SESSION['notif'] = array('class' => 'info', 'message' => 'Perspective added. Please check the Strategy Map now.');
+                $_SESSION['notif'] = array('class' => 'success', 'message' => 'Perspective added. Please check the Strategy Map now.');
             } catch (ServiceException $ex) {
                 $_SESSION['validation'] = array($ex->getMessage());
             }
@@ -348,6 +350,7 @@ class MapController extends Controller {
 
         $perspective = $this->loadPerspectiveModel($id);
         $strategyMap = $this->loadStrategyMapModel('', $perspective);
+        $this->title = ApplicationConstants::APP_NAME . ' - Delete Perspective';
         $this->layout = "column-1";
         $this->render('commons/confirm', array(
             'confirm' => array('class' => 'error',
@@ -375,9 +378,10 @@ class MapController extends Controller {
             throw new ValidationException("Another parameter is needed to process this request");
         }
 
-        $perspective = $this->clonePerspective($id);
+        $perspective = clone $this->loadPerspectiveModel($id);
         $strategyMap = $this->mapService->getStrategyMap('', $perspective);
         $this->mapService->deletePerspective($id);
+        $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SMAP, $strategyMap->id, $perspective);
         $_SESSION['notif'] = array('class' => '', 'message' => 'Perspective removed from the Strategy Map');
         $this->redirect(array('map/managePerspectives', 'map' => $strategyMap->id));
     }
@@ -411,7 +415,176 @@ class MapController extends Controller {
         $this->renderAjaxJsonResponse($perspectiveArray);
     }
 
-    private function loadStrategyMapModel($id = null, $perspective = null, $objective = null, $theme = null) {
+    public function manageThemes() {
+        $map = filter_input(INPUT_GET, 'map');
+
+        if (!isset($map) || empty($map)) {
+            throw new ValidationException("Another parameter is needed to process this request");
+        }
+
+        $strategyMap = $this->loadStrategyMapModel($map);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Themes';
+        $this->layout = 'column-1';
+        $this->render('perspective/theme', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
+                'Manage Themes' => 'active'),
+            'themes' => $this->mapService->listThemes($strategyMap),
+            'model' => new Theme(),
+            'mapModel' => $strategyMap,
+            'validation' => isset($_SESSION['validation']) ? $_SESSION['validation'] : "",
+            'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : "",
+        ));
+
+        if (isset($_SESSION['validation'])) {
+            unset($_SESSION['validation']);
+        }
+        if (isset($_SESSION['notif'])) {
+            unset($_SESSION['notif']);
+        }
+    }
+
+    public function insertTheme() {
+        $condition = array_key_exists('Theme', filter_input_array(INPUT_POST)) && array_key_exists('StrategyMap', filter_input_array(INPUT_POST));
+        if (!(count(filter_input_array(INPUT_POST)) > 0 && $condition)) {
+            throw new ValidationException("Another parameter is needed to process this request");
+        }
+
+        $themeData = filter_input_array(INPUT_POST)['Theme'];
+        $strategyMapData = filter_input_array(INPUT_POST)['StrategyMap'];
+
+        $theme = new Theme();
+        $theme->bindValuesUsingArray(array('theme' => $themeData), $theme);
+
+        $strategyMap = new StrategyMap();
+        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData), $strategyMap);
+        if ($theme->validate()) {
+            try {
+                $this->mapService->manageTheme($theme, $strategyMap);
+                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SMAP, $strategyMap->id, $theme);
+                $_SESSION['notif'] = array('class' => 'success', 'message' => 'Theme added to Strategy Map. Please check the Strategy Map.');
+            } catch (ServiceException $ex) {
+                $_SESSION['validation'] = array($ex->getMessage());
+            }
+        } else {
+            $_SESSION['validation'] = $theme->validationMessages;
+        }
+        $this->redirect(array('map/manageThemes', 'map' => $strategyMap->id));
+    }
+
+    public function listEnlistedThemes() {
+        $themes = $this->mapService->listThemes();
+
+        $data = array();
+        foreach ($themes as $theme) {
+            array_push($data, array('description' => $theme->description));
+        }
+        $this->renderAjaxJsonResponse($data);
+    }
+
+    public function updateTheme() {
+        if (count(filter_input_array(INPUT_POST)) > 0 && array_key_exists('Theme', filter_input_array(INPUT_POST))) {
+            $this->processThemeUpdate(filter_input_array(INPUT_POST));
+        }
+
+        $id = filter_input(INPUT_GET, 'id');
+        if (!isset($id) || empty($id)) {
+            throw new ValidationException('Another parameter is needed to process this request');
+        }
+
+        $theme = $this->loadThemeModel($id);
+        $strategyMap = $this->loadStrategyMapModel(null, null, null, $theme);
+
+        $this->layout = 'column-1';
+        $this->title = ApplicationConstants::APP_NAME . ' - Update Theme';
+        $this->render('perspective/theme', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
+                'Manage Themes' => array('map/manageThemes', 'map' => $strategyMap->id),
+                'Update Theme' => 'active'),
+            'themes' => $this->mapService->listThemes($strategyMap),
+            'model' => $theme,
+            'mapModel' => $strategyMap,
+            'validation' => isset($_SESSION['validation']) ? $_SESSION['validation'] : ""
+        ));
+
+        if (isset($_SESSION['validation'])) {
+            unset($_SESSION['validation']);
+        }
+    }
+
+    private function processThemeUpdate(array $themeData) {
+        $theme = new Theme();
+        $theme->bindValuesUsingArray(array('theme' => $themeData['Theme']), $theme);
+        $oldTheme = clone $this->loadThemeModel($theme->id);
+        $strategyMap = $this->loadStrategyMapModel(null, null, null, $theme);
+        if ($theme->validate()) {
+            if ($theme->computePropertyChanges($oldTheme) > 0) {
+                $this->mapService->manageTheme($theme);
+                $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_SMAP, $strategyMap->id, $theme, $oldTheme);
+                $_SESSION['notif'] = array('class' => 'info', 'message' => 'Theme updated');
+                $this->redirect(array('map/manageThemes', 'map' => $strategyMap->id));
+            }
+        } else {
+            $_SESSION['validation'] = $theme->validationMessages;
+            $this->redirect(array('map/updateTheme', 'id' => $theme->id));
+        }
+    }
+
+    public function confirmDeleteTheme() {
+        $id = filter_input(INPUT_GET, 'id');
+
+        if (!isset($id) || empty($id)) {
+            throw new ValidationException('Another parameter is needed to process this request');
+        }
+
+        $theme = $this->loadThemeModel($id);
+        $strategyMap = $this->loadStrategyMapModel(null, null, null, $theme);
+        $this->title = ApplicationConstants::APP_NAME . ' - Delete Theme';
+        $this->layout = "column-1";
+        $this->render('commons/confirm', array(
+            'confirm' => array('class' => 'error',
+                'header' => 'Confirm Theme deletion',
+                'text' => "Do you want to delete this theme? Continuing will remove the theme, <strong>{$theme->description}</strong>, in the Strategy Map",
+                'accept.class' => 'red',
+                'accept.text' => 'Yes',
+                'accept.url' => array('map/deleteTheme', 'id' => $id),
+                'deny.class' => 'green',
+                'deny.text' => 'No',
+                'deny.url' => array('map/manageThemes', 'map' => $strategyMap->id)),
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
+                'Manage Themes' => array('map/manageThemes', 'map' => $strategyMap->id),
+                'Delete Theme' => 'active')));
+    }
+
+    public function deleteTheme() {
+        $id = filter_input(INPUT_GET, 'id');
+
+        if (!isset($id) || empty($id)) {
+            throw new ValidationException('Another parameter is needed to process this request');
+        }
+
+        $theme = clone $this->loadThemeModel($id);
+        $strategyMap = $this->loadStrategyMapModel(null, null, null, $theme);
+        $this->mapService->deleteTheme($id);
+        $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SMAP, $strategyMap->id, $theme);
+        
+        $_SESSION['notif'] = array('class' => '', 'message' => 'Theme deleted');
+        $this->redirect(array('map/manageThemes', 'map' => $strategyMap->id));
+    }
+
+    private function loadStrategyMapModel($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null) {
         $strategyMap = $this->mapService->getStrategyMap($id, $perspective, $objective, $theme);
 
         if (is_null($strategyMap->id)) {
@@ -430,6 +603,17 @@ class MapController extends Controller {
             $this->redirect(array('map/index'));
         } else {
             return $perspective;
+        }
+    }
+
+    private function loadThemeModel($id) {
+        $theme = $this->mapService->getTheme($id);
+
+        if (is_null($theme->id)) {
+            $_SESSION['notif'] = array('class' => '', 'message' => 'Theme not found');
+            $this->redirect(array('map/index'));
+        } else {
+            return $theme;
         }
     }
 

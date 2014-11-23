@@ -17,6 +17,7 @@ class RevisionHistory {
 
     const TYPE_INSERT = "A";
     const TYPE_UPDATE = "U";
+    const TYPE_DELETE = "D";
 
     private $module;
     private $referenceId;
@@ -34,7 +35,9 @@ class RevisionHistory {
     }
 
     public static function getRevisionTypes() {
-        return array(self::TYPE_INSERT => 'New Entry', self::TYPE_UPDATE => 'Updated Entry');
+        return array(self::TYPE_INSERT => 'New Entry',
+            self::TYPE_UPDATE => 'Updated Entry',
+            self::TYPE_DELETE => 'Removed Entry');
     }
 
 }

@@ -28,10 +28,15 @@ interface RevisionHistoryLoggingService {
     public function logNewAction($revisionHistory, $model);
     
     /**
-     * Logs changes in a major entity
+     * Logs changes of an entity
      * @param RevisionHistory $revisionHistory
      * @param Model $model
      * @param Model $oldModel
      */
     public function logUpdateAction($revisionHistory, $model, $oldModel);
+    
+    /**
+     * Logs deleted entries of subcomponents of a Core Entity
+     */
+    public function logDeleteAction($revisionHistory, $model);
 }

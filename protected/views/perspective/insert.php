@@ -15,11 +15,11 @@ $form = new Form(array(
 <script type="text/javascript" src="protected/js/perspective/form.js"></script>
 <div id="validation-container"></div>
 <?php
-if (isset($params['validation']) && !empty($params['validation'])) {
-    $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
-}
 if (isset($params['notif']) && !empty($params['notif'])) {
     $this->renderPartial('commons/_notification', array('notif' => $params['notif']));
+}
+if (isset($params['validation']) && !empty($params['validation'])) {
+    $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
 }
 ?>
 <?php echo $form->startComponent(); ?>
@@ -42,7 +42,7 @@ if (isset($params['notif']) && !empty($params['notif'])) {
         <div id="positionOrder"></div>
         <?php echo $form->renderSubmitButton("Add", array('class' => 'ink-button green flat', 'style' => 'margin-left: 0px; margin-top: 1em')); ?>
     </div>
-    <?php echo $form->renderHiddenField('Perspective[description]', array('id'=>'description')); ?>
+    <?php echo $form->renderHiddenField('Perspective[description]', array('id' => 'description')); ?>
     <?php echo $form->renderHiddenField('Perspective[positionOrder]', array('id' => 'position-order')); ?>
     <?php echo $form->renderHiddenField('StrategyMap[id]', array('value' => $params['id'], 'id' => 'strategy-id')); ?>
 </div>
@@ -52,6 +52,7 @@ if (isset($params['notif']) && !empty($params['notif'])) {
         <table class="ink-table bordered alternating">
             <thead>
                 <tr>
+                    <th style="width: 10%;">#</th>
                     <th>Perspective</th>
                     <th style="width: 20%;">Actions</th>
                 </tr>
@@ -59,11 +60,14 @@ if (isset($params['notif']) && !empty($params['notif'])) {
             <tbody>
                 <?php if (count($perspectives) < 1): ?>
                     <tr>
-                        <td colspan="2">No perspectives defined</td>
+                        <td colspan="3">No perspectives defined</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($perspectives as $perspective): ?>
                         <tr>
+                            <td style="text-align:center;">
+                                <?php echo $perspective->positionOrder; ?>
+                            </td>
                             <td><?php echo $perspective->description; ?></td>
                             <td style="text-align:center;">
                                 <?php echo ApplicationUtils::generateLink(array('map/updatePerspective', 'id' => $perspective->id), '<i class="fa fa-edit">&nbsp;</i>') ?>

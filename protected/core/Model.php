@@ -21,7 +21,7 @@ abstract class Model {
      */
     abstract function validate();
 
-    public function bindValuesUsingArray(array $valueArray, $model=null){
+    public function bindValuesUsingArray(array $valueArray, Model $model){
         $classFullName = explode('\\', get_class($model));
         $className = strtolower($classFullName[count($classFullName)-1]);
         
@@ -30,7 +30,6 @@ abstract class Model {
         }
         
         foreach($valueArray[$className] as $property=>$value){
-            
             if(!property_exists($model, $property)){
                 throw new ModelException('Data binding failure');
             }
@@ -42,13 +41,15 @@ abstract class Model {
         return array();
     }
     
+    public function isNew(){}
+    
     public function getModelTranslationAsNewEntity(){}
     
-    public function getModelTranslationAsUpdatedEntity($oldModel){}
+    public function getModelTranslationAsUpdatedEntity(Model $oldModel){}
     
     public function getModelTranslationAsDeletedEntity(){}
     
-    public function computePropertyChanges($oldModel){}
+    public function computePropertyChanges(Model $oldModel){}
     
 
     public function __set($name, $value) {

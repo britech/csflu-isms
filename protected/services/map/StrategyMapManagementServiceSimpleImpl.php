@@ -6,6 +6,10 @@ use org\csflu\isms\service\map\StrategyMapManagementService;
 use org\csflu\isms\dao\map\StrategyMapDaoSqlImpl as StrategyMapDao;
 use org\csflu\isms\dao\map\PerspectiveDaoSqlImpl as PerspectiveDao;
 use org\csflu\isms\exceptions\ServiceException;
+use org\csflu\isms\models\map\StrategyMap;
+use org\csflu\isms\models\map\Perspective;
+use org\csflu\isms\models\map\Theme;
+use org\csflu\isms\models\map\Objective;
 
 /**
  *
@@ -26,11 +30,11 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         return $this->mapDaoSource->listStrategyMaps();
     }
 
-    public function insert($strategyMap) {
+    public function insert(StrategyMap $strategyMap) {
         return $this->mapDaoSource->insert($strategyMap);
     }
 
-    public function getStrategyMap($id = null, $perspective = null, $objective = null, $theme = null) {
+    public function getStrategyMap($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null) {
         if (!is_null($id) && !empty($id)) {
             return $this->mapDaoSource->getStrategyMap($id);
         }
@@ -38,9 +42,13 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         if (!is_null($perspective) && !empty($perspective)) {
             return $this->mapDaoSource->getStrategyMapByPerspective($perspective);
         }
+
+        if (!is_null($theme) && !empty($theme)) {
+            return $this->mapDaoSource->getStrategyMapByTheme($theme);
+        }
     }
 
-    public function insertPerspective($perspective, $strategyMap) {
+    public function insertPerspective(Perspective $perspective, StrategyMap $strategyMap) {
         $perspectiveList = $this->listPerspectives($strategyMap);
         $match = false;
         $identicalDescription = false;
@@ -65,7 +73,7 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         $this->perspectiveDaoSource->insertPerspective($perspective, $strategyMap);
     }
 
-    public function listPerspectives($strategyMap = null) {
+    public function listPerspectives(StrategyMap $strategyMap = null) {
 
         if (is_null($strategyMap)) {
             return $this->perspectiveDaoSource->listAllPerspectives();
@@ -78,13 +86,13 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         return $this->perspectiveDaoSource->getPerspective($id);
     }
 
-    public function updatePerspective($perspective) {
+    public function updatePerspective(Perspective $perspective) {
         $strategyMap = $this->mapDaoSource->getStrategyMapByPerspective($perspective);
 
         $perspectives = $this->perspectiveDaoSource->listPerspectivesByStrategyMap($strategyMap);
         $match = false;
         foreach ($perspectives as $perspectiveObject) {
-            if($perspective->description == $perspectiveObject->description && $perspective->positionOrder != $perspectiveObject->positionOrder){
+            if ($perspective->description == $perspectiveObject->description && $perspective->positionOrder != $perspectiveObject->positionOrder) {
                 $match = true;
                 break;
             }
@@ -101,8 +109,46 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         $this->perspectiveDaoSource->deletePerspective($id);
     }
 
-    public function update($strategyMap) {
+    public function update(StrategyMap $strategyMap) {
         $this->mapDaoSource->update($strategyMap);
+    }
+
+    public function listThemes(StrategyMap $strategyMap = null) {
+        if (is_null($strategyMap)) {
+            return $this->perspectiveDaoSource->listAllThemes();
+        } else {
+            return $this->perspectiveDaoSource->listThemesByStrategyMap($strategyMap);
+        }
+    }
+
+    public function deleteTheme($id) {
+        $this->perspectiveDaoSource->deleteTheme($id);
+    }
+
+    public function manageTheme(Theme $theme, StrategyMap $strategyMap = null) {
+        $themes = $this->listThemes($strategyMap);
+
+        $match = false;
+        foreach ($themes as $themeObject) {
+            if ($theme->description == $themeObject->description) {
+                $match = true;
+                break;
+            }
+        }
+
+        if ($match) {
+            throw new ServiceException('Theme already defined. Please try again.');
+        } else {
+            if (!is_null($strategyMap) || !empty($strategyMap)) {
+                $this->perspectiveDaoSource->insertTheme($theme, $strategyMap);
+            } else {
+                $this->perspectiveDaoSource->updateTheme($theme);
+            }
+        }
+    }
+
+    public function getTheme($id) {
+        return $this->perspectiveDaoSource->getTheme($id);
     }
 
 }

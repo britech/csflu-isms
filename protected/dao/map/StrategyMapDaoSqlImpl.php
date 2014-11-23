@@ -6,6 +6,8 @@ use org\csflu\isms\dao\map\StrategyMapDao;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\map\StrategyMap;
+use org\csflu\isms\models\map\Perspective;
+use org\csflu\isms\models\map\Theme;
 
 /**
  *
@@ -42,7 +44,7 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
         }
     }
 
-    public function insert($strategyMap) {
+    public function insert(StrategyMap $strategyMap) {
         try {
             $this->db->beginTransaction();
 
@@ -89,7 +91,7 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
         }
     }
 
-    public function getStrategyMapByPerspective($perspective) {
+    public function getStrategyMapByPerspective(Perspective $perspective) {
         try {
             $dbst = $this->db->prepare('SELECT map_ref FROM smap_perspectives WHERE pers_id=:id');
             $dbst->execute(array('id' => $perspective->id));
@@ -103,7 +105,7 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
         }
     }
 
-    public function update($strategyMap) {
+    public function update(StrategyMap $strategyMap) {
         try {
             $this->db->beginTransaction();
 
@@ -127,6 +129,20 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getStrategyMapByTheme(Theme $theme) {
+        try {
+            $dbst = $this->db->prepare('SELECT map_ref FROM smap_themes WHERE theme_id=:id');
+            $dbst->execute(array('id' => $theme->id));
+            
+            while($data = $dbst->fetch()){
+                list($map) = $data;
+            }
+            return $this->getStrategyMap($map);
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }

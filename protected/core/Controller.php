@@ -77,7 +77,7 @@ class Controller {
         }
     }
 
-    protected function logRevision($revisionType, $module, $referenceId, $model, $oldModel = null) {
+    protected function logRevision($revisionType, $module, $referenceId, Model $model, Model $oldModel = null) {
         $this->loggingService = new RevisionHistoryLoggingService();
         $revision = new RevisionHistory();
         $revision->employee = new Employee();
@@ -92,6 +92,9 @@ class Controller {
                 break;
             case RevisionHistory::TYPE_UPDATE:
                 $this->loggingService->logUpdateAction($revision, $model, $oldModel);
+                break;
+            case RevisionHistory::TYPE_DELETE:
+                $this->loggingService->logDeleteAction($revision, $model);
                 break;
         }
     }
