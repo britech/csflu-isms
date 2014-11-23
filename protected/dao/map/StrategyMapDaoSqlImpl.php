@@ -14,11 +14,11 @@ use org\csflu\isms\models\map\StrategyMap;
 class StrategyMapDaoSqlImpl implements StrategyMapDao {
 
     private $db;
-    
+
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
     }
-    
+
     public function listStrategyMaps() {
         try {
             $dbst = $this->db->prepare('SELECT map_id, map_desc, map_vision, map_type, map_stat FROM smap_main ORDER BY map_stat ASC, period_date_end DESC');
@@ -69,10 +69,10 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
     public function getStrategyMap($id) {
         try {
             $dbst = $this->db->prepare('SELECT map_id, map_desc, map_vision, map_mission, map_values, map_type, period_date_start, period_date_end, map_stat FROM smap_main WHERE map_id=:id');
-            $dbst->execute(array('id'=>$id));
-            
+            $dbst->execute(array('id' => $id));
+
             $map = new StrategyMap();
-            while($data = $dbst->fetch()){
+            while ($data = $dbst->fetch()) {
                 list($map->id,
                         $map->name,
                         $map->visionStatement,
@@ -90,15 +90,43 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
     }
 
     public function getStrategyMapByPerspective($perspective) {
-        try{
+        try {
             $dbst = $this->db->prepare('SELECT map_ref FROM smap_perspectives WHERE pers_id=:id');
-            $dbst->execute(array('id'=>$perspective->id));
-            
-            while($data = $dbst->fetch()){
+            $dbst->execute(array('id' => $perspective->id));
+
+            while ($data = $dbst->fetch()) {
                 list($map) = $data;
             }
             return $this->getStrategyMap($map);
         } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function update($strategyMap) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('UPDATE smap_main SET map_vision=:vision, '
+                    . 'map_mission=:mission, '
+                    . 'map_values=:values, '
+                    . 'map_type=:type, '
+                    . 'period_date_start=:start, '
+                    . 'period_date_end=:end WHERE map_id=:id');
+
+            $dbst->execute(array(
+                'vision' => $strategyMap->visionStatement,
+                'mission' => $strategyMap->missionStatement,
+                'values' => $strategyMap->valuesStatement,
+                'type' => $strategyMap->strategyType,
+                'start' => $strategyMap->startingPeriodDate->format('Y-m-d'),
+                'end' => $strategyMap->endingPeriodDate->format('Y-m-d'),
+                'id' => $strategyMap->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }

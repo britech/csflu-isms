@@ -12,6 +12,7 @@ $form = new Form(array(
     'hasFieldset' => true
         ));
 ?>
+<script type="text/javascript" src="protected/js/perspective/update.js"></script>
 <?php echo $form->startComponent(); ?>
 <?php echo $form->constructHeader('Update Perspective'); ?>
 <?php if (isset($params['validation']) && !empty($params['validation'])) : ?>
@@ -24,10 +25,13 @@ $form = new Form(array(
 </div>
 <div class="control-group column-group half-gutters">
     <?php echo $form->renderLabel('Description&nbsp;*', array('class' => 'all-20 align-right')); ?>
-    <div class="control all-80 append-button">
-        <span><?php echo $form->renderTextField('Perspective[description]', array('value' => $perspective->description)); ?></span>
-        <?php echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat')) ?>
+    <div class="control all-80">
+        <div id="description-input"></div>
+        <?php echo $form->renderSubmitButton('Update', 
+                array('class' => 'ink-button blue flat',
+                    'style'=>'margin-top: 10px; margin-left: 0px;')) ?>
     </div>
+    <?php echo $form->renderHiddenField('Perspective[description]', array('value' => $perspective->description, 'id'=>'description')); ?>
     <?php echo $form->renderHiddenField('Perspective[id]', array('value' => $perspective->id)); ?>
     <?php echo $form->renderHiddenField('Perspective[positionOrder]', array('value' => $perspective->positionOrder)); ?>
 </div>

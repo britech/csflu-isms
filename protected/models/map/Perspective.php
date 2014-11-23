@@ -82,7 +82,6 @@ class Perspective extends Model {
         $perspective->id = $this->id;
         $perspective->description = $this->description;
         $perspective->positionOrder = $this->positionOrder;
-        return $perspective;
     }
 
 }

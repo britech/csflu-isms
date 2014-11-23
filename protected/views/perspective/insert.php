@@ -31,19 +31,20 @@ if (isset($params['notif']) && !empty($params['notif'])) {
     </p>
 </div>
 <div class="control-group column-group quarter-gutters">
-        <?php echo $form->renderLabel('Perspective&nbsp;*', array('class' => 'all-20 align-right')); ?>
+    <?php echo $form->renderLabel('Perspective&nbsp;*', array('class' => 'all-20 align-right')); ?>
     <div class="control all-80">
-<?php echo $form->renderTextField('Perspective[description]'); ?>
+        <div id="description-input"></div>
     </div>
 </div>
 <div class="control-group column-group quarter-gutters">
-<?php echo $form->renderLabel('Position Order&nbsp;*', array('class' => 'all-20 align-right')); ?>
+    <?php echo $form->renderLabel('Position Order&nbsp;*', array('class' => 'all-20 align-right')); ?>
     <div class="control all-80">
         <div id="positionOrder"></div>
-        <?php echo $form->renderSubmitButton("Add", array('class'=>'ink-button green flat', 'style'=>'margin-left: 0px; margin-top: 1em'));?>
+        <?php echo $form->renderSubmitButton("Add", array('class' => 'ink-button green flat', 'style' => 'margin-left: 0px; margin-top: 1em')); ?>
     </div>
-    <?php echo $form->renderHiddenField('Perspective[positionOrder]', array('id'=>'position-order'));?>
-    <?php echo $form->renderHiddenField('StrategyMap[id]', array('value'=>$params['id'], 'id'=>'strategy-id'));?>
+    <?php echo $form->renderHiddenField('Perspective[description]', array('id'=>'description')); ?>
+    <?php echo $form->renderHiddenField('Perspective[positionOrder]', array('id' => 'position-order')); ?>
+    <?php echo $form->renderHiddenField('StrategyMap[id]', array('value' => $params['id'], 'id' => 'strategy-id')); ?>
 </div>
 <?php echo $form->endComponent(); ?>
 <div class="column-group quarter-gutters">
@@ -56,22 +57,22 @@ if (isset($params['notif']) && !empty($params['notif'])) {
                 </tr>
             </thead>
             <tbody>
-                <?php if(count($perspectives) < 1):?>
-                <tr>
-                    <td colspan="2">No perspectives defined</td>
-                </tr>
-                <?php else:?>
-                <?php foreach($perspectives as $perspective):?>
-                <tr>
-                    <td><?php echo $perspective->description;?></td>
-                    <td style="text-align:center;">
-                        <?php echo ApplicationUtils::generateLink(array('map/updatePerspective', 'id'=>$perspective->id), '<i class="fa fa-edit">&nbsp;</i>')?>
-                        &nbsp;|&nbsp;
-                        <?php echo ApplicationUtils::generateLink(array('map/confirmDeletePerspective', 'id'=>$perspective->id), '<i class="fa fa-trash-o">&nbsp;</i>')?>
-                    </td>
-                </tr>
-                <?php endforeach;?>
-                <?php endif;?>
+                <?php if (count($perspectives) < 1): ?>
+                    <tr>
+                        <td colspan="2">No perspectives defined</td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($perspectives as $perspective): ?>
+                        <tr>
+                            <td><?php echo $perspective->description; ?></td>
+                            <td style="text-align:center;">
+                                <?php echo ApplicationUtils::generateLink(array('map/updatePerspective', 'id' => $perspective->id), '<i class="fa fa-edit">&nbsp;</i>') ?>
+                                &nbsp;|&nbsp;
+                                <?php echo ApplicationUtils::generateLink(array('map/confirmDeletePerspective', 'id' => $perspective->id), '<i class="fa fa-trash-o">&nbsp;</i>') ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>

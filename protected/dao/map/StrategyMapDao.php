@@ -37,4 +37,10 @@ interface StrategyMapDao {
      * @throws DataAccessException
      */
     public function insert($strategyMap);
+    
+    /**
+     * @param StrategyMap $strategyMap
+     * @throws DataAccessException
+     */
+    public function update($strategyMap);
 }

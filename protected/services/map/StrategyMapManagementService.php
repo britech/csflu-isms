@@ -21,11 +21,17 @@ interface StrategyMapManagementService {
     public function listStrategyMaps();
 
     /**
-     * Inserts the Strategy Map entity to DataSource
+     * Enlists a Strategy Map entity
      * @param StrategyMap $strategyMap
      * @return String auto-generated ID after insertion
      */
     public function insert($strategyMap);
+    
+    /**
+     * Updates a Strategy Map entity
+     * @param StrategyMap $strategyMap
+     */
+    public function update($strategyMap);
 
     /**
      * Retrieves the information about a Strategy Map

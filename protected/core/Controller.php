@@ -26,7 +26,7 @@ class Controller {
      * @throws \Exception
      */
 
-    public function render($view, $params = []) {
+    protected function render($view, $params = []) {
         $fileLocation = $this->generateFileName($view);
 
         if (file_exists($fileLocation)) {
@@ -48,11 +48,11 @@ class Controller {
         }
     }
 
-    public function renderAjaxJsonResponse(array $response) {
+    protected function renderAjaxJsonResponse(array $response) {
         echo json_encode($response);
     }
 
-    public function redirect(array $url) {
+    protected function redirect(array $url) {
         header("location: " . ApplicationUtils::resolveUrl($url));
         die();
     }
@@ -70,14 +70,14 @@ class Controller {
         $this->renderPartial('commons/warning', array('header' => $header, 'message' => $message));
     }
 
-    public function checkAuthorization() {
+    protected function checkAuthorization() {
         if (empty($_SESSION['employee']) || empty($_SESSION['user'])) {
             $_SESSION['login.notif'] = "Please enter your user credentials to continue.";
             $this->redirect(array('site/login'));
         }
     }
 
-    public function logRevision($revisionType, $module, $referenceId, $model, $oldModel = null) {
+    protected function logRevision($revisionType, $module, $referenceId, $model, $oldModel = null) {
         $this->loggingService = new RevisionHistoryLoggingService();
         $revision = new RevisionHistory();
         $revision->employee = new Employee();
@@ -93,6 +93,14 @@ class Controller {
             case RevisionHistory::TYPE_UPDATE:
                 $this->loggingService->logUpdateAction($revision, $model, $oldModel);
                 break;
+        }
+    }
+    
+    protected function remoteValidateModel($model){
+        if(!$model->validate()){
+            $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $model->validationMessages));
+        } else {
+            $this->renderAjaxJsonResponse(array('respCode'=>'00'));
         }
     }
 

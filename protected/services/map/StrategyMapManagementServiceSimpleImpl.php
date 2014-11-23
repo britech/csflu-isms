@@ -101,4 +101,8 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         $this->perspectiveDaoSource->deletePerspective($id);
     }
 
+    public function update($strategyMap) {
+        $this->mapDaoSource->update($strategyMap);
+    }
+
 }

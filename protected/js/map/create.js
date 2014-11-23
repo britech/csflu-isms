@@ -57,4 +57,41 @@ $(document).ready(function() {
         maxLength: -1,
         forceLowercase: false
     });
+    
+    
+    var startingDate = $("[name*=startingPeriodDate]").val();
+    var endingDate = $("[name*=endingPeriodDate]").val();
+    
+    if(startingDate!=='' && endingDate!==''){
+        $("#periodDate").jqxDateTimeInput('setRange', startingDate, endingDate);
+    }
+    
+    $(".ink-form").submit(function(){
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=map/validateStrategyMap",
+            data: {"StrategyMap": {
+                    'visionStatement': $("[name*=visionStatement]").val(),
+                    'missionStatement': $("[name*=missionStatement]").val(),
+                    'valuesStatement':$("[name*=valuesStatement]").val(),
+                    'strategyType':$("[name*=strategyType]").val(),
+                    'startingPeriodDate':$("[name*=startingPeriodDate]").val(),
+                    'endingPeriodDate':$("[name*=endingPeriodDate]").val(),
+                    'name':$("[name*=endingPeriodDate]").val()},
+                "mode": $("[name=mode]").val()},
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result; 
+    });
 });

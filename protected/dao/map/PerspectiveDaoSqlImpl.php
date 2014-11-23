@@ -36,13 +36,13 @@ class PerspectiveDaoSqlImpl implements PerspectiveDao {
 
     public function listAllPerspectives() {
         try {
-            $dbst = $this->db->prepare('SELECT pers_id, pers_desc FROM smap_perspectives ORDER BY pers_desc');
+            $dbst = $this->db->prepare('SELECT DISTINCT(pers_desc) FROM smap_perspectives ORDER BY pers_desc');
             $dbst->execute();
 
             $perspectives = array();
             while ($data = $dbst->fetch()) {
                 $perspective = new Perspective();
-                list($perspective->id, $perspective->description) = $data;
+                list($perspective->description) = $data;
                 array_push($perspectives, $perspective);
             }
             return $perspectives;

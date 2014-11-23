@@ -118,6 +118,74 @@ class MapController extends Controller {
         ));
     }
 
+    public function updateMap() {
+        $id = filter_input(INPUT_GET, 'id');
+
+        if (!isset($id) || empty($id)) {
+            throw new ValidationException('Another parameter is needed to process this request');
+        }
+
+        $strategyMap = $this->loadStrategyMapModel($id);
+        $this->title = ApplicationConstants::APP_NAME . ' - Update Entry Data';
+        $this->layout = 'column-1';
+        $this->render('map/create', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
+                'Update Entry Data' => 'active'),
+            'model' => $strategyMap,
+            'validation' => isset($_SESSION['validation']) ? $_SESSION['validation'] : ""
+        ));
+        if (isset($_SESSION['validation'])) {
+            unset($_SESSION['validation']);
+        }
+    }
+
+    public function update() {
+        if (!(count(filter_input_array(INPUT_POST)) > 0 && array_key_exists('StrategyMap', filter_input_array(INPUT_POST)))) {
+            throw new ValidationException('Another parameter is needed to process this request');
+        }
+
+        $strategyMapData = filter_input_array(INPUT_POST)['StrategyMap'];
+        $strategyMap = new StrategyMap();
+        $strategyMap->validationMode = Model::VALIDATION_MODE_UPDATE;
+        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData));
+
+        if ($strategyMap->validate()) {
+            $oldMap = clone $this->loadStrategyMapModel($strategyMap->id);
+
+            if ($strategyMap->computePropertyChanges($oldMap) > 0) {
+                $this->mapService->update($strategyMap);
+                $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_SMAP, $strategyMap->id, $strategyMap, $oldMap);
+                $_SESSION['notif'] = array('class' => 'info', 'message' => 'Strategy Map updated');
+            }
+            $this->redirect(array('map/complete', 'id' => $strategyMap->id));
+        } else {
+            $_SESSION['validation'] = $strategyMap->validationMessages;
+            $this->redirect(array('map/updateMap', 'id' => $strategyMap->id));
+        }
+    }
+
+    /**
+     * AJAX validation
+     */
+    public function validateStrategyMap() {
+        $condition = array_key_exists('StrategyMap', filter_input_array(INPUT_POST)) && array_key_exists('mode', filter_input_array(INPUT_POST));
+        if (!(count(filter_input_array(INPUT_POST)) > 0 && $condition)) {
+            $this->renderAjaxJsonResponse(array('respCode' => '50'));
+        }
+        $validationMode = filter_input_array(INPUT_POST)['mode'];
+
+        $strategyMapData = filter_input_array(INPUT_POST)['StrategyMap'];
+        $strategyMap = new StrategyMap();
+        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData));
+        $strategyMap->validationMode = $validationMode;
+
+        $this->remoteValidateModel($strategyMap);
+    }
+
     public function complete() {
         $id = filter_input(INPUT_GET, 'id');
 
@@ -125,11 +193,7 @@ class MapController extends Controller {
             throw new ValidationException('Another parameter is needed to process this request');
         }
 
-        $strategyMap = $this->mapService->getStrategyMap($id);
-        if (is_null($strategyMap->id)) {
-            $_SESSION['notif'] = array('class' => '', 'message' => 'Strategy Map not found');
-            $this->redirect(array('map/index'));
-        }
+        $strategyMap = $this->loadStrategyMapModel($id);
         $this->title = ApplicationConstants::APP_NAME . ' - Complete Strategy Map';
         $this->render('map/complete', array(
             'breadcrumb' => array(
@@ -141,13 +205,19 @@ class MapController extends Controller {
                 'data' => array(
                     'header' => 'Actions',
                     'links' => array(
-                        'Update Entry Data' => array('map/updateInitial', 'id' => $id),
+                        'Update Entry Data' => array('map/updateMap', 'id' => $id),
                         'Manage Perspectives' => array('map/managePerspectives', 'map' => $id),
                         'Manage Strategic Themes' => array('map/manageThemes', 'map' => $id),
                         'Manage Objectives' => array('map/manageObjectives', 'map' => $id)
                     ))),
-            'strategyMap' => $strategyMap
+            'strategyMap' => $strategyMap,
+            'perspectives' => $this->mapService->listPerspectives($strategyMap),
+            'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""
         ));
+        
+        if (isset($_SESSION['notif'])) {
+            unset($_SESSION['notif']);
+        }
     }
 
     public function managePerspectives() {
@@ -158,7 +228,7 @@ class MapController extends Controller {
         }
 
         $this->title = ApplicationConstants::APP_NAME . ' - Add Perspective';
-        $strategyMap = $this->loadStrategyModel($map);
+        $strategyMap = $this->loadStrategyMapModel($map);
         $this->layout = 'column-1';
         $this->render('perspective/insert', array(
             'breadcrumb' => array(
@@ -222,7 +292,7 @@ class MapController extends Controller {
         }
 
         $perspective = $this->loadPerspectiveModel($id);
-        $strategyMap = $this->loadStrategyModel('', $perspective);
+        $strategyMap = $this->loadStrategyMapModel('', $perspective);
 
         $this->title = ApplicationConstants::APP_NAME . ' - Update Perspective';
         $this->layout = 'column-1';
@@ -250,8 +320,8 @@ class MapController extends Controller {
 
         if ($perspective->validate()) {
             try {
-                $oldPerspective = $this->clonePerspective($perspective->id);
-                $strategyMap = $this->loadStrategyModel('', $perspective);
+                $oldPerspective = clone $this->loadPerspectiveModel($perspective->id);
+                $strategyMap = $this->loadStrategyMapModel('', $perspective);
 
                 if ($perspective->computePropertyChanges($oldPerspective) > 0) {
                     $this->mapService->updatePerspective($perspective);
@@ -269,17 +339,6 @@ class MapController extends Controller {
         }
     }
 
-    private function clonePerspective($id) {
-        $oldPerspective = $this->loadPerspectiveModel($id);
-
-        $perspective = new Perspective();
-        $perspective->id = $oldPerspective->id;
-        $perspective->description = $oldPerspective->description;
-        $perspective->positionOrder = $oldPerspective->positionOrder;
-
-        return $perspective;
-    }
-
     public function confirmDeletePerspective() {
         $id = filter_input(INPUT_GET, 'id');
 
@@ -288,7 +347,7 @@ class MapController extends Controller {
         }
 
         $perspective = $this->loadPerspectiveModel($id);
-        $strategyMap = $this->mapService->getStrategyMap('', $perspective);
+        $strategyMap = $this->loadStrategyMapModel('', $perspective);
         $this->layout = "column-1";
         $this->render('commons/confirm', array(
             'confirm' => array('class' => 'error',
@@ -323,9 +382,12 @@ class MapController extends Controller {
         $this->redirect(array('map/managePerspectives', 'map' => $strategyMap->id));
     }
 
+    /**
+     * AJAX validation
+     */
     public function validatePerspective() {
         if (count(filter_input_array(INPUT_POST)) == 0) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            $this->renderAjaxJsonResponse(array('respCode' => '50'));
         }
 
         $perspectiveData = filter_input_array(INPUT_POST)['Perspective'];
@@ -335,14 +397,21 @@ class MapController extends Controller {
         $perspective->bindValuesUsingArray(array('perspective' => $perspectiveData), $perspective);
         $perspective->validationMode = $mode;
 
-        if (!$perspective->validate()) {
-            $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $perspective->validationMessages));
-        } else {
-            $this->renderAjaxJsonResponse(array('respCode' => '0000'));
-        }
+        $this->remoteValidateModel($perspective);
     }
 
-    private function loadStrategyModel($id, $perspective = null, $objective = null, $theme = null) {
+    public function listEnlistedPerspectives() {
+        $perspectives = $this->mapService->listPerspectives();
+
+        $perspectiveArray = array();
+
+        foreach ($perspectives as $perspective) {
+            array_push($perspectiveArray, array('description' => $perspective->description));
+        }
+        $this->renderAjaxJsonResponse($perspectiveArray);
+    }
+
+    private function loadStrategyMapModel($id = null, $perspective = null, $objective = null, $theme = null) {
         $strategyMap = $this->mapService->getStrategyMap($id, $perspective, $objective, $theme);
 
         if (is_null($strategyMap->id)) {
