@@ -124,4 +124,15 @@ class Controller {
         return $counter == 0;
     }
 
+    protected function getSessionData($key){
+        return $_SESSION[$key];
+    }
+    
+    protected function setSessionData($key, $value){
+        $_SESSION[$key] = $value;
+    }
+    
+    protected function unsetSessionData($key){
+        unset($_SESSION[$key]);
+    }
 }
