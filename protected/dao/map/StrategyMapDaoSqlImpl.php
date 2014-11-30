@@ -84,11 +84,13 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
                         $map->missionStatement,
                         $map->valuesStatement,
                         $map->strategyType,
-                        $map->startingPeriodDate,
-                        $map->endingPeriodDate,
+                        $startingDate,
+                        $endingDate,
                         $map->strategyEnvironmentStatus) = $data;
             }
-            
+            $map->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $startingDate);
+            $map->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $endingDate);
+
             $map->objectives = $this->objectiveDaoSource->listObjectivesByStrategyMap($map);
             return $map;
         } catch (\PDOException $ex) {
@@ -142,8 +144,8 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
         try {
             $dbst = $this->db->prepare('SELECT map_ref FROM smap_themes WHERE theme_id=:id');
             $dbst->execute(array('id' => $theme->id));
-            
-            while($data = $dbst->fetch()){
+
+            while ($data = $dbst->fetch()) {
                 list($map) = $data;
             }
             return $this->getStrategyMap($map);

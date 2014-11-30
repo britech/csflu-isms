@@ -195,11 +195,11 @@ class StrategyMap extends Model {
             $counter++;
         }
         
-        if ($oldModel->startingPeriodDate != $this->startingPeriodDate) {
+        if ($oldModel->startingPeriodDate->format('Y-m-d') != $this->startingPeriodDate->format('Y-m-d')) {
             $counter++;
         }
         
-        if ($oldModel->endingPeriodDate != $this->endingPeriodDate) {
+        if ($oldModel->endingPeriodDate->format('Y-m-d') != $this->endingPeriodDate->format('Y-m-d')) {
             $counter++;
         }
         
@@ -242,11 +242,11 @@ class StrategyMap extends Model {
             array_push($changes, "Strategy Type:\t{$this->strategyType}");
         }
         
-        if ($oldModel->startingPeriodDate != $this->startingPeriodDate) {
+        if ($oldModel->startingPeriodDate->format('Y-m-d') != $this->startingPeriodDate->format('Y-m-d')) {
             array($changes, "Starting Period Date:\t{$this->startingPeriodDate->format('F-Y')}");
         }
         
-        if ($oldModel->endingPeriodDate != $this->endingPeriodDate) {
+        if ($oldModel->endingPeriodDate->format('Y-m-d') != $this->endingPeriodDate->format('Y-m-d')) {
             array($changes, "Ending Period Date:\t{$this->endingPeriodDate->format('F-Y')}");
         }
         

@@ -128,6 +128,8 @@ class MapController extends Controller {
         }
 
         $strategyMap = $this->loadStrategyMapModel($id);
+        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
         $this->title = ApplicationConstants::APP_NAME . ' - Update Entry Data';
         $this->layout = 'column-1';
         $this->render('map/create', array(
