@@ -745,7 +745,7 @@ class MapController extends Controller {
         foreach ($objectives as $objective) {
             array_push($data, array('id' => $objective->id,
                 'description' => $objective->description,
-                'perspective' => $objective->perspective->description,
+                'perspective' => $objective->perspective->positionOrder . ' - ' . $objective->perspective->description,
                 'theme' => $objective->theme->description,
                 'actions' => ApplicationUtils::generateLink(array('map/updateObjective', 'id' => $objective->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink(array('map/deleteObjective', 'id' => $objective->id), 'Delete')));
         }

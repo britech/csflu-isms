@@ -29,7 +29,7 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
 
     public function listObjectivesByStrategyMap(StrategyMap $strategyMap) {
         try {
-            $dbst = $this->db->prepare('SELECT obj_id, pers_desc, theme_desc, obj_desc, pers_id, theme_id FROM smap_objectives t1 '
+            $dbst = $this->db->prepare('SELECT obj_id, pers_desc, theme_desc, obj_desc, pers_id, theme_id, pos_order FROM smap_objectives t1 '
                     . 'JOIN smap_perspectives ON pers_ref = pers_id '
                     . 'LEFT JOIN smap_themes ON theme_ref = theme_id '
                     . 'WHERE t1.map_ref=:ref '
@@ -46,7 +46,8 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
                         $objective->theme->description,
                         $objective->description,
                         $objective->perspective->id,
-                        $objective->theme->id) = $data;
+                        $objective->theme->id,
+                        $objective->perspective->positionOrder) = $data;
                 array_push($objectives, $objective);
             }
             return $objectives;
