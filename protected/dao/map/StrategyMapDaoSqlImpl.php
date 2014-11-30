@@ -3,6 +3,7 @@
 namespace org\csflu\isms\dao\map;
 
 use org\csflu\isms\dao\map\StrategyMapDao;
+use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\map\StrategyMap;
@@ -16,9 +17,11 @@ use org\csflu\isms\models\map\Theme;
 class StrategyMapDaoSqlImpl implements StrategyMapDao {
 
     private $db;
+    private $objectiveDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
+        $this->objectiveDaoSource = new ObjectiveDaoSqlImpl();
     }
 
     public function listStrategyMaps() {
@@ -85,6 +88,8 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
                         $map->endingPeriodDate,
                         $map->strategyEnvironmentStatus) = $data;
             }
+            
+            $map->objectives = $this->objectiveDaoSource->listObjectivesByStrategyMap($map);
             return $map;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());

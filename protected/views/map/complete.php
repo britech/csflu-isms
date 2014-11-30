@@ -4,6 +4,7 @@ namespace org\csflu\isms\views;
 
 $strategyMap = $params['strategyMap'];
 $perspectives = $params['perspectives'];
+$themes = $params['themes'];
 if (isset($params['notif']) && !empty($params['notif'])) {
     $this->renderPartial('commons/_notification', array('notif' => $params['notif']));
 }
@@ -55,15 +56,47 @@ if (isset($params['notif']) && !empty($params['notif'])) {
             <tbody>
                 <?php foreach ($perspectives as $perspective): ?>
                     <tr>
-                        <th title="Click to update the perspective, <?php echo $perspective->description;?> or add an objective" style="width: 20%; background-color: black; color:white; cursor: pointer;" id="pers-<?php echo $perspective->id; ?>"><?php echo $perspective->description; ?></th>
+                        <th title="Click to update or add an objective for the perspective, <?php echo $perspective->description; ?>." style="width: 20%; background-color: black; color:white; cursor: pointer;" id="pers-<?php echo $perspective->id; ?>"><?php echo $perspective->description; ?></th>
                         <td>
                             <?php
-                            if (empty($strategyMap->objectives) || count($strategyMap->objectives) < 1) {
+                            $objectivesWithThemeCounter = 0;
+                            $capturedThemes = array();
+                            if (is_null($strategyMap->objectives) || count($strategyMap->objectives) < 1) {
                                 echo "&lt;Not yet defined&gt;";
                             } else {
+                                $themeDescriptions = array();
+                                foreach ($themes as $theme) {
+                                    array_push($themeDescriptions, $theme->description);
+                                }
+
+                                /**
+                                 * Enlist objectives with no themes referenced with
+                                 */
                                 foreach ($strategyMap->objectives as $objective) {
-                                    if ($objective->perspective->id == $perspective->id) {
-                                        echo '*&nbsp;' . $objective->description;
+                                    if ($perspective->id == $objective->perspective->id && is_null($objective->theme->id)) {
+                                        echo "<span style=\"display: block;\">*&nbsp;{$objective->description}</span>";
+                                    } elseif ($perspective->id == $objective->perspective->id && !is_null($objective->theme->id)) {
+                                        $objectivesWithThemeCounter++;
+                                        array_push($capturedThemes, $objective->theme->description);
+                                    }
+                                }
+
+                                /**
+                                 * Enlist objectives with themes defined
+                                 */
+                                if ($objectivesWithThemeCounter > 0) {
+                                    $themesToBeDisplayed = array_intersect($themeDescriptions, $capturedThemes);
+                                    foreach ($themesToBeDisplayed as $theme) {
+                                        echo "<div class=\"ink-alert block info\">";
+                                        echo "<h4 style=\"padding: 0px; text-align:center;\">{$theme}</h4>";
+                                        echo "<p style=\"margin: 0px 0px 0px 10px;\">";
+                                        foreach ($strategyMap->objectives as $objective) {
+                                            if ($perspective->id == $objective->perspective->id && $objective->theme->description == $theme) {
+                                                echo "<span style=\"display: block\">*&nbsp;{$objective->description}</span>";
+                                            }
+                                        }
+                                        echo "</p>";
+                                        echo "</div>";
                                     }
                                 }
                             }

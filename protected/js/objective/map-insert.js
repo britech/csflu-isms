@@ -63,31 +63,31 @@ $(document).ready(function() {
         source: new $.jqx.dataAdapter({
             datatype: 'json',
             datafields: [
-                {name: 'name'},
+                {name: 'description'},
                 {name: 'perspective'},
                 {name: 'theme'},
                 {name: 'actions'}
             ],
-            url: '?r=map/renderStrategyMapTable'
+            url: '?r=map/renderObjectivesTable',
+            type: 'POST',
+            data: {
+                map: $("#map-id").val()
+            }
         }),
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Objective</span>', dataField: 'name', width: '50%'},
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Actions</span>', dataField: 'actions'}
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Objective</span>', dataField: 'description', width: '80%'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Actions</span>', dataField: 'actions', cellsAlign: 'center'}
         ],
         width: '100%',
         pageable: true,
         filterable: true,
         filterMode: 'simple',
         sortable: true,
-        groups: ['perspective', 'theme'],
+        groups: ['perspective'],
         groupsRenderer: function(value, rowData, level) {
-            if (level === 0) {
-                return "<strong>" + value + "</strong>";
-            } else {
-                return "<strong style=\"margin-left: 20px;\">" + value + "</strong>";
-            }
+            return "<strong>" + value + "</strong>";
         }
     });
 

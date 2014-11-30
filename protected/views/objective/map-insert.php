@@ -71,7 +71,7 @@ $form = new Form(array(
         <?php echo $form->renderHiddenField($model, 'endingPeriodDate', array('id' => 'obj-end')); ?>
         <?php echo $form->renderHiddenField($mapModel, 'startingPeriodDate', array('id' => 'map-start')); ?>
         <?php echo $form->renderHiddenField($mapModel, 'endingPeriodDate', array('id' => 'map-end')); ?>
-        <?php echo $form->renderHiddenField($mapModel, 'id'); ?>
+        <?php echo $form->renderHiddenField($mapModel, 'id', array('id'=>'map-id')); ?>
         <?php echo $form->endComponent(); ?>
     </div>
 

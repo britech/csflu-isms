@@ -29,7 +29,7 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
 
     public function listObjectivesByStrategyMap(StrategyMap $strategyMap) {
         try {
-            $dbst = $this->db->prepare('SELECT obj_id, pers_desc, theme_desc, obj_desc FROM smap_objectives t1 '
+            $dbst = $this->db->prepare('SELECT obj_id, pers_desc, theme_desc, obj_desc, pers_id, theme_id FROM smap_objectives t1 '
                     . 'JOIN smap_perspectives ON pers_ref = pers_id '
                     . 'LEFT JOIN smap_themes ON theme_ref = theme_id '
                     . 'WHERE t1.map_ref=:ref '
@@ -41,7 +41,12 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
                 $objective = new Objective();
                 $objective->perspective = new Perspective();
                 $objective->theme = new Theme();
-                list($objective->id, $objective->perspective->description, $objective->theme->description, $objective->description) = $data;
+                list($objective->id,
+                        $objective->perspective->description,
+                        $objective->theme->description,
+                        $objective->description,
+                        $objective->perspective->id,
+                        $objective->theme->id) = $data;
                 array_push($objectives, $objective);
             }
             return $objectives;
@@ -57,19 +62,20 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
     public function addObjective(Objective $objective, StrategyMap $strategyMap) {
         try {
             $this->db->beginTransaction();
-            
+
             $dbst = $this->db->prepare('INSERT INTO smap_objectives(map_ref, obj_desc, pers_ref, theme_ref, period_date_start, period_date_end, obj_stat) '
                     . 'VALUES(:map, :description, :perspective, :theme, :dateStart, :dateEnd, :status)');
+            $theme = is_null($objective->theme->id) ? null : $objective->theme->id;
             $dbst->execute(array(
-                'map'=>$strategyMap->id,
-                'description'=>$objective->description,
-                'perspective'=>$objective->perspective->id,
-                'theme'=>empty($objective->theme->id) ? null : $objective->theme->id,
-                'dateStart'=>$objective->startingPeriodDate->format('Y-m-d'),
-                'dateEnd'=>$objective->endingPeriodDate->format('Y-m-d'),
-                'status'=>$objective->environmentStatus
+                'map' => $strategyMap->id,
+                'description' => $objective->description,
+                'perspective' => $objective->perspective->id,
+                'theme' => $theme,
+                'dateStart' => $objective->startingPeriodDate->format('Y-m-d'),
+                'dateEnd' => $objective->endingPeriodDate->format('Y-m-d'),
+                'status' => $objective->environmentStatus
             ));
-            
+
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();

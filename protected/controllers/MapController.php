@@ -214,6 +214,7 @@ class MapController extends Controller {
                     ))),
             'strategyMap' => $strategyMap,
             'perspectives' => $this->mapService->listPerspectives($strategyMap),
+            'themes' => $this->mapService->listThemes($strategyMap),
             'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""
         ));
 
@@ -619,11 +620,11 @@ class MapController extends Controller {
             'validation' => isset($_SESSION['validation']) ? $_SESSION['validation'] : "",
             'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""
         ));
-        
+
         if (isset($_SESSION['validation'])) {
             unset($_SESSION['validation']);
         }
-        
+
         if (isset($_SESSION['notif'])) {
             unset($_SESSION['notif']);
         }
@@ -660,7 +661,6 @@ class MapController extends Controller {
             } catch (ServiceException $ex) {
                 $_SESSION['validation'] = array($ex->getMessage());
             }
-            
         } else {
             $_SESSION['validation'] = $objective->validationMessages;
         }
@@ -698,7 +698,7 @@ class MapController extends Controller {
     }
 
     public function renderObjectivesTable() {
-        $map = filter_input(INPUT_GET, 'map');
+        $map = filter_input(INPUT_POST, 'map');
 
         if (!isset($map) || empty($map)) {
             throw new ValidationException("Another parameter is needed to process this request");
