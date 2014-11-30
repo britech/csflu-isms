@@ -18,7 +18,7 @@ $form = new Form(array(
     'hasFieldset' => true
         ));
 ?>
-<script type="text/javascript" src="protected/js/objective/map-insert.js"></script>
+<script type="text/javascript" src="protected/js/objective/insert.js"></script>
 <div class="column-group half-gutters">
     <div class="all-60">        
         <?php

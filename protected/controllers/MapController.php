@@ -608,7 +608,7 @@ class MapController extends Controller {
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Objectives';
         $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');
         $themes = ApplicationUtils::generateListData($this->mapService->listThemes($strategyMap), 'id', 'description');
-        $this->render('objective/map-insert', array(
+        $this->render('objective/insert', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
@@ -644,7 +644,7 @@ class MapController extends Controller {
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Objectives';
         $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');
         $themes = ApplicationUtils::generateListData($this->mapService->listThemes($strategyMap), 'id', 'description');
-        $this->render('objective/map-insert', array(
+        $this->render('objective/insert', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
