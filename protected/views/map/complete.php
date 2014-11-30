@@ -74,7 +74,7 @@ if (isset($params['notif']) && !empty($params['notif'])) {
                                  */
                                 foreach ($strategyMap->objectives as $objective) {
                                     if ($perspective->id == $objective->perspective->id && is_null($objective->theme->id)) {
-                                        echo "<span style=\"display: block;\">*&nbsp;{$objective->description}</span>";
+                                        echo "<span style=\"display: block; cursor:pointer\" id=\"obj-{$objective->id}\" title=\"Click to update this objective, {$objective->description}\">*&nbsp;{$objective->description}</span>";
                                     } elseif ($perspective->id == $objective->perspective->id && !is_null($objective->theme->id)) {
                                         $objectivesWithThemeCounter++;
                                         array_push($capturedThemes, $objective->theme->description);
@@ -88,11 +88,19 @@ if (isset($params['notif']) && !empty($params['notif'])) {
                                     $themesToBeDisplayed = array_intersect($themeDescriptions, $capturedThemes);
                                     foreach ($themesToBeDisplayed as $theme) {
                                         echo "<div class=\"ink-alert block info\">";
-                                        echo "<h4 style=\"padding: 0px; text-align:center;\">{$theme}</h4>";
+                                        
+                                        foreach($themes as $themeObject){
+                                            if($theme == $themeObject->description){
+                                                $id = $themeObject->id;
+                                                break;
+                                            }
+                                        }
+                                        
+                                        echo "<h4 style=\"padding: 0px; text-align:center; cursor:pointer;\" title=\"Click to update this theme, {$theme}\" id=\"theme-{$id}\">{$theme}</h4>";
                                         echo "<p style=\"margin: 0px 0px 0px 10px;\">";
                                         foreach ($strategyMap->objectives as $objective) {
                                             if ($perspective->id == $objective->perspective->id && $objective->theme->description == $theme) {
-                                                echo "<span style=\"display: block\">*&nbsp;{$objective->description}</span>";
+                                                echo "<span style=\"display: block; cursor:pointer;\" id=\"obj-{$objective->id}\" title=\"Click to update this objective, {$objective->description}\">*&nbsp;{$objective->description}</span>";
                                             }
                                         }
                                         echo "</p>";
