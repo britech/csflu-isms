@@ -595,6 +595,8 @@ class MapController extends Controller {
             $this->manageObjectivesByPerpective($perspective);
         } elseif (isset($map) && !empty($map)) {
             $strategyMap = $this->loadStrategyMapModel($map);
+            $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+            $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
             $this->manageObjectivesByStrategyMap($strategyMap);
         } else {
             throw new ValidationException('Another parameter is needed to process this request');
@@ -636,6 +638,8 @@ class MapController extends Controller {
         $perspectiveModel = $this->loadPerspectiveModel($perspective);
         $strategyMap = $this->loadStrategyMapModel(null, $perspectiveModel);
 
+        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
         $this->layout = 'column-1';
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Objectives';
         $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');

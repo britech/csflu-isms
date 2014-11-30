@@ -57,7 +57,20 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
     }
 
     public function updateObjectivesCoveragePeriodsByStrategyMap(StrategyMap $strategyMap) {
-        
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('UPDATE smap_objectives SET period_date_start=:start, period_date_end=:end WHERE map_ref=:ref AND obj_stat=:stat');
+            $dbst->execute(array('start' => $strategyMap->startingPeriodDate->format('Y-m-d'),
+                'end' => $strategyMap->endingPeriodDate->format('Y-m-d'),
+                'ref' => $strategyMap->id,
+                'stat' => Objective::TYPE_ACTIVE));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
     }
 
     public function addObjective(Objective $objective, StrategyMap $strategyMap) {
@@ -66,9 +79,9 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
 
             $dbst = $this->db->prepare('INSERT INTO smap_objectives(map_ref, obj_desc, pers_ref, theme_ref, period_date_start, period_date_end, obj_stat) '
                     . 'VALUES(:map, :description, :perspective, :theme, :dateStart, :dateEnd, :status)');
-            
+
             $theme = is_null($objective->theme->id) ? null : $objective->theme->id;
-            
+
             $dbst->execute(array(
                 'map' => $strategyMap->id,
                 'description' => $objective->description,

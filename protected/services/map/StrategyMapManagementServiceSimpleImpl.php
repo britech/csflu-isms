@@ -37,6 +37,12 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         return $this->mapDaoSource->insert($strategyMap);
     }
 
+    public function update(StrategyMap $strategyMap) {
+        $this->mapDaoSource->update($strategyMap);
+
+        $this->objectiveDaoSource->updateObjectivesCoveragePeriodsByStrategyMap($strategyMap);
+    }
+
     public function getStrategyMap($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null) {
         if (!is_null($id) && !empty($id)) {
             return $this->mapDaoSource->getStrategyMap($id);
@@ -112,10 +118,6 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         $this->perspectiveDaoSource->deletePerspective($id);
     }
 
-    public function update(StrategyMap $strategyMap) {
-        $this->mapDaoSource->update($strategyMap);
-    }
-
     public function listThemes(StrategyMap $strategyMap = null) {
         if (is_null($strategyMap)) {
             return $this->perspectiveDaoSource->listAllThemes();
@@ -155,7 +157,7 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
     }
 
     public function listObjectives(StrategyMap $strategyMap = null) {
-        if(is_null($strategyMap)){
+        if (is_null($strategyMap)) {
             return $this->objectiveDaoSource->listAllObjectives();
         } else {
             return $this->objectiveDaoSource->listObjectivesByStrategyMap($strategyMap);
@@ -164,13 +166,13 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
 
     public function addObjective(Objective $objective, StrategyMap $strategyMap) {
         $objectives = $this->listObjectives($strategyMap);
-        
-        foreach($objectives as $data){
-            if($objective->description == $data->description && $objective->perspective->id == $data->perspective->id){
+
+        foreach ($objectives as $data) {
+            if ($objective->description == $data->description && $objective->perspective->id == $data->perspective->id) {
                 throw new ServiceException("Objective already defined");
             }
         }
-        
+
         $this->objectiveDaoSource->addObjective($objective, $strategyMap);
     }
 
