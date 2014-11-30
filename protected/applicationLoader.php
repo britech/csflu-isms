@@ -54,6 +54,7 @@ require_once 'dao/indicator/IndicatorDao.php';
 require_once 'dao/indicator/BaselineDao.php';
 require_once 'dao/map/StrategyMapDao.php';
 require_once 'dao/map/PerspectiveDao.php';
+require_once 'dao/map/ObjectiveDao.php';
 
 #dao-implementations
 require_once 'dao/commons/DepartmentDaoSqlImpl.php';
@@ -66,6 +67,7 @@ require_once 'dao/indicator/IndicatorDaoSqlImpl.php';
 require_once 'dao/indicator/BaselineDaoSqlImpl.php';
 require_once 'dao/map/StrategyMapDaoSqlImpl.php';
 require_once 'dao/map/PerspectiveDaoSqlImpl.php';
+require_once 'dao/map/ObjectiveDaoSqlImpl.php';
 
 #service-interfaces
 require_once 'services/commons/DepartmentService.php';

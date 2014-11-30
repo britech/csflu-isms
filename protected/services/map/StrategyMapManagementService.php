@@ -105,4 +105,11 @@ interface StrategyMapManagementService {
      * @return Theme
      */
     public function getTheme($id);
+    
+    /**
+     * Retrieves the list of objectives
+     * @param StrategyMap $strategyMap
+     * @return Objective[]
+     */
+    public function listObjectives(StrategyMap $strategyMap = null);
 }

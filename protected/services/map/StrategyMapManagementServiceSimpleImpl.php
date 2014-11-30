@@ -5,6 +5,7 @@ namespace org\csflu\isms\service\map;
 use org\csflu\isms\service\map\StrategyMapManagementService;
 use org\csflu\isms\dao\map\StrategyMapDaoSqlImpl as StrategyMapDao;
 use org\csflu\isms\dao\map\PerspectiveDaoSqlImpl as PerspectiveDao;
+use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Perspective;
@@ -20,10 +21,12 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
 
     private $mapDaoSource;
     private $perspectiveDaoSource;
+    private $objectiveDaoSource;
 
     public function __construct() {
         $this->mapDaoSource = new StrategyMapDao();
         $this->perspectiveDaoSource = new PerspectiveDao();
+        $this->objectiveDaoSource = new ObjectiveDao();
     }
 
     public function listStrategyMaps() {
@@ -149,6 +152,14 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
 
     public function getTheme($id) {
         return $this->perspectiveDaoSource->getTheme($id);
+    }
+
+    public function listObjectives(StrategyMap $strategyMap = null) {
+        if(is_null($strategyMap)){
+            return $this->objectiveDaoSource->listAllObjectives();
+        } else {
+            return $this->objectiveDaoSource->listObjectivesByStrategyMap($strategyMap);
+        }
     }
 
 }

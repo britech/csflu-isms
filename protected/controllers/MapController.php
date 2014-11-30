@@ -620,8 +620,32 @@ class MapController extends Controller {
         ));
     }
 
-    private function manageObjectivesByPerpective($perspective) {
+    public function manageObjectivesByPerpective($perspective) {
         
+    }
+    
+    public function renderObjectivesTable(){
+        $map = filter_input(INPUT_GET, 'map');
+        
+        if(!isset($map) || empty($map)){
+            throw new ValidationException("Another parameter is needed to process this request");
+        }
+        
+        $strategyMap = $this->mapService->getStrategyMap($map);
+        
+        if(is_null($strategyMap->id)){
+            throw new ValidationException("Strategy Map not found.");
+        }
+        
+        $objectives = $this->mapService->listObjectives($strategyMap);
+        $data = array();
+        foreach($objectives as $objective){
+            array_push($data, array('id'=>$objective->id,
+                'description'=>$objective->description,
+                'perspective'=>$objective->perspective->description,
+                'theme'=>$objective->theme->description));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     private function loadStrategyMapModel($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null) {

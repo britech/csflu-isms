@@ -55,8 +55,14 @@ echo $form->constructHeader('Add Objective')
     <?php echo $form->renderLabel($model, 'period', array('class' => 'all-20 align-right', 'required' => true)); ?>
     <div class="control all-80">
         <div id="periods"></div>
+        <?php //echo $form->renderSubmitButton('Create', array('class'=>'ink-button green flat', 'style'=>'margin-top: 1em; margin-left: 0px;'));?>
     </div>
 </div>
+<?php echo $form->renderHiddenField($model, 'startingPeriodDate', array('id'=>'obj-start'));?>
+<?php echo $form->renderHiddenField($model, 'endingPeriodDate', array('id'=>'obj-end'));?>
+<?php echo $form->renderHiddenField($mapModel, 'startingPeriodDate', array('id'=>'map-start'));?>
+<?php echo $form->renderHiddenField($mapModel, 'endingPeriodDate', array('id'=>'map-end'));?>
+<?php echo $form->renderHiddenField($mapModel, 'id');?>
 <?php echo $form->endComponent(); ?>
 <div id="objectives"></div>
 
