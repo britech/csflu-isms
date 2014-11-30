@@ -243,22 +243,22 @@ class StrategyMap extends Model {
         }
         
         if ($oldModel->startingPeriodDate->format('Y-m-d') != $this->startingPeriodDate->format('Y-m-d')) {
-            array($changes, "Starting Period Date:\t{$this->startingPeriodDate->format('F-Y')}");
+            array_push($changes, "Starting Period Date:\t{$this->startingPeriodDate->format('F-Y')}");
         }
         
         if ($oldModel->endingPeriodDate->format('Y-m-d') != $this->endingPeriodDate->format('Y-m-d')) {
-            array($changes, "Ending Period Date:\t{$this->endingPeriodDate->format('F-Y')}");
+            array_push($changes, "Ending Period Date:\t{$this->endingPeriodDate->format('F-Y')}");
         }
         
         if ($oldModel->implementationDate != $this->implementationDate) {
-            array($changes, "Date Implemented:\t{$this->implementationDate->format('M d, Y')}");
+            array_push($changes, "Date Implemented:\t{$this->implementationDate->format('M d, Y')}");
         }
         
         if ($oldModel->terminationDate != $this->terminationDate) {
             if($this->strategyEnvironmentStatus == StrategyMap::STATUS_COMPLETED){
-                array($changes, "Date Completed:\t{$this->implementationDate->format('M d, Y')}");
+                array_push($changes, "Date Completed:\t{$this->implementationDate->format('M d, Y')}");
             } else {
-                array($changes, "Date Terminated:\t{$this->implementationDate->format('M d, Y')}");
+                array_push($changes, "Date Terminated:\t{$this->implementationDate->format('M d, Y')}");
             }
         }
         
