@@ -76,7 +76,7 @@ class Controller {
     }
 
     protected function checkAuthorization() {
-        if (empty($_SESSION['employee']) || empty($_SESSION['user'])) {
+        if (empty($this->getSessionData('employee')) || empty($this->getSessionData('user'))) {
             $_SESSION['login.notif'] = "Please enter your user credentials to continue.";
             $this->redirect(array('site/login'));
         }
