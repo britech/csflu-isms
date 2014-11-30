@@ -121,7 +121,8 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
                     . 'map_values=:values, '
                     . 'map_type=:type, '
                     . 'period_date_start=:start, '
-                    . 'period_date_end=:end WHERE map_id=:id');
+                    . 'period_date_end=:end, '
+                    . 'map_desc=:name WHERE map_id=:id');
 
             $dbst->execute(array(
                 'vision' => $strategyMap->visionStatement,
@@ -130,6 +131,7 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
                 'type' => $strategyMap->strategyType,
                 'start' => $strategyMap->startingPeriodDate->format('Y-m-d'),
                 'end' => $strategyMap->endingPeriodDate->format('Y-m-d'),
+                'name' => $strategyMap->name,
                 'id' => $strategyMap->id
             ));
 

@@ -15,6 +15,10 @@ require_once 'utils/FormGenerator.php';
 require_once 'utils/ModelFormGenerator.php';
 require_once 'utils/ApplicationUtils.php';
 
+#logging extension
+require_once 'ext/log4php/Logger.php';
+\Logger::configure("protected/logs/logback.xml");
+
 #custom exceptions
 require_once 'exception/DataAccessException.php';
 require_once 'exception/ServiceException.php';
