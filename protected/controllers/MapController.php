@@ -630,8 +630,38 @@ class MapController extends Controller {
         }
     }
 
-    public function manageObjectivesByPerpective($perspective) {
-        
+    private function manageObjectivesByPerpective($perspective) {
+        $perspectiveModel = $this->loadPerspectiveModel($perspective);
+        $strategyMap = $this->loadStrategyMapModel(null, $perspectiveModel);
+
+        $this->layout = 'column-1';
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Objectives';
+        $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');
+        $themes = ApplicationUtils::generateListData($this->mapService->listThemes($strategyMap), 'id', 'description');
+        $this->render('objective/map-insert', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
+                'Manage Objectives' => 'active'),
+            'model' => new Objective(),
+            'mapModel' => $strategyMap,
+            'themeModel' => new Theme(),
+            'perspectiveModel' => $perspectiveModel,
+            'perspectives' => $perspectives,
+            'themes' => $themes,
+            'validation' => isset($_SESSION['validation']) ? $_SESSION['validation'] : "",
+            'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""
+        ));
+
+        if (isset($_SESSION['validation'])) {
+            unset($_SESSION['validation']);
+        }
+
+        if (isset($_SESSION['notif'])) {
+            unset($_SESSION['notif']);
+        }
     }
 
     public function insertObjective() {

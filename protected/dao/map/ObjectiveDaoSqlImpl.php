@@ -65,12 +65,14 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
 
             $dbst = $this->db->prepare('INSERT INTO smap_objectives(map_ref, obj_desc, pers_ref, theme_ref, period_date_start, period_date_end, obj_stat) '
                     . 'VALUES(:map, :description, :perspective, :theme, :dateStart, :dateEnd, :status)');
+            
             $theme = is_null($objective->theme->id) ? null : $objective->theme->id;
+            
             $dbst->execute(array(
                 'map' => $strategyMap->id,
                 'description' => $objective->description,
                 'perspective' => $objective->perspective->id,
-                'theme' => $theme,
+                'theme' => empty($theme) ? null : $theme,
                 'dateStart' => $objective->startingPeriodDate->format('Y-m-d'),
                 'dateEnd' => $objective->endingPeriodDate->format('Y-m-d'),
                 'status' => $objective->environmentStatus
