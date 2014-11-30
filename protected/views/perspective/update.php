@@ -2,6 +2,7 @@
 
 namespace org\csflu\isms\views;
 
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\util\FormGenerator as Form;
 
 $perspective = $params['perspective'];
@@ -27,11 +28,14 @@ $form = new Form(array(
     <?php echo $form->renderLabel('Description&nbsp;*', array('class' => 'all-20 align-right')); ?>
     <div class="control all-80">
         <div id="description-input"></div>
-        <?php echo $form->renderSubmitButton('Update', 
-                array('class' => 'ink-button blue flat',
-                    'style'=>'margin-top: 10px; margin-left: 0px;')) ?>
+        <?php
+        echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat',
+            'style' => 'margin-top: 10px; margin-left: 0px;'));
+
+        echo ApplicationUtils::generateLink(array('map/manageObjectives', 'perspective' => $perspective->id), 'Add an Objective', array('class'=>'ink-button green flat', 'style'=>'margin-top: 10px;'));
+        ?>
     </div>
-    <?php echo $form->renderHiddenField('Perspective[description]', array('value' => $perspective->description, 'id'=>'description')); ?>
+    <?php echo $form->renderHiddenField('Perspective[description]', array('value' => $perspective->description, 'id' => 'description')); ?>
     <?php echo $form->renderHiddenField('Perspective[id]', array('value' => $perspective->id)); ?>
     <?php echo $form->renderHiddenField('Perspective[positionOrder]', array('value' => $perspective->positionOrder)); ?>
 </div>

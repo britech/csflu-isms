@@ -34,24 +34,26 @@ class Objective extends Model {
     private $startingPeriodDate;
     private $endingPeriodDate;
     private $environmentStatus;
+    public $period;
 
     public function validate() {
         
     }
 
     public function bindValuesUsingArray(array $valueArray) {
-        if(array_key_exists('perspective', $valueArray)){
+        if (array_key_exists('perspective', $valueArray)) {
             $this->perspective = new Perspective();
             $this->perspective->bindValuesUsingArray($valueArray, $this->perspective);
         }
-        
-        if(array_key_exists('theme', $valueArray)){
+
+        if (array_key_exists('theme', $valueArray)) {
             $this->theme = new Theme();
             $this->theme->bindValuesUsingArray($valueArray, $this->theme);
         }
-        
+
         parent::bindValuesUsingArray($valueArray, $this);
     }
+
     public static function getEnvironmentStatus() {
         return array(
             self::TYPE_ACTIVE => 'Active',
@@ -65,6 +67,18 @@ class Objective extends Model {
 
     public function __get($name) {
         return $this->$name;
+    }
+
+    public function getAttributeNames() {
+        return array(
+            'description' => 'Objective',
+            'perspective' => 'Perspective',
+            'theme' => 'Theme',
+            'period' => 'Periods Covered',
+            'startingPeriodDate' => 'Period Start',
+            'endingPeriodDate' => 'Period End',
+            'environmentStatus' => 'Status'
+        );
     }
 
 }

@@ -579,9 +579,49 @@ class MapController extends Controller {
         $strategyMap = $this->loadStrategyMapModel(null, null, null, $theme);
         $this->mapService->deleteTheme($id);
         $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SMAP, $strategyMap->id, $theme);
-        
+
         $_SESSION['notif'] = array('class' => '', 'message' => 'Theme deleted');
         $this->redirect(array('map/manageThemes', 'map' => $strategyMap->id));
+    }
+
+    public function manageObjectives() {
+        $perspective = filter_input(INPUT_GET, 'perspective');
+        $map = filter_input(INPUT_GET, 'map');
+
+        if (isset($perspective) && !empty($perspective)) {
+            $this->manageObjectivesByPerpective($perspective);
+        } elseif (isset($map) && !empty($map)) {
+            $strategyMap = $this->loadStrategyMapModel($map);
+            $this->manageObjectivesByStrategyMap($strategyMap);
+        } else {
+            throw new ValidationException('Another parameter is needed to process this request');
+        }
+    }
+
+    private function manageObjectivesByStrategyMap($strategyMap) {
+        $this->layout = 'column-1';
+
+
+        $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');
+        $themes = ApplicationUtils::generateListData($this->mapService->listThemes($strategyMap), 'id', 'description');
+        $this->render('objective/map-insert', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
+                'Manage Objectives' => 'active'),
+            'model' => new Objective(),
+            'mapModel' => $strategyMap,
+            'themeModel' => new Theme(),
+            'perspectiveModel' => new Perspective(),
+            'perspectives' => $perspectives,
+            'themes' => $themes
+        ));
+    }
+
+    private function manageObjectivesByPerpective($perspective) {
+        
     }
 
     private function loadStrategyMapModel($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null) {

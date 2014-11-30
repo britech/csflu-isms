@@ -55,7 +55,7 @@ if (isset($params['notif']) && !empty($params['notif'])) {
             <tbody>
                 <?php foreach ($perspectives as $perspective): ?>
                     <tr>
-                        <th title="Click to update the perspective, <?php echo $perspective->description;?>" style="width: 20%; background-color: black; color:white; cursor: pointer;" id="pers-<?php echo $perspective->id; ?>"><?php echo $perspective->description; ?></th>
+                        <th title="Click to update the perspective, <?php echo $perspective->description;?> or add an objective" style="width: 20%; background-color: black; color:white; cursor: pointer;" id="pers-<?php echo $perspective->id; ?>"><?php echo $perspective->description; ?></th>
                         <td>
                             <?php
                             if (empty($strategyMap->objectives) || count($strategyMap->objectives) < 1) {
