@@ -615,8 +615,18 @@ class MapController extends Controller {
             'themeModel' => new Theme(),
             'perspectiveModel' => new Perspective(),
             'perspectives' => $perspectives,
-            'themes' => $themes
+            'themes' => $themes,
+            'validation' => isset($_SESSION['validation']) ? $_SESSION['validation'] : "",
+            'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""
         ));
+        
+        if (isset($_SESSION['validation'])) {
+            unset($_SESSION['validation']);
+        }
+        
+        if (isset($_SESSION['notif'])) {
+            unset($_SESSION['notif']);
+        }
     }
 
     public function manageObjectivesByPerpective($perspective) {
@@ -624,20 +634,43 @@ class MapController extends Controller {
     }
 
     public function insertObjective() {
-        if ((count(filter_input_array(INPUT_POST)) == 0) || (!$this->validatePostData(array('Perspective', 'Theme', 'Objective')))) {
+        if ((count(filter_input_array(INPUT_POST)) == 0) || (!$this->validatePostData(array('Perspective', 'Theme', 'Objective', 'StrategyMap')))) {
             throw new ValidationException("Another parameter is needed to process this request");
         }
 
         $objectiveData = filter_input_array(INPUT_POST)['Objective'];
         $perspectiveData = filter_input_array(INPUT_POST)['Perspective'];
         $themeData = filter_input_array(INPUT_POST)['Theme'];
+        $strategyMapData = filter_input_array(INPUT_POST)['StrategyMap'];
+
+        $strategyMap = $this->loadStrategyMapModel($strategyMapData['id']);
 
         $objective = new Objective();
         $objective->bindValuesUsingArray(array(
             'objective' => $objectiveData,
             'perspective' => $perspectiveData,
             'theme' => $themeData));
-        
+
+        if ($objective->validate()) {
+            try {
+                $this->mapService->addObjective($objective, $strategyMap);
+                $objective->perspective = $this->loadPerspectiveModel($objective->perspective->id);
+                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SMAP, $strategyMap->id, $objective);
+                $_SESSION['notif'] = array('class' => 'success', 'message' => 'Objective added');
+            } catch (ServiceException $ex) {
+                $_SESSION['validation'] = array($ex->getMessage());
+            }
+            
+        } else {
+            $_SESSION['validation'] = $objective->validationMessages;
+        }
+
+        $referer = filter_input(INPUT_SERVER, 'HTTP_REFERER');
+        if (empty($referer)) {
+            $this->redirect(array('site/index'));
+        } else {
+            $this->redirect($referer);
+        }
     }
 
     public function validateObjective() {

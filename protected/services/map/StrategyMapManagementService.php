@@ -112,4 +112,12 @@ interface StrategyMapManagementService {
      * @return Objective[]
      */
     public function listObjectives(StrategyMap $strategyMap = null);
+    
+    /**
+     * Adds an Objective on a selected Strategy map
+     * @param Objective $objective
+     * @param StrategyMap $strategyMap
+     * @throws ServiceException
+     */
+    public function addObjective(Objective $objective, StrategyMap $strategyMap);
 }

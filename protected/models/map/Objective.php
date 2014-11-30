@@ -55,6 +55,9 @@ class Objective extends Model {
         if (empty($this->startingPeriodDate) || empty($this->endingPeriodDate)) {
             array_push($this->validationMessages, '- Periods should be defined');
             $counter++;
+        } else {
+            $this->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->startingPeriodDate, new \DateTimeZone('Asia/Manila'));
+            $this->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->endingPeriodDate, new \DateTimeZone('Asia/Manila'));
         }
 
         return $counter == 0;
@@ -99,6 +102,19 @@ class Objective extends Model {
             'endingPeriodDate' => 'Period End',
             'environmentStatus' => 'Status'
         );
+    }
+    
+    public function getModelTranslationAsNewEntity() {
+        return "[Objective added]\n\n"
+        . "Objective:\t{$this->description}\n"
+        . "Perspective:\t{$this->perspective->description}\n"
+        . "Status:\t{$this->getEnvironmentStatus()[$this->environmentStatus]}\n"
+        . "Starting Period Date:\t{$this->startingPeriodDate->format('F-Y')}\n"
+        . "Ending Period Date:\t{$this->endingPeriodDate->format('F-Y')}";
+    }
+    
+    public function isNew() {
+        return empty($this->id);
     }
 
 }

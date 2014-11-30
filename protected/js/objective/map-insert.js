@@ -55,6 +55,10 @@ $(document).ready(function() {
         $("#obj-end").val(endingDate.getFullYear() + "-" + (endingDate.getMonth() + 1) + "-" + lastDayOfEndingDate);
     });
 
+    $("#periods").jqxDateTimeInput('setRange', $("#map-start").val(), $("#map-end").val());
+    $("#obj-start").val($("#map-start").val());
+    $("#obj-end").val($("#map-end").val());
+
     $("#objectives").jqxDataTable({
         source: new $.jqx.dataAdapter({
             datatype: 'json',
@@ -69,8 +73,8 @@ $(document).ready(function() {
         columnsresize: false,
         theme: 'office',
         columns: [
-           {text: '<span style="text-align:center; display: block; font-weight: bold;">Objective</span>', dataField: 'name', width: '50%'},
-           {text: '<span style="text-align:center; display: block; font-weight: bold;">Actions</span>', dataField: 'actions'} 
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Objective</span>', dataField: 'name', width: '50%'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Actions</span>', dataField: 'actions'}
         ],
         width: '100%',
         pageable: true,
@@ -86,7 +90,7 @@ $(document).ready(function() {
             }
         }
     });
-    
+
     $(".ink-form").submit(function() {
         var result = false;
 
@@ -97,14 +101,14 @@ $(document).ready(function() {
                     'description': $("[name*=description]").val(),
                     'startingPeriodDate': $("#obj-start").val(),
                     'endingPeriodDate': $("#obj-end").val()
-                   },
-                   "Perspective":{
+                },
+                "Perspective": {
                     'id': $("#pers-id").val()
-                   },
-                   "Theme":{
+                },
+                "Theme": {
                     'id': $("#theme-id").val()
-                   },
-                   "mode": 1},
+                },
+                "mode": 1},
             async: false,
             success: function(data) {
                 try {

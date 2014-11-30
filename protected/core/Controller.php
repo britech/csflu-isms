@@ -53,8 +53,12 @@ class Controller {
         echo json_encode($response);
     }
 
-    protected function redirect(array $url) {
-        header("location: " . ApplicationUtils::resolveUrl($url));
+    protected function redirect($url) {
+        if (is_array($url)) {
+            header("location: " . ApplicationUtils::resolveUrl($url));
+        } else {
+            header("location: {$url}");
+        }
         die();
     }
 
@@ -99,24 +103,24 @@ class Controller {
                 break;
         }
     }
-    
-    protected function remoteValidateModel(Model $model){
-        if(!$model->validate()){
+
+    protected function remoteValidateModel(Model $model) {
+        if (!$model->validate()) {
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $model->validationMessages));
         } else {
-            $this->renderAjaxJsonResponse(array('respCode'=>'00'));
+            $this->renderAjaxJsonResponse(array('respCode' => '00'));
         }
     }
-    
-    protected function validatePostData(array $keyNames){
+
+    protected function validatePostData(array $keyNames) {
         $counter = 0;
         $data = filter_input_array(INPUT_POST);
-        foreach($keyNames as $key){
-            if(!array_key_exists($key, $data)){
+        foreach ($keyNames as $key) {
+            if (!array_key_exists($key, $data)) {
                 $counter++;
             }
         }
-        
+
         return $counter == 0;
     }
 

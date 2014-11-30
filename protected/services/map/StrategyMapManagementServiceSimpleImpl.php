@@ -162,4 +162,16 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         }
     }
 
+    public function addObjective(Objective $objective, StrategyMap $strategyMap) {
+        $objectives = $this->listObjectives($strategyMap);
+        
+        foreach($objectives as $data){
+            if($objective->description == $data->description && $objective->perspective->id == $data->perspective->id){
+                throw new ServiceException("Objective already defined");
+            }
+        }
+        
+        $this->objectiveDaoSource->addObjective($objective, $strategyMap);
+    }
+
 }

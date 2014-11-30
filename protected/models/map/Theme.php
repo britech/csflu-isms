@@ -13,7 +13,7 @@ use org\csflu\isms\core\Model;
  */
 class Theme extends Model {
 
-    private $id;
+    private $id = null;
     private $description;
 
     public function validate() {
