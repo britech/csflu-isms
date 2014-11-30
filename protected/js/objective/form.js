@@ -56,8 +56,10 @@ $(document).ready(function() {
     });
 
     $("#periods").jqxDateTimeInput('setRange', $("#map-start").val(), $("#map-end").val());
-    $("#obj-start").val($("#map-start").val());
-    $("#obj-end").val($("#map-end").val());
+    if (!($("#obj-start").val() !== '' && $("#obj-start").val() !== '')) {
+        $("#obj-start").val($("#map-start").val());
+        $("#obj-end").val($("#map-end").val());
+    }
 
     $("#objectives").jqxDataTable({
         source: new $.jqx.dataAdapter({

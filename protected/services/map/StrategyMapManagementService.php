@@ -114,6 +114,13 @@ interface StrategyMapManagementService {
     public function listObjectives(StrategyMap $strategyMap = null);
     
     /**
+     * Retrieves the objective's information
+     * @param String $id
+     * @return Objective
+     */
+    public function getObjective($id);
+    
+    /**
      * Adds an Objective on a selected Strategy map
      * @param Objective $objective
      * @param StrategyMap $strategyMap

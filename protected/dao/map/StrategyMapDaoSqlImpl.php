@@ -7,6 +7,7 @@ use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\map\StrategyMap;
+use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\map\Perspective;
 use org\csflu\isms\models\map\Theme;
 
@@ -146,6 +147,20 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
         try {
             $dbst = $this->db->prepare('SELECT map_ref FROM smap_themes WHERE theme_id=:id');
             $dbst->execute(array('id' => $theme->id));
+
+            while ($data = $dbst->fetch()) {
+                list($map) = $data;
+            }
+            return $this->getStrategyMap($map);
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getStrategyMapByObjective(Objective $objective) {
+        try {
+            $dbst = $this->db->prepare('SELECT map_ref FROM smap_objectives WHERE obj_id=:id');
+            $dbst->execute(array('id' => $objective->id));
 
             while ($data = $dbst->fetch()) {
                 list($map) = $data;

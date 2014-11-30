@@ -99,4 +99,38 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
         }
     }
 
+    public function getObjective($id) {
+        try {
+            $dbst = $this->db->prepare('SELECT obj_id, obj_desc, shift_desc, agenda_desc, pers_ref, pers_desc, theme_ref, theme_desc, period_date_start, period_date_end, obj_stat '
+                    . 'FROM smap_objectives '
+                    . 'JOIN smap_perspectives ON pers_ref=pers_id '
+                    . 'LEFT JOIN smap_themes ON theme_ref=theme_id '
+                    . 'WHERE obj_id=:id');
+            $dbst->execute(array('id' => $id));
+
+            $objective = new Objective();
+            $objective->perspective = new Perspective();
+            $objective->theme = new Theme();
+            while ($data = $dbst->fetch()) {
+                list($objective->id,
+                        $objective->description,
+                        $objective->strategicShiftStatement,
+                        $objective->agendaStatement,
+                        $objective->perspective->id,
+                        $objective->perspective->description,
+                        $objective->theme->id,
+                        $objective->theme->description,
+                        $startDate,
+                        $endDate,
+                        $objective->environmentStatus) = $data;
+            }
+            $objective->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $startDate);
+            $objective->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $endDate);
+            
+            return $objective;
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

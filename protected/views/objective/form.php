@@ -13,12 +13,12 @@ $perspectives = $params['perspectives'];
 $themes = $params['themes'];
 
 $form = new Form(array(
-    'action' => array('map/insertObjective'),
+    'action' => array($model->isNew() ? 'map/insertObjective' : 'map/updateObjective'),
     'class' => 'ink-form',
     'hasFieldset' => true
         ));
 ?>
-<script type="text/javascript" src="protected/js/objective/insert.js"></script>
+<script type="text/javascript" src="protected/js/objective/form.js"></script>
 <div class="column-group half-gutters">
     <div class="all-60">        
         <?php
@@ -30,7 +30,7 @@ $form = new Form(array(
         }
 
         echo $form->startComponent();
-        echo $form->constructHeader('Add Objective')
+        echo $form->constructHeader($model->isNew() ? 'Add Objective' : 'Update Objective')
         ?>
         <div class="ink-alert basic info">
             <strong>Important Note:</strong>&nbsp;Fields with * are required.
@@ -64,9 +64,16 @@ $form = new Form(array(
             <?php echo $form->renderLabel($model, 'period', array('class' => 'all-20 align-right', 'required' => true)); ?>
             <div class="control all-80">
                 <div id="periods"></div>
-                <?php echo $form->renderSubmitButton('Create', array('class'=>'ink-button green flat', 'style'=>'margin-top: 1em; margin-left: 0px;'));?>
+                <?php 
+                if($model->isNew()){
+                    echo $form->renderSubmitButton('Create', array('class'=>'ink-button green flat', 'style'=>'margin-top: 1em; margin-left: 0px;'));
+                } else {
+                    echo $form->renderSubmitButton('Update', array('class'=>'ink-button blue flat', 'style'=>'margin-top: 1em; margin-left: 0px;'));
+                }
+                ?>
             </div>
         </div>
+        <?php echo $form->renderHiddenField($model, 'id');?>
         <?php echo $form->renderHiddenField($model, 'startingPeriodDate', array('id' => 'obj-start')); ?>
         <?php echo $form->renderHiddenField($model, 'endingPeriodDate', array('id' => 'obj-end')); ?>
         <?php echo $form->renderHiddenField($mapModel, 'startingPeriodDate', array('id' => 'map-start')); ?>

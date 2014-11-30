@@ -25,6 +25,13 @@ interface ObjectiveDao {
     public function listObjectivesByStrategyMap(StrategyMap $strategyMap);
     
     /**
+     * @param String $id
+     * @return Objective
+     * @throws DataAccessException
+     */
+    public function getObjective($id);
+    
+    /**
      * @param Objective $objective
      * @param StrategyMap $strategyMap
      * @throws DataAccessException

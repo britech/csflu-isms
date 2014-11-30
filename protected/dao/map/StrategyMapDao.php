@@ -4,6 +4,7 @@ namespace org\csflu\isms\dao\map;
 
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\map\StrategyMap;
+use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\map\Perspective;
 use org\csflu\isms\models\map\Theme;
 /**
@@ -38,6 +39,13 @@ interface StrategyMapDao {
      * @throws DataAccessException
      */
     public function getStrategyMapByTheme(Theme $theme);
+    
+    /**
+     * @param Objective $objective
+     * @return StrategyMap
+     * @throws DataAccessException
+     */
+    public function getStrategyMapByObjective(Objective $objective);
     
     /**
      * @param StrategyMap $strategyMap

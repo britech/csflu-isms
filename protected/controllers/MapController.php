@@ -24,11 +24,13 @@ use org\csflu\isms\models\uam\ModuleAction;
 class MapController extends Controller {
 
     private $mapService;
+    private $logger;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->layout = 'column-2';
         $this->mapService = new StrategyMapService();
+        $this->logger = \Logger::getLogger(__CLASS__);
     }
 
     public function index() {
@@ -608,7 +610,7 @@ class MapController extends Controller {
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Objectives';
         $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');
         $themes = ApplicationUtils::generateListData($this->mapService->listThemes($strategyMap), 'id', 'description');
-        $this->render('objective/insert', array(
+        $this->render('objective/form', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
@@ -644,7 +646,7 @@ class MapController extends Controller {
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Objectives';
         $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');
         $themes = ApplicationUtils::generateListData($this->mapService->listThemes($strategyMap), 'id', 'description');
-        $this->render('objective/insert', array(
+        $this->render('objective/form', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
@@ -707,6 +709,42 @@ class MapController extends Controller {
         } else {
             $this->redirect($referer);
         }
+    }
+
+    public function updateObjective() {
+        $id = filter_input(INPUT_GET, 'id');
+
+        if (!isset($id) || empty($id)) {
+            throw new ValidationException("Another parameter is needed to process this request");
+        }
+
+        $objective = $this->loadObjectiveModel($id);
+        $strategyMap = $this->loadStrategyMapModel(NULL, NULL, $objective);
+
+        $objective->startingPeriodDate = $objective->startingPeriodDate->format('Y-m-d');
+        $objective->endingPeriodDate = $objective->endingPeriodDate->format('Y-m-d');
+        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
+
+        $this->layout = 'column-1';
+        $this->title = ApplicationConstants::APP_NAME . ' - Update Objective';
+        $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');
+        $themes = ApplicationUtils::generateListData($this->mapService->listThemes($strategyMap), 'id', 'description');
+        $this->render('objective/form', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
+                'Manage Objectives' => array('map/manageObjectives', 'map'=>$strategyMap->id),
+                'Update Objective'=>'active'),
+            'model' => $objective,
+            'mapModel' => $strategyMap,
+            'themeModel' => $objective->theme,
+            'perspectiveModel' => $objective->perspective,
+            'perspectives' => $perspectives,
+            'themes' => $themes
+        ));
     }
 
     public function validateObjective() {
@@ -788,6 +826,17 @@ class MapController extends Controller {
             $this->redirect(array('map/index'));
         } else {
             return $theme;
+        }
+    }
+
+    private function loadObjectiveModel($id) {
+        $objective = $this->mapService->getObjective($id);
+
+        if (is_null($objective->id)) {
+            $_SESSION['notif'] = array('class' => '', 'message' => 'Objective not found');
+            $this->redirect(array('map/index'));
+        } else {
+            return $objective;
         }
     }
 

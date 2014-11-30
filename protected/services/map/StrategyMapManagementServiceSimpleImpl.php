@@ -51,6 +51,10 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         if (!is_null($perspective) && !empty($perspective)) {
             return $this->mapDaoSource->getStrategyMapByPerspective($perspective);
         }
+        
+        if(!is_null($objective) && !empty($objective)){
+            return $this->mapDaoSource->getStrategyMapByObjective($objective);
+        }
 
         if (!is_null($theme) && !empty($theme)) {
             return $this->mapDaoSource->getStrategyMapByTheme($theme);
@@ -174,6 +178,10 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         }
 
         $this->objectiveDaoSource->addObjective($objective, $strategyMap);
+    }
+
+    public function getObjective($id) {
+        return $this->objectiveDaoSource->getObjective($id);
     }
 
 }
