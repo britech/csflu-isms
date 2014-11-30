@@ -6,6 +6,7 @@ use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
 use org\csflu\isms\service\commons\RevisionHistoryLoggingServiceImpl as RevisionHistoryLoggingService;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\Employee;
+use org\csflu\isms\core\Model;
 
 /**
  * 
@@ -99,12 +100,24 @@ class Controller {
         }
     }
     
-    protected function remoteValidateModel($model){
+    protected function remoteValidateModel(Model $model){
         if(!$model->validate()){
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $model->validationMessages));
         } else {
             $this->renderAjaxJsonResponse(array('respCode'=>'00'));
         }
+    }
+    
+    protected function validatePostData(array $keyNames){
+        $counter = 0;
+        $data = filter_input_array(INPUT_POST);
+        foreach($keyNames as $key){
+            if(!array_key_exists($key, $data)){
+                $counter++;
+            }
+        }
+        
+        return $counter == 0;
     }
 
 }

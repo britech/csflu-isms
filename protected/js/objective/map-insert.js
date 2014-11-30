@@ -61,15 +61,16 @@ $(document).ready(function() {
             datafields: [
                 {name: 'name'},
                 {name: 'perspective'},
-                {name: 'theme'}
+                {name: 'theme'},
+                {name: 'actions'}
             ],
             url: '?r=map/renderStrategyMapTable'
         }),
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Objective</span>', dataField: 'name'}
-            
+           {text: '<span style="text-align:center; display: block; font-weight: bold;">Objective</span>', dataField: 'name', width: '50%'},
+           {text: '<span style="text-align:center; display: block; font-weight: bold;">Actions</span>', dataField: 'actions'} 
         ],
         width: '100%',
         pageable: true,
@@ -84,6 +85,38 @@ $(document).ready(function() {
                 return "<strong style=\"margin-left: 20px;\">" + value + "</strong>";
             }
         }
+    });
+    
+    $(".ink-form").submit(function() {
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=map/validateObjective",
+            data: {"Objective": {
+                    'description': $("[name*=description]").val(),
+                    'startingPeriodDate': $("#obj-start").val(),
+                    'endingPeriodDate': $("#obj-end").val()
+                   },
+                   "Perspective":{
+                    'id': $("#pers-id").val()
+                   },
+                   "Theme":{
+                    'id': $("#theme-id").val()
+                   },
+                   "mode": 1},
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result;
     });
 });
 

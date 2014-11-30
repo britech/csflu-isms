@@ -600,8 +600,7 @@ class MapController extends Controller {
 
     private function manageObjectivesByStrategyMap($strategyMap) {
         $this->layout = 'column-1';
-
-
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Objectives';
         $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');
         $themes = ApplicationUtils::generateListData($this->mapService->listThemes($strategyMap), 'id', 'description');
         $this->render('objective/map-insert', array(
@@ -623,27 +622,69 @@ class MapController extends Controller {
     public function manageObjectivesByPerpective($perspective) {
         
     }
-    
-    public function renderObjectivesTable(){
-        $map = filter_input(INPUT_GET, 'map');
-        
-        if(!isset($map) || empty($map)){
+
+    public function insertObjective() {
+        if ((count(filter_input_array(INPUT_POST)) == 0) || (!$this->validatePostData(array('Perspective', 'Theme', 'Objective')))) {
             throw new ValidationException("Another parameter is needed to process this request");
         }
+
+        $objectiveData = filter_input_array(INPUT_POST)['Objective'];
+        $perspectiveData = filter_input_array(INPUT_POST)['Perspective'];
+        $themeData = filter_input_array(INPUT_POST)['Theme'];
+
+        $objective = new Objective();
+        $objective->bindValuesUsingArray(array(
+            'objective' => $objectiveData,
+            'perspective' => $perspectiveData,
+            'theme' => $themeData));
         
+    }
+
+    public function validateObjective() {
+        if (count(filter_input_array(INPUT_POST)) == 0) {
+            $this->renderAjaxJsonResponse(array('respCode' => '50'));
+            return;
+        } elseif (!$this->validatePostData(array('Perspective', 'Theme', 'Objective', 'mode'))) {
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+            return;
+        }
+
+        $objectiveData = filter_input_array(INPUT_POST)['Objective'];
+        $perspectiveData = filter_input_array(INPUT_POST)['Perspective'];
+        $themeData = filter_input_array(INPUT_POST)['Theme'];
+        $mode = filter_input_array(INPUT_POST)['mode'];
+
+        $objective = new Objective();
+        $objective->bindValuesUsingArray(array(
+            'objective' => $objectiveData,
+            'perspective' => $perspectiveData,
+            'theme' => $themeData));
+        $objective->validationMode = $mode;
+
+        $this->remoteValidateModel($objective);
+    }
+
+    public function renderObjectivesTable() {
+        $map = filter_input(INPUT_GET, 'map');
+
+        if (!isset($map) || empty($map)) {
+            throw new ValidationException("Another parameter is needed to process this request");
+        }
+
         $strategyMap = $this->mapService->getStrategyMap($map);
-        
-        if(is_null($strategyMap->id)){
+
+        if (is_null($strategyMap->id)) {
             throw new ValidationException("Strategy Map not found.");
         }
-        
+
         $objectives = $this->mapService->listObjectives($strategyMap);
         $data = array();
-        foreach($objectives as $objective){
-            array_push($data, array('id'=>$objective->id,
-                'description'=>$objective->description,
-                'perspective'=>$objective->perspective->description,
-                'theme'=>$objective->theme->description));
+        foreach ($objectives as $objective) {
+            array_push($data, array('id' => $objective->id,
+                'description' => $objective->description,
+                'perspective' => $objective->perspective->description,
+                'theme' => $objective->theme->description,
+                'actions' => ApplicationUtils::generateLink(array('map/updateObjective', 'id' => $objective->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink(array('map/deleteObjective', 'id' => $objective->id), 'Delete')));
         }
         $this->renderAjaxJsonResponse($data);
     }

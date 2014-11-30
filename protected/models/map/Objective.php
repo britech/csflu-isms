@@ -33,11 +33,31 @@ class Objective extends Model {
     private $theme;
     private $startingPeriodDate;
     private $endingPeriodDate;
-    private $environmentStatus;
+    private $environmentStatus = self::TYPE_ACTIVE;
     public $period;
 
     public function validate() {
-        
+        $counter = 0;
+
+        if (empty($this->description)) {
+            array_push($this->validationMessages, '- Description should be defined');
+            $counter++;
+        }
+
+        if (empty($this->perspective->id)) {
+            $id = $this->perspective->id;
+            if (empty($id)) {
+                array_push($this->validationMessages, '- Perspective should be defined');
+                $counter++;
+            }
+        }
+
+        if (empty($this->startingPeriodDate) || empty($this->endingPeriodDate)) {
+            array_push($this->validationMessages, '- Periods should be defined');
+            $counter++;
+        }
+
+        return $counter == 0;
     }
 
     public function bindValuesUsingArray(array $valueArray) {
