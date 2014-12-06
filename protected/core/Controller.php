@@ -2,7 +2,8 @@
 
 namespace org\csflu\isms\core;
 
-use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
+use org\csflu\isms\exceptions\ValidationException;
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\service\commons\RevisionHistoryLoggingServiceImpl as RevisionHistoryLoggingService;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\Employee;
@@ -31,13 +32,13 @@ class Controller {
         $fileLocation = $this->generateFileName($view);
 
         extract($params);
-        
+
         if (file_exists($fileLocation)) {
             $body = $fileLocation;
         } else {
             throw new \Exception("Resource does not exist ({$view}.php)");
         }
-        
+
         require_once "protected/views/layouts/{$this->layout}.php";
     }
 
@@ -117,24 +118,34 @@ class Controller {
     protected function validatePostData(array $keyNames) {
         $counter = 0;
         $data = filter_input_array(INPUT_POST);
+        if (is_null($data) || empty($data)) {
+            throw new ValidationException("Parameter/s are needed to process this request");
+        }
+
         foreach ($keyNames as $key) {
             if (!array_key_exists($key, $data)) {
                 $counter++;
             }
         }
 
-        return $counter == 0;
+        if ($counter > 0) {
+            throw new ValidationException("Parameter/s are needed to process this request");
+        }
+    }
+    
+    protected function getFormData($indexName){
+        return filter_input_array(INPUT_POST)[$indexName];
     }
 
-    protected function getSessionData($key){
+    protected function getSessionData($key) {
         return (isset($_SESSION[$key]) && !empty($_SESSION[$key])) ? $_SESSION[$key] : "";
     }
-    
-    protected function setSessionData($key, $value){
+
+    protected function setSessionData($key, $value) {
         $_SESSION[$key] = $value;
     }
-    
-    protected function unsetSessionData($key){
+
+    protected function unsetSessionData($key) {
         unset($_SESSION[$key]);
     }
 }

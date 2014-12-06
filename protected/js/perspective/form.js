@@ -19,7 +19,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "?r=map/validatePerspective",
+            url: "?r=perspective/validate",
             data: {"Perspective": {
                     'description': $("#description-input").val(),
                     'positionOrder': $("#positionOrder").val()},
@@ -48,14 +48,16 @@ $(document).ready(function() {
             datafields: [
                 {name: 'description'}
             ],
-            url: '?r=map/listEnlistedPerspectives'
+            url: '?r=perspective/listPerspectives',
+            type: 'POST'
         }),
-        valueMember: 'description',
+        displayMember: 'description',
         width: '100%',
         searchMode: 'containsignorecase',
         autoComplete: true,
         theme: 'office',
-        height: '35px'
+        height: '35px',
+        animationType: 'none'
     }).on("select", function(event) {
         if (event.args) {
             $("#description").val(event.args.item.value);

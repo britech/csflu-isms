@@ -5,7 +5,7 @@ $(document).ready(function(){
             datafields: [
                 {name: 'description'}
             ],
-            url: '?r=map/listEnlistedPerspectives'
+            url: '?r=perspective/listPerspectives'
         }),
         displayMember: 'description',
         width: '100%',

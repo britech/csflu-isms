@@ -8,7 +8,7 @@ use org\csflu\isms\util\ApplicationUtils;
 $perspectives = $params['perspectiveList'];
 
 $form = new Form(array(
-    'action' => array('map/insertPerspective'),
+    'action' => array('perspective/insert'),
     'class' => 'ink-form'
         ));
 ?>
@@ -70,9 +70,9 @@ if (isset($params['validation']) && !empty($params['validation'])) {
                             </td>
                             <td><?php echo $perspective->description; ?></td>
                             <td style="text-align:center;">
-                                <?php echo ApplicationUtils::generateLink(array('map/updatePerspective', 'id' => $perspective->id), '<i class="fa fa-edit">&nbsp;</i>') ?>
+                                <?php echo ApplicationUtils::generateLink(array('perspective/update', 'id' => $perspective->id), '<i class="fa fa-edit">&nbsp;</i>') ?>
                                 &nbsp;|&nbsp;
-                                <?php echo ApplicationUtils::generateLink(array('map/confirmDeletePerspective', 'id' => $perspective->id), '<i class="fa fa-trash-o">&nbsp;</i>') ?>
+                                <?php echo ApplicationUtils::generateLink(array('perspective/confirmDelete', 'id' => $perspective->id), '<i class="fa fa-trash-o">&nbsp;</i>') ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

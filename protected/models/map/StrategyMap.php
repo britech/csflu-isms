@@ -130,13 +130,6 @@ class StrategyMap extends Model {
         return $counter;
     }
 
-    public function bindValuesUsingArray(array $valueArray) {
-        if (array_key_exists('objective', $valueArray)) {
-            //do nothing
-        }
-        parent::bindValuesUsingArray($valueArray, $this);
-    }
-
     public static function getStrategyTypes() {
         return array(
             self::TYPE_LONG => 'Long Term',

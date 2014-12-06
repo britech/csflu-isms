@@ -2,10 +2,7 @@
 
 namespace org\csflu\isms\views;
 
-$strategyMap = $params['strategyMap'];
-$perspectives = $params['perspectives'];
-$themes = $params['themes'];
-if (isset($params['notif']) && !empty($params['notif'])) {
+if (isset($notif) && !empty($notif)) {
     $this->renderPartial('commons/_notification', array('notif' => $params['notif']));
 }
 ?>

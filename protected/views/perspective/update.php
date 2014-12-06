@@ -8,7 +8,7 @@ use org\csflu\isms\util\FormGenerator as Form;
 $perspective = $params['perspective'];
 
 $form = new Form(array(
-    'action' => array('map/updatePerspective'),
+    'action' => array('perspective/update'),
     'class' => 'ink-form',
     'hasFieldset' => true
         ));

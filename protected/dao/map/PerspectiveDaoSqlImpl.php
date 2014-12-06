@@ -100,8 +100,13 @@ class PerspectiveDaoSqlImpl implements PerspectiveDao {
     public function deletePerspective($id) {
         try {
             $this->db->beginTransaction();
-            $dbst = $this->db->prepare('DELETE FROM smap_perspectives WHERE pers_id=:id');
-            $dbst->execute(array('id' => $id));
+            
+            $dbst1 = $this->db->prepare('DELETE FROM smap_objectives WHERE pers_ref=:ref');
+            $dbst1->execute(array('ref'=>$id));
+            
+            $dbst2 = $this->db->prepare('DELETE FROM smap_perspectives WHERE pers_id=:id');
+            $dbst2->execute(array('id' => $id));
+            
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
