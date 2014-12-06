@@ -5,7 +5,8 @@ $(document).ready(function() {
             datafields: [
                 {name: 'description'}
             ],
-            url: '?r=map/listEnlistedThemes'
+            url: '?r=theme/listThemes',
+            type: 'POST'
         }),
         displayMember: 'description',
         width: '100%',
@@ -24,9 +25,35 @@ $(document).ready(function() {
 
     $("#description-input").change(function() {
         $("#description").val($(this).val());
-    }).blur(function(){
+    }).blur(function() {
         $("#description").val($(this).val());
     });
+
+    $('#deleteTheme').jqxWindow({
+        title: '<strong>Confirm Theme Deletion</strong>',
+        width: 300,
+        height: 140,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+        
+    });
+    $("[id^=del-]").click(function() {
+        var text = $(this).parent().siblings("td").html();
+        $("#text").html("Do you want to delete the theme, <strong>" + text + "</strong>? Continuing will remove this theme from the Strategy Map.")
+        $("#deleteTheme").jqxWindow('open');
+        $("#accept").prop('id', "accept-"+$(this).attr('id').split('-')[1]);
+    });
+    
+    $("[id^=accept]").click(function(){
+        var id = $(this).attr('id').split('-')[1];
+        window.location = "?r=theme/delete&id="+id;
+    });
 });
+
 
 

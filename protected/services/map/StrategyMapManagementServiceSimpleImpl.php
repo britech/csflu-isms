@@ -148,7 +148,7 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         if ($match) {
             throw new ServiceException('Theme already defined. Please try again.');
         } else {
-            if (!is_null($strategyMap) || !empty($strategyMap)) {
+            if (!is_null($strategyMap)) {
                 $this->perspectiveDaoSource->insertTheme($theme, $strategyMap);
             } else {
                 $this->perspectiveDaoSource->updateTheme($theme);

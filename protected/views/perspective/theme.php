@@ -5,12 +5,8 @@ namespace org\csflu\isms\views;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\util\ModelFormGenerator as Form;
 
-$themes = $params['themes'];
-$model = $params['model'];
-$mapModel = $params['mapModel'];
-
 $form = new Form(array(
-    'action' => array($model->isNew() ? 'map/insertTheme' : 'map/updateTheme'),
+    'action' => array($model->isNew() ? 'theme/insert' : 'theme/update'),
     'class' => 'ink-form',
     'hasFieldset' => true
         ));
@@ -60,9 +56,9 @@ if (isset($params['validation']) && !empty($params['validation'])) {
                         <tr>
                             <td><?php echo $theme->description; ?></td>
                             <td style="text-align: center;">
-                                <?php echo ApplicationUtils::generateLink(array('map/updateTheme', 'id' => $theme->id), '<i class="fa fa-save">&nbsp;</i>') ?>
+                                <?php echo ApplicationUtils::generateLink(array('theme/update', 'id' => $theme->id), '<i class="fa fa-save">&nbsp;</i>') ?>
                                 &nbsp;|&nbsp;
-                                <?php echo ApplicationUtils::generateLink(array('map/confirmDeleteTheme', 'id' => $theme->id), '<i class="fa fa-trash-o">&nbsp;</i>') ?>
+                                <?php echo ApplicationUtils::generateLink('#', '<i class="fa fa-trash-o">&nbsp;</i>', array('id' => 'del-' . $theme->id)) ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -76,4 +72,13 @@ if (isset($params['validation']) && !empty($params['validation'])) {
     </div>
 </div>
 
+<div id="deleteTheme">
+    <div id="deleteThemeContent" style="overflow: hidden">
+        <p id="text"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept">Yes</button>
+            <button class="ink-button green flat" id="deny">No</button>
+        </div>
+    </div>
+</div>
 

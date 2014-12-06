@@ -33,7 +33,7 @@ abstract class Model {
             if(!property_exists($model, $property)){
                 throw new ModelException('Data binding failure');
             }
-            $model->$property = $value;
+            $model->$property = htmlentities($value, ENT_COMPAT, 'UTF-8');
         }
     }
 

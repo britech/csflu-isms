@@ -187,7 +187,7 @@ class PerspectiveController extends Controller {
         }
     }
 
-    private function loadMapModel($id = null, $perspective = null) {
+    private function loadMapModel($id = null, Perspective $perspective = null) {
         $strategyMap = $this->mapService->getStrategyMap($id, $perspective);
 
         if (is_null($strategyMap->id)) {
