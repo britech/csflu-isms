@@ -30,12 +30,14 @@ class Controller {
     protected function render($view, $params = []) {
         $fileLocation = $this->generateFileName($view);
 
+        extract($params);
+        
         if (file_exists($fileLocation)) {
             $body = $fileLocation;
         } else {
             throw new \Exception("Resource does not exist ({$view}.php)");
         }
-
+        
         require_once "protected/views/layouts/{$this->layout}.php";
     }
 
@@ -125,7 +127,7 @@ class Controller {
     }
 
     protected function getSessionData($key){
-        return $_SESSION[$key];
+        return (isset($_SESSION[$key]) && !empty($_SESSION[$key])) ? $_SESSION[$key] : "";
     }
     
     protected function setSessionData($key, $value){

@@ -127,4 +127,17 @@ interface StrategyMapManagementService {
      * @throws ServiceException
      */
     public function addObjective(Objective $objective, StrategyMap $strategyMap);
+    
+    /**
+     * Updates an Objective
+     * @param Objective $objective
+     * @throws ServiceException
+     */
+    public function updateObjective(Objective $objective);
+    
+    /**
+     * Deletes an Objective
+     * @param String $id
+     */
+    public function deleteObjective($id);
 }

@@ -13,6 +13,12 @@ use org\csflu\isms\models\uam\Employee;
  */
 class RevisionHistoryLoggingDaoSqlImpl implements RevisionHistoryLoggingDao {
 
+    private $logger;
+    
+    public function __construct() {
+        $this->logger = \Logger::getLogger(__CLASS__);
+    }
+    
     public function getRevisionHistoryList($moduleId) {
         try {
             $db = ConnectionManager::getConnectionInstance();
@@ -58,6 +64,10 @@ class RevisionHistoryLoggingDaoSqlImpl implements RevisionHistoryLoggingDao {
                 'type'=>$revisionHistory->revisionType));
             
             $db->commit();
+            
+            $this->logger->debug("EXECUTING SQL statement: {$dbst->queryString}");
+            $this->logger->debug($revisionHistory);
+                
         } catch (\PDOException $ex) {
             $db->rollBack();
             throw new DataAccessException($ex->getMessage());

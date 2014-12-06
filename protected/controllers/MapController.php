@@ -713,38 +713,117 @@ class MapController extends Controller {
 
     public function updateObjective() {
         $id = filter_input(INPUT_GET, 'id');
+        if ((count(filter_input_array(INPUT_POST)) > 0) && ($this->validatePostData(array('Perspective', 'Theme', 'Objective', 'StrategyMap')))) {
+            $this->processObjectiveUpdate(filter_input_array(INPUT_POST));
+        } elseif (isset($id) && !empty($id)) {
+            $objective = $this->loadObjectiveModel($id);
+            $strategyMap = $this->loadStrategyMapModel(NULL, NULL, $objective);
 
-        if (!isset($id) || empty($id)) {
+            $objective->startingPeriodDate = $objective->startingPeriodDate->format('Y-m-d');
+            $objective->endingPeriodDate = $objective->endingPeriodDate->format('Y-m-d');
+            $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+            $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
+
+            $this->layout = 'column-1';
+            $this->title = ApplicationConstants::APP_NAME . ' - Update Objective';
+            $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');
+            $themes = ApplicationUtils::generateListData($this->mapService->listThemes($strategyMap), 'id', 'description');
+            $this->render('objective/form', array(
+                'breadcrumb' => array(
+                    'Home' => array('site/index'),
+                    'Strategy Map Directory' => array('map/index'),
+                    'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                    'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
+                    'Manage Objectives' => array('map/manageObjectives', 'map' => $strategyMap->id),
+                    'Update Objective' => 'active'),
+                'model' => $objective,
+                'mapModel' => $strategyMap,
+                'themeModel' => $objective->theme,
+                'perspectiveModel' => $objective->perspective,
+                'perspectives' => $perspectives,
+                'themes' => $themes,
+                'notif' => $this->getSessionData('notif'),
+                'validation' => $this->getSessionData('validation')
+            ));
+            $this->unsetSessionData('notif');
+            $this->unsetSessionData('validation');
+        } else {
+            throw new ValidationException("Another parameter is needed to process this request");
+        }
+    }
+
+    private function processObjectiveUpdate(array $data) {
+        $themeId = $data['Theme']['id'];
+        $perspectiveId = $data['Perspective']['id'];
+
+        $perspective = $this->loadPerspectiveModel($perspectiveId);
+        if (isset($themeId) && !empty($themeId)) {
+            $theme = $this->loadThemeModel($themeId);
+        }
+
+        $objective = new Objective();
+        $objective->bindValuesUsingArray(array('objective' => $data['Objective']));
+        $objective->perspective = $perspective;
+        $objective->theme = !isset($theme) ? null : $theme;
+
+        $strategyMap = $this->loadStrategyMapModel(null, null, $objective);
+
+        $oldObjective = clone $this->loadObjectiveModel($objective->id);
+
+        if ($objective->validate()) {
+            if ($objective->computePropertyChanges($oldObjective) > 0) {
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Objective Updated'));
+                $this->mapService->updateObjective($objective);
+                $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_SMAP, $strategyMap->id, $objective, $oldObjective);
+            }
+        } else {
+            $this->setSessionData('validation', $objective->validationMessages);
+        }
+        $this->redirect(array('map/updateObjective', 'id' => $objective->id));
+    }
+
+    public function confirmDeleteObjective($id) {
+        if (empty($id)) {
             throw new ValidationException("Another parameter is needed to process this request");
         }
 
         $objective = $this->loadObjectiveModel($id);
-        $strategyMap = $this->loadStrategyMapModel(NULL, NULL, $objective);
-
-        $objective->startingPeriodDate = $objective->startingPeriodDate->format('Y-m-d');
-        $objective->endingPeriodDate = $objective->endingPeriodDate->format('Y-m-d');
-        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
-        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
+        $strategyMap = $this->loadStrategyMapModel(null, null, $objective);
 
         $this->layout = 'column-1';
-        $this->title = ApplicationConstants::APP_NAME . ' - Update Objective';
-        $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');
-        $themes = ApplicationUtils::generateListData($this->mapService->listThemes($strategyMap), 'id', 'description');
-        $this->render('objective/form', array(
+        $this->render('commons/confirm', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
-                'Manage Objectives' => array('map/manageObjectives', 'map'=>$strategyMap->id),
-                'Update Objective'=>'active'),
-            'model' => $objective,
-            'mapModel' => $strategyMap,
-            'themeModel' => $objective->theme,
-            'perspectiveModel' => $objective->perspective,
-            'perspectives' => $perspectives,
-            'themes' => $themes
+                'Manage Objectives' => array('map/manageObjectives', 'map' => $strategyMap->id),
+                'Confirm Delete Objective' => 'active'),
+            'confirm' => array('class' => 'error',
+                'header' => 'Confirm Objective deletion',
+                'text' => "Do you want to delete this objective? Continuing will remove the objective, <strong>{$objective->description}</strong>, in the Strategy Map",
+                'accept.class' => 'red',
+                'accept.text' => 'Yes',
+                'accept.url' => array('map/deleteObjective', 'id' => $id),
+                'deny.class' => 'green',
+                'deny.text' => 'No',
+                'deny.url' => array('map/manageObjectives', 'map' => $strategyMap->id))
         ));
+    }
+
+    public function deleteObjective($id) {
+        if (empty($id)) {
+            throw new ValidationException("Another parameter is needed to process this request");
+        }
+
+        $objective = clone $this->loadObjectiveModel($id);
+        $strategyMap = $this->loadStrategyMapModel(null, null, $objective);
+
+        $this->mapService->deleteObjective($id);
+        $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SMAP, $strategyMap->id, $objective);
+
+        $this->setSessionData('notif', array('class' => '', 'message' => 'Objective deleted'));
+        $this->redirect(array('map/manageObjectives', 'map' => $strategyMap->id));
     }
 
     public function validateObjective() {
@@ -791,7 +870,7 @@ class MapController extends Controller {
                 'description' => $objective->description,
                 'perspective' => $objective->perspective->positionOrder . ' - ' . $objective->perspective->description,
                 'theme' => $objective->theme->description,
-                'actions' => ApplicationUtils::generateLink(array('map/updateObjective', 'id' => $objective->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink(array('map/deleteObjective', 'id' => $objective->id), 'Delete')));
+                'actions' => ApplicationUtils::generateLink(array('map/updateObjective', 'id' => $objective->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink(array('map/confirmDeleteObjective', 'id' => $objective->id), 'Delete')));
         }
         $this->renderAjaxJsonResponse($data);
     }

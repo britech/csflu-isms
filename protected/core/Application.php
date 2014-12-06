@@ -9,15 +9,21 @@ class Application {
 
     private $controller = 'site';
     private $action = 'index';
+    private $logger;
+
+    public function __construct() {
+        $this->logger = \Logger::getLogger(__CLASS__);
+    }
 
     public function runApplication() {
+        $this->logger->debug("Arguments captured");
+        $this->logger->debug(filter_input_array(INPUT_GET));
+
         $request = filter_input(INPUT_GET, 'r');
         try {
             $this->resolveAndDispatchRequest($request);
         } catch (\Exception $e) {
-            $logger = \Logger::getLogger(__CLASS__);
-            $logger->error($e->getMessage(), $e);
-            
+            $this->logger->error($e->getMessage(), $e);
             $controller = new Controller();
             $controller->title = ApplicationConstants::APP_NAME;
             $controller->viewErrorPage($e);
@@ -35,7 +41,7 @@ class Application {
         $controller = $this->generateControllerClass($this->controller);
 
         if (method_exists($controller, $this->action)) {
-            call_user_func([$controller, $this->action]);
+            call_user_func_array([$controller, $this->action], $this->filterInputArguments(filter_input_array(INPUT_GET)));
         } else {
             throw new \Exception('Action does not exist');
         }
@@ -55,6 +61,17 @@ class Application {
         }
     }
 
-}
+    private function filterInputArguments($inputs) {
+        $inputData = array();
 
-?>
+        if (is_array($inputs)) {
+            foreach ($inputs as $data => $value) {
+                if ($data != 'r') {
+                    array_push($inputData, $value);
+                }
+            }
+        }
+        return $inputData;
+    }
+
+}

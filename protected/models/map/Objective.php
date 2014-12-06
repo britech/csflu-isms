@@ -103,18 +103,84 @@ class Objective extends Model {
             'environmentStatus' => 'Status'
         );
     }
-    
+
     public function getModelTranslationAsNewEntity() {
         return "[Objective added]\n\n"
-        . "Objective:\t{$this->description}\n"
-        . "Perspective:\t{$this->perspective->description}\n"
-        . "Status:\t{$this->getEnvironmentStatus()[$this->environmentStatus]}\n"
-        . "Starting Period Date:\t{$this->startingPeriodDate->format('F-Y')}\n"
-        . "Ending Period Date:\t{$this->endingPeriodDate->format('F-Y')}";
+                . "Objective:\t{$this->description}\n"
+                . "Perspective:\t{$this->perspective->description}\n"
+                . "Status:\t{$this->getEnvironmentStatus()[$this->environmentStatus]}\n"
+                . "Starting Period Date:\t{$this->startingPeriodDate->format('F-Y')}\n"
+                . "Ending Period Date:\t{$this->endingPeriodDate->format('F-Y')}";
+    }
+
+    public function getModelTranslationAsUpdatedEntity(Objective $oldModel) {
+        $translation = "[Objective updated]\n\n";
+
+        $changes = array();
+        if ($this->description != $oldModel->description) {
+            array_push($changes, "Description:\t{$this->description}");
+        }
+
+        if ($this->perspective->id != $oldModel->perspective->id) {
+            array_push($changes, "Perspective:\t{$this->perspective->description}");
+        }
+
+        if ($this->theme->id != $oldModel->theme->id) {
+            array_push($changes, "Theme:\t{$this->theme->description}");
+        }
+
+        if ($this->startingPeriodDate->format('Y-m-d') != $oldModel->startingPeriodDate->format('Y-m-d')) {
+            array_push($changes, "Starting Period Date:\t{$this->startingPeriodDate->format('F-Y')}");
+        }
+
+        if ($this->endingPeriodDate->format('Y-m-d') != $oldModel->endingPeriodDate->format('Y-m-d')) {
+            array_push($changes, "Ending Period Date:\t{$this->endingPeriodDate->format('F-Y')}");
+        }
+        return $translation . implode("\n", $changes);
     }
     
+    public function getModelTranslationAsDeletedEntity() {
+        return "[Objective Deleted]\nDescription:\t{$this->description}";
+    }
+
+    public function computePropertyChanges(Objective $oldModel) {
+        $counter = 0;
+
+        if ($this->description != $oldModel->description) {
+            $counter++;
+        }
+
+        if ($this->perspective->id != $oldModel->perspective->id) {
+            $counter++;
+        }
+
+        if ($this->theme->id != $oldModel->theme->id) {
+            $counter++;
+        }
+
+        if ($this->startingPeriodDate->format('Y-m-d') != $oldModel->startingPeriodDate->format('Y-m-d')) {
+            $counter++;
+        }
+
+        if ($this->endingPeriodDate->format('Y-m-d') != $oldModel->endingPeriodDate->format('Y-m-d')) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
     public function isNew() {
         return empty($this->id);
+    }
+
+    public function __clone() {
+        $objective = new Objective();
+        $objective->id = $this->id;
+        $objective->description = $this->description;
+        $objective->perspective = clone $this->perspective;
+        $objective->theme = clone $this->theme;
+        $objective->startingPeriodDate = $this->startingPeriodDate;
+        $objective->endingPeriodDate = $this->endingPeriodDate;
     }
 
 }

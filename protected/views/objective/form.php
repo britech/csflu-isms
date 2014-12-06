@@ -5,13 +5,6 @@ namespace org\csflu\isms\views;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\util\ModelFormGenerator as Form;
 
-$model = $params['model'];
-$mapModel = $params['mapModel'];
-$perspectiveModel = $params['perspectiveModel'];
-$themeModel = $params['themeModel'];
-$perspectives = $params['perspectives'];
-$themes = $params['themes'];
-
 $form = new Form(array(
     'action' => array($model->isNew() ? 'map/insertObjective' : 'map/updateObjective'),
     'class' => 'ink-form',
@@ -45,13 +38,13 @@ $form = new Form(array(
         <div class="control-group column-group half-gutters">
             <?php echo $form->renderLabel($model, 'perspective', array('class' => 'all-20 align-right', 'required' => true)); ?>
             <div class="control all-80">
-                <?php echo $form->renderDropDownList($perspectiveModel, 'id', $perspectives, array('id'=>'pers-id')); ?>
+                <?php echo $form->renderDropDownList($perspectiveModel, 'id', $perspectives, array('id' => 'pers-id')); ?>
             </div>
         </div>
         <div class="control-group column-group half-gutters">
             <?php echo $form->renderLabel($model, 'theme', array('class' => 'all-20 align-right', 'required' => true)); ?>
             <div class="control all-80">
-                <?php echo $form->renderDropDownList($themeModel, 'id', $themes, array('id'=>'theme-id')); ?>
+                <?php echo $form->renderDropDownList($themeModel, 'id', $themes, array('id' => 'theme-id')); ?>
             </div>
         </div>
         <div class="control-group column-group half-gutters">
@@ -64,21 +57,21 @@ $form = new Form(array(
             <?php echo $form->renderLabel($model, 'period', array('class' => 'all-20 align-right', 'required' => true)); ?>
             <div class="control all-80">
                 <div id="periods"></div>
-                <?php 
-                if($model->isNew()){
-                    echo $form->renderSubmitButton('Create', array('class'=>'ink-button green flat', 'style'=>'margin-top: 1em; margin-left: 0px;'));
+                <?php
+                if ($model->isNew()) {
+                    echo $form->renderSubmitButton('Create', array('class' => 'ink-button green flat', 'style' => 'margin-top: 1em; margin-left: 0px;'));
                 } else {
-                    echo $form->renderSubmitButton('Update', array('class'=>'ink-button blue flat', 'style'=>'margin-top: 1em; margin-left: 0px;'));
+                    echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat', 'style' => 'margin-top: 1em; margin-left: 0px;'));
                 }
                 ?>
             </div>
         </div>
-        <?php echo $form->renderHiddenField($model, 'id');?>
+        <?php echo $form->renderHiddenField($model, 'id'); ?>
         <?php echo $form->renderHiddenField($model, 'startingPeriodDate', array('id' => 'obj-start')); ?>
         <?php echo $form->renderHiddenField($model, 'endingPeriodDate', array('id' => 'obj-end')); ?>
         <?php echo $form->renderHiddenField($mapModel, 'startingPeriodDate', array('id' => 'map-start')); ?>
         <?php echo $form->renderHiddenField($mapModel, 'endingPeriodDate', array('id' => 'map-end')); ?>
-        <?php echo $form->renderHiddenField($mapModel, 'id', array('id'=>'map-id')); ?>
+        <?php echo $form->renderHiddenField($mapModel, 'id', array('id' => 'map-id')); ?>
         <?php echo $form->endComponent(); ?>
     </div>
 

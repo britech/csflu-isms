@@ -4,8 +4,7 @@ namespace org\csflu\isms\views;
 
 use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
 
-if (isset($params['breadcrumb']) && !empty($params['breadcrumb'])):
-    $breadcrumb = $params['breadcrumb'];
+if (isset($breadcrumb) && !empty($breadcrumb)):
     ?>
     <div class="column-group quarter-gutters">
         <div class="all-100">

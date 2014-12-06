@@ -39,6 +39,18 @@ interface ObjectiveDao {
     public function addObjective(Objective $objective, StrategyMap $strategyMap);
     
     /**
+     * @param Objective $objective
+     * @throws DataAccessException
+     */
+    public function updateObjective(Objective $objective);
+    
+    /**
+     * @param String $id
+     * @throws DataAccessException
+     */
+    public function deleteObjective($id);
+    
+    /**
      * @param StrategyMap $strategyMap
      * @throws DataAccessException
      */
