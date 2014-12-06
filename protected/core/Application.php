@@ -10,9 +10,17 @@ class Application {
     private $controller = 'site';
     private $action = 'index';
     private $logger;
+    private static $instance;
 
-    public function __construct() {
+    private function __construct() {
         $this->logger = \Logger::getLogger(__CLASS__);
+    }
+    
+    public static function getInstance(){
+        if(empty(self::$instance)){
+            self::$instance = new Application();
+        }
+        return self::$instance;
     }
 
     public function runApplication() {

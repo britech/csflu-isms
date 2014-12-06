@@ -3,7 +3,7 @@ namespace org\csflu\isms\views;
 
 require_once 'protected/applicationLoader.php';
 
-use org\csflu\isms\core\Application as Application;
+use org\csflu\isms\core\Application;
 
-$application = new Application();
+$application = Application::getInstance();
 $application->runApplication();
