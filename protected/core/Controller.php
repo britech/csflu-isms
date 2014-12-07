@@ -132,9 +132,17 @@ class Controller {
             throw new ValidationException("Parameter/s are needed to process this request");
         }
     }
-    
-    protected function getFormData($indexName){
+
+    protected function getFormData($indexName) {
         return filter_input_array(INPUT_POST)[$indexName];
+    }
+
+    protected function getArgumentData($argumentName) {
+        return htmlentities(filter_input(INPUT_GET, $argumentName));
+    }
+    
+    protected function getServerData($argumentName){
+        return filter_input(INPUT_SERVER, $argumentName);
     }
 
     protected function getSessionData($key) {
@@ -148,4 +156,5 @@ class Controller {
     protected function unsetSessionData($key) {
         unset($_SESSION[$key]);
     }
+
 }
