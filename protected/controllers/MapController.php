@@ -111,13 +111,10 @@ class MapController extends Controller {
         ));
     }
 
-    public function updateMap() {
-        $id = filter_input(INPUT_GET, 'id');
-
+    public function updateMap($id) {
         if (!isset($id) || empty($id)) {
             throw new ControllerException('Another parameter is needed to process this request');
         }
-
         $strategyMap = $this->loadStrategyMapModel($id);
         $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
         $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
@@ -131,22 +128,17 @@ class MapController extends Controller {
                 'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
                 'Update Entry Data' => 'active'),
             'model' => $strategyMap,
-            'validation' => isset($_SESSION['validation']) ? $_SESSION['validation'] : ""
+            'validation' => $this->getSessionData('validation')
         ));
-        if (isset($_SESSION['validation'])) {
-            unset($_SESSION['validation']);
-        }
+        $this->unsetSessionData('validation');
     }
 
     public function update() {
-        if (!(count(filter_input_array(INPUT_POST)) > 0 && array_key_exists('StrategyMap', filter_input_array(INPUT_POST)))) {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-
-        $strategyMapData = filter_input_array(INPUT_POST)['StrategyMap'];
+        $this->validatePostData(array('StrategyMap'));
+        $strategyMapData = $this->getFormData('StrategyMap');
         $strategyMap = new StrategyMap();
         $strategyMap->validationMode = Model::VALIDATION_MODE_UPDATE;
-        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData));
+        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData), $strategyMap);
 
         if ($strategyMap->validate()) {
             $oldMap = clone $this->loadStrategyMapModel($strategyMap->id);
@@ -154,18 +146,15 @@ class MapController extends Controller {
             if ($strategyMap->computePropertyChanges($oldMap) > 0) {
                 $this->mapService->update($strategyMap);
                 $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_SMAP, $strategyMap->id, $strategyMap, $oldMap);
-                $_SESSION['notif'] = array('class' => 'info', 'message' => 'Strategy Map updated');
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Strategy Map updated'));
             }
             $this->redirect(array('map/complete', 'id' => $strategyMap->id));
         } else {
-            $_SESSION['validation'] = $strategyMap->validationMessages;
+            $this->setSessionData('validation', $strategyMap->validationMessages);
             $this->redirect(array('map/updateMap', 'id' => $strategyMap->id));
         }
     }
 
-    /**
-     * AJAX validation
-     */
     public function validateStrategyMap() {
         $condition = array_key_exists('StrategyMap', filter_input_array(INPUT_POST)) && array_key_exists('mode', filter_input_array(INPUT_POST));
         if (!(count(filter_input_array(INPUT_POST)) > 0 && $condition)) {
@@ -181,13 +170,11 @@ class MapController extends Controller {
         $this->remoteValidateModel($strategyMap);
     }
 
-    public function complete() {
-        $id = filter_input(INPUT_GET, 'id');
-
+    public function complete($id) {
         if (!isset($id) || empty($id)) {
             throw new ControllerException('Another parameter is needed to process this request');
         }
-
+        
         $strategyMap = $this->loadStrategyMapModel($id);
         $this->title = ApplicationConstants::APP_NAME . ' - Complete Strategy Map';
         $this->render('map/complete', array(
@@ -208,12 +195,9 @@ class MapController extends Controller {
             'strategyMap' => $strategyMap,
             'perspectives' => $this->mapService->listPerspectives($strategyMap),
             'themes' => $this->mapService->listThemes($strategyMap),
-            'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""
+            'notif' => $this->getSessionData('notif')
         ));
-
-        if (isset($_SESSION['notif'])) {
-            unset($_SESSION['notif']);
-        }
+        $this->unsetSessionData('notif');
     }
 
     private function loadStrategyMapModel($id) {
