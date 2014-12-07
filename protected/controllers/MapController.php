@@ -190,7 +190,8 @@ class MapController extends Controller {
                         'Update Entry Data' => array('map/updateMap', 'id' => $id),
                         'Manage Perspectives' => array('perspective/manage', 'map' => $id),
                         'Manage Strategic Themes' => array('theme/manage', 'map' => $id),
-                        'Manage Objectives' => array('objective/manage', 'map' => $id)
+                        'Manage Objectives' => array('objective/manage', 'map' => $id),
+                        'Complete Strategy Map' => array('map/finish', 'id'=>$id)
                     ))),
             'strategyMap' => $strategyMap,
             'perspectives' => $this->mapService->listPerspectives($strategyMap),
@@ -198,6 +199,16 @@ class MapController extends Controller {
             'notif' => $this->getSessionData('notif')
         ));
         $this->unsetSessionData('notif');
+    }
+    
+    public function finish($id){
+        /**
+         * 
+         * @todo 
+         * 1. Check if any objectives are defined
+         * 2a. If no objectives are defined, redirect the user to the completion page
+         * 2b. View the finish page
+         */
     }
 
     private function loadStrategyMapModel($id) {

@@ -28,7 +28,7 @@ class StrategyMap extends Model {
     const TYPE_SHORT = 'ST';
     const STATUS_DRAFT = 'D';
     const STATUS_ACTIVE = 'A';
-    const STATUS_HALT = 'H';
+    const STATUS_INACTIVE = 'I';
     const STATUS_COMPLETED = 'C';
     const STATUS_TERMINATED = 'T';
     const LENGTH_MEDIUM_MIN = 35;
@@ -142,7 +142,7 @@ class StrategyMap extends Model {
         return array(
             self::STATUS_DRAFT => 'Draft Stage',
             self::STATUS_ACTIVE => 'Active',
-            self::STATUS_HALT => 'Halted',
+            self::STATUS_INACTIVE => 'Inactive',
             self::STATUS_COMPLETED => 'Completed',
             self::STATUS_TERMINATED => 'Terminated'
         );
@@ -248,9 +248,11 @@ class StrategyMap extends Model {
         }
         
         if ($oldModel->terminationDate != $this->terminationDate) {
-            if($this->strategyEnvironmentStatus == StrategyMap::STATUS_COMPLETED){
+            if($this->strategyEnvironmentStatus == self::STATUS_COMPLETED){
                 array_push($changes, "Date Completed:\t{$this->implementationDate->format('M d, Y')}");
-            } else {
+            } elseif($this->strategyEnvironmentStatus == self::STATUS_INACTIVE){
+                array_push($changes, "Date Deactivated:\t{$this->implementationDate->format('M d, Y')}");
+            } elseif($this->strategyEnvironmentStatus == self::STATUS_TERMINATED) {
                 array_push($changes, "Date Terminated:\t{$this->implementationDate->format('M d, Y')}");
             }
         }
