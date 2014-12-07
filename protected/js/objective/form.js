@@ -70,7 +70,7 @@ $(document).ready(function() {
                 {name: 'theme'},
                 {name: 'actions'}
             ],
-            url: '?r=map/renderObjectivesTable',
+            url: '?r=objective/renderTable',
             type: 'POST',
             data: {
                 map: $("#map-id").val()
@@ -88,10 +88,18 @@ $(document).ready(function() {
         filterable: true,
         filterMode: 'simple',
         sortable: true,
+        selectionMode: 'singleRow',
         groups: ['perspective'],
         groupsRenderer: function(value, rowData, level) {
             return "<strong>" + value + "</strong>";
         }
+    }).on("rowClick", function() {
+        $("[id^=remove]").click(function() {
+            var text = $(this).parent().siblings("td").html();
+            $("#text").html("Do you want to delete this objective? Continuing will remove the objective, <strong>" + text + "</strong>, in the Strategy Map")
+            $("#delete-objective").jqxWindow('open');
+            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+        });
     });
 
     $(".ink-form").submit(function() {
@@ -99,7 +107,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "?r=map/validateObjective",
+            url: "?r=objective/validate",
             data: {"Objective": {
                     'description': $("[name*=description]").val(),
                     'startingPeriodDate': $("#obj-start").val(),
@@ -124,6 +132,65 @@ $(document).ready(function() {
         });
 
         return result;
+    });
+
+    $("#description-input").jqxComboBox({
+        source: new $.jqx.dataAdapter({
+            datatype: 'json',
+            datafields: [
+                {name: 'description'}
+            ],
+            url: '?r=objective/listAll',
+            type: 'POST'
+        }),
+        displayMember: 'description',
+        valueMember: 'description',
+        width: '100%',
+        searchMode: 'containsignorecase',
+        autoComplete: true,
+        theme: 'office',
+        height: '35px',
+        animationType: 'none'
+    }).on("select", function(event) {
+        if (event.args) {
+            $("[name*=description]").val(event.args.item.value);
+        }
+    }).on("bindingComplete", function() {
+        $("#description-input").val($("#description").val());
+    });
+
+    $("#description-input").change(function() {
+        
+        $("[name*=description]").val($(this).val());
+    });
+
+    $('#delete-objective').jqxWindow({
+        title: '<strong>Confirm Objective Deletion</strong>',
+        width: 300,
+        height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+
+    });
+
+    $("#deny").click(function() {
+        $("#objectives").jqxDataTable('updateBoundData');
+    });
+
+
+    $("[id^=accept]").click(function() {
+        var id = $(this).attr('id').split('-')[1];
+        $.post("?r=objective/delete",
+                {id: id},
+        function(data) {
+            var response = $.parseJSON(data);
+            window.location = response.url;
+        });
     });
 });
 

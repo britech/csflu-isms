@@ -40,9 +40,11 @@ $(document).ready(function() {
         theme: 'office',
         animationType: 'none',
         cancelButton: $("#deny")
-
     });
-    $("[id^=del-]").click(function() {
+    
+    
+    
+    $("[id^=remove-]").click(function() {
         var text = $(this).parent().siblings("td").html();
         $("#text").html("Do you want to delete the theme, <strong>" + text + "</strong>? Continuing will remove this theme from the Strategy Map.")
         $("#deleteTheme").jqxWindow('open');

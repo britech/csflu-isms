@@ -31,8 +31,6 @@ $form = new Form(array(
         <?php
         echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat',
             'style' => 'margin-top: 10px; margin-left: 0px;'));
-
-        echo ApplicationUtils::generateLink(array('map/manageObjectives', 'perspective' => $perspective->id), 'Add an Objective', array('class'=>'ink-button green flat', 'style'=>'margin-top: 10px;'));
         ?>
     </div>
     <?php echo $form->renderHiddenField('Perspective[description]', array('value' => $perspective->description, 'id' => 'description')); ?>

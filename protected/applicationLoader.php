@@ -24,6 +24,7 @@ require_once 'exception/DataAccessException.php';
 require_once 'exception/ServiceException.php';
 require_once 'exception/ValidationException.php';
 require_once 'exception/ModelException.php';
+require_once 'exception/ApplicationException.php';
 
 #models
 require_once 'models/commons/Department.php';

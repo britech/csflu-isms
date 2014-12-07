@@ -173,7 +173,7 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
 
         $match = false;
         foreach ($objectives as $data) {
-            if ($objective->description == $data->description && $objective->perspective->id == $data->perspective->id) {
+            if ($objective->description == $data->description) {
                 $match = true;
                 break;
             }
@@ -200,7 +200,7 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         
         $match = false;
         foreach ($objectives as $data) {
-            if ($objective->description == $data->description && $objective->perspective->id == $data->perspective->id) {
+            if ($objective->description == $data->description) {
                 $match = true;
                 break;
             }

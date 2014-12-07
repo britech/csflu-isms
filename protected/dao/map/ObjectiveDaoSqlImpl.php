@@ -26,14 +26,15 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
     public function listAllObjectives() {
         try {
             $dbst = $this->db->prepare('SELECT DISTINCT(obj_desc) FROM smap_objectives ORDER BY obj_desc ASC');
-            $objectives = array();            
+            $dbst->execute();
             
-            while($data = $dbst->execute()){
+            $objectives = array();
+            while ($data = $dbst->fetch()) {
                 $objective = new Objective();
                 list($objective->description) = $data;
                 array_push($objectives, $objective);
             }
-            
+
             return $objectives;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
@@ -139,7 +140,7 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
             }
             $objective->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $startDate);
             $objective->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $endDate);
-            
+
             return $objective;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
@@ -149,10 +150,10 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
     public function deleteObjective($id) {
         try {
             $this->db->beginTransaction();
-            
+
             $dbst = $this->db->prepare('DELETE FROM smap_objectives WHERE obj_id=:id');
-            $dbst->execute(array('id'=>$id));
-            
+            $dbst->execute(array('id' => $id));
+
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
@@ -163,20 +164,20 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
     public function updateObjective(Objective $objective) {
         try {
             $this->db->beginTransaction();
-            
+
             $dbst = $this->db->prepare('UPDATE smap_objectives SET obj_desc=:description, '
                     . 'pers_ref=:perspective, '
                     . 'theme_ref=:theme, '
                     . 'period_date_start=:start, '
                     . 'period_date_end=:end '
                     . 'WHERE obj_id=:id');
-            $dbst->execute(array('description'=>$objective->description,
-                'perspective'=>$objective->perspective->id,
-                'theme'=>$objective->theme->id,
-                'start'=>$objective->startingPeriodDate->format('Y-m-d'),
-                'end'=>$objective->endingPeriodDate->format('Y-m-d'),
-                'id'=>$objective->id));
-            
+            $dbst->execute(array('description' => $objective->description,
+                'perspective' => $objective->perspective->id,
+                'theme' => $objective->theme->id,
+                'start' => $objective->startingPeriodDate->format('Y-m-d'),
+                'end' => $objective->endingPeriodDate->format('Y-m-d'),
+                'id' => $objective->id));
+
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();

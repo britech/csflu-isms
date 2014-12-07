@@ -2,6 +2,7 @@
 
 namespace org\csflu\isms\util;
 
+use org\csflu\isms\exceptions\ApplicationException;
 /**
  * 
  * @author britech
@@ -52,21 +53,25 @@ class ApplicationUtils {
     }
 
     public static function generateListData(array $models, $valueMember, $displayMember) {
-        
+
         $listValues = array("");
         $listNames = array("");
 
         foreach ($models as $model) {
-            if(property_exists($model, $valueMember)){
+            if (property_exists($model, $valueMember)) {
                 array_push($listValues, $model->$valueMember);
-            } elseif(method_exists($model, $valueMember)){
+            } elseif (method_exists($model, $valueMember)) {
                 array_push($listValues, call_user_func([$model, $valueMember]));
+            } else {
+                throw new ApplicationException("List Data Generation failure. Defined member does not exist");
             }
-            
-            if(property_exists($model, $displayMember)){
+
+            if (property_exists($model, $displayMember)) {
                 array_push($listNames, $model->$displayMember);
-            } elseif(method_exists($model, $displayMember)){
+            } elseif (method_exists($model, $displayMember)) {
                 array_push($listNames, call_user_func([$model, $displayMember]));
+            } else {
+                throw new ApplicationException("List Data Generation failure. Defined member does not exist");
             }
         }
         return array_combine($listValues, $listNames);
