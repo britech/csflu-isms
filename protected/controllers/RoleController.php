@@ -6,7 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl as UserManagementService;
-use org\csflu\isms\exceptions\ValidationException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\uam\SecurityRole;
 
@@ -62,7 +62,7 @@ class RoleController extends Controller {
         $id = filter_input(INPUT_GET, 'id');
 
         if (!isset($id) || empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $securityRole = $this->userService->getSecurityRoleData($id);
@@ -89,7 +89,7 @@ class RoleController extends Controller {
         $condition = (isset($securityRoleData) && !empty($securityRoleData)) || (isset($allowableActionRoleData) && !empty($allowableActionRoleData));
 
         if (!$condition) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $securityRole = new SecurityRole();
@@ -118,7 +118,7 @@ class RoleController extends Controller {
         $condition = (isset($securityRoleData) && !empty($securityRoleData)) || (isset($allowableActionRoleData) && !empty($allowableActionRoleData));
 
         if (!$condition) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $securityRole = new SecurityRole();
@@ -133,7 +133,7 @@ class RoleController extends Controller {
         
         $this->title = ApplicationConstants::APP_NAME . ' - Security Role';
         if(!isset($id) && empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
         
         $securityRole = $this->userService->getSecurityRoleData($id);
@@ -158,7 +158,7 @@ class RoleController extends Controller {
     public function remove() {
         $id = filter_input(INPUT_GET, 'id');
         if(!isset($id) && empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
         $securityRole = new SecurityRole();
         $securityRole->id = $id;
@@ -171,7 +171,7 @@ class RoleController extends Controller {
         $id = filter_input(INPUT_POST, 'id');
         
         if(!isset($id) && empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
         $securityRole = $this->userService->getSecurityRoleData($id);
         $this->renderPartial('user/_roleDetail', array('actions' => $securityRole->allowableActions));

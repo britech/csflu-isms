@@ -7,7 +7,7 @@ use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\service\commons\UnitOfMeasureSimpleImpl as UnitOfMeasureService;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\commons\UnitOfMeasure;
-use org\csflu\isms\exceptions\ValidationException;
+use org\csflu\isms\exceptions\ControllerException;
 
 /**
  * Description of UomController
@@ -94,7 +94,7 @@ class UomController extends Controller {
         $id = filter_input(INPUT_GET, 'id');
 
         if (!isset($id) || empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $uom = $this->uomService->getUomInfo($id);

@@ -2,7 +2,7 @@
 
 namespace org\csflu\isms\core;
 
-use org\csflu\isms\exceptions\ValidationException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\service\commons\RevisionHistoryLoggingServiceImpl as RevisionHistoryLoggingService;
 use org\csflu\isms\models\commons\RevisionHistory;
@@ -119,7 +119,7 @@ class Controller {
         $counter = 0;
         $data = filter_input_array(INPUT_POST);
         if (is_null($data) || empty($data)) {
-            throw new ValidationException("Parameter/s are needed to process this request");
+            throw new ControllerException("Parameter/s are needed to process this request");
         }
 
         foreach ($keyNames as $key) {
@@ -129,7 +129,7 @@ class Controller {
         }
 
         if ($counter > 0) {
-            throw new ValidationException("Parameter/s are needed to process this request");
+            throw new ControllerException("Parameter/s are needed to process this request");
         }
     }
 

@@ -4,7 +4,7 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
-use org\csflu\isms\exceptions\ValidationException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapService;
 use org\csflu\isms\core\Model;
@@ -31,7 +31,7 @@ class PerspectiveController extends Controller {
 
     public function manage($map) {
         if (!isset($map) || empty($map)) {
-            throw new ValidationException("Another parameter is needed to process this request");
+            throw new ControllerException("Another parameter is needed to process this request");
         }
 
         $this->title = ApplicationConstants::APP_NAME . ' - Add Perspective';
@@ -84,7 +84,7 @@ class PerspectiveController extends Controller {
             $this->validatePostData(array('Perspective'));
             $this->processUpdate();
         } elseif (!isset($id) || empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
         $perspective = $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $perspective);
@@ -137,7 +137,7 @@ class PerspectiveController extends Controller {
 
     public function confirmDelete($id) {
         if (!isset($id) || empty($id)) {
-            throw new ValidationException("Another parameter is needed to process this request");
+            throw new ControllerException("Another parameter is needed to process this request");
         }
 
         $perspective = $this->loadModel($id);
@@ -165,7 +165,7 @@ class PerspectiveController extends Controller {
 
     public function delete($id) {
         if (!isset($id) || empty($id)) {
-            throw new ValidationException("Another parameter is needed to process this request");
+            throw new ControllerException("Another parameter is needed to process this request");
         }
 
         $perspective = clone $this->loadModel($id);

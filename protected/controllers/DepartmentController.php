@@ -3,7 +3,7 @@
 namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
-use org\csflu\isms\exceptions\ValidationException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl as DepartmentService;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
@@ -36,7 +36,7 @@ class DepartmentController extends Controller {
                 $this->renderAjaxJsonResponse(array('respCode' => '10'));
             }
         } else {
-            throw new ValidationException('Data is needed to process request');
+            throw new ControllerException('Data is needed to process request');
         }
     }
 
@@ -98,7 +98,7 @@ class DepartmentController extends Controller {
         $departmentData = filter_input_array(INPUT_POST)['Department'];
 
         if (!isset($departmentData) && empty($departmentData)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $department = new Department();
@@ -119,7 +119,7 @@ class DepartmentController extends Controller {
     public function updateDepartment() {
         $id = filter_input(INPUT_GET, 'id');
         if(!isset($id) && empty($id)){
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
         
         $department = $this->departmentService->getDepartmentDetail(array('id'=>$id));
@@ -150,7 +150,7 @@ class DepartmentController extends Controller {
         $departmentData = filter_input_array(INPUT_POST)['Department'];
 
         if (!isset($departmentData) && empty($departmentData)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $department = new Department();

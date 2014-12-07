@@ -7,7 +7,7 @@ use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\service\commons\PositionServiceSimpleImpl as PositionService;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\commons\Position;
-use org\csflu\isms\exceptions\ValidationException;
+use org\csflu\isms\exceptions\ControllerException;
 
 /**
  * Description of PositionController
@@ -72,7 +72,7 @@ class PositionController extends Controller {
         $id = filter_input(INPUT_GET, 'id');
 
         if (!isset($id) && empty($id)) {
-            throw new ValidationException('Another parameter is needed process this request');
+            throw new ControllerException('Another parameter is needed process this request');
         }
         $position = $this->positionService->getPositionData($id);
 

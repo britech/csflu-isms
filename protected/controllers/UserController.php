@@ -6,7 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl as UserManagementService;
-use org\csflu\isms\exceptions\ValidationException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\uam\Employee;
 
@@ -93,7 +93,7 @@ class UserController extends Controller {
                 $this->renderAjaxJsonResponse(array('respCode' => $respCode, 'respMessage' => 'Employee not found. Please enter another employee ID to continue.'));
             }
         } else {
-            throw new ValidationException('Data is needed to process request');
+            throw new ControllerException('Data is needed to process request');
         }
     }
 
@@ -147,7 +147,7 @@ class UserController extends Controller {
                 }
             }
         } else {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
     }
 
@@ -168,7 +168,7 @@ class UserController extends Controller {
             }
             $this->renderAjaxJsonResponse($accountsArray);
         } else {
-            throw new ValidationException('Data is needed to process request');
+            throw new ControllerException('Data is needed to process request');
         }
     }
 
@@ -202,7 +202,7 @@ class UserController extends Controller {
                     'deny.text' => 'Back',
                     'deny.url' => array('user/manageAccount', 'id' => $id))));
         } else {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
     }
 
@@ -213,7 +213,7 @@ class UserController extends Controller {
             $_SESSION['notif'] = array('class'=>'info', 'message'=>"Password reset successfull. Default password is the account username");
             $this->redirect(array('user/manageAccount', 'id' => $id));
         } else {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
     }
 
@@ -251,7 +251,7 @@ class UserController extends Controller {
                     'deny.text' => 'Back',
                     'deny.url' => array('user/manageAccount', 'id' => $id))));
         } else {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
     }
 
@@ -266,7 +266,7 @@ class UserController extends Controller {
             $_SESSION['notif'] = array('class'=>'info', 'message'=>"Account is now {$statusName}");
             $this->redirect(array('user/manageAccount', 'id' => $id));
         } else {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
     }
 
@@ -300,7 +300,7 @@ class UserController extends Controller {
                     'deny.text' => 'No',
                     'deny.url' => array('user/manageAccount', 'id' => $account->employee->id))));
         } else {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
     }
 
@@ -312,7 +312,7 @@ class UserController extends Controller {
             $_SESSION['notif'] = array('class'=>'error', 'message'=>"<b>{$account->securityRole->description}</b> designated at <b>{$account->employee->department->name}</b> was unlinked to this account.");
             $this->redirect(array('user/manageAccount', 'id' => $account->employee->id));
         } else {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
     }
 
@@ -347,7 +347,7 @@ class UserController extends Controller {
             }
             $this->renderAjaxJsonResponse(array('respCode' => $responseCode, 'respMessage' => $responseMessage));
         } else {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
     }
 
@@ -387,7 +387,7 @@ class UserController extends Controller {
                 'status' => $employee->loginAccount->status
             ));
         } else {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
     }
     
@@ -409,7 +409,7 @@ class UserController extends Controller {
             $_SESSION['notif'] = array('class'=>'info', 'message'=>"Security role successfully linked to this account");
             $this->redirect(array('user/manageAccount', 'id'=>$employeeData['id']));
         } else{
-            throw new ValidationException('Form data is needed to process this request');
+            throw new ControllerException('Form data is needed to process this request');
         }
     }
     
@@ -417,7 +417,7 @@ class UserController extends Controller {
         $id = filter_input(INPUT_GET, 'id');
         
         if(!isset($id) || empty($id)){
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
         
         $account = $this->userService->getAccountById($id);
@@ -453,7 +453,7 @@ class UserController extends Controller {
         $condition = !isset($securityRoleData) || !isset($positionData) || !isset($employeeData) || !isset($accountData);
         
         if($condition) {
-            throw new ValidationException('Form data is expected to process this request');
+            throw new ControllerException('Form data is expected to process this request');
         }
         
         $account = new UserAccount();

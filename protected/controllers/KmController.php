@@ -6,7 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\core\Model;
 use org\csflu\isms\util\ApplicationUtils;
-use org\csflu\isms\exceptions\ValidationException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\indicator\IndicatorManagementServiceSimpleImpl as IndicatorManagementService;
 use org\csflu\isms\models\indicator\Indicator;
@@ -97,7 +97,7 @@ class KmController extends Controller {
         $uomData = filter_input_array(INPUT_POST)['UnitOfMeasure'];
 
         if (count(filter_input_array(INPUT_POST)) < 2) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $indicator = new Indicator();
@@ -123,7 +123,7 @@ class KmController extends Controller {
         $id = filter_input(INPUT_GET, 'id');
 
         if (!isset($id) || empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $indicator = $this->indicatorService->retrieveIndicator($id);
@@ -159,7 +159,7 @@ class KmController extends Controller {
         $id = filter_input(INPUT_GET, 'id');
         $this->layout = 'column-1';
         if (!isset($id) || empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $indicator = $this->indicatorService->retrieveIndicator($id);
@@ -185,7 +185,7 @@ class KmController extends Controller {
         $action = filter_input(INPUT_POST, 'action');
 
         if ((!isset($id) || empty($id)) && (!isset($action))) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $data = array();
@@ -209,7 +209,7 @@ class KmController extends Controller {
         $uomData = filter_input_array(INPUT_POST)['UnitOfMeasure'];
 
         if (count(filter_input_array(INPUT_POST)) < 2) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $indicator = new Indicator();
@@ -232,7 +232,7 @@ class KmController extends Controller {
         $indicator = filter_input(INPUT_GET, 'indicator');
 
         if (!isset($indicator) || empty($indicator)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $indicatorObject = $this->indicatorService->retrieveIndicator($indicator);
@@ -267,7 +267,7 @@ class KmController extends Controller {
 
     public function insertBaseline() {
         if (count(filter_input_array(INPUT_POST)) == 0) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $indicatorData = filter_input_array(INPUT_POST)['Indicator'];
@@ -297,7 +297,7 @@ class KmController extends Controller {
 
         $condition = (!isset($id) || empty($id)) && (!isset($indicator) || empty($indicator));
         if ($condition) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $indicatorEntity = $this->indicatorService->retrieveIndicator($indicator);
@@ -329,7 +329,7 @@ class KmController extends Controller {
 
     public function updateBaseline() {
         if (count(filter_input_array(INPUT_POST)) == 0) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $indicatorData = filter_input_array(INPUT_POST)['Indicator'];
@@ -355,7 +355,7 @@ class KmController extends Controller {
         
         $condition = (!isset($id) || empty($id)) && (!isset($indicatorId) || empty($indicatorId));
         if ($condition) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
         $indicator = $this->indicatorService->retrieveIndicator($indicatorId);
         if (is_null($indicator->id)) {
@@ -400,7 +400,7 @@ class KmController extends Controller {
         
         $condition = (!isset($id) || empty($id)) && (!isset($indicatorId) || empty($indicatorId));
         if ($condition) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
         $indicator = $this->indicatorService->retrieveIndicator($indicatorId);
         if (is_null($indicator->id)) {

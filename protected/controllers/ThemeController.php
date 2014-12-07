@@ -5,7 +5,7 @@ namespace org\csflu\isms\controllers;
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
-use org\csflu\isms\exceptions\ValidationException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapService;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
@@ -30,7 +30,7 @@ class ThemeController extends Controller {
 
     public function manage($map) {
         if (!isset($map) || empty($map)) {
-            throw new ValidationException("Another parameter is needed to process this request");
+            throw new ControllerException("Another parameter is needed to process this request");
         }
 
         $strategyMap = $this->loadMapModel($map);
@@ -81,7 +81,7 @@ class ThemeController extends Controller {
             $this->validatePostData(array('Theme'));
             $this->processUpdate();
         } elseif (!isset($id) || empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $theme = $this->loadModel($id);

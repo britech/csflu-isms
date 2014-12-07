@@ -6,7 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\core\Model;
 use org\csflu\isms\util\ApplicationUtils;
-use org\csflu\isms\exceptions\ValidationException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapService;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\commons\RevisionHistory;
@@ -68,24 +68,19 @@ class MapController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Create a Strategy Map' => 'active'),
-            'validation' => isset($_SESSION['validation']) ? $_SESSION['validation'] : ""
+            'validation' => $this->getSessionData('validation')
         ));
-        if (isset($_SESSION['validation'])) {
-            unset($_SESSION['validation']);
-        }
+        $this->unsetSessionData('validation');
     }
 
     public function insert() {
-        if (count(filter_input_array(INPUT_POST)) == 0) {
-            throw new ValidationException('Another parameter is needed to process this request');
-        }
-
-        $strategyMapData = filter_input_array(INPUT_POST)['StrategyMap'];
+        $this->validatePostData(array('StrategyMap'));
+        $strategyMapData = $this->getFormData('StrategyMap');
         $strategyMap = new StrategyMap();
         $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData));
         $strategyMap->validationMode = Model::VALIDATION_MODE_INITIAL;
         if (!$strategyMap->validate()) {
-            $_SESSION['validation'] = $strategyMap->validationMessages;
+            $this->setSessionData('validation', $strategyMap->validationMessages);
             $this->redirect(array('map/create'));
         } else {
             $id = $this->mapService->insert($strategyMap);
@@ -94,11 +89,9 @@ class MapController extends Controller {
         }
     }
 
-    public function view() {
-        $id = filter_input(INPUT_GET, 'id');
-
+    public function view($id) {
         if (!isset($id) || empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $strategyMap = $this->mapService->getStrategyMap($id);
@@ -122,7 +115,7 @@ class MapController extends Controller {
         $id = filter_input(INPUT_GET, 'id');
 
         if (!isset($id) || empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $strategyMap = $this->loadStrategyMapModel($id);
@@ -147,7 +140,7 @@ class MapController extends Controller {
 
     public function update() {
         if (!(count(filter_input_array(INPUT_POST)) > 0 && array_key_exists('StrategyMap', filter_input_array(INPUT_POST)))) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $strategyMapData = filter_input_array(INPUT_POST)['StrategyMap'];
@@ -182,7 +175,7 @@ class MapController extends Controller {
 
         $strategyMapData = filter_input_array(INPUT_POST)['StrategyMap'];
         $strategyMap = new StrategyMap();
-        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData));
+        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData), $strategyMap);
         $strategyMap->validationMode = $validationMode;
 
         $this->remoteValidateModel($strategyMap);
@@ -192,7 +185,7 @@ class MapController extends Controller {
         $id = filter_input(INPUT_GET, 'id');
 
         if (!isset($id) || empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
+            throw new ControllerException('Another parameter is needed to process this request');
         }
 
         $strategyMap = $this->loadStrategyMapModel($id);
@@ -233,4 +226,5 @@ class MapController extends Controller {
             return $strategyMap;
         }
     }
+
 }

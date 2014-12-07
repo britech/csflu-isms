@@ -22,7 +22,7 @@ require_once 'ext/log4php/Logger.php';
 #custom exceptions
 require_once 'exception/DataAccessException.php';
 require_once 'exception/ServiceException.php';
-require_once 'exception/ValidationException.php';
+require_once 'exception/ControllerException.php';
 require_once 'exception/ModelException.php';
 require_once 'exception/ApplicationException.php';
 
