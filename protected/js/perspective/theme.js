@@ -40,18 +40,24 @@ $(document).ready(function() {
         theme: 'office',
         animationType: 'none',
         cancelButton: $("#deny")
-        
+
     });
     $("[id^=del-]").click(function() {
         var text = $(this).parent().siblings("td").html();
         $("#text").html("Do you want to delete the theme, <strong>" + text + "</strong>? Continuing will remove this theme from the Strategy Map.")
         $("#deleteTheme").jqxWindow('open');
-        $("#accept").prop('id', "accept-"+$(this).attr('id').split('-')[1]);
+        $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
     });
-    
-    $("[id^=accept]").click(function(){
+
+    $("[id^=accept]").click(function() {
         var id = $(this).attr('id').split('-')[1];
-        window.location = "?r=theme/delete&id="+id;
+
+        $.post("?r=theme/delete",
+                {id: id},
+        function(data) {
+            var response = $.parseJSON(data);
+            window.location = response.url;
+        });
     });
 });
 

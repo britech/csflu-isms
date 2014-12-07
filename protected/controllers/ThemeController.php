@@ -4,12 +4,12 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ValidationException;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapService;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\map\Theme;
-use org\csflu\isms\models\map\StrategyMap;
 
 /**
  * Description of ThemeController
@@ -104,18 +104,17 @@ class ThemeController extends Controller {
         $this->unsetSessionData('validation');
     }
 
-    public function delete($id) {
-        if (!isset($id) || empty($id)) {
-            throw new ValidationException('Another parameter is needed to process this request');
-        }
+    public function delete() {
+        $this->validatePostData(array('id'));
+        $id = $this->getFormData('id');
 
         $theme = clone $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $theme);
         $this->mapService->deleteTheme($id);
-        
+
         $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SMAP, $strategyMap->id, $theme);
-        $this->setSessionData('notif', array('class' => '', 'message' => 'Theme deleted'));
-        $this->redirect(array('theme/manage', 'map' => $strategyMap->id));
+        $this->setSessionData('notif', array('class'=>'', 'message'=>'Theme deleted in the Strategy Map'));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('theme/manage', 'map' => $strategyMap->id))));
     }
 
     public function listThemes() {
