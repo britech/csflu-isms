@@ -220,7 +220,7 @@ class ObjectiveController extends Controller {
             array_push($data, array('id' => $objective->id,
                 'description' => $objective->description,
                 'perspective' => $objective->perspective->positionOrder . ' - ' . $objective->perspective->description,
-                'theme' => $objective->theme->description,
+                'theme' => is_null($objective->theme->description) ? "--" : $objective->theme->description,
                 'actions' => ApplicationUtils::generateLink(array('objective/update', 'id' => $objective->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$objective->id}"))));
         }
         $this->renderAjaxJsonResponse($data);

@@ -89,9 +89,15 @@ $(document).ready(function() {
         filterMode: 'simple',
         sortable: true,
         selectionMode: 'singleRow',
-        groups: ['perspective'],
+        groups: ['perspective', 'theme'],
         groupsRenderer: function(value, rowData, level) {
-            return "<strong>" + value + "</strong>";
+            if (level === 0) {
+                return "<strong>" + value + "</strong>";
+            } else if (level === 1 && value !== "--") {
+                return "<strong style=\"margin-left: 18px;\">" + value + "</strong>";
+            } else if (level === 1 && value === "--") {
+                return "";
+            }
         }
     }).on("rowClick", function() {
         $("[id^=remove]").click(function() {
@@ -160,7 +166,7 @@ $(document).ready(function() {
     });
 
     $("#description-input").change(function() {
-        
+
         $("[name*=description]").val($(this).val());
     });
 
