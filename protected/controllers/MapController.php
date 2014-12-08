@@ -115,7 +115,7 @@ class MapController extends Controller {
         if (!isset($id) || empty($id)) {
             throw new ControllerException('Another parameter is needed to process this request');
         }
-        $strategyMap = $this->loadStrategyMapModel($id);
+        $strategyMap = $this->loadModel($id);
         $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
         $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
         $this->title = ApplicationConstants::APP_NAME . ' - Update Entry Data';
@@ -141,7 +141,7 @@ class MapController extends Controller {
         $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData), $strategyMap);
 
         if ($strategyMap->validate()) {
-            $oldMap = clone $this->loadStrategyMapModel($strategyMap->id);
+            $oldMap = clone $this->loadModel($strategyMap->id);
 
             if ($strategyMap->computePropertyChanges($oldMap) > 0) {
                 $this->mapService->update($strategyMap);
@@ -174,8 +174,8 @@ class MapController extends Controller {
         if (!isset($id) || empty($id)) {
             throw new ControllerException('Another parameter is needed to process this request');
         }
-        
-        $strategyMap = $this->loadStrategyMapModel($id);
+
+        $strategyMap = $this->loadModel($id);
         $this->title = ApplicationConstants::APP_NAME . ' - Complete Strategy Map';
         $this->render('map/complete', array(
             'breadcrumb' => array(
@@ -191,7 +191,7 @@ class MapController extends Controller {
                         'Manage Perspectives' => array('perspective/manage', 'map' => $id),
                         'Manage Strategic Themes' => array('theme/manage', 'map' => $id),
                         'Manage Objectives' => array('objective/manage', 'map' => $id),
-                        'Complete Strategy Map' => array('map/finish', 'id'=>$id)
+                        'Complete Strategy Map' => array('map/finish', 'id' => $id)
                     ))),
             'strategyMap' => $strategyMap,
             'perspectives' => $this->mapService->listPerspectives($strategyMap),
@@ -200,18 +200,78 @@ class MapController extends Controller {
         ));
         $this->unsetSessionData('notif');
     }
-    
-    public function finish($id){
-        /**
-         * 
-         * @todo 
-         * 1. Check if any objectives are defined
-         * 2a. If no objectives are defined, redirect the user to the completion page
-         * 2b. View the finish page
-         */
+
+    public function finish($id) {
+        if (!isset($id) || empty($id)) {
+            throw new ControllerException('Another parameter is needed to process this request');
+        }
+
+        $strategyMap = $this->loadModel($id);
+        if (count($strategyMap->objectives) == 0) {
+            $this->setSessionData('notif', array('class' => '', 'message' => 'Please complete the construction of the Strategy Map'));
+            $this->redirect(array('map/complete', 'id' => $strategyMap->id));
+        } else {
+            $this->layout = 'column-1';
+            $this->title = ApplicationConstants::APP_NAME . ' - Finish Strategy Map';
+            $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+            $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
+            $this->render('map/finish', array(
+                'breadcrumb' => array(
+                    'Home' => array('site/index'),
+                    'Strategy Map Directory' => array('map/index'),
+                    'Strategy Map' => array('map/view', 'id' => $id),
+                    'Complete Strategy Map' => array('map/complete', 'id' => $id),
+                    'Finish' => 'active'),
+                'model' => $strategyMap,
+                'status' => StrategyMap::getEnvironmentStatusTypes(),
+                'validation' => $this->getSessionData('validation')
+            ));
+            $this->unsetSessionData('validation');
+        }
     }
 
-    private function loadStrategyMapModel($id) {
+    public function updateEnvironmentStatus() {
+        $this->validatePostData(array('StrategyMap'));
+        $strategyMapData = $this->getFormData('StrategyMap');
+
+        $strategyMap = $this->loadModel($strategyMapData['id']);
+        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData), $strategyMap);
+        $strategyMap->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $strategyMap->startingPeriodDate, new \DateTimeZone("Asia/Manila"));
+        $strategyMap->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $strategyMap->endingPeriodDate, new \DateTimeZone("Asia/Manila"));
+
+        if (!is_null($strategyMap->implementationDate)) {
+            $strategyMap->implementationDate = \DateTime::createFromFormat('Y-m-d', $strategyMap->implementationDate, new \DateTimeZone("Asia/Manila"));
+        }
+
+        if (!is_null($strategyMap->terminationDate)) {
+            $strategyMap->terminationDate = \DateTime::createFromFormat('Y-m-d', $strategyMap->terminationDate, new \DateTimeZone("Asia/Manila"));
+        }
+
+        $this->validateStatusUpdateInputs($strategyMap);
+
+        $oldStrategyMap = clone $this->loadModel($strategyMap->id);
+        if ($strategyMap->computePropertyChanges($oldStrategyMap) > 0) {
+            $this->logger->debug($strategyMap->getModelTranslationAsUpdatedEntity($oldStrategyMap));
+        }
+
+        $this->redirect(array('map/view', 'id' => $strategyMap->id));
+    }
+
+    private function validateStatusUpdateInputs(StrategyMap $strategyMap) {
+        $referer = $this->getServerData('HTTP_REFERER');
+        $implemDate = $strategyMap->implementationDate;
+        $termDate = $strategyMap->terminationDate;
+
+        if ($strategyMap->strategyEnvironmentStatus == StrategyMap::STATUS_ACTIVE && empty($implemDate)) {
+            $this->setSessionData('validation', array('Date Implemented should be defined'));
+            $this->redirect(empty($referer) ? array('map/index') : $referer);
+        } elseif ($strategyMap->strategyEnvironmentStatus != StrategyMap::STATUS_DRAFT && (empty($implemDate) && empty($termDate))) {
+            $this->setSessionData('validation', array('Both date fields should be defined'));
+            $this->redirect(empty($referer) ? array('map/index') : $referer);
+        }
+    }
+
+    private function loadModel($id) {
         $strategyMap = $this->mapService->getStrategyMap($id);
 
         if (is_null($strategyMap->id)) {

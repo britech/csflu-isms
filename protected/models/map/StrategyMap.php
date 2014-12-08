@@ -148,6 +148,17 @@ class StrategyMap extends Model {
         );
     }
 
+    public function getAttributeNames() {
+        return array(
+            'id' => 'ID',
+            'name' => 'Strategy Map',
+            'visionStatement' => 'Vision Statement',
+            'strategyEnvironmentStatus' => 'Status',
+            'implementationDate' => 'Date Implemented',
+            'terminationDate' => 'Date Deactivated/Terminated'
+        );
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
@@ -171,102 +182,102 @@ class StrategyMap extends Model {
         if ($oldModel->name != $this->name) {
             $counter++;
         }
-        
+
         if ($oldModel->visionStatement != $this->visionStatement) {
             $counter++;
         }
-        
+
         if ($oldModel->missionStatement != $this->missionStatement) {
             $counter++;
         }
-        
+
         if ($oldModel->valuesStatement != $this->valuesStatement) {
             $counter++;
         }
-        
+
         if ($oldModel->strategyType != $this->strategyType) {
             $counter++;
         }
-        
+
         if ($oldModel->startingPeriodDate->format('Y-m-d') != $this->startingPeriodDate->format('Y-m-d')) {
             $counter++;
         }
-        
+
         if ($oldModel->endingPeriodDate->format('Y-m-d') != $this->endingPeriodDate->format('Y-m-d')) {
             $counter++;
         }
-        
+
         if ($oldModel->implementationDate != $this->implementationDate) {
             $counter++;
         }
-        
+
         if ($oldModel->terminationDate != $this->terminationDate) {
             $counter++;
         }
-        
+
         if ($oldModel->strategyEnvironmentStatus != $this->strategyEnvironmentStatus) {
             $counter++;
         }
-        
+
         return $counter;
     }
-    
+
     public function getModelTranslationAsUpdatedEntity($oldModel) {
         $translation = "[Strategy Map updated]\n\n";
         $changes = array();
-        
+
         if ($oldModel->name != $this->name) {
             array_push($changes, "Name:\t{$this->name}");
         }
-        
+
         if ($oldModel->visionStatement != $this->visionStatement) {
             array_push($changes, "Vision Statement:\t{$this->visionStatement}");
         }
-        
+
         if ($oldModel->missionStatement != $this->missionStatement) {
             array_push($changes, "Mission Statement:\t{$this->missionStatement}");
         }
-        
+
         if ($oldModel->valuesStatement != $this->valuesStatement) {
             array_push($changes, "Values Statement:\t{$this->valuesStatement}");
         }
-        
+
         if ($oldModel->strategyType != $this->strategyType) {
             array_push($changes, "Strategy Type:\t{$this->strategyType}");
         }
-        
+
         if ($oldModel->startingPeriodDate->format('Y-m-d') != $this->startingPeriodDate->format('Y-m-d')) {
             array_push($changes, "Starting Period Date:\t{$this->startingPeriodDate->format('F-Y')}");
         }
-        
+
         if ($oldModel->endingPeriodDate->format('Y-m-d') != $this->endingPeriodDate->format('Y-m-d')) {
             array_push($changes, "Ending Period Date:\t{$this->endingPeriodDate->format('F-Y')}");
         }
-        
+
         if ($oldModel->implementationDate != $this->implementationDate) {
             array_push($changes, "Date Implemented:\t{$this->implementationDate->format('M d, Y')}");
         }
-        
+
         if ($oldModel->terminationDate != $this->terminationDate) {
-            if($this->strategyEnvironmentStatus == self::STATUS_COMPLETED){
+            if ($this->strategyEnvironmentStatus == self::STATUS_COMPLETED) {
                 array_push($changes, "Date Completed:\t{$this->implementationDate->format('M d, Y')}");
-            } elseif($this->strategyEnvironmentStatus == self::STATUS_INACTIVE){
+            } elseif ($this->strategyEnvironmentStatus == self::STATUS_INACTIVE) {
                 array_push($changes, "Date Deactivated:\t{$this->implementationDate->format('M d, Y')}");
-            } elseif($this->strategyEnvironmentStatus == self::STATUS_TERMINATED) {
+            } elseif ($this->strategyEnvironmentStatus == self::STATUS_TERMINATED) {
                 array_push($changes, "Date Terminated:\t{$this->implementationDate->format('M d, Y')}");
             }
         }
-        
+
         if ($oldModel->strategyEnvironmentStatus != $this->strategyEnvironmentStatus) {
             array_push($changes, "Status:\t{$this->strategyEnvironmentStatus}");
         }
-        
+
         return $translation . implode("\n", $changes);
     }
-    
+
     public function __clone() {
         $strategyMap = new StrategyMap;
-        
+
         $strategyMap->id = $this->id;
         $strategyMap->name = $this->name;
         $strategyMap->visionStatement = $this->visionStatement;
@@ -279,4 +290,5 @@ class StrategyMap extends Model {
         $strategyMap->terminationDate = $this->terminationDate;
         $strategyMap->strategyEnvironmentStatus = $this->strategyEnvironmentStatus;
     }
+
 }
