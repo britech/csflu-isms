@@ -74,7 +74,7 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
 
     public function getStrategyMap($id) {
         try {
-            $dbst = $this->db->prepare('SELECT map_id, map_desc, map_vision, map_mission, map_values, map_type, period_date_start, period_date_end, map_stat FROM smap_main WHERE map_id=:id');
+            $dbst = $this->db->prepare('SELECT map_id, map_desc, map_vision, map_mission, map_values, map_type, period_date_start, period_date_end, map_stat, map_efdate, map_tmdate FROM smap_main WHERE map_id=:id');
             $dbst->execute(array('id' => $id));
 
             $map = new StrategyMap();
@@ -87,10 +87,14 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
                         $map->strategyType,
                         $startingDate,
                         $endingDate,
-                        $map->strategyEnvironmentStatus) = $data;
+                        $map->strategyEnvironmentStatus,
+                        $implemDate,
+                        $termDate) = $data;
             }
             $map->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $startingDate);
             $map->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $endingDate);
+            $map->implementationDate = empty($implemDate) ? null : \DateTime::createFromFormat('Y-m-d', $implemDate);
+            $map->terminationDate = empty($termDate) ? null : \DateTime::createFromFormat('Y-m-d', $termDate);
 
             $map->objectives = $this->objectiveDaoSource->listObjectivesByStrategyMap($map);
             return $map;
@@ -130,7 +134,7 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
 
             $implemDate = $strategyMap->implementationDate;
             $termDate = $strategyMap->terminationDate;
-            
+
             $dbst->execute(array(
                 'vision' => $strategyMap->visionStatement,
                 'mission' => $strategyMap->missionStatement,
@@ -138,9 +142,9 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
                 'type' => $strategyMap->strategyType,
                 'start' => $strategyMap->startingPeriodDate->format('Y-m-d'),
                 'end' => $strategyMap->endingPeriodDate->format('Y-m-d'),
-                'implemDate'=> empty($implemDate) ? null : $implemDate->format('Y-m-d'),
-                'termDate'=> empty($termDate) ? null : $termDate->format('Y-m-d'),
-                'stat'=> $strategyMap->strategyEnvironmentStatus,
+                'implemDate' => empty($implemDate) ? null : $implemDate->format('Y-m-d'),
+                'termDate' => empty($termDate) ? null : $termDate->format('Y-m-d'),
+                'stat' => $strategyMap->strategyEnvironmentStatus,
                 'name' => $strategyMap->name,
                 'id' => $strategyMap->id
             ));

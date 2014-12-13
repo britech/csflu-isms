@@ -51,6 +51,7 @@ $(document).ready(function() {
     function resolveInputFields(status) {
         if (status === 'A') {
             $("#implem-date").show();
+            $("#term-date").hide();
         } else if (status === 'D') {
             $("#implem-date, #term-date").hide();
         } else {

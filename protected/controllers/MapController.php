@@ -100,15 +100,66 @@ class MapController extends Controller {
             $this->redirect(array('map/index'));
         }
 
-        $this->layout = 'column-1';
         $this->title = ApplicationConstants::APP_NAME . ' - Strategy Map';
         $this->render('map/view', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => 'active'),
-            'strategyMap' => $strategyMap
+            'sidebar' => array(
+                'data' => array(
+                    'header' => 'Actions',
+                    'links' => $this->resolveSidebarLinks($strategyMap))),
+            'strategyMap' => $strategyMap,
+            'perspectives' => $this->mapService->listPerspectives($strategyMap),
+            'themes' => $this->mapService->listThemes($strategyMap)
         ));
+    }
+
+    private function resolveSidebarLinks(StrategyMap $strategyMap) {
+        $links = array('Revision History' => array('revision/logs', 'module' => ModuleAction::MODULE_SMAP, 'ref' => $strategyMap->id));
+        switch ($strategyMap->strategyEnvironmentStatus) {
+            case StrategyMap::STATUS_DRAFT:
+                $links = array_merge($links, array('Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id)));
+                break;
+            case StrategyMap::STATUS_ACTIVE:
+                $additionalLinks = array('Update Entry Data' => array('map/update', 'id' => $strategyMap->id),
+                    'Manage Objectives' => array('objective/manage', 'map' => $strategyMap->id),
+                    'Update Status' => array('map/updateStatus', 'id' => $strategyMap->id));
+                $links = array_merge($links, $additionalLinks);
+                break;
+            case StrategyMap::STATUS_INACTIVE:
+                $links = array_merge($links, array('Reactivate Strategy Map' => array('map/updateStatus', 'id' => $strategyMap->id, 'status' => StrategyMap::STATUS_ACTIVE)));
+                break;
+        }
+        return $links;
+    }
+
+    public function updateStatus($id, $status = null) {
+        if (!isset($id) || empty($id)) {
+            throw new ControllerException('Another parameter is needed to process this request');
+        }
+
+        $strategyMap = $this->loadModel($id);
+
+        $this->layout = 'column-1';
+        $this->title = ApplicationConstants::APP_NAME . ' - Finish Strategy Map';
+        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
+        $strategyMap->implementationDate = is_null($strategyMap->implementationDate) ? null : $strategyMap->implementationDate->format('Y-m-d');
+        $strategyMap->terminationDate = null;
+        $this->render('map/finish', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $id),
+                'Update Status' => 'active'),
+            'model' => $strategyMap,
+            'status' => $status,
+            'statusDescription' => StrategyMap::getEnvironmentStatusTypes()[$status],
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
     }
 
     public function update($id = null) {
@@ -160,6 +211,7 @@ class MapController extends Controller {
 
         if ($strategyMap->validate()) {
             $oldMap = clone $this->loadModel($strategyMap->id);
+            $strategyMap->terminationDate = $oldMap->strategyEnvironmentStatus == StrategyMap::STATUS_INACTIVE ? null : $strategyMap->terminationDate;
 
             if ($strategyMap->computePropertyChanges($oldMap) > 0) {
                 $this->mapService->update($strategyMap);
@@ -216,7 +268,7 @@ class MapController extends Controller {
                         'Manage Perspectives' => array('perspective/manage', 'map' => $id),
                         'Manage Strategic Themes' => array('theme/manage', 'map' => $id),
                         'Manage Objectives' => array('objective/manage', 'map' => $id),
-                        'Complete Strategy Map' => array('map/finish', 'id' => $id)
+                        'Finish' => array('map/finish', 'id' => $id)
                     ))),
             'strategyMap' => $strategyMap,
             'perspectives' => $this->mapService->listPerspectives($strategyMap),

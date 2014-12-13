@@ -2,7 +2,8 @@
 
 namespace org\csflu\isms\views;
 
-use org\csflu\isms\util\ModelFormGenerator as Form;
+use org\csflu\isms\util\FormGenerator as Form;
+use org\csflu\isms\models\map\StrategyMap;
 
 $form = new Form(array(
     'action' => array('map/updateEnvironmentStatus'),
@@ -21,20 +22,22 @@ $form = new Form(array(
         }
         ?>
         <?php echo $form->startComponent(); ?>
-        <div class="control-group column-group half-gutters">
-            <?php echo $form->renderLabel($model, 'strategyEnvironmentStatus', array('class' => 'all-35 align-right', 'required' => true)); ?>
-            <div class="control all-65">
-                <?php echo $form->renderDropDownList($model, 'strategyEnvironmentStatus', $status); ?>
+        <?php if ($model->strategyEnvironmentStatus != StrategyMap::STATUS_INACTIVE): ?>
+            <div class="control-group column-group half-gutters">
+                <?php echo $form->renderLabel('Status', array('class' => 'all-35 align-right', 'required' => true)); ?>
+                <div class="control all-65">
+                    <?php echo $form->renderDropDownList('StrategyMap[strategyEnvironmentStatus]', $status, array('value' => $model->strategyEnvironmentStatus)); ?>
+                </div>
             </div>
-        </div>
+        <?php endif; ?>
         <div class="control-group column-group half-gutters" id="implem-date">
-            <?php echo $form->renderLabel($model, 'implementationDate', array('class' => 'all-35 align-right', 'required' => true)); ?>
+            <?php echo $form->renderLabel('Date Implemented', array('class' => 'all-35 align-right', 'required' => true)); ?>
             <div class="control all-65">
                 <div id="implem-date-input"></div>
             </div>
         </div>
         <div class="control-group column-group half-gutters" id="term-date">
-            <?php echo $form->renderLabel($model, 'terminationDate', array('class' => 'all-35 align-right', 'required' => true, 'id' => 'term-label')); ?>
+            <?php echo $form->renderLabel(' ', array('class' => 'all-35 align-right', 'required' => true, 'id' => 'term-label')); ?>
             <div class="control all-65">
                 <div id="term-date-input"></div>
             </div>
@@ -42,14 +45,25 @@ $form = new Form(array(
         <div class="control-group column-group half-gutters">
             <label class="all-35 align-right">&nbsp;</label>
             <div class="control all-65">
-                <?php echo $form->renderSubmitButton('Finish', array('class' => 'ink-button green flat', 'style' => 'margin-left:0px;')); ?>
+                <?php 
+                if($model->strategyEnvironmentStatus == StrategyMap::STATUS_DRAFT){
+                     echo $form->renderSubmitButton('Finish', array('class' => 'ink-button green flat', 'style' => 'margin-left:0px;'));
+                } else {
+                     echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat', 'style' => 'margin-left:0px;'));
+                }
+                ?>
             </div>
         </div>
-        <?php echo $form->renderHiddenField($model, 'id'); ?>
-        <?php echo $form->renderHiddenField($model, 'startingPeriodDate'); ?>
-        <?php echo $form->renderHiddenField($model, 'endingPeriodDate'); ?>
-        <?php echo $form->renderHiddenField($model, 'implementationDate'); ?>
-        <?php echo $form->renderHiddenField($model, 'terminationDate'); ?>
+        <?php
+            if($model->strategyEnvironmentStatus == StrategyMap::STATUS_INACTIVE && $status == StrategyMap::STATUS_ACTIVE){
+                echo $form->renderHiddenField('StrategyMap[strategyEnvironmentStatus]', array('value'=>$status));
+            }
+        ?>
+        <?php echo $form->renderHiddenField('StrategyMap[id]', array('value' => $model->id)); ?>
+        <?php echo $form->renderHiddenField('StrategyMap[startingPeriodDate]', array('value' => $model->startingPeriodDate)); ?>
+        <?php echo $form->renderHiddenField('StrategyMap[endingPeriodDate]', array('value'=>$model->endingPeriodDate)); ?>
+        <?php echo $form->renderHiddenField('StrategyMap[implementationDate]', array('value'=>$model->implementationDate)); ?>
+        <?php echo $form->renderHiddenField('StrategyMap[terminationDate]', array('value'=>$model->terminationDate)); ?>
         <?php echo $form->endComponent(); ?>
     </div>
 </div>
