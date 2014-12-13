@@ -80,7 +80,7 @@ class StrategyMap extends Model {
                 $this->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->endingPeriodDate, new \DateTimeZone('Asia/Manila'));
                 $counter+=$this->validateDateRange();
             }
-        } elseif ($this->validationMode == Model::VALIDATION_MODE_UPDATE) {
+        } elseif ($this->validationMode == Model::VALIDATION_MODE_UPDATE && $this->strategyEnvironmentStatus == self::STATUS_DRAFT) {
             if (empty($this->visionStatement)) {
                 array_push($this->validationMessages, '- Vision Statement should be defined');
                 $counter++;
@@ -96,6 +96,10 @@ class StrategyMap extends Model {
                 $counter++;
             }
 
+            $this->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->startingPeriodDate, new \DateTimeZone('Asia/Manila'));
+            $this->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->endingPeriodDate, new \DateTimeZone('Asia/Manila'));
+            $counter+=$this->validateDateRange();
+        } elseif ($this->validationMode == Model::VALIDATION_MODE_UPDATE && $this->strategyEnvironmentStatus != self::STATUS_DRAFT) {
             $this->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->startingPeriodDate, new \DateTimeZone('Asia/Manila'));
             $this->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->endingPeriodDate, new \DateTimeZone('Asia/Manila'));
             $counter+=$this->validateDateRange();
@@ -153,6 +157,8 @@ class StrategyMap extends Model {
             'id' => 'ID',
             'name' => 'Strategy Map',
             'visionStatement' => 'Vision Statement',
+            'missionStatement' => 'Mission Statement',
+            'valuesStatement' => 'Values Statement',
             'strategyEnvironmentStatus' => 'Status',
             'implementationDate' => 'Date Implemented',
             'terminationDate' => 'Date Deactivated/Terminated'
@@ -269,7 +275,7 @@ class StrategyMap extends Model {
         }
 
         if ($oldModel->strategyEnvironmentStatus != $this->strategyEnvironmentStatus) {
-            array_push($changes, "Status:\t".self::getEnvironmentStatusTypes()[$this->strategyEnvironmentStatus]);
+            array_push($changes, "Status:\t" . self::getEnvironmentStatusTypes()[$this->strategyEnvironmentStatus]);
         }
 
         return $translation . implode("\n", $changes);

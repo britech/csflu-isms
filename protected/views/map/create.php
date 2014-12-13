@@ -5,8 +5,6 @@ namespace org\csflu\isms\views;
 use org\csflu\isms\util\FormGenerator as Form;
 use org\csflu\isms\models\map\StrategyMap;
 
-$model = array_key_exists('model', $params) ? $params['model'] : '';
-
 $form = new Form(array(
     'action' => array(empty($model) ? 'map/insert' : 'map/update'),
     'class' => 'ink-form',
@@ -31,6 +29,7 @@ if (isset($params['validation']) && !empty($params['validation'])) {
     $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
 }
 ?>
+<?php if($model->strategyEnvironmentStatus == StrategyMap::STATUS_DRAFT):?>
 <div class="control-group">
     <?php echo $form->renderLabel('Vision Statement&nbsp*'); ?>
     <div class="control">
@@ -49,7 +48,9 @@ if (isset($params['validation']) && !empty($params['validation'])) {
         <?php echo $form->renderTextArea('StrategyMap[valuesStatement]', array('value' => empty($model) ? '' : $model->valuesStatement)); ?>
     </div>
 </div>
+<?php endif;?>
 <div class="column-group quarter-gutters">
+    <?php if($model->strategyEnvironmentStatus == StrategyMap::STATUS_DRAFT):?>
     <div class="all-33">
         <div class="control-group">
             <?php echo $form->renderLabel('Strategy Type&nbsp*'); ?>
@@ -58,8 +59,9 @@ if (isset($params['validation']) && !empty($params['validation'])) {
             </div>
         </div>
     </div>
+    <?php endif;?>
 
-    <div class="all-33">
+    <div class="<?php echo $model->strategyEnvironmentStatus == StrategyMap::STATUS_DRAFT ? "all-33" : "all-50"?>">
         <div class="control-group">
             <?php echo $form->renderLabel('Starting and Ending Periods&nbsp*'); ?>
             <div class="control">
@@ -71,7 +73,7 @@ if (isset($params['validation']) && !empty($params['validation'])) {
         </div>
     </div>
 
-    <div class="all-33">
+    <div class="<?php echo $model->strategyEnvironmentStatus == StrategyMap::STATUS_DRAFT ? "all-33" : "all-50"?>">
         <div class="control-group">
             <?php echo $form->renderLabel('&nbsp;'); ?>
             <div class="control">

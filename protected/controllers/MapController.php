@@ -111,32 +111,50 @@ class MapController extends Controller {
         ));
     }
 
-    public function updateMap($id) {
-        if (!isset($id) || empty($id)) {
+    public function update($id = null) {
+        if (is_null($id)) {
+            $this->validatePostData(array('StrategyMap'));
+            $this->processUpdate();
+        } elseif (!isset($id) || empty($id)) {
             throw new ControllerException('Another parameter is needed to process this request');
         }
+        $this->renderUpdateForm($id);
+    }
+
+    private function renderUpdateForm($id) {
         $strategyMap = $this->loadModel($id);
         $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
         $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
         $this->title = ApplicationConstants::APP_NAME . ' - Update Entry Data';
         $this->layout = 'column-1';
         $this->render('map/create', array(
-            'breadcrumb' => array(
-                'Home' => array('site/index'),
-                'Strategy Map Directory' => array('map/index'),
-                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
-                'Update Entry Data' => 'active'),
+            'breadcrumb' => $this->resolveBreadcrumbs($strategyMap),
             'model' => $strategyMap,
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
     }
 
-    public function update() {
-        $this->validatePostData(array('StrategyMap'));
+    private function resolveBreadcrumbs(StrategyMap $strategyMap) {
+        switch ($strategyMap->strategyEnvironmentStatus) {
+            case StrategyMap::STATUS_DRAFT:
+                return array('Home' => array('site/index'),
+                    'Strategy Map Directory' => array('map/index'),
+                    'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                    'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
+                    'Update Entry Data' => 'active');
+
+            default:
+                return array('Home' => array('site/index'),
+                    'Strategy Map Directory' => array('map/index'),
+                    'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                    'Update Entry Data' => 'active');
+        }
+    }
+
+    private function processUpdate() {
         $strategyMapData = $this->getFormData('StrategyMap');
-        $strategyMap = new StrategyMap();
+        $strategyMap = $this->loadModel($strategyMapData['id']);
         $strategyMap->validationMode = Model::VALIDATION_MODE_UPDATE;
         $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData), $strategyMap);
 
@@ -148,7 +166,13 @@ class MapController extends Controller {
                 $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_SMAP, $strategyMap->id, $strategyMap, $oldMap);
                 $this->setSessionData('notif', array('class' => 'info', 'message' => 'Strategy Map updated'));
             }
-            $this->redirect(array('map/complete', 'id' => $strategyMap->id));
+            switch ($strategyMap->strategyEnvironmentStatus) {
+                case StrategyMap::STATUS_DRAFT:
+                    $this->redirect(array('map/complete', 'id' => $strategyMap->id));
+                    break;
+                default:
+                    $this->redirect(array('map/view', 'id' => $strategyMap->id));
+            }
         } else {
             $this->setSessionData('validation', $strategyMap->validationMessages);
             $this->redirect(array('map/updateMap', 'id' => $strategyMap->id));
@@ -201,10 +225,10 @@ class MapController extends Controller {
         ));
         $this->unsetSessionData('notif');
     }
-    
-    private function checkCRUDAccessForStrategyMap(StrategyMap $strategyMap){
-        if($strategyMap->strategyEnvironmentStatus != StrategyMap::STATUS_DRAFT){
-            $this->setSessionData('notif', array('class'=>'error', 'message'=>'CRUD access is only granted for Strategy Maps that are under "Draft Stage" ONLY.'));
+
+    private function checkCRUDAccessForStrategyMap(StrategyMap $strategyMap) {
+        if ($strategyMap->strategyEnvironmentStatus != StrategyMap::STATUS_DRAFT) {
+            $this->setSessionData('notif', array('class' => 'error', 'message' => 'CRUD access is only granted for Strategy Maps that are under "Draft Stage" ONLY.'));
             $this->redirect(array('map/index'));
         }
     }
