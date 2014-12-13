@@ -116,7 +116,7 @@ class ObjectiveController extends Controller {
         $perspectives = ApplicationUtils::generateListData($this->mapService->listPerspectives($strategyMap), 'id', 'description');
         $themes = ApplicationUtils::generateListData($this->mapService->listThemes($strategyMap), 'id', 'description');
         $this->render('objective/form', array(
-            'breadcrumb' => is_null($objective) ? $this->getIntialBreadcrumbs($strategyMap) : $this->getUpdateBreadcrumbs($strategyMap),
+            'breadcrumb' => $this->resolveBreadcrumbs($strategyMap, $objective),
             'model' => is_null($objective) ? new Objective() : $objective,
             'mapModel' => $strategyMap,
             'themeModel' => is_null($objective) ? new Theme : $objective->theme,
@@ -128,6 +128,15 @@ class ObjectiveController extends Controller {
         ));
         $this->unsetSessionData('notif');
         $this->unsetSessionData('validation');
+    }
+    
+    private function resolveBreadcrumbs(StrategyMap $strategyMap, Objective $objective = null){
+        switch($strategyMap->strategyEnvironmentStatus){
+            case StrategyMap::STATUS_DRAFT:
+                return is_null($objective) ? $this->getIntialBreadcrumbs($strategyMap) : $this->getUpdateBreadcrumbs($strategyMap);
+            case StrategyMap::STATUS_ACTIVE:
+                return is_null($objective) ? $this->getInitialBreadcrumbsForActivatedStrategyMap($strategyMap) : $this->getUpdateBreadcrumbsForActivatedStrategyMap($strategyMap);
+        }
     }
 
     private function getIntialBreadcrumbs(StrategyMap $strategyMap) {
@@ -143,7 +152,22 @@ class ObjectiveController extends Controller {
             'Strategy Map Directory' => array('map/index'),
             'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
             'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
-            'Manage Objectives' => array('map/manageObjectives', 'map' => $strategyMap->id),
+            'Manage Objectives' => array('objective/manage', 'map' => $strategyMap->id),
+            'Update Objective' => 'active');
+    }
+    
+    private function getInitialBreadcrumbsForActivatedStrategyMap(StrategyMap $strategyMap){
+         return array('Home' => array('site/index'),
+            'Strategy Map Directory' => array('map/index'),
+            'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+            'Manage Objectives' => 'active');
+    }
+    
+    private function getUpdateBreadcrumbsForActivatedStrategyMap(StrategyMap $strategyMap) {
+        return array('Home' => array('site/index'),
+            'Strategy Map Directory' => array('map/index'),
+            'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+            'Manage Objectives' => array('objective/manage', 'map' => $strategyMap->id),
             'Update Objective' => 'active');
     }
 
@@ -194,11 +218,14 @@ class ObjectiveController extends Controller {
         $objective = clone $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $objective);
 
-        $this->mapService->deleteObjective($id);
-        $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SMAP, $strategyMap->id, $objective);
-
-        $this->setSessionData('notif', array('class' => '', 'message' => 'Objective deleted'));
-        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/manageObjectives', 'map' => $strategyMap->id))));
+        if ($strategyMap->strategyEnvironmentStatus != StrategyMap::STATUS_DRAFT) {
+            $this->setSessionData('notif', array('class' => 'error', 'message' => 'Direct Deletion of Objectives are not allowed for strategy maps that not under the "Draft Stage".'));
+        } elseif ($strategyMap->strategyEnvironmentStatus == StrategyMap::STATUS_DRAFT) {
+            $this->mapService->deleteObjective($id);
+            $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SMAP, $strategyMap->id, $objective);
+            $this->setSessionData('notif', array('class' => '', 'message' => 'Objective deleted'));
+        }
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('objective/manage', 'map' => $strategyMap->id))));
     }
 
     public function renderTable() {
@@ -268,9 +295,9 @@ class ObjectiveController extends Controller {
         }
     }
 
-    private function loadThemeModel($id){
+    private function loadThemeModel($id) {
         $theme = $this->mapService->getTheme($id);
-        
+
         if (is_null($theme->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Theme not found'));
             $this->redirect(array('map/index'));
@@ -278,4 +305,5 @@ class ObjectiveController extends Controller {
             return $theme;
         }
     }
+
 }
