@@ -268,4 +268,14 @@ class ObjectiveController extends Controller {
         }
     }
 
+    private function loadThemeModel($id){
+        $theme = $this->mapService->getTheme($id);
+        
+        if (is_null($theme->id)) {
+            $this->setSessionData('notif', array('class' => '', 'message' => 'Theme not found'));
+            $this->redirect(array('map/index'));
+        } else {
+            return $theme;
+        }
+    }
 }

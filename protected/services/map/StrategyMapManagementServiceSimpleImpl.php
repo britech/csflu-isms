@@ -51,8 +51,8 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         if (!is_null($perspective) && !empty($perspective)) {
             return $this->mapDaoSource->getStrategyMapByPerspective($perspective);
         }
-        
-        if(!is_null($objective) && !empty($objective)){
+
+        if (!is_null($objective) && !empty($objective)) {
             return $this->mapDaoSource->getStrategyMapByObjective($objective);
         }
 
@@ -179,10 +179,10 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
             }
         }
 
-        if($match){
+        if ($match) {
             throw new ServiceException("Objective already defined");
         }
-        
+
         $this->objectiveDaoSource->addObjective($objective, $strategyMap);
     }
 
@@ -197,16 +197,16 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
     public function updateObjective(Objective $objective) {
         $strategyMap = $this->mapDaoSource->getStrategyMapByObjective($objective);
         $objectives = $this->objectiveDaoSource->listObjectivesByStrategyMap($strategyMap);
-        
+
         $match = false;
         foreach ($objectives as $data) {
-            if ($objective->description == $data->description) {
+            if ($objective->description == $data->description && $objective->perspective->id != $data->perspective->id) {
                 $match = true;
                 break;
             }
         }
 
-        if($match){
+        if ($match) {
             throw new ServiceException("Objective already defined");
         }
         $this->objectiveDaoSource->updateObjective($objective);
