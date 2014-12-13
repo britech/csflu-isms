@@ -9,6 +9,7 @@ use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapService;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
+use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Theme;
 
 /**
@@ -159,6 +160,12 @@ class ThemeController extends Controller {
     private function loadMapModel($id = null, Theme $theme = null) {
         $strategyMap = $this->mapService->getStrategyMap($id, null, null, $theme);
 
+        if($strategyMap->strategyEnvironmentStatus != StrategyMap::STATUS_DRAFT){
+            $this->setSessionData('notif', array('class'=>'error', 'message'=>'CRUD access is only granted for Strategy Maps that are under "Draft Stage" ONLY.'));
+            $this->redirect(array('map/index'));
+            return;
+        }
+        
         if (is_null($strategyMap->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Strategy Map not found'));
             $this->redirect(array('map/index'));

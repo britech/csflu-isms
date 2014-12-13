@@ -190,6 +190,12 @@ class PerspectiveController extends Controller {
     private function loadMapModel($id = null, Perspective $perspective = null) {
         $strategyMap = $this->mapService->getStrategyMap($id, $perspective);
 
+        if($strategyMap->strategyEnvironmentStatus != StrategyMap::STATUS_DRAFT){
+            $this->setSessionData('notif', array('class'=>'error', 'message'=>'CRUD access is only granted for Strategy Maps that are under "Draft Stage" ONLY.'));
+            $this->redirect(array('map/index'));
+            return;
+        }
+        
         if (is_null($strategyMap->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Strategy Map not found'));
             $this->redirect(array('map/index'));
