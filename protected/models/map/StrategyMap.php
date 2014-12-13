@@ -269,7 +269,7 @@ class StrategyMap extends Model {
         }
 
         if ($oldModel->strategyEnvironmentStatus != $this->strategyEnvironmentStatus) {
-            array_push($changes, "Status:\t{$this->strategyEnvironmentStatus}");
+            array_push($changes, "Status:\t".self::getEnvironmentStatusTypes()[$this->strategyEnvironmentStatus]);
         }
 
         return $translation . implode("\n", $changes);

@@ -176,6 +176,7 @@ class MapController extends Controller {
         }
 
         $strategyMap = $this->loadModel($id);
+        $this->checkCRUDAccessForStrategyMap($strategyMap);
         $this->title = ApplicationConstants::APP_NAME . ' - Complete Strategy Map';
         $this->render('map/complete', array(
             'breadcrumb' => array(
@@ -200,6 +201,13 @@ class MapController extends Controller {
         ));
         $this->unsetSessionData('notif');
     }
+    
+    private function checkCRUDAccessForStrategyMap(StrategyMap $strategyMap){
+        if($strategyMap->strategyEnvironmentStatus != StrategyMap::STATUS_DRAFT){
+            $this->setSessionData('notif', array('class'=>'error', 'message'=>'CRUD access is only granted for Strategy Maps that are under "Draft Stage" ONLY.'));
+            $this->redirect(array('map/index'));
+        }
+    }
 
     public function finish($id) {
         if (!isset($id) || empty($id)) {
@@ -207,6 +215,7 @@ class MapController extends Controller {
         }
 
         $strategyMap = $this->loadModel($id);
+        $this->checkCRUDAccessForStrategyMap($strategyMap);
         if (count($strategyMap->objectives) == 0) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Please complete the construction of the Strategy Map'));
             $this->redirect(array('map/complete', 'id' => $strategyMap->id));
@@ -251,7 +260,8 @@ class MapController extends Controller {
 
         $oldStrategyMap = clone $this->loadModel($strategyMap->id);
         if ($strategyMap->computePropertyChanges($oldStrategyMap) > 0) {
-            $this->logger->debug($strategyMap->getModelTranslationAsUpdatedEntity($oldStrategyMap));
+            $this->mapService->update($strategyMap);
+            $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_SMAP, $strategyMap->id, $strategyMap, $oldStrategyMap);
         }
 
         $this->redirect(array('map/view', 'id' => $strategyMap->id));
