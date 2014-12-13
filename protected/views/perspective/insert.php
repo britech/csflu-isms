@@ -12,7 +12,7 @@ $form = new Form(array(
     'class' => 'ink-form'
         ));
 ?>
-<script type="text/javascript" src="protected/js/perspective/form.js"></script>
+<script type="text/javascript" src="protected/js/perspective/insert.js"></script>
 <div id="validation-container"></div>
 <?php
 if (isset($params['notif']) && !empty($params['notif'])) {
@@ -68,16 +68,26 @@ if (isset($params['validation']) && !empty($params['validation'])) {
                             <td style="text-align:center;">
                                 <?php echo $perspective->positionOrder; ?>
                             </td>
-                            <td><?php echo $perspective->description; ?></td>
+                            <td id="description-<?php echo $perspective->id?>"><?php echo $perspective->description; ?></td>
                             <td style="text-align:center;">
                                 <?php echo ApplicationUtils::generateLink(array('perspective/update', 'id' => $perspective->id), '<i class="fa fa-edit">&nbsp;</i>') ?>
                                 &nbsp;|&nbsp;
-                                <?php echo ApplicationUtils::generateLink(array('perspective/confirmDelete', 'id' => $perspective->id), '<i class="fa fa-trash-o">&nbsp;</i>') ?>
+                                <?php echo ApplicationUtils::generateLink("#", '<i class="fa fa-trash-o">&nbsp;</i>', array('id'=>"del-{$perspective->id}")) ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </tbody>
         </table>
+    </div>
+</div>
+
+<div id="deletePerspective">
+    <div id="deleteThemeContent" style="overflow: hidden">
+        <p id="text"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept">Yes</button>
+            <button class="ink-button green flat" id="deny">No</button>
+        </div>
     </div>
 </div>

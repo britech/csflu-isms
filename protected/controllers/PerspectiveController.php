@@ -4,6 +4,7 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapService;
@@ -134,46 +135,17 @@ class PerspectiveController extends Controller {
             $this->redirect(array('map/updatePerspective', 'id' => $perspective->id));
         }
     }
-
-    public function confirmDelete($id) {
-        if (!isset($id) || empty($id)) {
-            throw new ControllerException("Another parameter is needed to process this request");
-        }
-
-        $perspective = $this->loadModel($id);
-        $strategyMap = $this->loadMapModel(null, $perspective);
-        $this->title = ApplicationConstants::APP_NAME . ' - Delete Perspective';
-        $this->layout = "column-1";
-        $this->render('commons/confirm', array(
-            'confirm' => array('class' => 'error',
-                'header' => 'Confirm Perspective deletion',
-                'text' => "Do you want to delete this perspective? Continuing will remove the perspective, <strong>{$perspective->description}</strong>, and its underlying objectives in the Strategy Map",
-                'accept.class' => 'red',
-                'accept.text' => 'Yes',
-                'accept.url' => array('perspective/delete', 'id' => $id),
-                'deny.class' => 'green',
-                'deny.text' => 'No',
-                'deny.url' => array('perspective/manage', 'map' => $strategyMap->id)),
-            'breadcrumb' => array(
-                'Home' => array('site/index'),
-                'Strategy Map Directory' => array('map/index'),
-                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
-                'Manage Perspectives' => array('perspective/manage', 'map' => $strategyMap->id),
-                'Delete Perspective' => 'active')));
-    }
-
-    public function delete($id) {
-        if (!isset($id) || empty($id)) {
-            throw new ControllerException("Another parameter is needed to process this request");
-        }
-
+    
+    public function delete() {
+        $this->validatePostData(array('id'));
+        $id = $this->getFormData('id');
+        
         $perspective = clone $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $perspective);
         $this->mapService->deletePerspective($id);
         $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SMAP, $strategyMap->id, $perspective);
         $this->setSessionData('notif', array('class' => '', 'message' => 'Perspective removed from the Strategy Map'));
-        $this->redirect(array('perspective/manage', 'map' => $strategyMap->id));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('perspective/manage', 'map' => $strategyMap->id))));
     }
 
     private function loadModel($id) {

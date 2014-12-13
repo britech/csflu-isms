@@ -67,4 +67,35 @@ $(document).ready(function() {
     $("#description-input").change(function() {
         $("#description").val($(this).val());
     });
+
+    $('#deletePerspective').jqxWindow({
+        title: '<strong>Confirm Perspective Deletion</strong>',
+        width: 300,
+        height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+    });
+
+    $("[id^=del-]").click(function() {
+        var text = $(this).parent().siblings("td + td").html();
+        $("#text").html("Do you want to delete the perspective, <strong>" + text + "</strong>? Continuing will remove this perspective and its underlying objectives from the Strategy Map.")
+        $("#deletePerspective").jqxWindow('open');
+        $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+    });
+
+    $("[id^=accept]").click(function() {
+        var id = $(this).attr('id').split('-')[1];
+
+        $.post("?r=perspective/delete",
+                {id: id},
+        function(data) {
+            var response = $.parseJSON(data);
+            window.location = response.url;
+        });
+    });
 });

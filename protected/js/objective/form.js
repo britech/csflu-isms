@@ -150,7 +150,6 @@ $(document).ready(function() {
             type: 'POST'
         }),
         displayMember: 'description',
-        valueMember: 'description',
         width: '100%',
         searchMode: 'containsignorecase',
         autoComplete: true,
@@ -166,7 +165,7 @@ $(document).ready(function() {
     });
 
     $("#description-input").change(function() {
-
+        console.log($(this).val());
         $("[name*=description]").val($(this).val());
     });
 
