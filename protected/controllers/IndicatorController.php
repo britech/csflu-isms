@@ -108,8 +108,7 @@ class IndicatorController extends Controller {
                     'header' => 'Actions',
                     'links' => array(
                         'Update Indicator' => array('indicator/update', 'id' => $indicator->id),
-                        'Update Baseline Data' => array('km/manageBaselineData', 'indicator' => $indicator->id),
-                        'Enlist an Indicator' => array('km/enlistIndicator')
+                        'Update Baseline Data' => array('km/manageBaselineData', 'indicator' => $indicator->id)
                     ))),
             'indicator' => $indicator,
         ));
