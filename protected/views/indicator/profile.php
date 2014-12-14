@@ -17,23 +17,23 @@ if (isset($params['notif']) && !empty($params['notif'])) {
 <p><?php echo $indicator->description; ?></p>
 
 <span style="font-weight: bold;">Rationale</span>
-<p><?php echo empty($indicator->rationale) ? "Not yet defined" : $indicator->rationale; ?></p>
+<p><?php echo is_null($indicator->rationale) ? "Not yet defined" : $indicator->rationale; ?></p>
 
 <span style="font-weight: bold;">Formula</span>
-<p><?php echo empty($indicator->formula) ? "Not yet defined" : $indicator->formula; ?></p>
+<p><?php echo is_null($indicator->formula) ? "Not yet defined" : $indicator->formula; ?></p>
 
 <span style="font-weight: bold;">Unit of Measure</span>
 <p><?php echo $indicator->uom->description; ?></p>
 
 <span style="font-weight: bold;">Source of Data</span>
-<p><?php echo empty($indicator->dataSource) ? "Not yet defined" : $indicator->dataSource; ?></p>
+<p><?php echo is_null($indicator->dataSource) ? "Not yet defined" : $indicator->dataSource; ?></p>
 
 <span style="font-weight: bold;">Status - Source of Data</span>
 <p><?php echo Indicator::getDataSourceDescriptionList()[$indicator->dataSourceStatus]; ?></p>
 
 <?php if ($indicator->dataSourceStatus != Indicator::STAT_AVAILABLE): ?>
     <span style="font-weight: bold;">Date of Availability - Source of Data</span>
-    <p><?php echo empty($indicator->dataSourceAvailabilityDate) ? "Not yet defined" : $indicator->dataSourceAvailabilityDate; ?></p>
+    <p><?php echo is_null($indicator->dataSourceAvailabilityDate) ? "Not yet defined" : $indicator->dataSourceAvailabilityDate; ?></p>
 <?php endif; ?>
 <!--    </div>-->
 
