@@ -51,8 +51,8 @@ $(document).ready(function() {
         $("[name*=endingPeriodDate]").val(endingDate.getFullYear() + "-" + (endingDate.getMonth() + 1) + "-" + lastDayOfEndingDate);
         $("[name*=name]").val(endingDate.getFullYear() + " Development Strategy");
     });
-
-    $("[name*=missionStatement], [name*=valuesStatement]").tagEditor({
+    
+    $("#mission, #values").tagEditor({
         delimiter:'+;',
         maxLength: -1,
         forceLowercase: false

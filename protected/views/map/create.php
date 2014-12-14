@@ -30,19 +30,19 @@ if (isset($params['validation']) && !empty($params['validation'])) {
 <div class="control-group">
     <?php echo $form->renderLabel('Vision Statement&nbsp*'); ?>
     <div class="control">
-        <?php echo $form->renderTextArea('StrategyMap[visionStatement]', array('value' => empty($model) ? '' : $model->visionStatement)); ?>
+        <?php echo $form->renderTextArea('StrategyMap[visionStatement]', array('value' => empty($model) ? '' : $model->visionStatement, 'id'=>'vision')); ?>
     </div>
 </div>
 <div class="control-group">
     <?php echo $form->renderLabel('Mission Statement&nbsp*'); ?>
     <div class="control">
-        <?php echo $form->renderTextArea('StrategyMap[missionStatement]', array('value' => empty($model) ? '' : $model->missionStatement)); ?>
+        <?php echo $form->renderTextArea('StrategyMap[missionStatement]', array('value' => empty($model) ? '' : $model->missionStatement, 'id'=>'mission')); ?>
     </div>
 </div>
 <div class="control-group">
     <?php echo $form->renderLabel('Values Statement&nbsp*'); ?>
     <div class="control">
-        <?php echo $form->renderTextArea('StrategyMap[valuesStatement]', array('value' => empty($model) ? '' : $model->valuesStatement)); ?>
+        <?php echo $form->renderTextArea('StrategyMap[valuesStatement]', array('value' => empty($model) ? '' : $model->valuesStatement, 'id'=>'values')); ?>
     </div>
 </div>
 <?php endif;?>
@@ -76,6 +76,14 @@ if (isset($params['validation']) && !empty($params['validation'])) {
             <div class="control">
                 <?php
                 echo $form->renderHiddenField('mode', array('value' => $model->isNew() ? 1 : 2));
+                
+                if($model->strategyEnvironmentStatus != StrategyMap::STATUS_DRAFT){
+                    echo $form->renderHiddenField('StrategyMap[visionStatement]', array('value'=>$model->visionStatement));
+                    echo $form->renderHiddenField('StrategyMap[missionStatement]', array('value'=>$model->missionStatement));
+                    echo $form->renderHiddenField('StrategyMap[valuesStatement]', array('value'=>$model->valuesStatement));
+                    echo $form->renderHiddenField('StrategyMap[strategyType]', array('value'=>$model->strategyType));
+                }
+                
                 if ($model->isNew()) {
                     echo $form->renderSubmitButton('Create', array('class' => 'ink-button green flat',
                         'style' => 'width: 100%; margin-left: 0px;'));
