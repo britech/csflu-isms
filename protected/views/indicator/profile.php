@@ -29,7 +29,7 @@ if (isset($params['notif']) && !empty($params['notif'])) {
 <p><?php echo is_null($indicator->dataSource) ? "Not yet defined" : $indicator->dataSource; ?></p>
 
 <span style="font-weight: bold;">Status - Source of Data</span>
-<p><?php echo Indicator::getDataSourceDescriptionList()[$indicator->dataSourceStatus]; ?></p>
+<p><?php echo is_null($indicator->dataSourceStatus) ? "Not yet defined" : Indicator::getDataSourceDescriptionList()[$indicator->dataSourceStatus]; ?></p>
 
 <?php if ($indicator->dataSourceStatus != Indicator::STAT_AVAILABLE): ?>
     <span style="font-weight: bold;">Date of Availability - Source of Data</span>

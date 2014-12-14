@@ -40,7 +40,7 @@ class KmController extends Controller {
 
     public function indicators() {
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Indicators';
-        $this->render('indicator/indicatorList', array(
+        $this->render('indicator/index', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Knowledge Management' => array('km/index'),
@@ -71,44 +71,6 @@ class KmController extends Controller {
         }
 
         $this->renderAjaxJsonResponse($data);
-    }
-
-    public function indicatorProfile() {
-        $this->title = ApplicationConstants::APP_NAME . ' - Indicator Profile';
-        //$this->layout = 'column-1';
-        $id = filter_input(INPUT_GET, 'id');
-
-        if (!isset($id) || empty($id)) {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-
-        $indicator = $this->indicatorService->retrieveIndicator($id);
-
-        if (is_null($indicator->id)) {
-            $_SESSION['notif'] = array('class' => '', 'message' => 'Indicator not found');
-            $this->redirect(array('km/indicators'));
-        }
-
-        $this->render('indicator/profile', array(
-            'breadcrumb' => array(
-                'Home' => array('site/index'),
-                'Knowledge Management' => array('km/index'),
-                'Manage Indicators' => array('km/indicators'),
-                'Profile' => 'active'),
-            'sidebar' => array(
-                'data' => array(
-                    'header' => 'Actions',
-                    'links' => array(
-                        'Update Indicator' => array('km/updateIndicator', 'id' => $indicator->id),
-                        'Update Baseline Data' => array('km/manageBaselineData', 'indicator' => $indicator->id),
-                        'Enlist an Indicator' => array('km/enlistIndicator')
-                    ))),
-            'indicator' => $indicator,
-            'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""
-        ));
-        if (isset($_SESSION['notif'])) {
-            unset($_SESSION['notif']);
-        }
     }
 
     public function updateIndicator() {
