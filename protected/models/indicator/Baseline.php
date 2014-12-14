@@ -29,7 +29,7 @@ class Baseline extends Model {
             array_push($this->validationMessages, '- Covered Year must be defined');
         }
 
-        if (empty($this->value) && $this->value != 0) {
+        if (empty($this->value) && $this->value != "0") {
             $counter+=1;
             array_push($this->validationMessages, '- Figure Value should be defined');
         }
@@ -43,6 +43,18 @@ class Baseline extends Model {
 
     public function __get($name) {
         return $this->$name;
+    }
+
+    public function isNew() {
+        return empty($this->id);
+    }
+
+    public function getAttributeNames() {
+        return array(
+            'baselineDataGroup' => 'Item Name',
+            'coveredYear' => 'Covered Year',
+            'value' => 'Figure Value',
+            'notes' => 'Notes');
     }
 
 }

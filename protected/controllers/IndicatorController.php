@@ -9,6 +9,7 @@ use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\indicator\IndicatorManagementServiceSimpleImpl as IndicatorManagementService;
 use org\csflu\isms\models\indicator\Indicator;
+use org\csflu\isms\models\indicator\Baseline;
 use org\csflu\isms\models\commons\UnitOfMeasure;
 
 class IndicatorController extends Controller {
@@ -160,15 +161,11 @@ class IndicatorController extends Controller {
         }
 
         $data = $this->loadModel($indicator);
-
-        if (is_null($data->id)) {
-            $_SESSION['notif'] = array('class' => '', 'message' => 'Indicator not found');
-            $this->redirect(array('km/indicators'));
-        }
-
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Baseline Data';
         $this->layout = 'column-1';
 
+        $baseline = new Baseline();
+        $baseline->validationMode = Model::VALIDATION_MODE_INITIAL;
         $this->render('indicator/baselineForm', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
@@ -176,7 +173,8 @@ class IndicatorController extends Controller {
                 'Manage Indicators' => array('km/indicators'),
                 'Profile' => array('indicator/view', 'id' => $data->id),
                 'Manage Baseline Data' => 'active'),
-            'indicatorId' => $data->id,
+            'indicatorModel' => $data,
+            'model' => $baseline,
             'uom' => $data->uom->description,
             'validation' => $this->getSessionData('validation'),
             'notif' => $this->getSessionData('notif')
@@ -185,7 +183,11 @@ class IndicatorController extends Controller {
         $this->unsetSessionData('notif');
     }
     
-    public function listBaselines(){
+    public function insertBaseline(){
+        
+    }
+
+    public function listBaselines() {
         $this->validatePostData(array('id', 'action'));
         $id = $this->getFormData('id');
         $action = $this->getFormData('action');
