@@ -57,7 +57,7 @@ echo $form->constructHeader(!$model->isNew() ? 'Update Indicator Data' : 'Enlist
     <div class="control-group">
         <?php echo $form->renderLabel($model, 'dataSourceStatus', array('required' => true)); ?>
         <div class="control">
-            <?php echo $form->renderTextArea($model, 'dataSourceStatus'); ?>
+            <?php echo $form->renderDropDownList($model, 'dataSourceStatus', $statusList); ?>
             <p class="tip">Is information about the measure available?</p>
         </div>
     </div>
@@ -83,6 +83,7 @@ echo $form->constructHeader(!$model->isNew() ? 'Update Indicator Data' : 'Enlist
         } else {
             echo $form->renderSubmitButton('Enlist', array('class' => 'ink-button green flat', 'style' => 'margin-top: 1em; margin-left: 0px;'));
         }
+        echo $form->renderHiddenField($model, 'validationMode');
         ?>
     </div>
 </div>

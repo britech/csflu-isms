@@ -70,7 +70,7 @@ class IndicatorManagementServiceSimpleImpl implements IndicatorManagementService
         
         $match = false;
         foreach($indicators as $data){
-            if($data->description == $indicator->description){
+            if($data->description == $indicator->description && is_null($indicator->id)){
                 $match = true;
                 break;
             }
@@ -80,7 +80,7 @@ class IndicatorManagementServiceSimpleImpl implements IndicatorManagementService
             throw new ServiceException("Indicator already defined. Please use the update facility instead.");
         }
         
-        if($indicator->id){
+        if(!is_null($indicator->id)){
             $this->daoSource->updateIndicator($indicator);
         } else {
             return $this->daoSource->enlistIndicator($indicator);

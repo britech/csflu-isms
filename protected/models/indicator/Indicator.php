@@ -21,11 +21,11 @@ class Indicator extends Model {
 
     private $id;
     private $description;
-    private $rationale;
-    private $formula;
-    private $dataSource;
-    private $dataSourceStatus;
-    private $dataSourceAvailabilityDate;
+    private $rationale = "";
+    private $formula = "";
+    private $dataSource = "";
+    private $dataSourceStatus = "";
+    private $dataSourceAvailabilityDate = "";
     private $uom;
     private $baselineData = array();
 
@@ -118,4 +118,49 @@ class Indicator extends Model {
         );
     }
 
+    public function computePropertyChanges(Indicator $oldModel) {
+        $counter = 0;
+
+        if ($this->description != $oldModel->description) {
+            $counter++;
+        }
+
+        if ($this->uom->id != $oldModel->uom->id) {
+            $counter++;
+        }
+
+        if (!empty($this->rationale) && $this->rationale != $oldModel->rationale) {
+            $counter++;
+        }
+
+        if (!empty($this->formula) && $this->formula != $oldModel->formula) {
+            $counter++;
+        }
+
+        if (!empty($this->dataSource) && $this->dataSource != $oldModel->dataSource) {
+            $counter++;
+        }
+
+        if (!empty($this->dataSourceStatus) && $this->dataSourceStatus != $oldModel->dataSourceStatus) {
+            $counter++;
+        }
+
+        if (!empty($this->dataSourceAvailabilityDate) && $this->dataSourceAvailabilityDate != $oldModel->dataSourceAvailabilityDate) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
+    public function __clone() {
+        $indicator = new Indicator();
+        $indicator->id = $this->id;
+        $indicator->description = $this->description;
+        $indicator->rationale = $this->rationale;
+        $indicator->formula = $this->formula;
+        $indicator->dataSource = $this->dataSource;
+        $indicator->dataSourceStatus = $this->dataSourceStatus;
+        $indicator->dataSourceAvailabilityDate = $this->dataSourceAvailabilityDate;
+        $indicator->uom = $this->uom;
+    }
 }

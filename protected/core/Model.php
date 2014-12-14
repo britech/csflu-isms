@@ -13,7 +13,7 @@ abstract class Model {
     const VALIDATION_MODE_INITIAL = 1;
     const VALIDATION_MODE_UPDATE = 2;
     
-    private $validationMode;
+    protected $validationMode;
     protected $validationMessages = array();
     /**
      * 

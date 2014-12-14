@@ -36,11 +36,16 @@ $(document).ready(function() {
             url: "?r=indicator/validateIndicatorEntry",
             data: {"Indicator": {
                     'description': $("[name*=description]").val(),
+                    'rationale' : $("[name*=rationale]").val(),
+                    'formula' : $("[name*=formula]").val(),
+                    'dataSource' : $("[name*=dataSource]").val(),
+                    'dataSourceStatus' : $("[name*=dataSourceStatus]").val(),
+                    'dataSourceAvailabilityDate' : $("[name*=dataSourceAvailabilityDate]").val()
                    },
                    "UnitOfMeasure":{
                        'id':$("#uom-id").val()
                    },
-                   "mode": 1},
+                   "mode": $("[name*=validationMode]").val()},
             async: false,
             success: function(data) {
                 try {

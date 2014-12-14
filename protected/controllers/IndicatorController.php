@@ -26,13 +26,15 @@ class IndicatorController extends Controller {
     public function enlist() {
         $this->title = ApplicationConstants::APP_NAME . ' - Enlist An Indicator';
         $this->layout = 'column-1';
+        $indicator = new Indicator();
+        $indicator->validationMode = Model::VALIDATION_MODE_INITIAL;
         $this->render('indicator/mainForm', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Knowledge Management' => array('km/index'),
                 'Manage Indicators' => array('km/indicators'),
                 'Enlist An Indicator' => 'active'),
-            'model' => new Indicator(),
+            'model' => $indicator,
             'uomModel' => new UnitOfMeasure,
             'validation' => $this->getSessionData('validation')
         ));
@@ -129,11 +131,13 @@ class IndicatorController extends Controller {
     public function update($id = null) {
         if (is_null($id)) {
             $this->validatePostData(array('Indicator', 'UnitOfMeasure'));
+            $this->processUpdate();
         } elseif (!isset($id) || empty($id)) {
             throw new ControllerException('Another parameter is needed to process this request');
         }
         $this->layout = 'column-1';
         $indicator = $this->loadModel($id);
+        $indicator->validationMode = Model::VALIDATION_MODE_UPDATE;
 
         $this->title = ApplicationConstants::APP_NAME . ' - Indicator Profile';
         $this->render('indicator/mainForm', array(
@@ -141,15 +145,38 @@ class IndicatorController extends Controller {
                 'Home' => array('site/index'),
                 'Knowledge Management' => array('km/index'),
                 'Manage Indicators' => array('km/indicators'),
-                'Profile' => array('km/indicatorProfile', 'id' => $indicator->id),
+                'Profile' => array('indicator/view', 'id' => $indicator->id),
                 'Update Indicator' => 'active'),
             'model' => $indicator,
-            'uomModel' => $indicator->uom
+            'uomModel' => $indicator->uom,
+            'statusList' => Indicator::getDataSourceDescriptionList(),
+            'validation' => $this->getSessionData('validation')
         ));
+        $this->unsetSessionData('validation');
     }
 
     private function processUpdate() {
-        
+        $indicatorData = $this->getFormData('Indicator');
+        $uomData = $this->getFormData('UnitOfMeasure');
+
+        $indicator = new Indicator();
+        $indicator->validationMode = Model::VALIDATION_MODE_UPDATE;
+        $indicator->bindValuesUsingArray(array(
+            'indicator' => $indicatorData,
+            'unitofmeasure' => $uomData
+        ));
+
+        $oldModel = clone $this->loadModel($indicator->id);
+
+        if ($indicator->validate()) {
+            if ($indicator->computePropertyChanges($oldModel) > 0) {
+                $this->indicatorService->manageIndicator($indicator);
+            }
+            $this->redirect(array('indicator/view', 'id' => $indicator->id));
+        } else {
+            $this->setSessionData('validation', $indicator->validationMessages);
+            $this->redirect(array('indicator/update', 'id' => $indicator->id));
+        }
     }
 
     private function loadModel($id) {
