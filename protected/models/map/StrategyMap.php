@@ -46,7 +46,7 @@ class StrategyMap extends Model {
     private $endingPeriodDate;
     private $implementationDate;
     private $terminationDate;
-    private $strategyEnvironmentStatus;
+    private $strategyEnvironmentStatus = self::STATUS_DRAFT;
     private $objectives;
 
     public function validate() {
@@ -297,4 +297,7 @@ class StrategyMap extends Model {
         $strategyMap->strategyEnvironmentStatus = $this->strategyEnvironmentStatus;
     }
 
+    public function isNew() {
+        return empty($this->id);
+    }
 }

@@ -158,7 +158,8 @@ $(document).ready(function() {
         animationType: 'none'
     }).on("select", function(event) {
         if (event.args) {
-            $("[name*=description]").val(event.args.item.value);
+            console.log(event.args.item.label);
+            $("[name*=description]").val(event.args.item.label);
         }
     }).on("bindingComplete", function() {
         $("#description-input").val($("#description").val());

@@ -6,14 +6,11 @@ use org\csflu\isms\util\FormGenerator as Form;
 use org\csflu\isms\models\map\StrategyMap;
 
 $form = new Form(array(
-    'action' => array(empty($model) ? 'map/insert' : 'map/update'),
+    'action' => array($model->isNew() ? 'map/insert' : 'map/update'),
     'class' => 'ink-form',
     'hasFieldset' => true,
     'style' => 'margin-bottom: 10px'
         ));
-
-
-
 echo $form->startComponent();
 echo $form->constructHeader(empty($model) ? 'Create a Strategy Map - Initial Phase' : 'Update Entry Data');
 ?>
@@ -79,7 +76,7 @@ if (isset($params['validation']) && !empty($params['validation'])) {
             <div class="control">
                 <?php
                 echo $form->renderHiddenField('mode', array('value' => empty($model) ? 1 : 2));
-                if (empty($model)) {
+                if ($model->isNew()) {
                     echo $form->renderSubmitButton('Create', array('class' => 'ink-button green flat',
                         'style' => 'width: 100%; margin-left: 0px;'));
                 } else {

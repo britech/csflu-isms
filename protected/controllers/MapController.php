@@ -68,6 +68,7 @@ class MapController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Create a Strategy Map' => 'active'),
+            'model' => new StrategyMap(),
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
@@ -77,7 +78,7 @@ class MapController extends Controller {
         $this->validatePostData(array('StrategyMap'));
         $strategyMapData = $this->getFormData('StrategyMap');
         $strategyMap = new StrategyMap();
-        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData));
+        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData), $strategyMap);
         $strategyMap->validationMode = Model::VALIDATION_MODE_INITIAL;
         if (!$strategyMap->validate()) {
             $this->setSessionData('validation', $strategyMap->validationMessages);
@@ -155,8 +156,7 @@ class MapController extends Controller {
                 'Strategy Map' => array('map/view', 'id' => $id),
                 'Update Status' => 'active'),
             'model' => $strategyMap,
-            'status' => $status,
-            'statusDescription' => StrategyMap::getEnvironmentStatusTypes()[$status],
+            'status' => is_null($status) ? StrategyMap::getEnvironmentStatusTypes() : $status,
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');

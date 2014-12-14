@@ -60,7 +60,7 @@ $(document).ready(function() {
         animationType: 'none'
     }).on("select", function(event) {
         if (event.args) {
-            $("#description").val(event.args.item.value);
+            $("#description").val(event.args.item.label);
         }
     });
 
