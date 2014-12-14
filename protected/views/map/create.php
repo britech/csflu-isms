@@ -75,7 +75,7 @@ if (isset($params['validation']) && !empty($params['validation'])) {
             <?php echo $form->renderLabel('&nbsp;'); ?>
             <div class="control">
                 <?php
-                echo $form->renderHiddenField('mode', array('value' => empty($model) ? 1 : 2));
+                echo $form->renderHiddenField('mode', array('value' => $model->isNew() ? 1 : 2));
                 if ($model->isNew()) {
                     echo $form->renderSubmitButton('Create', array('class' => 'ink-button green flat',
                         'style' => 'width: 100%; margin-left: 0px;'));

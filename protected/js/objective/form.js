@@ -115,7 +115,7 @@ $(document).ready(function() {
             type: "POST",
             url: "?r=objective/validate",
             data: {"Objective": {
-                    'description': $("[name*=description]").val(),
+                    'description': $("#description").val(),
                     'startingPeriodDate': $("#obj-start").val(),
                     'endingPeriodDate': $("#obj-end").val()
                 },
