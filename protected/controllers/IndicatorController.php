@@ -108,7 +108,7 @@ class IndicatorController extends Controller {
                     'header' => 'Actions',
                     'links' => array(
                         'Update Indicator' => array('indicator/update', 'id' => $indicator->id),
-                        'Update Baseline Data' => array('km/manageBaselineData', 'indicator' => $indicator->id)
+                        'Update Baseline Data' => array('indicator/manageBaselines', 'indicator' => $indicator->id)
                     ))),
             'indicator' => $indicator,
         ));
@@ -152,6 +152,58 @@ class IndicatorController extends Controller {
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
+    }
+
+    public function manageBaselines($indicator) {
+        if (!isset($indicator) || empty($indicator)) {
+            throw new ControllerException('Another parameter is needed to process this request');
+        }
+
+        $data = $this->loadModel($indicator);
+
+        if (is_null($data->id)) {
+            $_SESSION['notif'] = array('class' => '', 'message' => 'Indicator not found');
+            $this->redirect(array('km/indicators'));
+        }
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Baseline Data';
+        $this->layout = 'column-1';
+
+        $this->render('indicator/baselineForm', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Knowledge Management' => array('km/index'),
+                'Manage Indicators' => array('km/indicators'),
+                'Profile' => array('indicator/view', 'id' => $data->id),
+                'Manage Baseline Data' => 'active'),
+            'indicatorId' => $data->id,
+            'uom' => $data->uom->description,
+            'validation' => $this->getSessionData('validation'),
+            'notif' => $this->getSessionData('notif')
+        ));
+        $this->unsetSessionData('validation');
+        $this->unsetSessionData('notif');
+    }
+    
+    public function listBaselines(){
+        $this->validatePostData(array('id', 'action'));
+        $id = $this->getFormData('id');
+        $action = $this->getFormData('action');
+
+        $data = array();
+        $indicator = $this->indicatorService->retrieveIndicator($id);
+        foreach ($indicator->baselineData as $baseline) {
+            if ($action != 0) {
+                $actionLink = ApplicationUtils::generateLink(array('km/updateBaselineData', 'id' => $baseline->id, 'indicator' => $indicator->id), 'Update') . '&nbsp;|&nbsp;' .
+                        ApplicationUtils::generateLink(array('km/confirmDeleteBaselineData', 'id' => $baseline->id, 'indicator' => $indicator->id), 'Delete');
+            }
+            array_push($data, array(
+                'group' => is_null($baseline->baselineDataGroup) ? "-" : $baseline->baselineDataGroup,
+                'year' => $baseline->coveredYear,
+                'figure' => $baseline->value,
+                'action' => isset($actionLink) ? $actionLink : ''));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     private function processUpdate() {
