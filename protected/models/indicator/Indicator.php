@@ -48,31 +48,36 @@ class Indicator extends Model {
             $counter += 1;
         }
 
-        /**
-          if (empty($this->rationale)) {
-          array_push($this->validationMessages, '- Rationale should not be empty');
-          $counter += 1;
-          }
-
-          if (empty($this->formula)) {
-          array_push($this->validationMessages, '- Formula Description should not be empty');
-          $counter += 1;
-          }
-
-          if (empty($this->dataSource)) {
-          array_push($this->validationMessages, '- Source of Data should not be empty');
-          $counter += 1;
-          }
-
-          if (empty($this->dataSourceAvailabilityDate) && ($this->dataSourceStatus != self::STAT_AVAILABLE)) {
-          array_push($this->validationMessages, '- Date of Availability - Source of Data should not be empty');
-          $counter += 1;
-          }
-         * */
-        if (is_null($this->uom->id)) {
-            array_push($this->validationMessages, '- Unit of Measure should be selected');
-            $counter += 1;
+        if (empty($this->uom->id)) {
+            $id = $this->uom->id;
+            if (empty($id)) {
+                array_push($this->validationMessages, '- Unit of Measure should be selected');
+                $counter += 1;
+            }
         }
+
+        if ($this->validationMode == parent::VALIDATION_MODE_UPDATE) {
+            if (empty($this->rationale)) {
+                array_push($this->validationMessages, '- Rationale should not be empty');
+                $counter += 1;
+            }
+
+            if (empty($this->formula)) {
+                array_push($this->validationMessages, '- Formula Description should not be empty');
+                $counter += 1;
+            }
+
+            if (empty($this->dataSource)) {
+                array_push($this->validationMessages, '- Source of Data should not be empty');
+                $counter += 1;
+            }
+
+            if (empty($this->dataSourceAvailabilityDate) && ($this->dataSourceStatus != self::STAT_AVAILABLE)) {
+                array_push($this->validationMessages, '- Date of Availability - Source of Data should not be empty');
+                $counter += 1;
+            }
+        }
+
         return $counter > 0 ? false : true;
     }
 
@@ -81,8 +86,8 @@ class Indicator extends Model {
             $this->uom = new UnitOfMeasure();
             $this->uom->bindValuesUsingArray($valueArray, $this->uom);
         }
-        
-        if(array_key_exists('baseline', $valueArray)){
+
+        if (array_key_exists('baseline', $valueArray)) {
             $this->baselineData = new Baseline();
             $this->baselineData->bindValuesUsingArray($valueArray, $this->baselineData);
         }
@@ -95,6 +100,22 @@ class Indicator extends Model {
 
     public function __get($name) {
         return $this->$name;
+    }
+
+    public function isNew() {
+        return empty($this->id);
+    }
+
+    public function getAttributeNames() {
+        return array(
+            'description' => 'Description',
+            'rationale' => 'Rationale',
+            'formula' => 'Formula Description',
+            'dataSource' => 'Source of Data',
+            'dataSourceStatus' => 'Status - Source of Data',
+            'dataSourceAvailabilityDate' => 'Date of Availability - Source of Data',
+            'uom' => 'Unit of Measure'
+        );
     }
 
 }

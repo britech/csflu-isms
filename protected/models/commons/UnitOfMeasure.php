@@ -1,7 +1,9 @@
 <?php
 
 namespace org\csflu\isms\models\commons;
+
 use org\csflu\isms\core\Model;
+
 /**
  * Description of UnitOfMeasure
  *
@@ -10,7 +12,7 @@ use org\csflu\isms\core\Model;
  * @property String $description
  * @author britech
  */
-class UnitOfMeasure extends Model{
+class UnitOfMeasure extends Model {
 
     private $id;
     private $symbol;
@@ -25,12 +27,16 @@ class UnitOfMeasure extends Model{
     }
 
     public function validate() {
-        if(empty($this->description)){
+        if (empty($this->description)) {
             array_push($this->validationMessages, '- Description should not be empty!');
             return false;
         } else {
             return true;
         }
+    }
+
+    public function getAttributeNames() {
+        return array('symbol' => 'Symbol', 'description' => 'Unit of Measure');
     }
 
 }

@@ -34,6 +34,11 @@ class ModelFormGenerator extends FormGenerator {
         $properties = $this->validateAndRetrieve($model, $fieldName, $properties);
         return parent::renderTextField($this->generateFieldName($model, $fieldName), $properties);
     }
+    
+    public function renderTextArea(Model $model, $fieldName, array $properties = []) {
+        $properties = $this->validateAndRetrieve($model, $fieldName, $properties);
+        return parent::renderTextArea($this->generateFieldName($model, $fieldName), $properties);
+    }
 
     public function renderDropDownList(Model $model, $fieldName, array $data, array $properties = []) {
         $properties = $this->validateAndRetrieve($model, $fieldName, $properties);

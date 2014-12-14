@@ -27,5 +27,36 @@ $(document).ready(function() {
             selectedIndex: item.index
         });
     });
+    
+    $(".ink-form").submit(function() {
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=indicator/validateIndicatorEntry",
+            data: {"Indicator": {
+                    'description': $("[name*=description]").val(),
+                   },
+                   "UnitOfMeasure":{
+                       'id':$("#uom-id").val()
+                   },
+                   "mode": 1},
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    if (response.respCode === '00') {
+                        $("#description").val($("#description-input").val());
+                        $("#positionOrder").val($("#position-order").val());
+                    }
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result;
+    });
 });
 

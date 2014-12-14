@@ -29,7 +29,7 @@ class Baseline extends Model {
             array_push($this->validationMessages, '- Covered Year must be defined');
         }
 
-        if (empty($this->value)) {
+        if (empty($this->value) && $this->value != 0) {
             $counter+=1;
             array_push($this->validationMessages, '- Figure Value should be defined');
         }

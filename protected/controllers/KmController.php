@@ -49,14 +49,12 @@ class KmController extends Controller {
                 'data' => array(
                     'header' => 'Actions',
                     'links' => array(
-                        'Enlist an Indicator' => array('km/enlistIndicator'),
-                        'Link Indicator to a Job Position' => array('km/linkIndicator')
+                        'Enlist an Indicator' => array('indicator/enlist'),
+                        //'Link Indicator to a Job Position' => array('km/linkIndicator')
                     ))),
-            'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""
+            'notif' => $this->getSessionData('notif')
         ));
-        if (isset($_SESSION['notif'])) {
-            unset($_SESSION['notif']);
-        }
+        $this->unsetSessionData('notif');
     }
 
     public function renderIndicatorGrid() {
@@ -73,48 +71,6 @@ class KmController extends Controller {
         }
 
         $this->renderAjaxJsonResponse($data);
-    }
-
-    public function enlistIndicator() {
-        $this->title = ApplicationConstants::APP_NAME . ' - Enlist An Indicator';
-        $this->layout = 'column-1';
-        $this->render('indicator/mainForm', array(
-            'breadcrumb' => array(
-                'Home' => array('site/index'),
-                'Knowledge Management' => array('km/index'),
-                'Manage Indicators' => array('km/indicators'),
-                'Enlist An Indicator' => 'active'),
-            'validation' => isset($_SESSION['validation']) ? $_SESSION['validation'] : ""
-        ));
-
-        if (isset($_SESSION['validation'])) {
-            unset($_SESSION['validation']);
-        }
-    }
-
-    public function create() {
-        $indicatorData = filter_input_array(INPUT_POST)['Indicator'];
-        $uomData = filter_input_array(INPUT_POST)['UnitOfMeasure'];
-
-        if (count(filter_input_array(INPUT_POST)) < 2) {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-
-        $indicator = new Indicator();
-        $indicator->validationMode = Model::VALIDATION_MODE_INITIAL;
-        $indicator->bindValuesUsingArray(array(
-            'indicator' => $indicatorData,
-            'unitofmeasure' => $uomData
-        ));
-
-        if ($indicator->validate()) {
-            $id = $this->indicatorService->enlistIndicator($indicator);
-            $_SESSION['notif'] = array('class' => 'success', 'message' => 'Indicator successfully added');
-            $this->redirect(array('km/updateIndicator', 'id' => $id));
-        } else {
-            $_SESSION['validation'] = $indicator->validationMessages;
-            $this->redirect(array('km/enlistIndicator'));
-        }
     }
 
     public function indicatorProfile() {
