@@ -113,7 +113,7 @@ class StrategyMap extends Model {
         $monthLength = $interval->format('%y') > 0 ? $interval->format('%y') * 12 : $interval->format('%m');
         switch ($this->strategyType) {
             case self::TYPE_SHORT:
-                if (!($monthLength >= self::LENGTH_SHORT_MIN && $monthLength <= self::LENGTH_MEDIUM_MAX)) {
+                if (!($monthLength >= self::LENGTH_SHORT_MIN && $monthLength <= self::LENGTH_SHORT_MAX)) {
                     $counter++;
                 }
                 break;
@@ -123,7 +123,7 @@ class StrategyMap extends Model {
                 }
                 break;
             case self::TYPE_LONG:
-                if ($monthLength < self::LENGTH_MEDIUM_MAX) {
+                if ($monthLength <= self::LENGTH_MEDIUM_MAX) {
                     $counter++;
                 }
                 break;
