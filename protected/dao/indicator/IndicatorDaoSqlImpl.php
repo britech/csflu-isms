@@ -97,7 +97,7 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
                     . 'data_src, '
                     . 'data_src_stat, '
                     . 'data_src_avail_date, '
-                    . 'uom'
+                    . 'uom '
                     . 'FROM indicators '
                     . 'WHERE indicator_id=:id');
             $dbst->execute(array('id' => $id));
