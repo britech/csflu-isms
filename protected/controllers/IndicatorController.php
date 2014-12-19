@@ -196,8 +196,8 @@ class IndicatorController extends Controller {
         $indicator = $this->indicatorService->retrieveIndicator($id);
         foreach ($indicator->baselineData as $baseline) {
             if ($action != 0) {
-                $actionLink = ApplicationUtils::generateLink(array('km/updateBaselineData', 'id' => $baseline->id, 'indicator' => $indicator->id), 'Update') . '&nbsp;|&nbsp;' .
-                        ApplicationUtils::generateLink(array('km/confirmDeleteBaselineData', 'id' => $baseline->id, 'indicator' => $indicator->id), 'Delete');
+                $actionLink = ApplicationUtils::generateLink(array('indicator/updateBaseline', 'id' => $baseline->id, 'indicator' => $indicator->id), 'Update') . '&nbsp;|&nbsp;' .
+                        ApplicationUtils::generateLink('#', 'Delete', array('id'=>"del-{$baseline->id}"));
             }
             array_push($data, array(
                 'group' => is_null($baseline->baselineDataGroup) ? "-" : $baseline->baselineDataGroup,
