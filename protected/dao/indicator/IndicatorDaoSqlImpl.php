@@ -4,6 +4,7 @@ namespace org\csflu\isms\dao\indicator;
 
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\dao\indicator\IndicatorDao;
+use org\csflu\isms\dao\commons\UnitOfMeasureDaoSqlImpl as UnitOfMeasureDao;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\indicator\Indicator;
 use org\csflu\isms\models\indicator\Baseline;
@@ -15,6 +16,12 @@ use org\csflu\isms\models\commons\UnitOfMeasure;
  * @author britech
  */
 class IndicatorDaoSqlImpl implements IndicatorDao {
+
+    private $uomDaoSource;
+
+    public function __construct() {
+        $this->uomDaoSource = new UnitOfMeasureDao();
+    }
 
     public function listIndicators() {
         try {
@@ -79,9 +86,9 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
     }
 
     public function retrieveIndicator($id) {
-        try{
+        try {
             $db = ConnectionManager::getConnectionInstance();
-            
+
             $dbst = $db->prepare('SELECT '
                     . 'indicator_id, '
                     . 'indicator_description, '
@@ -90,16 +97,15 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
                     . 'data_src, '
                     . 'data_src_stat, '
                     . 'data_src_avail_date, '
-                    . 'uom_desc ,'
-                    . 'uom_id '
-                    . 'FROM indicators JOIN uom ON uom=uom_id '
+                    . 'uom'
+                    . 'FROM indicators '
                     . 'WHERE indicator_id=:id');
-            $dbst->execute(array('id'=>$id));
-            
+            $dbst->execute(array('id' => $id));
+
             $indicator = new Indicator();
-            $indicator->uom = new UnitOfMeasure();
-            
-            while($data = $dbst->fetch()){
+
+
+            while ($data = $dbst->fetch()) {
                 list($indicator->id,
                         $indicator->description,
                         $indicator->rationale,
@@ -107,12 +113,12 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
                         $indicator->dataSource,
                         $indicator->dataSourceStatus,
                         $indicator->dataSourceAvailabilityDate,
-                        $indicator->uom->description,
-                        $indicator->uom->id) = $data;
+                        $uom) = $data;
             }
             
+            $indicator->uom = $this->uomDaoSource->getUomInfo($uom);
             $indicator->baselineData = $this->retrieveIndicatorBaselineList($indicator);
-            
+
             return $indicator;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
@@ -126,10 +132,10 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
                     . 'FROM indicators_baseline '
                     . 'WHERE indicator_ref=:ref '
                     . 'ORDER BY period_year ASC, group_name ASC');
-            $dbst->execute(array('ref'=>$indicator->id));
-            
+            $dbst->execute(array('ref' => $indicator->id));
+
             $baselineData = array();
-            while($data = $dbst->fetch()){
+            while ($data = $dbst->fetch()) {
                 $baseline = new Baseline();
                 list($baseline->id,
                         $baseline->baselineDataGroup,
@@ -148,7 +154,7 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
         $db = ConnectionManager::getConnectionInstance();
         try {
             $db->beginTransaction();
-            
+
             $dbst = $db->prepare('UPDATE indicators SET indicator_description=:description, '
                     . 'indicator_rationale=:rationale, '
                     . 'formula_description=:formula, '
@@ -158,16 +164,16 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
                     . 'uom=:uom '
                     . 'WHERE indicator_id=:id');
             $dbst->execute(array(
-                'description'=>$indicator->description,
-                'rationale'=>$indicator->rationale,
-                'formula'=>$indicator->formula,
-                'dataSource'=>$indicator->dataSource,
-                'dataStat'=>$indicator->dataSourceStatus,
-                'date'=>$indicator->dataSourceAvailabilityDate,
-                'uom'=>$indicator->uom->id,
-                'id'=>$indicator->id
+                'description' => $indicator->description,
+                'rationale' => $indicator->rationale,
+                'formula' => $indicator->formula,
+                'dataSource' => $indicator->dataSource,
+                'dataStat' => $indicator->dataSourceStatus,
+                'date' => $indicator->dataSourceAvailabilityDate,
+                'uom' => $indicator->uom->id,
+                'id' => $indicator->id
             ));
-            
+
             $db->commit();
         } catch (\PDOException $ex) {
             $db->rollBack();

@@ -44,16 +44,4 @@ $(document).ready(function() {
     $("#year").on('valuechanged', function(event){
         $("#yearValue").val(event.args.value);
     });
-    
-    $("#notes").hide();
-    $("#show-dialog").click(function(){
-       $("#notes").show();
-       $("#divider").hide();
-       $(this).hide();
-    });
-    $(".ink-dismiss").click(function(){
-       $("#notes").hide();
-       $("#divider").show();
-       $("#show-dialog").show();
-    });
 });

@@ -6,7 +6,7 @@ $(document).ready(function() {
             {name: 'group'},
             {name: 'figure'}
         ],
-        url: '?r=km/renderIndicatorBaselineTable',
+        url: '?r=indicator/listBaselines',
         type: 'POST',
         data: {
             id: $("#indicator-id").val(),

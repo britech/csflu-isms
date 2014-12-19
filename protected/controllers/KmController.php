@@ -50,7 +50,7 @@ class KmController extends Controller {
                     'header' => 'Actions',
                     'links' => array(
                         'Enlist an Indicator' => array('indicator/enlist'),
-                        //'Link Indicator to a Job Position' => array('km/linkIndicator')
+                    //'Link Indicator to a Job Position' => array('km/linkIndicator')
                     ))),
             'notif' => $this->getSessionData('notif')
         ));
@@ -96,30 +96,6 @@ class KmController extends Controller {
                 'Update Indicator' => 'active'),
             'indicator' => $indicator
         ));
-    }
-
-    public function renderIndicatorBaselineTable() {
-        $id = filter_input(INPUT_POST, 'id');
-        $action = filter_input(INPUT_POST, 'action');
-
-        if ((!isset($id) || empty($id)) && (!isset($action))) {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-
-        $data = array();
-        $indicator = $this->indicatorService->retrieveIndicator($id);
-        foreach ($indicator->baselineData as $baseline) {
-            if ($action != 0) {
-                $actionLink = ApplicationUtils::generateLink(array('km/updateBaselineData', 'id' => $baseline->id, 'indicator' => $indicator->id), 'Update') . '&nbsp;|&nbsp;' .
-                        ApplicationUtils::generateLink(array('km/confirmDeleteBaselineData', 'id' => $baseline->id, 'indicator' => $indicator->id), 'Delete');
-            }
-            array_push($data, array(
-                'group' => is_null($baseline->baselineDataGroup) ? "-" : $baseline->baselineDataGroup,
-                'year' => $baseline->coveredYear,
-                'figure' => $baseline->value,
-                'action' => isset($actionLink) ? $actionLink : ''));
-        }
-        $this->renderAjaxJsonResponse($data);
     }
 
     public function update() {
@@ -269,8 +245,8 @@ class KmController extends Controller {
 
     public function confirmDeleteBaselineData() {
         $id = filter_input(INPUT_GET, 'id');
-        $indicatorId = filter_input(INPUT_GET, 'indicator'); 
-        
+        $indicatorId = filter_input(INPUT_GET, 'indicator');
+
         $condition = (!isset($id) || empty($id)) && (!isset($indicatorId) || empty($indicatorId));
         if ($condition) {
             throw new ControllerException('Another parameter is needed to process this request');
@@ -296,26 +272,26 @@ class KmController extends Controller {
                     'Manage Baseline Data' => array('km/manageBaselineData', 'indicator' => $indicator->id),
                     'Delete Baseline Data' => 'active'),
                 'indicator' => $indicator->id,
-                'confirm'=> array(
-                    'header'=>'Remove Baseline Data',
-                    'text'=>"Do you want to remove this baseline data?&nbsp;Data are as follows<br/>"
+                'confirm' => array(
+                    'header' => 'Remove Baseline Data',
+                    'text' => "Do you want to remove this baseline data?&nbsp;Data are as follows<br/>"
                     . "<strong>Item:&nbsp;</strong>{$baseline->baselineDataGroup}<br/>"
                     . "<strong>Covered Year:&nbsp;</strong>{$baseline->coveredYear}<br/>"
                     . "<strong>Figure Value:&nbsp;</strong>{$baseline->value}&nbsp{$indicator->uom->description}",
-                    'accept.url'=>array('km/deleteBaseline', 'id'=>$baseline->id, 'indicator'=>$indicator->id),
-                    'accept.text'=>'Continue',
-                    'accept.class'=>'red',
-                    'deny.url'=>array('km/manageBaselineData', 'indicator'=>$indicator->id),
-                    'deny.text'=>'Back',
-                    'deny.class'=>'grey'),
+                    'accept.url' => array('km/deleteBaseline', 'id' => $baseline->id, 'indicator' => $indicator->id),
+                    'accept.text' => 'Continue',
+                    'accept.class' => 'red',
+                    'deny.url' => array('km/manageBaselineData', 'indicator' => $indicator->id),
+                    'deny.text' => 'Back',
+                    'deny.class' => 'grey'),
             ));
         }
     }
-    
-    public function deleteBaseline(){
+
+    public function deleteBaseline() {
         $id = filter_input(INPUT_GET, 'id');
-        $indicatorId = filter_input(INPUT_GET, 'indicator'); 
-        
+        $indicatorId = filter_input(INPUT_GET, 'indicator');
+
         $condition = (!isset($id) || empty($id)) && (!isset($indicatorId) || empty($indicatorId));
         if ($condition) {
             throw new ControllerException('Another parameter is needed to process this request');
@@ -332,7 +308,7 @@ class KmController extends Controller {
             }
         }
         $this->indicatorService->unlinkBaseline($id);
-        $_SESSION['notif']=array('class'=>'error', 'message'=>'Baseline data deleted');
+        $_SESSION['notif'] = array('class' => 'error', 'message' => 'Baseline data deleted');
         $this->redirect(array('km/manageBaselineData', 'indicator' => $indicator->id));
     }
 

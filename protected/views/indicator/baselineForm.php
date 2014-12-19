@@ -22,15 +22,15 @@ $form = new Form(array(
         }
         ?>
         <?php echo $form->startComponent(); ?>
-        <?php echo $form->constructHeader(
-                (isset($baseline) ? 'Update Baseline Data' : 'Add Baseline Data') . '<span style="display: inline-block; float: right; font-weight: normal; font-size: 12px; margin-top: 10px; cursor:pointer;" id="show-dialog" title="Click this text to show the important notes">Show Important Notes</span>', 
-                array('style'=>'margin-bottom: 10px;')); ?>
+        <?php
+        echo $form->constructHeader(!$model->isNew() ? 'Update Baseline Data' : 'Add Baseline Data', array('style' => 'margin-bottom: 10px;'));
+        ?>
         <div class="ink-alert block info" id="notes">
-            <h4>Important Notes<span class="ink-dismiss" style="cursor: pointer" title="Click this icon to close the dialog">&times;</span></h4>
+            <h4>Important Notes</h4>
             <p>
-                *&nbsp;Values added should be equivalent to the Indicator's unit of measure (<?php echo $params['uom']; ?>)
+                -&nbsp;Fields with * are required
                 <br/>
-                *&nbsp;For zero figure value, please input "-" to specify the figure value is zero on the year selected.
+                -&nbsp;Values added should be equivalent to the Indicator's unit of measure (<?php echo $uom; ?>)
             </p>
         </div>
         <div class="control-group column-group half-gutters">
