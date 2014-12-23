@@ -13,7 +13,7 @@ abstract class Model {
     const VALIDATION_MODE_INITIAL = 1;
     const VALIDATION_MODE_UPDATE = 2;
     
-    protected $validationMode;
+    protected $validationMode = self::VALIDATION_MODE_INITIAL;
     protected $validationMessages = array();
     /**
      * 
@@ -33,7 +33,7 @@ abstract class Model {
             if(!property_exists($model, $property)){
                 throw new ModelException('Data binding failure');
             }
-            $model->$property = htmlentities($value, ENT_COMPAT, 'UTF-8');
+            $model->$property = htmlentities(trim($value), ENT_COMPAT, 'UTF-8');
         }
     }
 
