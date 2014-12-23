@@ -91,7 +91,10 @@ class Indicator extends Model {
             $this->baselineData = new Baseline();
             $this->baselineData->bindValuesUsingArray($valueArray, $this->baselineData);
         }
-        parent::bindValuesUsingArray($valueArray, $this);
+
+        if (array_key_exists('indicator', $valueArray)) {
+            parent::bindValuesUsingArray($valueArray, $this);
+        }
     }
 
     public function __set($name, $value) {
@@ -163,4 +166,5 @@ class Indicator extends Model {
         $indicator->dataSourceAvailabilityDate = $this->dataSourceAvailabilityDate;
         $indicator->uom = $this->uom;
     }
+
 }

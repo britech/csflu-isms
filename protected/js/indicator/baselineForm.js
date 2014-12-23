@@ -30,18 +30,50 @@ $(document).ready(function() {
         pageable: true,
         pageSize: 50
     });
-    
+
     $("#year").jqxNumberInput({
-        inputMode: 'simple',
+        inputMode: 'advanced',
         spinButtons: true,
         min: 2010,
         max: 2100,
         decimalDigits: 0,
         height: '35px',
-        textAlign: 'left'
-    }).val($("#yearValue").val());
-    
-    $("#year").on('valuechanged', function(event){
+        textAlign: 'left',
+        theme: 'office',
+        digits: 4,
+        groupSeparator: ''
+    });
+
+    if ($("#yearValue").val() !== '') {
+        $("#year").jqxNumberInput('val', $("#yearValue").val());
+    }
+
+    $("#year").on('valuechanged', function(event) {
         $("#yearValue").val(event.args.value);
+    });
+
+    $(".ink-form").submit(function() {
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=indicator/validateBaselineEntry",
+            data: {"Baseline": {
+                    'coveredYear': $("[name*=coveredYear]").val(),
+                    'value': $("[name*=value]").val()
+                },
+                "mode": $("[name*=validationMode]").val()},
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result;
     });
 });

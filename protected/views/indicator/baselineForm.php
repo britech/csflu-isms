@@ -12,19 +12,8 @@ $form = new Form(array(
 <script src="protected/js/indicator/baselineForm.js"></script>
 <div class="column-group quarter-gutters">
     <div class="all-50">
-        <?php
-        if (isset($params['notif']) && !empty($params['notif'])) {
-            $this->renderPartial('commons/_notification', array('notif' => $params['notif']));
-        }
-
-        if (isset($params['validation']) && !empty($params['validation'])) {
-            $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
-        }
-        ?>
         <?php echo $form->startComponent(); ?>
-        <?php
-        echo $form->constructHeader(!$model->isNew() ? 'Update Baseline Data' : 'Add Baseline Data', array('style' => 'margin-bottom: 10px;'));
-        ?>
+        <?php echo $form->constructHeader(!$model->isNew() ? 'Update Baseline Data' : 'Add Baseline Data', array('style' => 'margin-bottom: 10px;')); ?>
         <div class="ink-alert block info" id="notes">
             <h4>Important Notes</h4>
             <p>
@@ -33,6 +22,15 @@ $form = new Form(array(
                 -&nbsp;Values added should be equivalent to the Indicator's unit of measure (<?php echo $uom; ?>)
             </p>
         </div>
+        <?php
+        if (isset($notif) && !empty($notif)) {
+            $this->renderPartial('commons/_notification', array('notif' => $notif));
+        }
+        if (isset($validation) && !empty($validation)) {
+            $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $validation));
+        }
+        ?>
+        <div id="validation-container"></div>
         <div class="control-group column-group half-gutters">
             <?php echo $form->renderLabel($model, 'baselineDataGroup', array('class' => 'all-20 align-right')) ?>
             <div class="control all-80">
@@ -68,6 +66,7 @@ $form = new Form(array(
         <?php endif; ?>
         <?php echo $form->renderHiddenField($indicatorModel, 'id', array('id' => 'indicator-id')); ?>
         <?php echo $form->renderHiddenField($model, 'coveredYear', array('id' => 'yearValue')); ?>
+        <?php echo $form->renderHiddenField($model, 'validationMode'); ?>
         <?php echo $form->endComponent(); ?>
     </div>
     <div class="all-50">

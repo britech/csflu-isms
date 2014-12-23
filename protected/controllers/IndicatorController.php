@@ -165,7 +165,6 @@ class IndicatorController extends Controller {
         $this->layout = 'column-1';
 
         $baseline = new Baseline();
-        $baseline->validationMode = Model::VALIDATION_MODE_INITIAL;
         $this->render('indicator/baselineForm', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
@@ -182,9 +181,45 @@ class IndicatorController extends Controller {
         $this->unsetSessionData('validation');
         $this->unsetSessionData('notif');
     }
-    
-    public function insertBaseline(){
-        
+
+    public function insertBaseline() {
+        $this->validatePostData(array('Baseline', 'Indicator'));
+        $baselineData = $this->getFormData('Baseline');
+        $indicatorData = $this->getFormData('Indicator');
+        $indicator = $this->loadModel($indicatorData['id']);
+
+        $indicator->bindValuesUsingArray(array('baseline' => $baselineData));
+
+        if (!$indicator->baselineData->validate()) {
+            $this->setSessionData('validation', $indicator->baselineData->validationMessages);
+        }
+
+        try {
+            $this->indicatorService->addBaselineDataToIndicator($indicator);
+            $this->setSessionData('notif', array('class' => 'success', 'message' => 'Successfully added baseline data'));
+        } catch (ServiceException $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+            $this->setSessionData('validation', array($ex->getMessage()));
+        }
+
+        $this->redirect(array('indicator/manageBaselines', 'indicator' => $indicator->id));
+    }
+
+    public function validateBaselineEntry() {
+        try {
+            $this->validatePostData(array('Baseline', 'mode'));
+        } catch (\Exception $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+        }
+
+        $baselineData = $this->getFormData('Baseline');
+
+        $baseline = new Baseline();
+        $baseline->validationMode = $this->getFormData('mode');
+        $baseline->bindValuesUsingArray(array('baseline' => $baselineData), $baseline);
+
+        $this->remoteValidateModel($baseline);
     }
 
     public function listBaselines() {
@@ -197,7 +232,7 @@ class IndicatorController extends Controller {
         foreach ($indicator->baselineData as $baseline) {
             if ($action != 0) {
                 $actionLink = ApplicationUtils::generateLink(array('indicator/updateBaseline', 'id' => $baseline->id, 'indicator' => $indicator->id), 'Update') . '&nbsp;|&nbsp;' .
-                        ApplicationUtils::generateLink('#', 'Delete', array('id'=>"del-{$baseline->id}"));
+                        ApplicationUtils::generateLink('#', 'Delete', array('id' => "del-{$baseline->id}"));
             }
             array_push($data, array(
                 'group' => is_null($baseline->baselineDataGroup) ? "-" : $baseline->baselineDataGroup,
