@@ -22,9 +22,9 @@ $(document).ready(function() {
             return "Year Covered:&nbsp;" + value;
         },
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Item</span>', dataField: 'group', width: '20%'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Item</span>', dataField: 'group', width: '35%', cellsAlign: 'right'},
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Value</span>', dataField: 'figure'},
-            {text: '<span style="text-align:center; display: block; font-weight: bold;"></span>', dataField: 'action'}
+            {text: '<span style="text-align:center; display: block; font-weight: bold;"></span>', dataField: 'action', cellsAlign: 'center', width: '25%'}
         ],
         width: '100%',
         pageable: true,
