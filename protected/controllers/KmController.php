@@ -121,70 +121,7 @@ class KmController extends Controller {
             $this->redirect(array('km/enlistIndicator'));
         }
     }
-
-    public function manageBaselineData() {
-        $indicator = filter_input(INPUT_GET, 'indicator');
-
-        if (!isset($indicator) || empty($indicator)) {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-
-        $indicatorObject = $this->indicatorService->retrieveIndicator($indicator);
-
-        if (is_null($indicatorObject->id)) {
-            $_SESSION['notif'] = array('class' => '', 'message' => 'Indicator not found');
-            $this->redirect(array('km/indicators'));
-        }
-
-        $this->title = ApplicationConstants::APP_NAME . ' - Manage Baseline Data';
-        $this->layout = 'column-1';
-
-        $this->render('indicator/baselineForm', array(
-            'breadcrumb' => array(
-                'Home' => array('site/index'),
-                'Knowledge Management' => array('km/index'),
-                'Manage Indicators' => array('km/indicators'),
-                'Profile' => array('km/indicatorProfile', 'id' => $indicatorObject->id),
-                'Manage Baseline Data' => 'active'),
-            'indicatorId' => $indicatorObject->id,
-            'uom' => $indicatorObject->uom->description,
-            'validation' => isset($_SESSION['validation']) ? $_SESSION['validation'] : "",
-            'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""
-        ));
-        if (isset($_SESSION['validation'])) {
-            unset($_SESSION['validation']);
-        }
-        if (isset($_SESSION['notif'])) {
-            unset($_SESSION['notif']);
-        }
-    }
-
-    public function insertBaseline() {
-        if (count(filter_input_array(INPUT_POST)) == 0) {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-
-        $indicatorData = filter_input_array(INPUT_POST)['Indicator'];
-        $baselineData = filter_input_array(INPUT_POST)['Baseline'];
-
-        $indicator = new Indicator();
-        $indicator->bindValuesUsingArray(array(
-            'indicator' => $indicatorData,
-            'baseline' => $baselineData
-        ));
-        if ($indicator->baselineData->validate()) {
-            try {
-                $this->indicatorService->addBaselineDataToIndicator($indicator);
-                $_SESSION['notif'] = array('class' => 'success', 'message' => 'Baseline data added');
-            } catch (ServiceException $ex) {
-                $_SESSION['validation'] = array($ex->getMessage());
-            }
-        } else {
-            $_SESSION['validation'] = $indicator->baselineData->validationMessages;
-        }
-        $this->redirect(array('km/manageBaselineData', 'indicator' => $indicator->id));
-    }
-
+    
     public function updateBaselineData() {
         $id = filter_input(INPUT_GET, 'id');
         $indicator = filter_input(INPUT_GET, 'indicator');

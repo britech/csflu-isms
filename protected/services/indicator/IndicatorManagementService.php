@@ -28,20 +28,19 @@ interface IndicatorManagementService {
 
     /**
      * Retrieves the Indicator entity
-     * @param String $id Indicator Identifier
+     * @param String $id
+     * @param Baseline $baseline optional
      * @return Indicator
      * @throws ServiceException
      */
-    public function retrieveIndicator($id);
+    public function retrieveIndicator($id = null, Baseline $baseline = null);
 
     /**
-     * Retrieves the desired indicator based on the Indicator entity
-     * @param Indicator $indicator
+     * Retrieves the Baseline entity
      * @param String $id
      * @return Baseline
-     * @throws ServiceException
      */
-    public function getBaselineDataFromIndicator($indicator, $id);
+    public function getBaseline($id);
 
     /**
      * Adds a baseline in a selected Indicator

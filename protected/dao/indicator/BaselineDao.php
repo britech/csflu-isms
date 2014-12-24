@@ -12,6 +12,13 @@ use org\csflu\isms\models\indicator\Baseline;
 interface BaselineDao {
     
     /**
+     * @param String $id
+     * @return Baseline
+     * @throws DataAccessException
+     */
+    public function getBaseline($id);
+    
+    /**
      * @param Baseline $baseline
      * @param Indicator $indicator
      * @throws DataAccessException

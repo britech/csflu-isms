@@ -28,17 +28,13 @@ class IndicatorManagementServiceSimpleImpl implements IndicatorManagementService
         return $this->daoSource->listIndicators();
     }
 
-    public function retrieveIndicator($id) {
-        return $this->daoSource->retrieveIndicator($id);
-    }
-
-    public function getBaselineDataFromIndicator($indicator, $id) {
-        $baselineData = $this->daoSource->retrieveIndicatorBaselineList($indicator);
-
-        foreach ($baselineData as $baselineData) {
-            if ($baselineData->id == $id) {
-                return $baselineData;
-            }
+    public function retrieveIndicator($id = null, Baseline $baseline = null) {
+        if(!is_null($id) || !empty($id)){
+            return $this->daoSource->retrieveIndicator($id);
+        }
+        
+        if(!is_null($baseline)){
+            return $this->daoSource->retrieveIndicatorByBaseline($baseline);
         }
     }
 
@@ -86,6 +82,10 @@ class IndicatorManagementServiceSimpleImpl implements IndicatorManagementService
         } else {
             $this->baselineDaoSource->enlistBaseline($baseline, $indicator);
         }
+    }
+
+    public function getBaseline($id) {
+        return $this->baselineDaoSource->getBaseline($id);
     }
 
 }

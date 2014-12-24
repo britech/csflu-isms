@@ -8,7 +8,6 @@ use org\csflu\isms\dao\commons\UnitOfMeasureDaoSqlImpl as UnitOfMeasureDao;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\indicator\Indicator;
 use org\csflu\isms\models\indicator\Baseline;
-use org\csflu\isms\models\commons\UnitOfMeasure;
 
 /**
  * Description of IndicatorDaoSqlImpl
@@ -17,17 +16,17 @@ use org\csflu\isms\models\commons\UnitOfMeasure;
  */
 class IndicatorDaoSqlImpl implements IndicatorDao {
 
+    private $db;
     private $uomDaoSource;
 
     public function __construct() {
         $this->uomDaoSource = new UnitOfMeasureDao();
+        $this->db = ConnectionManager::getConnectionInstance();
     }
 
     public function listIndicators() {
         try {
-            $db = ConnectionManager::getConnectionInstance();
-
-            $dbst = $db->prepare('SELECT indicator_id, '
+            $dbst = $this->db->prepare('SELECT indicator_id, '
                     . 'indicator_description, '
                     . 'indicator_rationale, '
                     . 'formula_description, '
@@ -57,12 +56,10 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
     }
 
     public function enlistIndicator($indicator) {
-        $db = ConnectionManager::getConnectionInstance();
-
         try {
-            $db->beginTransaction();
+            $this->db->beginTransaction();
 
-            $dbst = $db->prepare('INSERT INTO indicators(indicator_description, indicator_rationale, formula_description, data_src, data_src_stat, data_src_avail_date, uom)'
+            $dbst = $this->db->prepare('INSERT INTO indicators(indicator_description, indicator_rationale, formula_description, data_src, data_src_stat, data_src_avail_date, uom)'
                     . ' VALUES(:description, :rationale, :formula, :dataSource, :dataStat, :dataAvailDate, :uom)');
             $dbst->execute(array(
                 'description' => $indicator->description,
@@ -74,22 +71,20 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
                 'uom' => $indicator->uom->id
             ));
 
-            $id = $db->lastInsertId();
+            $id = $this->db->lastInsertId();
 
-            $db->commit();
+            $this->db->commit();
 
             return $id;
         } catch (\PDOException $ex) {
-            $db->rollBack();
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }
 
     public function retrieveIndicator($id) {
         try {
-            $db = ConnectionManager::getConnectionInstance();
-
-            $dbst = $db->prepare('SELECT '
+            $dbst = $this->db->prepare('SELECT '
                     . 'indicator_id, '
                     . 'indicator_description, '
                     . 'indicator_rationale, '
@@ -115,7 +110,7 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
                         $indicator->dataSourceAvailabilityDate,
                         $uom) = $data;
             }
-            
+
             $indicator->uom = $this->uomDaoSource->getUomInfo($uom);
             $indicator->baselineData = $this->retrieveIndicatorBaselineList($indicator);
 
@@ -127,8 +122,7 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
 
     function retrieveIndicatorBaselineList($indicator) {
         try {
-            $db = ConnectionManager::getConnectionInstance();
-            $dbst = $db->prepare('SELECT baseline_id, group_name, period_year, figure_value, notes '
+            $dbst = $this->db->prepare('SELECT baseline_id, group_name, period_year, figure_value, notes '
                     . 'FROM indicators_baseline '
                     . 'WHERE indicator_ref=:ref '
                     . 'ORDER BY period_year ASC, group_name ASC');
@@ -151,11 +145,10 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
     }
 
     public function updateIndicator($indicator) {
-        $db = ConnectionManager::getConnectionInstance();
         try {
-            $db->beginTransaction();
+            $this->db->beginTransaction();
 
-            $dbst = $db->prepare('UPDATE indicators SET indicator_description=:description, '
+            $dbst = $this->db->prepare('UPDATE indicators SET indicator_description=:description, '
                     . 'indicator_rationale=:rationale, '
                     . 'formula_description=:formula, '
                     . 'data_src=:dataSource, '
@@ -174,9 +167,22 @@ class IndicatorDaoSqlImpl implements IndicatorDao {
                 'id' => $indicator->id
             ));
 
-            $db->commit();
+            $this->db->commit();
         } catch (\PDOException $ex) {
-            $db->rollBack();
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function retrieveIndicatorByBaseline(Baseline $baseline) {
+        try {
+            $dbst = $this->db->prepare('SELECT indicator_ref FROM indicators_baseline WHERE baseline_id=:id');
+            $dbst->execute(array('id' => $baseline->id));
+            while ($data = $dbst->fetch()) {
+                list($id) = $data;
+            }
+            return $this->retrieveIndicator($id);
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }

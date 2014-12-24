@@ -29,11 +29,11 @@ interface IndicatorDao {
     public function retrieveIndicator($id);
     
     /**
-     * @param Indicator $indicator
-     * @return Baseline[]
+     * @param Baseline $baseline
+     * @return Indicator
      * @throws DataAccessException
      */
-    function retrieveIndicatorBaselineList($indicator);
+    public function retrieveIndicatorByBaseline(Baseline $baseline);
     
     /**
      * @param Indicator $indicator

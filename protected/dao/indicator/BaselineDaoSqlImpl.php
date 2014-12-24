@@ -15,25 +15,28 @@ use org\csflu\isms\models\indicator\Baseline;
  */
 class BaselineDaoSqlImpl implements BaselineDao {
 
+    private $db;
+    public function __construct() {
+        $this->db = ConnectionManager::getConnectionInstance();
+    }
+    
     public function deleteBaseline($id) {
-        $db = ConnectionManager::getConnectionInstance();
         try {
-            $db->beginTransaction();
-            $dbst = $db->prepare('DELETE FROM indicators_baseline WHERE baseline_id=:id');
+            $this->db->beginTransaction();
+            $dbst = $this->db->prepare('DELETE FROM indicators_baseline WHERE baseline_id=:id');
             $dbst->execute(array('id' => $id));
-            $db->commit();
+            $this->db->commit();
         } catch (\PDOException $ex) {
-            $db->rollBack();
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }
 
     public function enlistBaseline(Baseline $baseline, Indicator $indicator) {
-        $db = ConnectionManager::getConnectionInstance();
         try {
-            $db->beginTransaction();
+            $this->db->beginTransaction();
 
-            $dbst = $db->prepare('INSERT INTO indicators_baseline(indicator_ref, group_name, period_year, figure_value, notes) '
+            $dbst = $this->db->prepare('INSERT INTO indicators_baseline(indicator_ref, group_name, period_year, figure_value, notes) '
                     . 'VALUES(:ref, :group, :year, :value, :notes)');
             $dbst->execute(array('ref' => $indicator->id,
                 'group' => $baseline->baselineDataGroup,
@@ -41,19 +44,18 @@ class BaselineDaoSqlImpl implements BaselineDao {
                 'value' => $baseline->value,
                 'notes' => $baseline->notes));
 
-            $db->commit();
+            $this->db->commit();
         } catch (\PDOException $ex) {
-            $db->rollBack();
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }
 
     public function updateBaseline($baseline) {
-        $db = ConnectionManager::getConnectionInstance();
         try {
-            $db->beginTransaction();
+            $this->db->beginTransaction();
 
-            $dbst = $db->prepare('UPDATE indicators_baseline SET '
+            $dbst = $this->db->prepare('UPDATE indicators_baseline SET '
                     . 'group_name=:group, '
                     . 'period_year=:year, '
                     . 'figure_value=:value, '
@@ -66,9 +68,28 @@ class BaselineDaoSqlImpl implements BaselineDao {
                 'notes' => $baseline->notes,
                 'id' => $baseline->id));
 
-            $db->commit();
+            $this->db->commit();
         } catch (\PDOException $ex) {
-            $db->rollBack();
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getBaseline($id) {
+        try {
+            $dbst = $this->db->prepare('SELECT baseline_id, group_name, period_year, figure_value, notes FROM indicators_baseline WHERE baseline_id=:id');
+            $dbst->execute(array('id'=>$id));
+            
+            $baseline = new Baseline();
+            while($data = $dbst->fetch()){
+                list($baseline->id, 
+                        $baseline->baselineDataGroup, 
+                        $baseline->coveredYear, 
+                        $baseline->value, 
+                        $baseline->notes) = $data;
+            }
+            return $baseline;
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }
