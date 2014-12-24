@@ -37,6 +37,7 @@ class IndicatorController extends Controller {
                 'Enlist An Indicator' => 'active'),
             'model' => $indicator,
             'uomModel' => new UnitOfMeasure,
+            'statusList' => Indicator::getDataSourceDescriptionList(),
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');

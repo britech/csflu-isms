@@ -28,6 +28,12 @@ $(document).ready(function() {
         });
     });
     
+    $("#dataSource").tagEditor({
+        delimiter:'+;',
+        maxLength: -1,
+        forceLowercase: false
+    });
+    
     $(".ink-form").submit(function() {
         var result = false;
 

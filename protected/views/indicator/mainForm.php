@@ -13,6 +13,10 @@ $form = new Form(array(
 echo $form->startComponent();
 echo $form->constructHeader(!$model->isNew() ? 'Update Indicator Data' : 'Enlist an Indicator');
 ?>
+<link href="assets/flick/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
+<link href="assets/tag-editor/jquery.tag-editor.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="assets/jquery/jquery-ui-1.10.4.custom.js"></script>
+<script type="text/javascript" src="assets/tag-editor/jquery.tag-editor.js"></script>
 <script type="text/javascript" src="protected/js/indicator/mainForm.js"></script>
 <div class="ink-alert basic info"><strong>Important Note:</strong>&nbsp;Fields with * are required.</div>
 <div id="validation-container"></div>
@@ -49,19 +53,19 @@ echo $form->constructHeader(!$model->isNew() ? 'Update Indicator Data' : 'Enlist
     <div class="control-group">
         <?php echo $form->renderLabel($model, 'dataSource', array('required' => true)); ?>
         <div class="control">
-            <?php echo $form->renderTextArea($model, 'dataSource'); ?>
+            <?php echo $form->renderTextArea($model, 'dataSource', array('id' => 'dataSource')); ?>
             <p class="tip">What data is required in calculating the measure? Where/how is it acquired?</p>
         </div>
     </div>
-
-    <div class="control-group">
-        <?php echo $form->renderLabel($model, 'dataSourceStatus', array('required' => true)); ?>
-        <div class="control">
-            <?php echo $form->renderDropDownList($model, 'dataSourceStatus', $statusList); ?>
-            <p class="tip">Is information about the measure available?</p>
-        </div>
+<?php endif; ?>
+<div class="control-group">
+    <?php echo $form->renderLabel($model, 'dataSourceStatus', array('required' => true)); ?>
+    <div class="control">
+        <?php echo $form->renderDropDownList($model, 'dataSourceStatus', $statusList); ?>
+        <p class="tip">Is information about the measure available?</p>
     </div>
-
+</div>
+<?php if (!$model->isNew()): ?>
     <div class="control-group">
         <?php echo $form->renderLabel($model, 'dataSourceAvailabilityDate', array('required' => true)); ?>
         <div class="control">
