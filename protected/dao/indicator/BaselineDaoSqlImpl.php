@@ -5,6 +5,8 @@ namespace org\csflu\isms\dao\indicator;
 use org\csflu\isms\dao\indicator\BaselineDao;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\exceptions\DataAccessException;
+use org\csflu\isms\models\indicator\Indicator;
+use org\csflu\isms\models\indicator\Baseline;
 
 /**
  * Description of BaselineDaoSqlImpl
@@ -26,7 +28,7 @@ class BaselineDaoSqlImpl implements BaselineDao {
         }
     }
 
-    public function enlistBaseline($indicator) {
+    public function enlistBaseline(Baseline $baseline, Indicator $indicator) {
         $db = ConnectionManager::getConnectionInstance();
         try {
             $db->beginTransaction();
@@ -34,10 +36,10 @@ class BaselineDaoSqlImpl implements BaselineDao {
             $dbst = $db->prepare('INSERT INTO indicators_baseline(indicator_ref, group_name, period_year, figure_value, notes) '
                     . 'VALUES(:ref, :group, :year, :value, :notes)');
             $dbst->execute(array('ref' => $indicator->id,
-                'group' => $indicator->baselineData->baselineDataGroup,
-                'year' => $indicator->baselineData->coveredYear,
-                'value' => $indicator->baselineData->value,
-                'notes' => $indicator->baselineData->notes));
+                'group' => $baseline->baselineDataGroup,
+                'year' => $baseline->coveredYear,
+                'value' => $baseline->value,
+                'notes' => $baseline->notes));
 
             $db->commit();
         } catch (\PDOException $ex) {

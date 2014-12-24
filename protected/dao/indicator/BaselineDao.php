@@ -12,10 +12,11 @@ use org\csflu\isms\models\indicator\Baseline;
 interface BaselineDao {
     
     /**
+     * @param Baseline $baseline
      * @param Indicator $indicator
      * @throws DataAccessException
      */
-    public function enlistBaseline($indicator);
+    public function enlistBaseline(Baseline $baseline, Indicator $indicator);
     
     /**
      * @param Baseline $baseline

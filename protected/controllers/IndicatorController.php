@@ -185,17 +185,18 @@ class IndicatorController extends Controller {
     public function insertBaseline() {
         $this->validatePostData(array('Baseline', 'Indicator'));
         $baselineData = $this->getFormData('Baseline');
+        $baseline = new Baseline();
+        $baseline->bindValuesUsingArray(array('baseline'=>$baselineData), $baseline);
+        
         $indicatorData = $this->getFormData('Indicator');
         $indicator = $this->loadModel($indicatorData['id']);
-
-        $indicator->bindValuesUsingArray(array('baseline' => $baselineData));
-
-        if (!$indicator->baselineData->validate()) {
-            $this->setSessionData('validation', $indicator->baselineData->validationMessages);
+        
+        if (!$baseline->validate()) {
+            $this->setSessionData('validation', $baseline->validationMessages);
         }
 
         try {
-            $this->indicatorService->addBaselineDataToIndicator($indicator);
+            $this->indicatorService->addBaseline($baseline, $indicator);
             $this->setSessionData('notif', array('class' => 'success', 'message' => 'Successfully added baseline data'));
         } catch (ServiceException $ex) {
             $this->logger->error($ex->getMessage(), $ex);

@@ -44,11 +44,12 @@ interface IndicatorManagementService {
     public function getBaselineDataFromIndicator($indicator, $id);
 
     /**
-     * Attach a Baseline entity to an Indicator entity
+     * Adds a baseline in a selected Indicator
+     * @param Baseline $baseline
      * @param Indicator $indicator
      * @throws ServiceException
      */
-    public function addBaselineDataToIndicator($indicator);
+    public function addBaseline(Baseline $baseline, Indicator $indicator);
 
     /**
      * Updates the Baseline entity

@@ -86,15 +86,7 @@ class Indicator extends Model {
             $this->uom = new UnitOfMeasure();
             $this->uom->bindValuesUsingArray($valueArray, $this->uom);
         }
-
-        if (array_key_exists('baseline', $valueArray)) {
-            $this->baselineData = new Baseline();
-            $this->baselineData->bindValuesUsingArray($valueArray, $this->baselineData);
-        }
-
-        if (array_key_exists('indicator', $valueArray)) {
-            parent::bindValuesUsingArray($valueArray, $this);
-        }
+        parent::bindValuesUsingArray($valueArray, $this);
     }
 
     public function __set($name, $value) {
