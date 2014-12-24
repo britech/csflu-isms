@@ -205,6 +205,10 @@ class IndicatorController extends Controller {
 
         $this->redirect(array('indicator/manageBaselines', 'indicator' => $indicator->id));
     }
+    
+    public function updateBaseline($id){
+        
+    }
 
     public function validateBaselineEntry() {
         try {
@@ -274,9 +278,20 @@ class IndicatorController extends Controller {
 
         if (is_null($indicator->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Indicator not found'));
-            $this->redirect(array('km/indicators'));
+            
         } else {
             return $indicator;
+        }
+    }
+    
+    private function loadBaselineModel($id){
+        $baseline = $this->indicatorService->getBaseline($id);
+        
+        if(is_null($baseline->id)){
+            $this->setSessionData('notif', array('class' => '', 'message' => 'Baseline Data not found'));
+            $this->redirect(array('km/indicators'));
+        } else {
+            return $baseline;
         }
     }
 
