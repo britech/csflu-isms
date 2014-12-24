@@ -109,7 +109,7 @@ class IndicatorController extends Controller {
                     'header' => 'Actions',
                     'links' => array(
                         'Update Indicator' => array('indicator/update', 'id' => $indicator->id),
-                        'Update Baseline Data' => array('indicator/manageBaselines', 'indicator' => $indicator->id)
+                        'Manage Baseline Data' => array('indicator/manageBaselines', 'indicator' => $indicator->id)
                     ))),
             'indicator' => $indicator,
         ));
@@ -231,7 +231,8 @@ class IndicatorController extends Controller {
         $indicator = $this->indicatorService->retrieveIndicator($id);
         foreach ($indicator->baselineData as $baseline) {
             if ($action != 0) {
-                $actionLink = ApplicationUtils::generateLink(array('indicator/updateBaseline', 'id' => $baseline->id, 'indicator' => $indicator->id), 'Update') . '&nbsp;|&nbsp;' .
+                $actionLink = ApplicationUtils::generateLink('#', 'View', array('id'=>"view-{$baseline->id}")).'&nbsp;|&nbsp;'.
+                        ApplicationUtils::generateLink(array('indicator/updateBaseline', 'id' => $baseline->id), 'Update') . '&nbsp;|&nbsp;' .
                         ApplicationUtils::generateLink('#', 'Delete', array('id' => "del-{$baseline->id}"));
             }
             array_push($data, array(
