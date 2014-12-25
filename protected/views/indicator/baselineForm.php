@@ -32,20 +32,23 @@ $form = new Form(array(
         ?>
         <div id="validation-container"></div>
         <div class="control-group column-group half-gutters">
-            <?php echo $form->renderLabel($model, 'baselineDataGroup', array('class' => 'all-20 align-right')) ?>
-            <div class="control all-80">
+            <?php echo $form->renderLabel($model, 'baselineDataGroup', array('class' => 'all-25 align-right')) ?>
+            <div class="control all-75">
                 <?php echo $form->renderTextField($model, 'baselineDataGroup'); ?>
             </div>
         </div>
         <div class="control-group column-group half-gutters">
-            <?php echo $form->renderLabel($model, 'coveredYear', array('class' => 'all-20 align-right')) ?>
-            <div class="control all-80">
-                <div id="year"></div>
+            <?php echo $form->renderLabel($model, 'coveredYear', array('class' => 'all-25 align-right', 'required' => true)) ?>
+            <div class="control all-75">
+                <?php if ($model->isNew()): ?>
+                    <div id="year"></div>
+                <?php else: echo $form->renderTextField($model, 'coveredYear', array('disabled' => true)); ?>
+                <?php endif; ?>
             </div>
         </div>
         <div class="control-group column-group half-gutters">
-            <?php echo $form->renderLabel($model, 'value', array('class' => 'all-20 align-right')) ?>
-            <div class="control all-80">
+            <?php echo $form->renderLabel($model, 'value', array('class' => 'all-25 align-right', 'required' => true)) ?>
+            <div class="control all-75">
                 <?php echo $form->renderTextField($model, 'value'); ?>
                 <?php
                 if ($model->isNew()) {
@@ -56,8 +59,8 @@ $form = new Form(array(
         </div>
         <?php if (!$model->isNew()): ?>
             <div class="control-group column-group half-gutters">
-                <?php echo $form->renderLabel($model, 'notes', array('class' => 'all-20 align-right')) ?>
-                <div class="control all-80">
+                <?php echo $form->renderLabel($model, 'notes', array('class' => 'all-25 align-right')) ?>
+                <div class="control all-75">
                     <?php echo $form->renderTextArea($model, 'notes'); ?>
                     <?php echo $form->renderHiddenField($model, 'id'); ?>
                     <?php echo $form->renderSubmitButton('Update', array('class' => 'ink-button flat blue', 'style' => 'margin-top: 1em; margin-left:0px;')); ?>

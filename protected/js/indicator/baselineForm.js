@@ -31,26 +31,28 @@ $(document).ready(function() {
         pageSize: 50
     });
 
-    $("#year").jqxNumberInput({
-        inputMode: 'advanced',
-        spinButtons: true,
-        min: 2010,
-        max: 2100,
-        decimalDigits: 0,
-        height: '35px',
-        textAlign: 'left',
-        theme: 'office',
-        digits: 4,
-        groupSeparator: ''
-    });
+    if ($("[name*=validationMode]").val() === "1") {
+        $("#year").jqxNumberInput({
+            inputMode: 'advanced',
+            spinButtons: true,
+            min: 2010,
+            max: 2100,
+            decimalDigits: 0,
+            height: '35px',
+            textAlign: 'left',
+            theme: 'office',
+            digits: 4,
+            groupSeparator: ''
+        });
 
-    if ($("#yearValue").val() !== '') {
-        $("#year").jqxNumberInput('val', $("#yearValue").val());
+        if ($("#yearValue").val() !== '') {
+            $("#year").jqxNumberInput('val', $("#yearValue").val());
+        }
+
+        $("#year").on('valuechanged', function(event) {
+            $("#yearValue").val(event.args.value);
+        });
     }
-
-    $("#year").on('valuechanged', function(event) {
-        $("#yearValue").val(event.args.value);
-    });
 
     $(".ink-form").submit(function() {
         var result = false;
