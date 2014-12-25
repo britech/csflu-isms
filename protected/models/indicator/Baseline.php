@@ -63,4 +63,28 @@ class Baseline extends Model {
             'notes' => 'Notes');
     }
 
+    public function computePropertyChanges(Baseline $oldModel) {
+        $counter = 0;
+        if($this->baselineDataGroup != $oldModel->baselineDataGroup){
+            $counter++;
+        }
+        
+        if($this->coveredYear != $oldModel->coveredYear){
+            $counter++;
+        }
+        
+        if($this->value != $oldModel->value){
+            $counter++;
+        }
+        
+        return $counter;
+    }
+    
+    public function __clone() {
+        $baseline = new Baseline();
+        $baseline->id = $this->id;
+        $baseline->baselineDataGroup = $this->baselineDataGroup;
+        $baseline->coveredYear = $this->coveredYear;
+        $baseline->value = $this->value;
+    }
 }
