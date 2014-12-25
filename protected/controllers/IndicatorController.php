@@ -187,11 +187,11 @@ class IndicatorController extends Controller {
         $this->validatePostData(array('Baseline', 'Indicator'));
         $baselineData = $this->getFormData('Baseline');
         $baseline = new Baseline();
-        $baseline->bindValuesUsingArray(array('baseline'=>$baselineData), $baseline);
-        
+        $baseline->bindValuesUsingArray(array('baseline' => $baselineData), $baseline);
+
         $indicatorData = $this->getFormData('Indicator');
         $indicator = $this->loadModel($indicatorData['id']);
-        
+
         if (!$baseline->validate()) {
             $this->setSessionData('validation', $baseline->validationMessages);
         }
@@ -206,9 +206,52 @@ class IndicatorController extends Controller {
 
         $this->redirect(array('indicator/manageBaselines', 'indicator' => $indicator->id));
     }
-    
-    public function updateBaseline($id){
-        
+
+    public function updateBaseline($id = null) {
+        if (is_null($id)) {
+            $this->validatePostData(array('Baseline'));
+            $this->processBaselineDataUpdate();
+        } elseif (!isset($id) || empty($id)) {
+            throw new ControllerException('Another parameter is needed to process this request');
+        }
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Update Baseline Data';
+        $this->layout = 'column-1';
+        $baseline = $this->loadBaselineModel($id);
+        $indicator = $this->loadModel(null, $baseline);
+        $this->render('indicator/baselineForm', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Knowledge Management' => array('km/index'),
+                'Manage Indicators' => array('km/indicators'),
+                'Profile' => array('indicator/view', 'id' => $indicator->id),
+                'Manage Baseline Data' => array('indicator/manageBaselines', 'indicator' => $indicator->id),
+                'Update Baseline' => 'active'),
+            'indicatorModel' => $indicator,
+            'model' => $baseline,
+            'uom' => $indicator->uom->description,
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+    }
+
+    private function processBaselineDataUpdate() {
+        $baselineData = $this->getFormData('Baseline');
+        $baseline = new Baseline();
+        $baseline->bindValuesUsingArray(array('baseline' => $baselineData), $baseline);
+
+        if ($baseline->validate()) {
+            $indicator = $this->loadModel(null, $baseline);
+            $oldBaseline = clone $this->loadBaselineModel($baseline->id);
+            if ($baseline->computePropertyChanges($oldBaseline) > 0) {
+                $this->indicatorService->updateBaseline($baseline);
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Baseline successfully updated'));
+            }
+            $this->redirect(array('indicator/manageBaselines', 'indicator' => $indicator->id));
+        } else {
+            $this->setSessionData('validation', $baseline->validationMessages);
+            $this->redirect(array('indicator/updateBaseline', 'id' => $baseline->id));
+        }
     }
 
     public function validateBaselineEntry() {
@@ -237,7 +280,7 @@ class IndicatorController extends Controller {
         $indicator = $this->indicatorService->retrieveIndicator($id);
         foreach ($indicator->baselineData as $baseline) {
             if ($action != 0) {
-                $actionLink = ApplicationUtils::generateLink('#', 'View', array('id'=>"view-{$baseline->id}")).'&nbsp;|&nbsp;'.
+                $actionLink = ApplicationUtils::generateLink('#', 'View', array('id' => "view-{$baseline->id}")) . '&nbsp;|&nbsp;' .
                         ApplicationUtils::generateLink(array('indicator/updateBaseline', 'id' => $baseline->id), 'Update') . '&nbsp;|&nbsp;' .
                         ApplicationUtils::generateLink('#', 'Delete', array('id' => "del-{$baseline->id}"));
             }
@@ -274,21 +317,20 @@ class IndicatorController extends Controller {
         }
     }
 
-    private function loadModel($id) {
-        $indicator = $this->indicatorService->retrieveIndicator($id);
+    private function loadModel($id = null, Baseline $baseline = null) {
+        $indicator = $this->indicatorService->retrieveIndicator($id, $baseline);
 
         if (is_null($indicator->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Indicator not found'));
-            
         } else {
             return $indicator;
         }
     }
-    
-    private function loadBaselineModel($id){
+
+    private function loadBaselineModel($id) {
         $baseline = $this->indicatorService->getBaseline($id);
-        
-        if(is_null($baseline->id)){
+        $baseline->validationMode = Model::VALIDATION_MODE_UPDATE;
+        if (is_null($baseline->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Baseline Data not found'));
             $this->redirect(array('km/indicators'));
         } else {
