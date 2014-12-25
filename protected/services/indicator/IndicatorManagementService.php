@@ -55,7 +55,7 @@ interface IndicatorManagementService {
      * @param Baseline $baseline
      * @throws ServiceException
      */
-    public function updateBaseline($baseline);
+    public function updateBaseline(Baseline $baseline);
 
     /**
      * Deletes the Baseline entity

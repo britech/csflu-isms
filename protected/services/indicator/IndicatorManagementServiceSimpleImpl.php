@@ -18,10 +18,12 @@ class IndicatorManagementServiceSimpleImpl implements IndicatorManagementService
 
     private $daoSource;
     private $baselineDaoSource;
+    private $logger;
 
     public function __construct() {
         $this->daoSource = new IndicatorDao();
         $this->baselineDaoSource = new BaselineDao();
+        $this->logger = \Logger::getLogger(__CLASS__);
     }
 
     public function listIndicators() {
@@ -29,17 +31,31 @@ class IndicatorManagementServiceSimpleImpl implements IndicatorManagementService
     }
 
     public function retrieveIndicator($id = null, Baseline $baseline = null) {
-        if(!is_null($id) || !empty($id)){
+        if (!is_null($id) || !empty($id)) {
             return $this->daoSource->retrieveIndicator($id);
         }
-        
-        if(!is_null($baseline)){
+
+        if (!is_null($baseline)) {
             return $this->daoSource->retrieveIndicatorByBaseline($baseline);
         }
     }
 
-    public function updateBaseline($baseline) {
-        $this->baselineDaoSource->updateBaseline($baseline);
+    public function updateBaseline(Baseline $baseline) {
+        $indicator = $this->daoSource->retrieveIndicatorByBaseline($baseline);
+
+        $match = false;
+        foreach ($indicator->baselineData as $data) {
+            if ($data->baselineDataGroup == $baseline->baselineDataGroup && $data->coveredYear == $baseline->coveredYear) {
+                $match = true;
+                break;
+            }
+        }
+
+        if ($match) {
+            $this->logger->warn("Baseline parameters already defined");
+        } else {
+            $this->baselineDaoSource->updateBaseline($baseline);
+        }
     }
 
     public function unlinkBaseline($id) {
