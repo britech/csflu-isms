@@ -29,6 +29,41 @@ $(document).ready(function() {
         width: '100%',
         pageable: true,
         pageSize: 50
+    }).on("rowClick", function() {
+        $("[id^=remove]").click(function() {
+            var text = $(this).parent().siblings("td + td").html();
+            $("#text").html("Delete baseline data with value of <strong>" + text + "</strong> in this Indicator.")
+            $("#delete-baseline").jqxWindow('open');
+            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+        });
+    });
+    
+    $('#delete-baseline').jqxWindow({
+        title: '<strong>Confirm Baseline Data Deletion</strong>',
+        width: 300,
+        height: 130,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+    });
+
+    $("#deny").click(function() {
+        $("#baselineTable").jqxDataTable('updateBoundData');
+    });
+
+
+    $("[id^=accept]").click(function() {
+        var id = $(this).attr('id').split('-')[1];
+        $.post("?r=indicator/deleteBaseline",
+                {id: id},
+        function(data) {
+            var response = $.parseJSON(data);
+            window.location = response.url;
+        });
     });
 
     if ($("[name*=validationMode]").val() === "1") {

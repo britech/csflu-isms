@@ -254,6 +254,18 @@ class IndicatorController extends Controller {
         }
     }
 
+    public function deleteBaseline() {
+        $this->validatePostData(array('id'));
+
+        $id = $this->getFormData('id');
+        $baseline = $this->loadBaselineModel($id);
+        $indicator = $this->loadModel(NULL, $baseline);
+
+        $this->indicatorService->unlinkBaseline($baseline->id);
+        $this->setSessionData('notif', array('class' => '', 'message' => 'Baseline deleted'));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('indicator/manageBaselines', 'indicator' => $indicator->id))));
+    }
+
     public function validateBaselineEntry() {
         try {
             $this->validatePostData(array('Baseline', 'mode'));
@@ -282,7 +294,7 @@ class IndicatorController extends Controller {
             if ($action != 0) {
                 $actionLink = ApplicationUtils::generateLink('#', 'View', array('id' => "view-{$baseline->id}")) . '&nbsp;|&nbsp;' .
                         ApplicationUtils::generateLink(array('indicator/updateBaseline', 'id' => $baseline->id), 'Update') . '&nbsp;|&nbsp;' .
-                        ApplicationUtils::generateLink('#', 'Delete', array('id' => "del-{$baseline->id}"));
+                        ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$baseline->id}"));
             }
             array_push($data, array(
                 'group' => is_null($baseline->baselineDataGroup) ? "-" : $baseline->baselineDataGroup,
