@@ -17,6 +17,7 @@ $(document).ready(function() {
         width: '100%',
         pageable: true,
         filterable: true,
-        filterMode: 'simple'
+        filterMode: 'simple',
+        pageSize: 25
     });
 });
