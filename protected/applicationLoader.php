@@ -42,6 +42,9 @@ require_once 'models/uam/ModuleAction.php';
 
 require_once 'models/indicator/Indicator.php';
 require_once 'models/indicator/Baseline.php';
+require_once 'models/indicator/MeasureProfile.php';
+require_once 'models/indicator/LeadOffice.php';
+require_once 'models/indicator/Target.php';
 
 require_once 'models/map/StrategyMap.php';
 require_once 'models/map/Perspective.php';
@@ -57,6 +60,7 @@ require_once 'dao/uam/UserManagementDao.php';
 require_once 'dao/uam/SecurityRoleDao.php';
 require_once 'dao/indicator/IndicatorDao.php';
 require_once 'dao/indicator/BaselineDao.php';
+require_once 'dao/indicator/MeasureProfileDao.php';
 require_once 'dao/map/StrategyMapDao.php';
 require_once 'dao/map/PerspectiveDao.php';
 require_once 'dao/map/ObjectiveDao.php';
@@ -70,6 +74,7 @@ require_once 'dao/uam/UserManagementDaoSqlImpl.php';
 require_once 'dao/uam/SecurityRoleDaoSqlImpl.php';
 require_once 'dao/indicator/IndicatorDaoSqlImpl.php';
 require_once 'dao/indicator/BaselineDaoSqlImpl.php';
+require_once 'dao/indicator/MeasureProfileDaoSqlImpl.php';
 require_once 'dao/map/StrategyMapDaoSqlImpl.php';
 require_once 'dao/map/PerspectiveDaoSqlImpl.php';
 require_once 'dao/map/ObjectiveDaoSqlImpl.php';
@@ -81,6 +86,7 @@ require_once 'services/commons/UnitOfMeasureService.php';
 require_once 'services/commons/RevisionHistoryLoggingService.php';
 require_once 'services/uam/UserManagementService.php';
 require_once 'services/indicator/IndicatorManagementService.php';
+require_once 'services/indicator/ScorecardManagementService.php';
 require_once 'services/map/StrategyMapManagementService.php';
 
 #service-implementations
@@ -90,6 +96,7 @@ require_once 'services/commons/UnitOfMeasureSimpleImpl.php';
 require_once 'services/commons/RevisionHistoryLoggingServiceImpl.php';
 require_once 'services/uam/SimpleUserManagementServiceImpl.php';
 require_once 'services/indicator/IndicatorManagementServiceSimpleImpl.php';
+require_once 'services/indicator/ScorecardManagementServiceSimpleImpl.php';
 require_once 'services/map/StrategyMapManagementServiceSimpleImpl.php';
 
 session_start();
