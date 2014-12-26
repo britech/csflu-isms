@@ -7,6 +7,7 @@ use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\core\Model;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ServiceException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\service\indicator\IndicatorManagementServiceSimpleImpl as IndicatorManagementService;
 use org\csflu\isms\models\indicator\Indicator;
 use org\csflu\isms\models\indicator\Baseline;
@@ -264,6 +265,22 @@ class IndicatorController extends Controller {
         $this->indicatorService->unlinkBaseline($baseline->id);
         $this->setSessionData('notif', array('class' => '', 'message' => 'Baseline deleted'));
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('indicator/manageBaselines', 'indicator' => $indicator->id))));
+    }
+
+    public function getBaseline() {
+        $this->validatePostData(array('id'));
+
+        $id = $this->getFormData('id');
+        $baseline = $this->loadBaselineModel($id);
+        $indicator = $this->loadModel(null, $baseline);
+        
+        $uom = strlen($indicator->uom->symbol) == 0 ? $indicator->uom->description : $indicator->uom->symbol;
+        
+        $dataGroupContent = strlen($baseline->baselineDataGroup) == 0 ? "" : $baseline->baselineDataGroup;
+        $notesContent = strlen($baseline->notes) == 0 ? "" : $baseline->notes;
+        $notes = nl2br("{$dataGroupContent}\n{$notesContent}");
+
+        $this->renderAjaxJsonResponse(array('coveredYear' => $baseline->coveredYear, 'figureValue' => $baseline->value."&nbsp{$uom}", 'notes' => $notes));
     }
 
     public function validateBaselineEntry() {

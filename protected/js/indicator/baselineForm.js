@@ -36,8 +36,21 @@ $(document).ready(function() {
             $("#delete-baseline").jqxWindow('open');
             $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
         });
+
+        $("[id^=view]").click(function() {
+            var id = $(this).attr('id').split("-")[1];
+            $("#about-baseline").jqxWindow('open');
+            $.post("?r=indicator/getBaseline",
+                    {id: id},
+            function(data) {
+                var response = $.parseJSON(data);
+                $("#yearCovered").html(response.coveredYear);
+                $("#figureValue").html(response.figureValue);
+                $("#others").html(response.notes);
+            });
+        });
     });
-    
+
     $('#delete-baseline').jqxWindow({
         title: '<strong>Confirm Baseline Data Deletion</strong>',
         width: 300,
@@ -49,12 +62,13 @@ $(document).ready(function() {
         theme: 'office',
         animationType: 'none',
         cancelButton: $("#deny")
+    }).on("close", function() {
+        $("#baselineTable").jqxDataTable('updateBoundData');
     });
 
     $("#deny").click(function() {
         $("#baselineTable").jqxDataTable('updateBoundData');
     });
-
 
     $("[id^=accept]").click(function() {
         var id = $(this).attr('id').split('-')[1];
@@ -64,6 +78,20 @@ $(document).ready(function() {
             var response = $.parseJSON(data);
             window.location = response.url;
         });
+    });
+
+    $('#about-baseline').jqxWindow({
+        width: 500,
+        height: 300,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+    }).on("close", function() {
+        $("#baselineTable").jqxDataTable('updateBoundData');
     });
 
     if ($("[name*=validationMode]").val() === "1") {

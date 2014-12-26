@@ -77,6 +77,10 @@ class Baseline extends Model {
             $counter++;
         }
 
+        if ($this->notes != $oldModel->notes) {
+            $counter++;
+        }
+
         return $counter;
     }
 

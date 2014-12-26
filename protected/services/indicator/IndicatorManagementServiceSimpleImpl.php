@@ -52,10 +52,9 @@ class IndicatorManagementServiceSimpleImpl implements IndicatorManagementService
         }
 
         if ($match) {
-            $this->logger->warn("Baseline arguments already defined\nArguments: " . $baseline);
-        } else {
-            $this->baselineDaoSource->updateBaseline($baseline);
+            $this->logger->warn("Baseline arguments already defined\nArguments: {$baseline}");
         }
+        $this->baselineDaoSource->updateBaseline($baseline);
     }
 
     public function unlinkBaseline($id) {

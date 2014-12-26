@@ -86,3 +86,28 @@ $form = new Form(array(
         </div>
     </div>
 </div>
+
+<div id="about-baseline">
+    <div id="aboutBaselineHeader">
+        <strong>About Baseline</strong>
+    </div>
+    <div id="aboutBaselineContent" style="overflow: hidden">
+        <table class="ink-table alternating">
+            <tr>
+                <th style="text-align: right">Year Covered</th>
+                <td id="yearCovered" style="width: 70%">&nbsp;</td>
+            </tr>
+            <tr>
+                <th style="text-align: right">Value</th>
+                <td id="figureValue" style="width: 70%">&nbsp;</td>
+            </tr>
+            <tr>
+                <th style="text-align: right">Notes</th>
+                <td id="others" style="width: 70%">&nbsp;</td>
+            </tr>
+        </table>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button green flat" id="deny">OK</button>
+        </div>
+    </div>
+</div>
