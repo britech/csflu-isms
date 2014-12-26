@@ -315,10 +315,11 @@ class IndicatorController extends Controller {
                         ApplicationUtils::generateLink(array('indicator/updateBaseline', 'id' => $baseline->id), 'Update') . '&nbsp;|&nbsp;' .
                         ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$baseline->id}"));
             }
+            $figure = is_numeric($baseline->value) ? number_format($baseline->value, 2): $baseline->value;
             array_push($data, array(
                 'group' => is_null($baseline->baselineDataGroup) ? "-" : $baseline->baselineDataGroup,
                 'year' => $baseline->coveredYear,
-                'figure' => $baseline->value.'&nbsp;'.strval($uom),
+                'figure' => $figure . '&nbsp;' . strval($uom),
                 'action' => isset($actionLink) ? $actionLink : ''));
         }
         $this->renderAjaxJsonResponse($data);
