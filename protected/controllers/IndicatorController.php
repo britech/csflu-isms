@@ -276,7 +276,7 @@ class IndicatorController extends Controller {
 
         $uom = strlen($indicator->uom->symbol) == 0 ? $indicator->uom->description : $indicator->uom->symbol;
 
-        $dataGroupContent = strlen($baseline->baselineDataGroup) == 0 ? "" : $baseline->baselineDataGroup;
+        $dataGroupContent = strlen($baseline->baselineDataGroup) == 0 ? "" : "Data Group: {$baseline->baselineDataGroup}";
         $notesContent = strlen($baseline->notes) == 0 ? "" : $baseline->notes;
         $notes = nl2br("{$dataGroupContent}\n{$notesContent}");
 
