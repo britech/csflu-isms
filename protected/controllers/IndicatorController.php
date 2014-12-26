@@ -273,14 +273,14 @@ class IndicatorController extends Controller {
         $id = $this->getFormData('id');
         $baseline = $this->loadBaselineModel($id);
         $indicator = $this->loadModel(null, $baseline);
-        
+
         $uom = strlen($indicator->uom->symbol) == 0 ? $indicator->uom->description : $indicator->uom->symbol;
-        
+
         $dataGroupContent = strlen($baseline->baselineDataGroup) == 0 ? "" : $baseline->baselineDataGroup;
         $notesContent = strlen($baseline->notes) == 0 ? "" : $baseline->notes;
         $notes = nl2br("{$dataGroupContent}\n{$notesContent}");
 
-        $this->renderAjaxJsonResponse(array('coveredYear' => $baseline->coveredYear, 'figureValue' => $baseline->value."&nbsp{$uom}", 'notes' => $notes));
+        $this->renderAjaxJsonResponse(array('coveredYear' => $baseline->coveredYear, 'figureValue' => $baseline->value . "&nbsp{$uom}", 'notes' => $notes));
     }
 
     public function validateBaselineEntry() {
@@ -307,6 +307,8 @@ class IndicatorController extends Controller {
 
         $data = array();
         $indicator = $this->indicatorService->retrieveIndicator($id);
+        $uom = strlen($indicator->uom->symbol) == 0 ? $indicator->uom->description : $indicator->uom->symbol;
+
         foreach ($indicator->baselineData as $baseline) {
             if ($action != 0) {
                 $actionLink = ApplicationUtils::generateLink('#', 'View', array('id' => "view-{$baseline->id}")) . '&nbsp;|&nbsp;' .
@@ -316,7 +318,7 @@ class IndicatorController extends Controller {
             array_push($data, array(
                 'group' => is_null($baseline->baselineDataGroup) ? "-" : $baseline->baselineDataGroup,
                 'year' => $baseline->coveredYear,
-                'figure' => $baseline->value,
+                'figure' => $baseline->value.'&nbsp;'.strval($uom),
                 'action' => isset($actionLink) ? $actionLink : ''));
         }
         $this->renderAjaxJsonResponse($data);
