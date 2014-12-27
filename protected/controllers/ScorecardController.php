@@ -5,6 +5,7 @@ namespace org\csflu\isms\controllers;
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\exceptions\ControllerException;
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
 
@@ -58,7 +59,8 @@ class ScorecardController extends Controller {
             array_push($data, array(
                 'perspective' => $leadMeasure->objective->perspective->positionOrder . '&nbsp;' . $leadMeasure->objective->perspective->description,
                 'objective' => $leadMeasure->objective->description,
-                'indicator' => $leadMeasure->indicator->description
+                'indicator' => $leadMeasure->indicator->description,
+                'action' => ApplicationUtils::generateLink(array('measure/manage'), 'Manage')
             ));
         }
         $this->renderAjaxJsonResponse($data);

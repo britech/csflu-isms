@@ -65,6 +65,20 @@ class MeasureProfile extends Model {
             self::STATUS_DROPPED => 'Dropped');
     }
 
+    public function isNew() {
+        return empty($this->id);
+    }
+
+    public function getAttributeNames() {
+        return array('objective' => 'Objective',
+            'indicator' => 'Indicator',
+            'measureType' => 'Type of Measure',
+            'frequencyOfMeasure' => 'Frequency of Measure to be Updated',
+            'leadOffices' => 'Responsibility Center',
+            'targets' => 'Targets',
+            'measureProfileEnvironmentStatus' => 'Status');
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
