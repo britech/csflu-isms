@@ -2,7 +2,8 @@ $(document).ready(function() {
     var dataAdapter = new $.jqx.dataAdapter({
         datatype: 'json',
         datafields: [
-            {name: 'description'}
+            {name: 'description'},
+            {name: 'action'}
         ],
         url: '?r=indicator/listIndicators'
     });
@@ -12,7 +13,8 @@ $(document).ready(function() {
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Indicator</span>', dataField: 'description'}
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Indicator</span>', dataField: 'description', width: '90%'},
+            {text: '', dataField: 'action', width: '10%', cellsAlign: 'center'}
         ],
         width: '100%',
         pageable: true,
