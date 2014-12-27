@@ -45,6 +45,20 @@ class MeasureProfile extends Model {
     public function validate() {
         
     }
+    
+    public function bindValuesUsingArray(array $valueArray) {
+        if(array_key_exists('objective', $valueArray)){
+            $this->objective = new Objective();
+            $this->objective->bindValuesUsingArray($valueArray);
+        }
+        
+        if(array_key_exists('indicator', $valueArray)){
+            $this->indicator = new Indicator();
+            $this->indicator->bindValuesUsingArray($valueArray);
+        }
+        
+        parent::bindValuesUsingArray($valueArray, $this);
+    }
 
     public static function getMeasureTypes() {
         return array(self::TYPE_LEAD => 'Lead Measure',

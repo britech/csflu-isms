@@ -15,6 +15,7 @@ abstract class Model {
     
     protected $validationMode = self::VALIDATION_MODE_INITIAL;
     protected $validationMessages = array();
+    protected $arrayDelimiter = "/";
     /**
      * 
      * @return boolean
@@ -33,6 +34,7 @@ abstract class Model {
             if(!property_exists($model, $property)){
                 throw new ModelException('Data binding failure');
             }
+            $value = is_array($value) ? implode($this->arrayDelimiter, $value) : $value;
             $model->$property = htmlentities(trim($value), ENT_COMPAT, 'UTF-8');
         }
     }
