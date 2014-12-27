@@ -20,13 +20,13 @@ class ModelFormGenerator extends FormGenerator {
     }
 
     public function renderLabel(Model $model, $fieldName, array $properties = []) {
-        if(array_key_exists('required', $properties)){
+        if (array_key_exists('required', $properties)) {
             $required = $properties['required'];
             $labelText = $this->generateLabel($model, $fieldName, $required);
         } else {
             $labelText = $this->generateLabel($model, $fieldName);
         }
-        
+
         return parent::renderLabel($labelText, $properties);
     }
 
@@ -34,7 +34,7 @@ class ModelFormGenerator extends FormGenerator {
         $properties = $this->validateAndRetrieve($model, $fieldName, $properties);
         return parent::renderTextField($this->generateFieldName($model, $fieldName), $properties);
     }
-    
+
     public function renderTextArea(Model $model, $fieldName, array $properties = []) {
         $properties = $this->validateAndRetrieve($model, $fieldName, $properties);
         return parent::renderTextArea($this->generateFieldName($model, $fieldName), $properties);
@@ -43,6 +43,11 @@ class ModelFormGenerator extends FormGenerator {
     public function renderDropDownList(Model $model, $fieldName, array $data, array $properties = []) {
         $properties = $this->validateAndRetrieve($model, $fieldName, $properties);
         return parent::renderDropDownList($this->generateFieldName($model, $fieldName), $data, $properties);
+    }
+
+    public function renderCheckBox(Model $model, $fieldName, $label, array $properties = []) {
+        $properties = $this->validateAndRetrieve($model, $fieldName, $properties);
+        return parent::renderCheckBox($this->generateFieldName($model, $fieldName) . '[]', $label, $properties);
     }
 
     public function renderHiddenField(Model $model, $fieldName, array $properties = []) {

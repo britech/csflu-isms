@@ -174,13 +174,17 @@ class FormGenerator extends Component {
             $checked = ApplicationUtils::getProperty($properties, self::PROPERTY_CHECKED);
 
             if (!empty($checked) && $checked == true) {
-                return "<input type=\"checkbox\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" value=\"{$value}\" tabindex=\"{$this->tabIndex}\" checked/>&nbsp;" . $this->renderLabel($label);
+                return "<input type=\"checkbox\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" value=\"{$value}\" tabindex=\"{$this->tabIndex}\" checked/>&nbsp;" . $this->renderCheckBoxLabel($label);
             } else {
-                return "<input type=\"checkbox\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" value=\"{$value}\" tabindex=\"{$this->tabIndex}\"/>&nbsp;" . $this->renderLabel($label);
+                return "<input type=\"checkbox\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" value=\"{$value}\" tabindex=\"{$this->tabIndex}\"/>&nbsp;" . $this->renderCheckBoxLabel($label);
             }
         } else {
-            return "<input type=\"checkbox\" name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\">&nbsp;" . $this->renderLabel($label);
+            return "<input type=\"checkbox\" name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\">&nbsp;" . $this->renderCheckBoxLabel($label);
         }
+    }
+
+    private function renderCheckBoxLabel($labelText) {
+        return "<label>${labelText}</label>";
     }
 
     public function renderTextArea($fieldName, array $properties = null) {
