@@ -31,7 +31,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
 
     public function listMeasureProfiles(StrategyMap $strategyMap) {
         try {
-            $dbst = $this->db->prepare('SELECT mp_id, measure_type, mp_freq, mp_stat, obj_ref, indicator_ref WHERE map_ref=:map');
+            $dbst = $this->db->prepare('SELECT mp_id, measure_type, mp_freq, mp_stat, obj_ref, indicator_ref FROM mp_main WHERE map_ref=:map');
             $dbst->execute(array('map' => $strategyMap->id));
 
             $profiles = array();
@@ -41,7 +41,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
                 list($measureProfile->id, $measureProfile->measureType, $measureProfile->frequencyOfMeasure, $measureProfile->measureProfileEnvironmentStatus, $objective, $indicator) = $data;
                 $measureProfile->indicator = $this->indicatorDataSource->retrieveIndicator($indicator);
                 $measureProfile->objective = $this->objectiveDataSource->getObjective($objective);
-                $profiles = array_merge(array($measureProfile));
+                array_push($profiles, $measureProfile);
             }
 
             return $profiles;
