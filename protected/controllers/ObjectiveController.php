@@ -129,9 +129,9 @@ class ObjectiveController extends Controller {
         $this->unsetSessionData('notif');
         $this->unsetSessionData('validation');
     }
-    
-    private function resolveBreadcrumbs(StrategyMap $strategyMap, Objective $objective = null){
-        switch($strategyMap->strategyEnvironmentStatus){
+
+    private function resolveBreadcrumbs(StrategyMap $strategyMap, Objective $objective = null) {
+        switch ($strategyMap->strategyEnvironmentStatus) {
             case StrategyMap::STATUS_DRAFT:
                 return is_null($objective) ? $this->getIntialBreadcrumbs($strategyMap) : $this->getUpdateBreadcrumbs($strategyMap);
             case StrategyMap::STATUS_ACTIVE:
@@ -155,14 +155,14 @@ class ObjectiveController extends Controller {
             'Manage Objectives' => array('objective/manage', 'map' => $strategyMap->id),
             'Update Objective' => 'active');
     }
-    
-    private function getInitialBreadcrumbsForActivatedStrategyMap(StrategyMap $strategyMap){
-         return array('Home' => array('site/index'),
+
+    private function getInitialBreadcrumbsForActivatedStrategyMap(StrategyMap $strategyMap) {
+        return array('Home' => array('site/index'),
             'Strategy Map Directory' => array('map/index'),
             'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
             'Manage Objectives' => 'active');
     }
-    
+
     private function getUpdateBreadcrumbsForActivatedStrategyMap(StrategyMap $strategyMap) {
         return array('Home' => array('site/index'),
             'Strategy Map Directory' => array('map/index'),
@@ -229,16 +229,13 @@ class ObjectiveController extends Controller {
     }
 
     public function renderTable() {
-        $map = filter_input(INPUT_POST, 'map');
-
-        if (!isset($map) || empty($map)) {
-            throw new ControllerException("Another parameter is needed to process this request");
-        }
+        $this->validatePostData(array('map'));
+        $map = $this->getFormData('map');
 
         $strategyMap = $this->mapService->getStrategyMap($map);
 
         if (is_null($strategyMap->id)) {
-            throw new ControllerException("Strategy Map not found.");
+            throw new ControllerException("Strategy Map not found");
         }
 
         $objectives = $this->mapService->listObjectives($strategyMap);
@@ -249,6 +246,26 @@ class ObjectiveController extends Controller {
                 'perspective' => $objective->perspective->positionOrder . ' - ' . $objective->perspective->description,
                 'theme' => is_null($objective->theme->description) ? "--" : $objective->theme->description,
                 'actions' => ApplicationUtils::generateLink(array('objective/update', 'id' => $objective->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$objective->id}"))));
+        }
+        $this->renderAjaxJsonResponse($data);
+    }
+
+    public function listObjectives() {
+        $this->validatePostData(array('map'));
+        $map = $this->getFormData('map');
+
+        $strategyMap = $this->mapService->getStrategyMap($map);
+
+        if (is_null($strategyMap->id)) {
+            throw new ControllerException("Strategy Map not found");
+        }
+
+        $objectives = $this->mapService->listObjectives($strategyMap);
+        $data = array();
+        foreach ($objectives as $objective) {
+            array_push($data, array('id' => $objective->id,
+                'description' => "{$objective->description}&nbsp;({$objective->perspective->description})"
+            ));
         }
         $this->renderAjaxJsonResponse($data);
     }

@@ -42,10 +42,9 @@ $(document).ready(function() {
             datatype: 'json',
             datafields: [
                 {name: 'id'},
-                {name: 'description'},
-                {name: 'group'}
+                {name: 'description'}
             ],
-            url: '?r=objective/renderTable',
+            url: '?r=objective/listObjectives',
             type: 'POST',
             data: {
                 map: $("#map").val()
