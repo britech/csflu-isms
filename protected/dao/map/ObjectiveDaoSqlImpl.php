@@ -5,6 +5,7 @@ namespace org\csflu\isms\dao\map;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\map\ObjectiveDao;
+use org\csflu\isms\dao\map\PerspectiveDaoSqlImpl;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\map\Perspective;
@@ -18,9 +19,11 @@ use org\csflu\isms\models\map\Theme;
 class ObjectiveDaoSqlImpl implements ObjectiveDao {
 
     private $db;
+    private $perspectiveDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
+        $this->perspectiveDaoSource = new PerspectiveDaoSqlImpl();
     }
 
     public function listAllObjectives() {
@@ -115,11 +118,8 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
 
     public function getObjective($id) {
         try {
-            $dbst = $this->db->prepare('SELECT obj_id, obj_desc, shift_desc, agenda_desc, pers_ref, pers_desc, theme_ref, theme_desc, period_date_start, period_date_end, obj_stat '
-                    . 'FROM smap_objectives '
-                    . 'JOIN smap_perspectives ON pers_ref=pers_id '
-                    . 'LEFT JOIN smap_themes ON theme_ref=theme_id '
-                    . 'WHERE obj_id=:id');
+            $dbst = $this->db->prepare('SELECT obj_id, obj_desc, shift_desc, agenda_desc, pers_ref, theme_ref, period_date_start, period_date_end, obj_stat '
+                    . 'FROM smap_objectives WHERE obj_id=:id');
             $dbst->execute(array('id' => $id));
 
             $objective = new Objective();
@@ -130,16 +130,16 @@ class ObjectiveDaoSqlImpl implements ObjectiveDao {
                         $objective->description,
                         $objective->strategicShiftStatement,
                         $objective->agendaStatement,
-                        $objective->perspective->id,
-                        $objective->perspective->description,
-                        $objective->theme->id,
-                        $objective->theme->description,
+                        $perspective,
+                        $theme,
                         $startDate,
                         $endDate,
                         $objective->environmentStatus) = $data;
             }
             $objective->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $startDate);
             $objective->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $endDate);
+            $objective->perspective = $this->perspectiveDaoSource->getPerspective($perspective);
+            $objective->theme = $this->perspectiveDaoSource->getTheme($theme);
 
             return $objective;
         } catch (\PDOException $ex) {
