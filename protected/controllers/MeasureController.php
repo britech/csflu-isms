@@ -109,8 +109,49 @@ class MeasureController extends Controller {
         $this->remoteValidateModel($measureProfile);
     }
 
-    private function loadMapModel($id) {
-        $map = $this->mapService->getStrategyMap($id);
+    public function view($id) {
+        if (!isset($id) || empty($id)) {
+            throw new ControllerException("Another parameter is needed to process this request");
+        }
+
+        $measureProfile = $this->loadModel($id);
+        $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
+        $this->layout = 'column-2';
+        $this->title = ApplicationConstants::APP_NAME . ' - Profile';
+        $this->render('measure-profile/view', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Scorecard' => array('scorecard/manage', 'map' => $strategyMap->id),
+                'Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Profile' => 'active'
+            ),
+            'sidebar' => array(
+                'data' => array(
+                    'header' => 'Actions',
+                    'links' => array(
+                        'Update Profile' => array('measure/update', 'id' => $measureProfile->id),
+                        'Manage Lead Offices' => array('measure/manageOffices', 'profile' => $measureProfile->id),
+                        'Manage Targets' => array('measure/manageTargets', 'profile' => $measureProfile->id)
+                    )
+                )
+            ),
+            'model' => $measureProfile
+        ));
+    }
+
+    private function loadModel($id) {
+        $measureProfile = $this->scorecardService->getMeasureProfile($id);
+        if (is_null($measureProfile->id)) {
+            $this->setSessionData('notif', array('class' => '', 'message' => 'Measure Profile not found'));
+            $this->redirect(array('map/index'));
+        }
+        return $measureProfile;
+    }
+
+    private function loadMapModel($id = null, Objective $objective = null) {
+        $map = $this->mapService->getStrategyMap($id, null, $objective);
         if (is_null($map->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Strategy Map not found'));
             $this->redirect(array('map/index'));

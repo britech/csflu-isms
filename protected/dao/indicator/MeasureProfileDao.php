@@ -19,6 +19,13 @@ interface MeasureProfileDao {
     public function listMeasureProfiles(StrategyMap $strategyMap);
     
     /**
+     * @param String $id
+     * @return MeasureProfile
+     * @throws DataAccessException
+     */
+    public function getMeasureProfile($id);
+    
+    /**
      * @param MeasureProfile $measureProfile
      * @return String
      * @throws DataAccessException

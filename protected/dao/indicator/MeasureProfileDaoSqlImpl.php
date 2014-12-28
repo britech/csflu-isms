@@ -66,12 +66,34 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
             ));
 
             $id = $this->db->lastInsertId();
-            
+
             $this->db->commit();
-            
+
             return $id;
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getMeasureProfile($id) {
+        try {
+            $dbst = $this->db->prepare('SELECT mp_id, measure_type, mp_freq, mp_stat, obj_ref, indicator_ref, period_start_date, period_end_date FROM mp_main WHERE mp_id=:id');
+            $dbst->execute(array('id' => $id));
+
+            $measureProfile = new MeasureProfile();
+
+            while ($data = $dbst->fetch()) {
+                list($measureProfile->id, $measureProfile->measureType, $measureProfile->frequencyOfMeasure, $measureProfile->measureProfileEnvironmentStatus, $objective, $indicator, $start, $end) = $data;
+                $measureProfile->indicator = $this->indicatorDataSource->retrieveIndicator($indicator);
+                $measureProfile->objective = $this->objectiveDataSource->getObjective($objective);
+            }
+
+            $measureProfile->timelineStart = \DateTime::createFromFormat('Y-m-d', $start);
+            $measureProfile->timelineEnd = \DateTime::createFromFormat('Y-m-d', $end);
+            
+            return $measureProfile;
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }

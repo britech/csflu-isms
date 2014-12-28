@@ -20,6 +20,13 @@ interface ScorecardManagementService {
     public function listMeasureProfiles(StrategyMap $strategyMap);
     
     /**
+     * Retrieves the selected Measure Profile
+     * @param String $id
+     * @return MeasureProfile
+     */
+    public function getMeasureProfile($id);
+    
+    /**
      * Inserts the Measure Profile entity
      * @param MeasureProfile $measureProfile
      * @param StrategyMap $strategyMap

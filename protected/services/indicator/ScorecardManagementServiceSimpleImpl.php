@@ -38,4 +38,8 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
         return $this->daoSource->insertMeasureProfile($measureProfile);
     }
 
+    public function getMeasureProfile($id) {
+        return $this->daoSource->getMeasureProfile($id);
+    }
+
 }

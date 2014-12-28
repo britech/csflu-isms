@@ -18,6 +18,8 @@ use org\csflu\isms\models\indicator\Target;
  * @property LeadOffice[] $leadOffices
  * @property Target[] $targets
  * @property String $measureProfileEnvironmentStatus
+ * @property \DateTime $timelineStart
+ * @property \DateTime $timelineEnd
  * @author britech
  */
 class MeasureProfile extends Model {
@@ -41,6 +43,8 @@ class MeasureProfile extends Model {
     private $leadOffices;
     private $targets;
     private $measureProfileEnvironmentStatus;
+    private $timelineStart;
+    private $timelineEnd;
 
     public function validate() {
         $counter = 0;
