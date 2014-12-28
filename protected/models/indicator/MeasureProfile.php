@@ -170,7 +170,8 @@ class MeasureProfile extends Model {
                 . "Indicator:\t{$this->indicator->description}\n"
                 . "Measure Type:\t{$this->getMeasureTypes()[$this->measureType]}\n"
                 . "Frequency:\t" . implode($this->arrayDelimiter, $frequencyValues) . "\n"
-                . "Status:\t{$this->getEnvironmentStatusTypes()[$this->measureProfileEnvironmentStatus]}";
+                . "Status:\t{$this->getEnvironmentStatusTypes()[$this->measureProfileEnvironmentStatus]}\n"
+                . "Timeline:\t{$this->timelineStart->format('F-Y')} - {$this->timelineEnd->format('F-Y')}";
     }
 
     public function __set($name, $value) {

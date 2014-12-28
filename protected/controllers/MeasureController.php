@@ -62,8 +62,10 @@ class MeasureController extends Controller {
             'mapModel' => $strategyMap,
             'measureTypes' => MeasureProfile::getMeasureTypes(),
             'frequencyTypes' => MeasureProfile::getFrequencyTypes(),
-            'statusTypes' => MeasureProfile::getEnvironmentStatusTypes()
+            'statusTypes' => MeasureProfile::getEnvironmentStatusTypes(),
+            'validation' => $this->getSessionData('validation')
         ));
+        $this->unsetSessionData('validation');
     }
 
     public function insert() {
