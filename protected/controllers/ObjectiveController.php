@@ -279,6 +279,22 @@ class ObjectiveController extends Controller {
         $this->renderAjaxJsonResponse($data);
     }
 
+    public function get() {
+        try {
+            $this->validatePostData(array('id'));
+        } catch (\Exception $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+        }
+        $id = $this->getFormData('id');
+        $objective = $this->mapService->getObjective($id);
+        $this->renderAjaxJsonResponse(array(
+            'id' => $objective->id,
+            'startingPeriodDate' => $objective->startingPeriodDate->format('Y-m-d'),
+            'endingPeriodDate' => $objective->endingPeriodDate->format('Y-m-d')
+        ));
+    }
+
     private function loadModel($id) {
         $objective = $this->mapService->getObjective($id);
 
