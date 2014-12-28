@@ -45,6 +45,7 @@ class MeasureProfile extends Model {
     private $measureProfileEnvironmentStatus;
     private $timelineStart;
     private $timelineEnd;
+    public $periods;
 
     public function validate() {
         $counter = 0;
@@ -83,12 +84,12 @@ class MeasureProfile extends Model {
         $input = explode($this->arrayDelimiter, $this->frequencyOfMeasure);
         $valid = 0;
         for ($i = 0; $i < count($input); $i++) {
-            if(array_key_exists($input[$i], self::getFrequencyTypes())){
-               $valid++; 
+            if (array_key_exists($input[$i], self::getFrequencyTypes())) {
+                $valid++;
             }
         }
-        
-        if($valid != count($input)){
+
+        if ($valid != count($input)) {
             array_push($this->validationMessages, '- ' . $this->getAttributeNames()['frequencyOfMeasure'] . ' is invalid');
             $counter++;
         }
@@ -140,7 +141,8 @@ class MeasureProfile extends Model {
             'frequencyOfMeasure' => 'Frequency of Measure to be Updated',
             'leadOffices' => 'Responsibility Center',
             'targets' => 'Targets',
-            'measureProfileEnvironmentStatus' => 'Status');
+            'measureProfileEnvironmentStatus' => 'Status',
+            'periods' => 'Timeline');
     }
 
     public function getModelTranslationAsNewEntity() {
