@@ -43,20 +43,66 @@ class MeasureProfile extends Model {
     private $measureProfileEnvironmentStatus;
 
     public function validate() {
-        
+        $counter = 0;
+
+        if (strlen($this->objective->id) == 0) {
+            array_push($this->validationMessages, '- ' . $this->getAttributeNames()['objective'] . ' should be defined');
+            $counter++;
+        }
+
+        if (strlen($this->indicator->id) == 0) {
+            array_push($this->validationMessages, '- ' . $this->getAttributeNames()['indicator'] . ' should be defined');
+            $counter++;
+        }
+
+        if (strlen($this->measureType) == 0) {
+            array_push($this->validationMessages, '- ' . $this->getAttributeNames()['measureType'] . ' should be defined');
+            $counter++;
+        }
+
+        if (strlen($this->frequencyOfMeasure) == 0) {
+            array_push($this->validationMessages, '- ' . $this->getAttributeNames()['frequencyOfMeasure'] . ' should be defined');
+            $counter++;
+        } else {
+            $counter = $this->validateFrequencyOfMeasureInput($counter);
+        }
+
+        if (strlen($this->measureProfileEnvironmentStatus) == 0) {
+            array_push($this->validationMessages, '- ' . $this->getAttributeNames()['measureProfileEnvironmentStatus'] . ' should be defined');
+            $counter++;
+        }
+
+        return $counter == 0;
     }
-    
+
+    private function validateFrequencyOfMeasureInput($counter) {
+        $input = explode($this->arrayDelimiter, $this->frequencyOfMeasure);
+        $valid = 0;
+        for ($i = 0; $i < count($input); $i++) {
+            if(array_key_exists($input[$i], self::getFrequencyTypes())){
+               $valid++; 
+            }
+        }
+        
+        if($valid != count($input)){
+            array_push($this->validationMessages, '- ' . $this->getAttributeNames()['frequencyOfMeasure'] . ' is invalid');
+            $counter++;
+        }
+
+        return $counter;
+    }
+
     public function bindValuesUsingArray(array $valueArray) {
-        if(array_key_exists('objective', $valueArray)){
+        if (array_key_exists('objective', $valueArray)) {
             $this->objective = new Objective();
             $this->objective->bindValuesUsingArray($valueArray);
         }
-        
-        if(array_key_exists('indicator', $valueArray)){
+
+        if (array_key_exists('indicator', $valueArray)) {
             $this->indicator = new Indicator();
             $this->indicator->bindValuesUsingArray($valueArray);
         }
-        
+
         parent::bindValuesUsingArray($valueArray, $this);
     }
 
@@ -91,6 +137,21 @@ class MeasureProfile extends Model {
             'leadOffices' => 'Responsibility Center',
             'targets' => 'Targets',
             'measureProfileEnvironmentStatus' => 'Status');
+    }
+
+    public function getModelTranslationAsNewEntity() {
+        $frequencyInputs = explode($this->arrayDelimiter, $this->frequencyOfMeasure);
+        $frequencyValues = array();
+        foreach ($frequencyInputs as $input) {
+            array_push($frequencyValues, self::getFrequencyTypes()[$input]);
+        }
+
+        return "[Measure Profile added]\n\n"
+                . "Objective:\t{$this->objective->description}\n"
+                . "Indicator:\t{$this->indicator->description}\n"
+                . "Measure Type:\t{$this->getMeasureTypes()[$this->measureType]}\n"
+                . "Frequency:\t" . implode($this->arrayDelimiter, $frequencyValues) . "\n"
+                . "Status:\t{$this->getEnvironmentStatusTypes()[$this->measureProfileEnvironmentStatus]}";
     }
 
     public function __set($name, $value) {

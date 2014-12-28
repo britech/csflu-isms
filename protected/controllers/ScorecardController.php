@@ -57,10 +57,10 @@ class ScorecardController extends Controller {
         $data = array();
         foreach ($leadMeasures as $leadMeasure) {
             array_push($data, array(
-                'perspective' => $leadMeasure->objective->perspective->positionOrder . '&nbsp;' . $leadMeasure->objective->perspective->description,
+                'perspective' => $leadMeasure->objective->perspective->positionOrder . '&nbsp;-&nbsp;' . $leadMeasure->objective->perspective->description,
                 'objective' => $leadMeasure->objective->description,
                 'indicator' => $leadMeasure->indicator->description,
-                'action' => ApplicationUtils::generateLink(array('measure/manage'), 'Manage')
+                'action' => ApplicationUtils::generateLink(array('measure/view', 'id'=>$leadMeasure->id), 'View')
             ));
         }
         $this->renderAjaxJsonResponse($data);

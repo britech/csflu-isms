@@ -17,8 +17,8 @@ $(document).ready(function() {
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Lead Measure</span>', dataField: 'indicator', cellsAlign: 'center', width: '90%'},
-            {text: '', dataField: 'action', width: '10%'}
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Lead Measure</span>', dataField: 'indicator', width: '90%'},
+            {text: '', dataField: 'action', width: '10%', cellsAlign: 'center'}
         ],
         width: '100%',
         pageable: true,
@@ -89,5 +89,48 @@ $(document).ready(function() {
         }
     }).on("bindingComplete", function() {
         //$("#description-input").val($("#description").val());
+    });
+
+    $(".ink-form").submit(function() {
+        var result = false;
+
+        var frequencyValues = [];
+        frequencyValues.length = $("[name*=frequencyOfMeasure] :checked").length;
+        var i = 0;
+        $("[name*=frequencyOfMeasure]").each(function() {
+            if ($(this).is(":checked")) {
+                console.log($(this).val());
+                frequencyValues[i] = $(this).val();
+                i++;
+            }
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "?r=measure/validateInput",
+            data: {"MeasureProfile": {
+                    'frequencyOfMeasure': frequencyValues,
+                    'measureType': $("[name*=measureType]").val(),
+                    'measureProfileEnvironmentStatus': $("[name*=measureProfileEnvironmentStatus]").val()
+                },
+                "Objective": {
+                    'id': $("#objective").val()
+                },
+                "Indicator": {
+                    'id': $("#indicator").val()
+                }
+            },
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result;
     });
 });

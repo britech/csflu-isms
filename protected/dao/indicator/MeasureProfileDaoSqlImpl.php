@@ -31,7 +31,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
 
     public function listMeasureProfiles(StrategyMap $strategyMap) {
         try {
-            $dbst = $this->db->prepare('SELECT mp_id, measure_type, mp_freq, mp_stat, obj_ref, indicator_ref FROM mp_main WHERE map_ref=:map');
+            $dbst = $this->db->prepare('SELECT mp_id, measure_type, mp_freq, mp_stat, obj_ref, indicator_ref FROM mp_main JOIN smap_objectives ON obj_ref=obj_id WHERE map_ref=:map');
             $dbst->execute(array('map' => $strategyMap->id));
 
             $profiles = array();
@@ -46,6 +46,32 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
 
             return $profiles;
         } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function insertMeasureProfile(MeasureProfile $measureProfile) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('INSERT INTO mp_main(obj_ref, indicator_ref, measure_type, mp_freq, mp_stat, period_start_date, period_end_date) VALUES(:objective, :indicator, :type, :frequency, :status, :start, :end)');
+            $dbst->execute(array(
+                'objective' => $measureProfile->objective->id,
+                'indicator' => $measureProfile->indicator->id,
+                'type' => $measureProfile->measureType,
+                'frequency' => $measureProfile->frequencyOfMeasure,
+                'status' => $measureProfile->measureProfileEnvironmentStatus,
+                'start' => $measureProfile->objective->startingPeriodDate->format('Y-m-d'),
+                'end' => $measureProfile->objective->endingPeriodDate->format('Y-m-d')
+            ));
+
+            $id = $this->db->lastInsertId();
+            
+            $this->db->commit();
+            
+            return $id;
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }

@@ -19,6 +19,12 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
         <div class="ink-alert basic info">
             <strong>Important Note:</strong>&nbsp;Fields with * are required.
         </div>
+        <div id="validation-container"></div>
+        <?php
+        if (isset($params['validation']) && !empty($params['validation'])) {
+            $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
+        }
+        ?>
         <div class="control-group">
             <?php echo $form->renderLabel($model, 'objective', array('required' => true)); ?>
             <div class="control">
