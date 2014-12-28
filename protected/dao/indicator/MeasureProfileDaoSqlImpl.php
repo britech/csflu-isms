@@ -5,10 +5,12 @@ namespace org\csflu\isms\dao\indicator;
 use org\csflu\isms\dao\indicator\MeasureProfileDao;
 use org\csflu\isms\dao\indicator\IndicatorDaoSqlImpl;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl;
+use org\csflu\isms\dao\commons\DepartmentDaoSqlImpl;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\indicator\LeadOffice;
 
 /**
  * Description of MeasureProfileDaoSqlImpl
@@ -20,12 +22,14 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
     private $db;
     private $indicatorDataSource;
     private $objectiveDataSource;
+    private $departmentDaoSource;
     private $logger;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
         $this->indicatorDataSource = new IndicatorDaoSqlImpl();
         $this->objectiveDataSource = new ObjectiveDaoSqlImpl();
+        $this->departmentDaoSource = new DepartmentDaoSqlImpl();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -91,8 +95,29 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
 
             $measureProfile->timelineStart = \DateTime::createFromFormat('Y-m-d', $start);
             $measureProfile->timelineEnd = \DateTime::createFromFormat('Y-m-d', $end);
+            $measureProfile->leadOffices = $this->listLeadOffices($measureProfile);
             
             return $measureProfile;
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function listLeadOffices(MeasureProfile $measureProfile) {
+        try {
+            $dbst = $this->db->prepare('SELECT mprc_id, dept_ref, type FROM mp_rc WHERE mp_ref=:ref');
+            $dbst->execute(array('ref' => $measureProfile->id));
+
+            $leadOffices = array();
+
+            while ($data = $dbst->fetch()) {
+                $leadOffice = new LeadOffice();
+                list($leadOffice->id, $department, $leadOffice->responsibilities) = $data;
+                $leadOffice->department = $this->departmentDaoSource->getDepartmentById($department);
+                array_push($leadOffices, $leadOffice);
+            }
+
+            return $leadOffices;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }

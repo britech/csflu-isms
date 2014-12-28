@@ -9,6 +9,7 @@ use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\Indicator;
+use org\csflu\isms\models\indicator\LeadOffice;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
@@ -143,6 +144,51 @@ class MeasureController extends Controller {
             ),
             'model' => $measureProfile
         ));
+    }
+
+    public function manageOffices($profile) {
+        if (!isset($profile) || empty($profile)) {
+            throw new ControllerException("Another parameter is needed to process this request");
+        }
+
+        $measureProfile = $this->loadModel($profile);
+        $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Lead Offices';
+        $this->render('measure-profile/lead-office', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Scorecard' => array('scorecard/manage', 'map' => $strategyMap->id),
+                'Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Profile' => array('measure/view', 'id' => $measureProfile->id),
+                'Manage Lead Offices' => 'active'
+            ),
+            'model' => new LeadOffice(),
+            'measureProfileModel' => $measureProfile,
+            'designationTypes' => LeadOffice::getDesignationOptions()
+        ));
+    }
+
+    public function listLeadOffices() {
+        $this->validatePostData(array('profile'));
+
+        $profile = $this->getFormData('profile');
+        $measureProfile = $this->scorecardService->getMeasureProfile($profile);
+
+        $data = array();
+        foreach ($measureProfile->leadOffices as $leadOffice) {
+            $designations = explode($leadOffice->arrayDelimiter, $leadOffice->designation);
+            foreach ($designations as $designation) {
+                array_push($data, array(
+                    'id' => $leadOffice->id,
+                    'department' => $leadOffice->department->name,
+                    'designation' => LeadOffice::getDesignationOptions()[$designation]
+                ));
+            }
+        }
+
+        $this->renderAjaxJsonResponse($data);
     }
 
     private function loadModel($id) {

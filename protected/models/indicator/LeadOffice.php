@@ -8,7 +8,7 @@ use org\csflu\isms\models\commons\Department;
 /**
  * @property String $id
  * @property Department $department
- * @property String $responsibilities 
+ * @property String $designation 
  * @author britech
  */
 class LeadOffice extends Model {
@@ -19,16 +19,27 @@ class LeadOffice extends Model {
 
     private $id;
     private $department;
-    private $responsibilities;
+    private $designation;
 
     public function validate() {
         
     }
 
-    public static function getResponsibilityOptions() {
+    public static function getDesignationOptions() {
         return array(self::RESPONSIBILITY_SETTER => 'Setter of Targets',
             self::RESPONSIBILITY_ACCOUNTABLE => 'Accountable for the Targets',
             self::RESPONSBILITY_TRACKER => 'Tracker and Reporter of Targets');
+    }
+
+    public function getAttributeNames() {
+        return array(
+            'department' => 'Department',
+            'designation' => 'Designation'
+        );
+    }
+
+    public function isNew() {
+        return empty($this->id);
     }
 
     public function __set($name, $value) {
