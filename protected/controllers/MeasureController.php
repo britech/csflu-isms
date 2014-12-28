@@ -40,6 +40,8 @@ class MeasureController extends Controller {
             throw new ControllerException("Another parameter is needed to process this request");
         }
         $strategyMap = $this->loadMapModel($map);
+        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
         $this->title = ApplicationConstants::APP_NAME . ' - Measure Profiles';
         $this->render('measure-profile/index', array(
             'breadcrumb' => array(

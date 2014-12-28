@@ -59,9 +59,19 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
                 <?php echo $form->renderDropDownList($model, 'measureProfileEnvironmentStatus', $statusTypes); ?>
             </div>
         </div>
+        <div class="control-group">
+            <?php echo $form->renderLabel($model, 'periods', array('required' => true)); ?>
+            <div class="control">
+                <div id="periods"></div>
+            </div>
+        </div>
         <?php echo $form->renderHiddenField($objectiveModel, 'id', array('id' => 'objective')); ?>
+        <?php echo $form->renderHiddenField($model, 'timelineStart'); ?>
+        <?php echo $form->renderHiddenField($model, 'timelineEnd'); ?>
         <?php echo $form->renderHiddenField($indicatorModel, 'id', array('id' => 'indicator')); ?>
         <?php echo $form->renderHiddenField($mapModel, 'id', array('id' => 'map')); ?>
+        <?php echo $form->renderHiddenField($mapModel, 'startingPeriodDate', array('id' => 'mapStart')); ?>
+        <?php echo $form->renderHiddenField($mapModel, 'endingPeriodDate', array('id' => 'mapEnd')); ?>
         <?php
         if ($model->isNew()) {
             echo $form->renderSubmitButton('Create', array('class' => 'ink-button green flat', 'style' => 'margin-top:10px; margin-left:0px;'));
