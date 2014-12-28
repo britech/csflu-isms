@@ -10,6 +10,7 @@ use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\Indicator;
 use org\csflu\isms\models\indicator\LeadOffice;
+use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
@@ -83,6 +84,11 @@ class MeasureController extends Controller {
         $measureProfile->bindValuesUsingArray(array('measureprofile' => $measureProfileData), $measureProfile);
         $measureProfile->objective = $this->mapService->getObjective($objectiveData['id']);
         $measureProfile->indicator = $this->indicatorService->retrieveIndicator($indicatorData['id']);
+
+        if (!$measureProfile->validate()) {
+            $this->setSessionData('validation', $measureProfile->validationMessages);
+            $this->redirect(array('measure/index', 'map' => $strategyMap->id));
+        }
 
         try {
             $id = $this->scorecardService->insertMeasureProfile($measureProfile, $strategyMap);
@@ -165,9 +171,30 @@ class MeasureController extends Controller {
                 'Manage Lead Offices' => 'active'
             ),
             'model' => new LeadOffice(),
+            'departmentModel' => new Department,
             'measureProfileModel' => $measureProfile,
             'designationTypes' => LeadOffice::getDesignationOptions()
         ));
+    }
+
+    public function validateLeadOfficeInput() {
+        try {
+            $this->validatePostData(array('LeadOffice', 'Department'));
+        } catch (\Exception $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+        }
+
+        $leadOfficeData = $this->getFormData('LeadOffice');
+        $departmentData = $this->getFormData('Department');
+
+        $leadOffice = new LeadOffice();
+        $leadOffice->bindValuesUsingArray(array(
+            'leadoffice' => $leadOfficeData,
+            'department' => $departmentData
+        ));
+
+        $this->remoteValidateModel($leadOffice);
     }
 
     public function listLeadOffices() {

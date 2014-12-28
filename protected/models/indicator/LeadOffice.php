@@ -22,7 +22,37 @@ class LeadOffice extends Model {
     private $designation;
 
     public function validate() {
+        $counter = 0;
+        if (strlen($this->department->id) == 0) {
+            array_push($this->validationMessages, "- {$this->getAttributeNames()['department']} should be defined");
+            $counter++;
+        }
+
+        if (empty($this->designation)) {
+            array_push($this->validationMessages, "- {$this->getAttributeNames()['designation']} should be defined");
+            $counter++;
+        } else {
+            $counter = $this->validateDesignationInput($counter);
+        }
         
+        return $counter == 0;
+    }
+
+    private function validateDesignationInput($counter) {
+        $input = explode($this->arrayDelimiter, $this->designation);
+        $valid = 0;
+        for ($i = 0; $i < count($input); $i++) {
+            if (array_key_exists($input[$i], self::getDesignationOptions())) {
+                $valid++;
+            }
+        }
+
+        if ($valid != count($input)) {
+            array_push($this->validationMessages, "- {$this->getAttributeNames()['designation']} selection invalid");
+            $counter++;
+        }
+
+        return $counter;
     }
 
     public static function getDesignationOptions() {
@@ -31,6 +61,14 @@ class LeadOffice extends Model {
             self::RESPONSBILITY_TRACKER => 'Tracker and Reporter of Targets');
     }
 
+    public function bindValuesUsingArray(array $valueArray) {
+        if(array_key_exists('department', $valueArray)){
+            $this->department = new Department();
+            $this->department->bindValuesUsingArray($valueArray, $this->department);
+        }
+        parent::bindValuesUsingArray($valueArray, $this);
+    }
+    
     public function getAttributeNames() {
         return array(
             'department' => 'Department',
