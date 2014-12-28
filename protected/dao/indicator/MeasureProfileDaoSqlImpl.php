@@ -61,8 +61,8 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
                 'type' => $measureProfile->measureType,
                 'frequency' => $measureProfile->frequencyOfMeasure,
                 'status' => $measureProfile->measureProfileEnvironmentStatus,
-                'start' => $measureProfile->objective->startingPeriodDate->format('Y-m-d'),
-                'end' => $measureProfile->objective->endingPeriodDate->format('Y-m-d')
+                'start' => $measureProfile->timelineStart->format('Y-m-d'),
+                'end' => $measureProfile->timelineEnd->format('Y-m-d')
             ));
 
             $id = $this->db->lastInsertId();

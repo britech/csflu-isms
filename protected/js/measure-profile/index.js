@@ -67,13 +67,13 @@ $(document).ready(function() {
                 data = $.parseJSON(response);
                 $("[name*=timelineStart]").val(data.startingPeriodDate);
                 $("[name*=timelineEnd]").val(data.endingPeriodDate);
-                
+
                 var startDate = data.startingPeriodDate.split('-');
                 var endDate = data.endingPeriodDate.split('-');
-                
+
                 $("#periods").jqxDateTimeInput('setMinDate', new Date(startDate[0], startDate[1] - 1, startDate[2]));
                 $("#periods").jqxDateTimeInput('setMaxDate', new Date(endDate[0], endDate[1] - 1, endDate[2]));
-                
+
                 $("#periods").jqxDateTimeInput('setRange', $("[name*=timelineStart]").val(), $("[name*=timelineEnd]").val());
             });
         }
@@ -136,7 +136,11 @@ $(document).ready(function() {
         $("[name*=timelineEnd]").val(endingDate.getFullYear() + "-" + (endingDate.getMonth() + 1) + "-" + lastDayOfEndingDate);
     });
 
-    $("#periods").jqxDateTimeInput('setRange', $("[name*=timelineStart]").val(), $("[name*=timelineEnd]").val());
+    if ($("[name*=timelineStart]").val() !== '' && $("[name*=timelineEnd]").val() !== '') {
+        $("#periods").jqxDateTimeInput('setRange', $("[name*=timelineStart]").val(), $("[name*=timelineEnd]").val());
+    } else {
+        $("#periods").jqxDateTimeInput('setRange', $("[name*=startingPeriodDate]").val(), $("[name*=endingPeriodDate]").val());
+    }
 
     $("#indicator-input").jqxComboBox({
         source: new $.jqx.dataAdapter({
@@ -183,7 +187,9 @@ $(document).ready(function() {
             data: {"MeasureProfile": {
                     'frequencyOfMeasure': frequencyValues,
                     'measureType': $("[name*=measureType]").val(),
-                    'measureProfileEnvironmentStatus': $("[name*=measureProfileEnvironmentStatus]").val()
+                    'measureProfileEnvironmentStatus': $("[name*=measureProfileEnvironmentStatus]").val(),
+                    'timelineStart': $("[name*=timelineStart]").val(),
+                    'timelineEnd': $("[name*=timelineEnd]").val()
                 },
                 "Objective": {
                     'id': $("#objective").val()

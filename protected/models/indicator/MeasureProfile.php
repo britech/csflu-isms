@@ -60,20 +60,25 @@ class MeasureProfile extends Model {
             $counter++;
         }
 
-        if (strlen($this->measureType) == 0) {
+        if (empty($this->measureType)) {
             array_push($this->validationMessages, '- ' . $this->getAttributeNames()['measureType'] . ' should be defined');
             $counter++;
         }
 
-        if (strlen($this->frequencyOfMeasure) == 0) {
+        if (empty($this->frequencyOfMeasure)) {
             array_push($this->validationMessages, '- ' . $this->getAttributeNames()['frequencyOfMeasure'] . ' should be defined');
             $counter++;
         } else {
             $counter = $this->validateFrequencyOfMeasureInput($counter);
         }
 
-        if (strlen($this->measureProfileEnvironmentStatus) == 0) {
+        if (empty($this->measureProfileEnvironmentStatus)) {
             array_push($this->validationMessages, '- ' . $this->getAttributeNames()['measureProfileEnvironmentStatus'] . ' should be defined');
+            $counter++;
+        }
+
+        if (empty($this->timelineStart) && empty($this->timelineEnd)) {
+            array_push($this->validationMessages, "- {$this->getAttributeNames()['periods']} should be defined");
             $counter++;
         }
 
@@ -109,6 +114,14 @@ class MeasureProfile extends Model {
         }
 
         parent::bindValuesUsingArray($valueArray, $this);
+
+        if (!empty($this->timelineStart)) {
+            $this->timelineStart = \DateTime::createFromFormat('Y-m-d', $this->timelineStart);
+        }
+
+        if (!empty($this->timelineEnd)) {
+            $this->timelineEnd = \DateTime::createFromFormat('Y-m-d', $this->timelineEnd);
+        }
     }
 
     public static function getMeasureTypes() {
