@@ -65,6 +65,11 @@ use org\csflu\isms\models\indicator\Indicator;
         <tr>
             <th style="text-align: center; color: white; background-color: black;" colspan="2">Lead Offices</th>
         </tr>
+        <tr>
+            <td colspan="2">
+                <div id="leadoffice-<?php echo $model->id; ?>"></div>
+            </td>
+        </tr>
 
         <tr>
             <th style="text-align: center; color: white; background-color: black;" colspan="2">Baseline Data</th>

@@ -28,4 +28,30 @@ $(document).ready(function() {
         pageable: true,
         pageSize: 50
     });
+    
+    $("[id^=leadoffice]").jqxDataTable({
+        source: new $.jqx.dataAdapter({
+            datatype: 'json',
+            datafields: [
+                {name: 'department'},
+                {name: 'designation'},
+            ],
+            url: '?r=measure/listLeadOffices',
+            type: 'POST',
+            data: {
+                profile: $("[id^=leadoffice]").attr('id').split('-')[1]
+            }
+        }),
+        columnsresize: false,
+        theme: 'office',
+        groups: ['designation'],
+        groupsRenderer: function(value, rowData, level) {
+            return "<strong>" + value + "</strong>";
+        },
+        columns: [
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Lead Office</span>', dataField: 'department'},
+        ],
+        width: '100%',
+        pageable: true
+    });
 });
