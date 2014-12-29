@@ -54,4 +54,33 @@ $(document).ready(function() {
         width: '100%',
         pageable: true
     });
+    $("[id^=target]").jqxDataTable({
+        source: new $.jqx.dataAdapter({
+            datatype: 'json',
+            datafields: [
+                {name: 'year'},
+                {name: 'group'},
+                {name: 'figure'},
+                {name: 'action'}
+            ],
+            url: '?r=measure/listTargets',
+            type: 'POST',
+            data: {
+                profile: $("[id^=target]").attr('id').split('-')[1]
+            }
+        }),
+        columnsresize: false,
+        theme: 'office',
+        groups: ['year'],
+        groupsRenderer: function(value, rowData, level) {
+            return "Year Covered:&nbsp;" + value;
+        },
+        columns: [
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Item</span>', dataField: 'group', width: '20%', cellsAlign: 'right'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Value</span>', dataField: 'figure'}
+        ],
+        width: '100%',
+        pageable: true,
+        pageSize: 50
+    })
 });

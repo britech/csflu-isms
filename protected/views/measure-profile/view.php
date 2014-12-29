@@ -83,5 +83,10 @@ use org\csflu\isms\models\indicator\Indicator;
         <tr>
             <th style="text-align: center; color: white; background-color: black;" colspan="2">Target Data</th>
         </tr>
+        <tr>
+            <td colspan="2">
+                <div id="target-<?php echo $model->id; ?>"></div>
+            </td>
+        </tr>
     </tbody>
 </table>
