@@ -112,7 +112,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
 
             while ($data = $dbst->fetch()) {
                 $leadOffice = new LeadOffice();
-                list($leadOffice->id, $department, $leadOffice->responsibilities) = $data;
+                list($leadOffice->id, $department, $leadOffice->designation) = $data;
                 $leadOffice->department = $this->departmentDaoSource->getDepartmentById($department);
                 array_push($leadOffices, $leadOffice);
             }
