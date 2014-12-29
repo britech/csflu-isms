@@ -309,6 +309,32 @@ class MeasureController extends Controller {
         $this->remoteValidateModel($target);
     }
 
+    public function insertTargetData() {
+        $this->validatePostData(array('Target', 'MeasureProfile'));
+
+        $profileData = $this->getFormData('MeasureProfile');
+        $targetData = $this->getFormData('Target');
+
+        $measureProfile = $this->loadModel($profileData['id']);
+
+        $target = new Target();
+        $target->bindValuesUsingArray(array('target' => $targetData), $target);
+        if ($target->validate()) {
+            $measureProfile->targets = array($target);
+            try {
+                $this->setSessionData('notif', array('class' => 'success', 'message' => 'Target data successfully added'));
+                $this->scorecardService->insertTargets($measureProfile);
+                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SCARD, $measureProfile->id, $target);
+            } catch (ServiceException $ex) {
+                $this->logger->error($ex->getMessage(), $ex);
+                $this->setSessionData('validation', array($ex->getMessage()));
+            }
+        } else {
+            $this->setSessionData('validation', $target->validationMessages);
+        }
+        $this->redirect(array('measure/manageTargets', 'profile' => $measureProfile->id));
+    }
+
     public function listTargets() {
         $this->validatePostData(array('profile'));
         $profile = $this->getFormData('profile');

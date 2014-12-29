@@ -21,12 +21,12 @@ class Target extends Model {
 
     public function validate() {
         $counter = 0;
-        if(empty($this->coveredYear)){
+        if (empty($this->coveredYear)) {
             array_push($this->validationMessages, "- {$this->getAttributeNames()['coveredYear']} should be defined");
             $counter++;
         }
-        
-        if(strlen($this->value) == 0){
+
+        if (strlen($this->value) == 0) {
             array_push($this->validationMessages, "- {$this->getAttributeNames()['value']} should be defined");
             $counter++;
         }
@@ -41,6 +41,14 @@ class Target extends Model {
             'notes' => 'Notes'
         );
     }
+    
+    public function getModelTranslationAsNewEntity() {
+        return "[Target added]\n\n"
+        . "Covered Year:\t{$this->coveredYear}\n"
+        . "Value:\t{$this->value}\n"
+        . "Group:\t{$this->dataGroup}\n"
+        . "Notes:\t{$this->notes}";
+    }
 
     public function isNew() {
         return empty($this->id);
@@ -52,6 +60,19 @@ class Target extends Model {
 
     public function __get($name) {
         return $this->$name;
+    }
+
+    public function __clone() {
+        $target = new Target();
+        $target->id = $this->id;
+        $target->dataGroup = $this->dataGroup;
+        $target->coveredYear = $this->coveredYear;
+        $target->value = $this->value;
+        $target->notes = $this->notes;
+    }
+
+    public function __toString() {
+        return "[Target] (id=>{$this->id}, group=>{$this->dataGroup}, year=>{$this->coveredYear}, value=>{$this->value}, notes=>{$this->notes})";
     }
 
 }

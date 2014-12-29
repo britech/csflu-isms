@@ -72,7 +72,33 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
     }
 
     public function insertTargets(MeasureProfile $measureProfile) {
-        
+        $targets = $this->daoSource->listTargets($measureProfile);
+
+        $finalTargets = array();
+        foreach ($measureProfile->targets as $target) {
+            $match = false;
+            foreach ($targets as $checker) {
+                if ($target->dataGroup == $checker->dataGroup && $target->coveredYear == $checker->coveredYear) {
+                    $match = true;
+                    break;
+                }
+            }
+
+            if (!$match) {
+                array_push($finalTargets, $target);
+            } else {
+                $this->logger->warn("Parameters already defined. Please use the update facility instead\n{$target}");
+            }
+        }
+
+        $finalMeasureProfile = clone $measureProfile;
+        $finalMeasureProfile->leadOffices = $finalTargets;
+
+        if (count($finalMeasureProfile->targets) > 0) {
+            $this->daoSource->insertTargets($finalMeasureProfile);
+        } else {
+            throw new ServiceException("No Target Data enlisted");
+        }
     }
 
 }
