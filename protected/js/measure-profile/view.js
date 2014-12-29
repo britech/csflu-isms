@@ -82,5 +82,5 @@ $(document).ready(function() {
         width: '100%',
         pageable: true,
         pageSize: 50
-    })
+    });
 });
