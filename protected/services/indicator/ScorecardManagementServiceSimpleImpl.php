@@ -71,4 +71,8 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
         }
     }
 
+    public function insertTargets(MeasureProfile $measureProfile) {
+        
+    }
+
 }
