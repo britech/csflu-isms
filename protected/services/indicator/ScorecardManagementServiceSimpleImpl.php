@@ -29,9 +29,9 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
 
     public function insertMeasureProfile(MeasureProfile $measureProfile, StrategyMap $strategyMap) {
         $leadMeasures = $this->listMeasureProfiles($strategyMap);
-        
-        foreach($leadMeasures as $leadMeasure){
-            if($leadMeasure->objective->id == $measureProfile->objective->id && $leadMeasure->indicator->id == $measureProfile->indicator->id){
+
+        foreach ($leadMeasures as $leadMeasure) {
+            if ($leadMeasure->objective->id == $measureProfile->objective->id && $leadMeasure->indicator->id == $measureProfile->indicator->id) {
                 throw new ServiceException("Measure Profile already defined. Please use the update facility instead");
             }
         }
@@ -40,6 +40,31 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
 
     public function getMeasureProfile($id) {
         return $this->daoSource->getMeasureProfile($id);
+    }
+
+    public function insertLeadOffices(MeasureProfile $measureProfile) {
+        $leadOffices = $this->daoSource->listLeadOffices($measureProfile);
+
+        $finalLeadOffices = array();
+        foreach ($measureProfile->leadOffices as $leadOffice) {
+            $match = false;
+            foreach ($leadOffices as $checker) {
+                if ($leadOffice->department->id == $checker->department->id && $leadOffice->designation == $checker->designation) {
+                    $match = true;
+                    break;
+                }
+            }
+
+            if (!$match) {
+                array_push($finalLeadOffices, $leadOffice);
+            } else {
+                $this->logger->warn("Parameters already defined. Please use the update facility instead\n{$leadOffice}");
+            }
+
+            $finalMeasureProfile = clone $measureProfile;
+            $finalMeasureProfile->leadOffices = $finalLeadOffices;
+        }
+        $this->daoSource->insertLeadOffices($finalMeasureProfile);
     }
 
 }

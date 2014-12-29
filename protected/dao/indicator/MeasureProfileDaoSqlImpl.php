@@ -96,7 +96,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
             $measureProfile->timelineStart = \DateTime::createFromFormat('Y-m-d', $start);
             $measureProfile->timelineEnd = \DateTime::createFromFormat('Y-m-d', $end);
             $measureProfile->leadOffices = $this->listLeadOffices($measureProfile);
-            
+
             return $measureProfile;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
@@ -119,6 +119,26 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
 
             return $leadOffices;
         } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function insertLeadOffices(MeasureProfile $measureProfile) {
+        try {
+            $this->db->beginTransaction();
+
+            foreach ($measureProfile->leadOffices as $leadOffice) {
+                $dbst = $this->db->prepare('INSERT INTO mp_rc(mp_ref, dept_ref, type) VALUES(:measure, :department, :type)');
+                $dbst->execute(array(
+                    'measure' => $measureProfile->id,
+                    'department' => $leadOffice->department->id,
+                    'type' => $leadOffice->designation
+                ));
+            }
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }

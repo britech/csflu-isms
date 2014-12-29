@@ -39,4 +39,10 @@ interface MeasureProfileDao {
      * @throws DataAccessException
      */
     public function listLeadOffices(MeasureProfile $measureProfile);
+
+    /**
+     * @param MeasureProfile $measureProfile
+     * @throws DataAccessException
+     */
+    public function insertLeadOffices(MeasureProfile $measureProfile);
 }

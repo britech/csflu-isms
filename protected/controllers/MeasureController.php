@@ -237,18 +237,21 @@ class MeasureController extends Controller {
             $leadOffice->bindValuesUsingArray(array(
                 'leadoffice' => $leadOfficeData
             ));
-            $leadOffice->department = $this->departmentService->getDepartmentDetail(array('id'=>$department));
+            $leadOffice->department = $this->departmentService->getDepartmentDetail(array('id' => $department));
             array_push($leadOffices, $leadOffice);
         }
 
         $measureProfile = $this->loadModel($measureProfileData['id']);
         $measureProfile->leadOffices = $leadOffices;
-        $this->logger->debug($measureProfile);
-        
-        if ($leadOffice->validate()) {
-            $this->setSessionData('notif', array('class' => 'success', 'message' => 'Lead Office added'));
+
+        if (count($measureProfile) > 0) {
+            $this->setSessionData('notif', array('class' => 'success', 'message' => 'Lead Office/s added'));
+            $this->scorecardService->insertLeadOffices($measureProfile);
+            foreach ($measureProfile->leadOffices as $leadOffice) {
+                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SCARD, $measureProfile->id, $leadOffice);
+            }
         } else {
-            $this->setSessionData('validation', $leadOffice->validationMessages);
+            $this->setSessionData('validation', array('Lead Offices must be defined'));
         }
         $this->redirect(array('measure/manageOffices', 'profile' => $measureProfile->id));
     }

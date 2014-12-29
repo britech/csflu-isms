@@ -34,7 +34,7 @@ class LeadOffice extends Model {
         } else {
             $counter = $this->validateDesignationInput($counter);
         }
-        
+
         return $counter == 0;
     }
 
@@ -62,13 +62,13 @@ class LeadOffice extends Model {
     }
 
     public function bindValuesUsingArray(array $valueArray) {
-        if(array_key_exists('department', $valueArray)){
+        if (array_key_exists('department', $valueArray)) {
             $this->department = new Department();
             $this->department->bindValuesUsingArray($valueArray, $this->department);
         }
         parent::bindValuesUsingArray($valueArray, $this);
     }
-    
+
     public function getAttributeNames() {
         return array(
             'department' => 'Department',
@@ -80,12 +80,27 @@ class LeadOffice extends Model {
         return empty($this->id);
     }
 
+    public function getModelTranslationAsNewEntity() {
+        $designationInputs = explode($this->arrayDelimiter, $this->designation);
+        $designationValues = array();
+        foreach ($designationInputs as $input) {
+            array_push($designationValues, self::getDesignationOptions()[$input]);
+        }
+        return "[LeadOffice added]\n\n"
+                . "Department:\t{$this->department->name}\n"
+                . "Designation:\t" . implode($this->arrayDelimiter, $designationValues);
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
 
     public function __get($name) {
         return $this->$name;
+    }
+
+    public function __toString() {
+        return "[LeadOffice] (id=>{$this->id}, department=>{$this->department->id}-{$this->department->name}, designation=>{$this->designation})";
     }
 
 }
