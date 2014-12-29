@@ -160,6 +160,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
                         $target->coveredYear,
                         $target->value,
                         $target->notes) = $data;
+                array_push($targets, $target);
             }
 
             return $targets;

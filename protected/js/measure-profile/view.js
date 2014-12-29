@@ -60,8 +60,7 @@ $(document).ready(function() {
             datafields: [
                 {name: 'year'},
                 {name: 'group'},
-                {name: 'figure'},
-                {name: 'action'}
+                {name: 'value'}
             ],
             url: '?r=measure/listTargets',
             type: 'POST',
@@ -77,7 +76,7 @@ $(document).ready(function() {
         },
         columns: [
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Item</span>', dataField: 'group', width: '20%', cellsAlign: 'right'},
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Value</span>', dataField: 'figure'}
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Value</span>', dataField: 'value'}
         ],
         width: '100%',
         pageable: true,
