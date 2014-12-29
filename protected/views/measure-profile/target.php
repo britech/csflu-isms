@@ -70,7 +70,7 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
             </div>
         </div>
         <?php echo $form->renderHiddenField($baselineReference, 'coveredYear', array('id' => 'start-pointer')); ?>
-        <?php echo $form->renderHiddenField($profileModel, 'id'); ?>
+        <?php echo $form->renderHiddenField($profileModel, 'id', array('id' => 'profile-id')); ?>
         <?php echo $form->renderHiddenField($model, 'id'); ?>
         <?php echo $form->renderHiddenField($model, 'coveredYear', array('id' => 'year')); ?>
         <?php echo $form->renderHiddenField($model, 'validationMode'); ?>

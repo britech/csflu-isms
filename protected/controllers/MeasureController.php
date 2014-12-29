@@ -291,6 +291,28 @@ class MeasureController extends Controller {
         ));
     }
 
+    public function listTargets() {
+        $this->validatePostData(array('profile'));
+        $profile = $this->getFormData('profile');
+
+        $measureProfile = $this->loadModel($profile);
+        $data = array();
+        foreach ($measureProfile->targets as $target) {
+            array_push($data, array(
+                'id' => $target->id,
+                'group' => $target->dataGroup,
+                'year' => $target->coveredYear,
+                'value' => $target->value,
+                'action' => ApplicationUtils::generateLink('#', 'View', array('id' => "view-{$target->id}"))
+                . '&nbsp;|&nbsp;' .
+                ApplicationUtils::generateLink(array('measure/updateTarget', 'id' => $target->id), 'Update')
+                . '&nbsp;|&nbsp;' .
+                ApplicationUtils::generateLink("#", 'Delete', array('id' => "remove-{$target->id}"))
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
+    }
+
     private function loadModel($id) {
         $measureProfile = $this->scorecardService->getMeasureProfile($id);
         if (is_null($measureProfile->id)) {
