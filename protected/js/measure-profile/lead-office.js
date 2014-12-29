@@ -15,11 +15,17 @@ $(document).ready(function() {
         autoComplete: true,
         theme: 'office',
         height: '35px',
-        animationType: 'none'
-    }).on("select", function(event) {
-        if (event.args) {
-            $("[name*=department]").val(event.args.item.value);
-        }
+        animationType: 'none',
+        multiSelect: true
+    }).on('change', function() {
+        var input = [];
+        var items = $("#department-input").jqxComboBox('getSelectedItems');
+        var i = 0;
+        $.each(items, function() {
+            input[i] = this.value;
+            i++;
+        });
+        $("#department").val(input.join("/"));
     });
 
     $("#lead-offices").jqxDataTable({
@@ -51,7 +57,7 @@ $(document).ready(function() {
     $(".ink-form").submit(function() {
         var result = false;
 
-       
+
         var designationValues = [];
         designationValues.length = $("[name*=designation]:checked").length;
         var i = 0;
