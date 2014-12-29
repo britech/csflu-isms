@@ -145,7 +145,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
         }
     }
 
-    private function listTargets(MeasureProfile $measureProfile) {
+    public function listTargets(MeasureProfile $measureProfile) {
         try {
             $dbst = $this->db->prepare('SELECT target_id, data_group, covered_year, value, notes '
                     . 'FROM mp_targets WHERE mp_ref=:ref '
