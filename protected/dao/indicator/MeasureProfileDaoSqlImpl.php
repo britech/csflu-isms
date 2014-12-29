@@ -168,4 +168,27 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
         }
     }
 
+    public function insertTargets(MeasureProfile $measureProfile) {
+        try {
+            $this->db->beginTransaction();
+
+            foreach ($measureProfile->targets as $target) {
+                $dbst = $this->db->prepare('INSERT INTO mp_targets(mp_ref, data_group, covered_year, value, notes) '
+                        . 'VALUES(:measure, :group, :year, :value, :notes)');
+                $dbst->execute(array(
+                    'measure' => $measureProfile->id,
+                    'group' => $target->dataGroup,
+                    'year' => $target->coveredYear,
+                    'value' => $target->value,
+                    'notes' => $target->notes
+                ));
+            }
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }
