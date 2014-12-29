@@ -11,6 +11,7 @@ use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\Indicator;
 use org\csflu\isms\models\indicator\LeadOffice;
+use org\csflu\isms\models\indicator\Target;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\commons\RevisionHistory;
@@ -263,6 +264,31 @@ class MeasureController extends Controller {
             $this->setSessionData('validation', array('Lead Offices must be defined'));
         }
         $this->redirect(array('measure/manageOffices', 'profile' => $measureProfile->id));
+    }
+
+    public function manageTargets($profile) {
+        if (!isset($profile) || empty($profile)) {
+            throw new ControllerException("Another parameter is needed to process this request");
+        }
+
+        $measureProfile = $this->loadModel($profile);
+        $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Targets';
+        $this->render('measure-profile/target', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Scorecard' => array('scorecard/manage', 'map' => $strategyMap->id),
+                'Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Profile' => array('measure/view', 'id' => $measureProfile->id),
+                'Manage Targets' => 'active'
+            ),
+            'model' => new Target(),
+            'profileModel' => $measureProfile,
+            'uom' => $measureProfile->indicator->uom,
+            'baselineReference' => $measureProfile->indicator->baselineData[count($measureProfile->indicator->baselineData) - 1]
+        ));
     }
 
     private function loadModel($id) {
