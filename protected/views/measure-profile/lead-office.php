@@ -21,6 +21,9 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
         </div>
         <div id="validation-container"></div>
         <?php
+        if (isset($params['notif']) && !empty($params['notif'])) {
+            $this->renderPartial('commons/_notification', array('notif' => $params['notif']));
+        }
         if (isset($params['validation']) && !empty($params['validation'])) {
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
         }
