@@ -13,6 +13,7 @@ use org\csflu\isms\models\indicator\LeadOffice;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\commons\RevisionHistory;
+use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl as DepartmentService;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\indicator\IndicatorManagementServiceSimpleImpl as IndicatorManagementService;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
@@ -25,12 +26,14 @@ use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as Sco
 class MeasureController extends Controller {
 
     private $logger;
+    private $departmentService;
     private $mapService;
     private $indicatorService;
     private $scorecardService;
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->departmentService = new DepartmentService();
         $this->mapService = new StrategyMapManagementService();
         $this->indicatorService = new IndicatorManagementService();
         $this->scorecardService = new ScorecardManagementService();
@@ -173,8 +176,12 @@ class MeasureController extends Controller {
             'model' => new LeadOffice(),
             'departmentModel' => new Department,
             'measureProfileModel' => $measureProfile,
-            'designationTypes' => LeadOffice::getDesignationOptions()
+            'designationTypes' => LeadOffice::getDesignationOptions(),
+            'validation' => $this->getSessionData('validation'),
+            'notif' => $this->getSessionData('notif')
         ));
+        $this->unsetSessionData('validation');
+        $this->unsetSessionData('notif');
     }
 
     public function validateLeadOfficeInput() {
@@ -216,6 +223,34 @@ class MeasureController extends Controller {
         }
 
         $this->renderAjaxJsonResponse($data);
+    }
+
+    public function insertLeadOffice() {
+        $this->validatePostData(array('LeadOffice', 'Department', 'MeasureProfile'));
+        $leadOfficeData = $this->getFormData('LeadOffice');
+        $departmentData = $this->getFormData('Department');
+        $measureProfileData = $this->getFormData('MeasureProfile');
+
+        $leadOffices = array();
+        foreach (explode("/", $departmentData['id']) as $department) {
+            $leadOffice = new LeadOffice();
+            $leadOffice->bindValuesUsingArray(array(
+                'leadoffice' => $leadOfficeData
+            ));
+            $leadOffice->department = $this->departmentService->getDepartmentDetail(array('id'=>$department));
+            array_push($leadOffices, $leadOffice);
+        }
+
+        $measureProfile = $this->loadModel($measureProfileData['id']);
+        $measureProfile->leadOffices = $leadOffices;
+        $this->logger->debug($measureProfile);
+        
+        if ($leadOffice->validate()) {
+            $this->setSessionData('notif', array('class' => 'success', 'message' => 'Lead Office added'));
+        } else {
+            $this->setSessionData('validation', $leadOffice->validationMessages);
+        }
+        $this->redirect(array('measure/manageOffices', 'profile' => $measureProfile->id));
     }
 
     private function loadModel($id) {
