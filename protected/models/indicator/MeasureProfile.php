@@ -182,4 +182,17 @@ class MeasureProfile extends Model {
         return $this->$name;
     }
 
+    public function __clone() {
+        $measureProfile = new MeasureProfile();
+        $measureProfile->id = $this->id;
+        $measureProfile->objective = $this->objective;
+        $measureProfile->indicator = $this->indicator;
+        $measureProfile->measureType = $this->measureType;
+        $measureProfile->frequencyOfMeasure = $this->frequencyOfMeasure;
+        $measureProfile->leadOffices = $this->leadOffices;
+        $measureProfile->targets = $this->targets;
+        $measureProfile->measureProfileEnvironmentStatus = $this->measureProfileEnvironmentStatus;
+        $measureProfile->timelineStart = $this->timelineStart;
+        $measureProfile->timelineEnd = $this->timelineEnd;
+    }
 }
