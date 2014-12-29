@@ -295,6 +295,20 @@ class MeasureController extends Controller {
         $this->unsetSessionData('validation');
     }
 
+    public function validateTargetInput() {
+        try {
+            $this->validatePostData(array('Target'));
+        } catch (\Exception $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+        }
+
+        $targetData = $this->getFormData('Target');
+        $target = new Target();
+        $target->bindValuesUsingArray(array('target' => $targetData), $target);
+        $this->remoteValidateModel($target);
+    }
+
     public function listTargets() {
         $this->validatePostData(array('profile'));
         $profile = $this->getFormData('profile');

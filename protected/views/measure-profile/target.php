@@ -21,9 +21,10 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
             <p>
                 -&nbsp;Fields with * are required
                 <br/>
-                -&nbsp;Values added should be equivalent to the Indicator's unit of measure (<?php echo $uom->description; ?>)
+                -&nbsp;Values added should be equivalent to the Lead Measure's unit of measure (<?php echo $uom->description; ?>)
             </p>
         </div>
+        <div id="validation-container"></div>
         <?php
         if (isset($notif) && !empty($notif)) {
             $this->renderPartial('commons/_notification', array('notif' => $notif));

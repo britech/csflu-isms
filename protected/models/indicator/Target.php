@@ -20,7 +20,17 @@ class Target extends Model {
     private $notes;
 
     public function validate() {
+        $counter = 0;
+        if(empty($this->coveredYear)){
+            array_push($this->validationMessages, "- {$this->getAttributeNames()['coveredYear']} should be defined");
+            $counter++;
+        }
         
+        if(strlen($this->value) == 0){
+            array_push($this->validationMessages, "- {$this->getAttributeNames()['value']} should be defined");
+            $counter++;
+        }
+        return $counter == 0;
     }
 
     public function getAttributeNames() {

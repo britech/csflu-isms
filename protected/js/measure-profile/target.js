@@ -18,7 +18,7 @@ $(document).ready(function() {
             $("#year").val(event.args.value);
         });
     }
-    
+
     $("#target-list").jqxDataTable({
         source: new $.jqx.dataAdapter({
             datatype: 'json',
@@ -69,4 +69,30 @@ $(document).ready(function() {
 //            });
 //        });
     });
+
+    $(".ink-form").submit(function() {
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=measure/validateTargetInput",
+            data: {"Target": {
+                    'coveredYear': $("#year").val(),
+                    'value': $("[name*=value]").val()
+                }
+            },
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result;
+    });
+
 });
