@@ -287,8 +287,12 @@ class MeasureController extends Controller {
             'model' => new Target(),
             'profileModel' => $measureProfile,
             'uom' => $measureProfile->indicator->uom,
-            'baselineReference' => $measureProfile->indicator->baselineData[count($measureProfile->indicator->baselineData) - 1]
+            'baselineReference' => $measureProfile->indicator->baselineData[count($measureProfile->indicator->baselineData) - 1],
+            'notif' => $this->getSessionData('notif'),
+            'validation' => $this->getSessionData('validation')
         ));
+        $this->unsetSessionData('notif');
+        $this->unsetSessionData('validation');
     }
 
     public function listTargets() {
