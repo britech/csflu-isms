@@ -6,6 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\Indicator;
@@ -217,7 +218,10 @@ class MeasureController extends Controller {
                 array_push($data, array(
                     'id' => $leadOffice->id,
                     'department' => $leadOffice->department->name,
-                    'designation' => LeadOffice::getDesignationOptions()[$designation]
+                    'designation' => LeadOffice::getDesignationOptions()[$designation],
+                    'actions' => ApplicationUtils::generateLink(array('measure/updateLeadOffice', 'id' => $leadOffice->id), 'Update')
+                    . '&nbsp;|&nbsp;' .
+                    ApplicationUtils::generateLink('#', 'Delete')
                 ));
             }
         }
@@ -245,10 +249,15 @@ class MeasureController extends Controller {
         $measureProfile->leadOffices = $leadOffices;
 
         if (count($measureProfile) > 0) {
-            $this->setSessionData('notif', array('class' => 'success', 'message' => 'Lead Office/s added'));
-            $this->scorecardService->insertLeadOffices($measureProfile);
-            foreach ($measureProfile->leadOffices as $leadOffice) {
-                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SCARD, $measureProfile->id, $leadOffice);
+            try {
+                $this->scorecardService->insertLeadOffices($measureProfile);
+                foreach ($measureProfile->leadOffices as $leadOffice) {
+                    $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SCARD, $measureProfile->id, $leadOffice);
+                }
+                $this->setSessionData('notif', array('class' => 'success', 'message' => 'Lead Office/s added'));
+            } catch (ServiceException $ex) {
+                $this->logger->error($ex->getMessage(), $ex);
+                $this->setSessionData('validation', array($ex->getMessage()));
             }
         } else {
             $this->setSessionData('validation', array('Lead Offices must be defined'));

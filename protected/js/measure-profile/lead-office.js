@@ -33,7 +33,8 @@ $(document).ready(function() {
             datatype: 'json',
             datafields: [
                 {name: 'department'},
-                {name: 'designation'}
+                {name: 'designation'},
+                {name: 'actions'}
             ],
             url: '?r=measure/listLeadOffices',
             type: 'POST',
@@ -45,10 +46,11 @@ $(document).ready(function() {
         theme: 'office',
         groups: ['designation'],
         groupsRenderer: function(value, rowData, level) {
-            return "Year Covered:&nbsp;" + value;
+            return "<strong>" + value + "</strong>";
         },
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Lead Office</span>', dataField: 'department'}
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Lead Office</span>', dataField: 'department', width: '80%'},
+            {text: '', dataField: 'actions', cellsAlign: 'center', width: '20%'}
         ],
         width: '100%',
         pageable: true
