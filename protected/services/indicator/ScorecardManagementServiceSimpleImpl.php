@@ -49,7 +49,7 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
         foreach ($measureProfile->leadOffices as $leadOffice) {
             $match = false;
             foreach ($leadOffices as $checker) {
-                if ($leadOffice->department->id == $checker->department->id && $leadOffice->designation == $checker->designation) {
+                if ($leadOffice->department->id == $checker->department->id) {
                     $match = true;
                     break;
                 }
@@ -64,7 +64,11 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
             $finalMeasureProfile = clone $measureProfile;
             $finalMeasureProfile->leadOffices = $finalLeadOffices;
         }
-        $this->daoSource->insertLeadOffices($finalMeasureProfile);
+        if (count($finalMeasureProfile->leadOffices) > 0) {
+            $this->daoSource->insertLeadOffices($finalMeasureProfile);
+        } else {
+            throw new ServiceException("No Lead Offices enlisted");
+        }
     }
 
 }

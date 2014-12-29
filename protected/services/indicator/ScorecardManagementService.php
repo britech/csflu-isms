@@ -18,14 +18,14 @@ interface ScorecardManagementService {
      * @return MeasureProfile[]
      */
     public function listMeasureProfiles(StrategyMap $strategyMap);
-    
+
     /**
      * Retrieves the selected Measure Profile
      * @param String $id
      * @return MeasureProfile
      */
     public function getMeasureProfile($id);
-    
+
     /**
      * Inserts the Measure Profile entity
      * @param MeasureProfile $measureProfile
@@ -34,10 +34,11 @@ interface ScorecardManagementService {
      * @throws ServiceException
      */
     public function insertMeasureProfile(MeasureProfile $measureProfile, StrategyMap $strategyMap);
-    
+
     /**
      * Inserts LeadOffice entities in a given Measure Profile entity
      * @param MeasureProfile $measureProfile
+     * @throws ServiceException
      */
     public function insertLeadOffices(MeasureProfile $measureProfile);
 }
