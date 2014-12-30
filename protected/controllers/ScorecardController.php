@@ -6,6 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\util\ApplicationUtils;
+use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
 
@@ -49,18 +50,34 @@ class ScorecardController extends Controller {
     }
 
     public function listLeadMeasures() {
-        $this->validatePostData(array('map'));
+        $this->validatePostData(array('map', 'readonly'));
         $map = $this->getFormData('map');
+        $readOnly = boolval($this->getFormData('readonly'));
         $strategyMap = $this->loadMapModel($map);
 
         $leadMeasures = $this->scorecardService->listMeasureProfiles($strategyMap);
         $data = array();
         foreach ($leadMeasures as $leadMeasure) {
+
+            if ($readOnly) {
+                $actions = ApplicationUtils::generateLink(array('measure/view', 'id' => $leadMeasure->id), 'View');
+            } else {
+                switch ($leadMeasure->measureProfileEnvironmentStatus) {
+                    case MeasureProfile::STATUS_ACTIVE:
+                        $actions = ApplicationUtils::generateLink(array('measure/view', 'id' => $leadMeasure->id), 'View') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink(array('measure/updateMovement', 'id' => $leadMeasure->id), 'Update Movement');
+                        break;
+
+                    case MeasureProfile::STATUS_DROPPED:
+                        $actions = ApplicationUtils::generateLink(array('measure/view', 'id' => $leadMeasure->id), 'View');
+                        break;
+                }
+            }
+            
             array_push($data, array(
                 'perspective' => $leadMeasure->objective->perspective->positionOrder . '&nbsp;-&nbsp;' . $leadMeasure->objective->perspective->description,
                 'objective' => $leadMeasure->objective->description,
                 'indicator' => $leadMeasure->indicator->description,
-                'action' => ApplicationUtils::generateLink(array('measure/view', 'id'=>$leadMeasure->id), 'View')
+                'action' => $actions
             ));
         }
         $this->renderAjaxJsonResponse($data);

@@ -47,32 +47,22 @@ class MeasureController extends Controller {
             throw new ControllerException("Another parameter is needed to process this request");
         }
         $strategyMap = $this->loadMapModel($map);
-        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
-        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
+        $this->layout = 'column-2';
         $this->title = ApplicationConstants::APP_NAME . ' - Measure Profiles';
         $this->render('measure-profile/index', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Manage Scorecard' => array('scorecard/manage', 'map' => $strategyMap->id),
-                'Measure Profiles' => 'active'
+                'Manage Measure Profiles' => 'active'
             ),
             'sidebar' => array(
                 'data' => array('header' => 'Actions',
                     'links' => array('Create Measure Profile' => array('measure/create'))
                 )
             ),
-            'model' => new MeasureProfile(),
-            'objectiveModel' => new Objective,
-            'indicatorModel' => new Indicator(),
-            'mapModel' => $strategyMap,
-            'measureTypes' => MeasureProfile::getMeasureTypes(),
-            'frequencyTypes' => MeasureProfile::getFrequencyTypes(),
-            'statusTypes' => MeasureProfile::getEnvironmentStatusTypes(),
-            'validation' => $this->getSessionData('validation')
+            'map' => $strategyMap->id
         ));
-        $this->unsetSessionData('validation');
     }
 
     public function insert() {
@@ -142,7 +132,7 @@ class MeasureController extends Controller {
         $measureProfileData = $this->getFormData('MeasureProfile');
         $objectiveData = $this->getFormData('Objective');
         $indicatorData = $this->getFormData('Indicator');
-        
+
         $oldMeasureProfile = clone $this->loadModel($measureProfileData['id']);
 
         $measureProfile = $this->loadModel($measureProfileData['id']);
