@@ -14,7 +14,7 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
             'hasFieldset' => true
         ));
         echo $form->startComponent();
-        echo $form->constructHeader($model->isNew() ? "Add Measure Profile" : "Update Measure Profile");
+        echo $form->constructHeader("Add Measure Profile");
         ?>
         <div class="ink-alert basic info">
             <strong>Important Note:</strong>&nbsp;Fields with * are required.
@@ -72,13 +72,7 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
         <?php echo $form->renderHiddenField($mapModel, 'id', array('id' => 'map')); ?>
         <?php echo $form->renderHiddenField($mapModel, 'startingPeriodDate', array('id' => 'mapStart')); ?>
         <?php echo $form->renderHiddenField($mapModel, 'endingPeriodDate', array('id' => 'mapEnd')); ?>
-        <?php
-        if ($model->isNew()) {
-            echo $form->renderSubmitButton('Create', array('class' => 'ink-button green flat', 'style' => 'margin-top:10px; margin-left:0px;'));
-        } else {
-            echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat', 'style' => 'margin-top:10px; margin-left:0px;'));
-        }
-        ?>
+        <?php echo $form->renderSubmitButton('Create', array('class' => 'ink-button green flat', 'style' => 'margin-top:10px; margin-left:0px;')); ?>
         <?php echo $form->endComponent(); ?>
     </div>
 
