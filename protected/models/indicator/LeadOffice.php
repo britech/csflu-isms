@@ -102,8 +102,8 @@ class LeadOffice extends Model {
     public function __clone() {
         $leadOffice = new LeadOffice();
         $leadOffice->id = $this->id;
-        $leadOffice->department = $this->department;
-        $leadOffice->designation = $this->designation
+        $leadOffice->department = clone $this->department;
+        $leadOffice->designation = $this->designation;
     }
 
     public function __toString() {
