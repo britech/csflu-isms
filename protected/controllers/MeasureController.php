@@ -66,7 +66,29 @@ class MeasureController extends Controller {
     }
 
     public function create($map) {
-        
+        if (!isset($map) || empty($map)) {
+            throw new ControllerException("Another parameter is needed to process this request");
+        }
+        $strategyMap = $this->loadMapModel($map);
+        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
+        $this->title = ApplicationConstants::APP_NAME . ' - Create Measure Profile';
+        $this->render('measure-profile/create', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Create Measure Profile' => 'active'
+            ),
+            'model' => new MeasureProfile(),
+            'objectiveModel' => new Objective(),
+            'indicatorModel' => new Indicator(),
+            'mapModel' => $strategyMap,
+            'frequencyTypes' => MeasureProfile::getFrequencyTypes(),
+            'measureTypes' => MeasureProfile::getMeasureTypes(),
+            'statusTypes' => MeasureProfile::getEnvironmentStatusTypes()
+        ));
     }
 
     public function insert() {

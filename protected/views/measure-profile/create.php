@@ -4,9 +4,9 @@ namespace org\csflu\isms\views;
 
 use org\csflu\isms\util\ModelFormGenerator as Form;
 ?>
-<script type="text/javascript" src="protected/js/measure-profile/index.js"></script>
+<script type="text/javascript" src="protected/js/measure-profile/create.js"></script>
 <div class="column-group quarter-gutters">
-    <div class="all-45">
+    <div class="all-50 push-center">
         <?php
         $form = new Form(array(
             'action' => array('measure/insert'),
@@ -74,9 +74,5 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
         <?php echo $form->renderHiddenField($mapModel, 'endingPeriodDate', array('id' => 'mapEnd')); ?>
         <?php echo $form->renderSubmitButton('Create', array('class' => 'ink-button green flat', 'style' => 'margin-top:10px; margin-left:0px;')); ?>
         <?php echo $form->endComponent(); ?>
-    </div>
-
-    <div class="all-55">
-        <div id="profileList"></div>
     </div>
 </div>
