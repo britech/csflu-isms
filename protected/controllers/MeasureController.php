@@ -87,8 +87,10 @@ class MeasureController extends Controller {
             'mapModel' => $strategyMap,
             'frequencyTypes' => MeasureProfile::getFrequencyTypes(),
             'measureTypes' => MeasureProfile::getMeasureTypes(),
-            'statusTypes' => MeasureProfile::getEnvironmentStatusTypes()
+            'statusTypes' => MeasureProfile::getEnvironmentStatusTypes(),
+            'validation' => $this->getSessionData('validation')
         ));
+        $this->unsetSessionData('validation');
     }
 
     public function insert() {
@@ -108,7 +110,7 @@ class MeasureController extends Controller {
 
         if (!$measureProfile->validate()) {
             $this->setSessionData('validation', $measureProfile->validationMessages);
-            $this->redirect(array('measure/index', 'map' => $strategyMap->id));
+            $this->redirect(array('measure/create', 'map' => $strategyMap->id));
         }
 
         try {
@@ -117,7 +119,7 @@ class MeasureController extends Controller {
             $this->redirect(array('measure/view', 'id' => $id));
         } catch (ServiceException $ex) {
             $this->setSessionData('validation', array($ex->getMessage()));
-            $this->redirect(array('measure/index', 'map' => $strategyMap->id));
+            $this->redirect(array('measure/create', 'map' => $strategyMap->id));
         }
     }
 
