@@ -36,12 +36,19 @@ interface ScorecardManagementService {
     public function insertMeasureProfile(MeasureProfile $measureProfile, StrategyMap $strategyMap);
 
     /**
+     * Updates the MeasureProfile entity
+     * @param MeasureProfile $measureProfile
+     * @throws ServiceException
+     */
+    public function updateMeasureProfile(MeasureProfile $measureProfile);
+
+    /**
      * Inserts LeadOffice entities in a given Measure Profile entity
      * @param MeasureProfile $measureProfile
      * @throws ServiceException
      */
     public function insertLeadOffices(MeasureProfile $measureProfile);
-    
+
     /**
      * Inserts Target entities in a given Measure Profile entity
      * @param MeasureProfile $measureProfile

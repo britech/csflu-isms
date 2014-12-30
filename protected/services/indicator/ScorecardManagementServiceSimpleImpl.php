@@ -4,6 +4,7 @@ namespace org\csflu\isms\service\indicator;
 
 use org\csflu\isms\service\indicator\ScorecardManagementService;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
+use org\csflu\isms\dao\map\StrategyMapDaoSqlImpl as StrategyMapDao;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\indicator\MeasureProfile;
@@ -16,10 +17,12 @@ use org\csflu\isms\models\indicator\MeasureProfile;
 class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService {
 
     private $daoSource;
+    private $mapDaoSource;
     private $logger;
 
     public function __construct() {
         $this->daoSource = new MeasureProfileDao();
+        $this->mapDaoSource = new StrategyMapDao();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -92,12 +95,24 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
         }
 
         $measureProfile->targets = $finalTargets;
-        
+
         if (count($measureProfile->targets) > 0) {
             $this->daoSource->insertTargets($measureProfile);
         } else {
             throw new ServiceException("No Target Data enlisted");
         }
+    }
+
+    public function updateMeasureProfile(MeasureProfile $measureProfile) {
+        $strategyMap = $this->mapDaoSource->getStrategyMapByObjective($measureProfile->objective);
+        $leadMeasures = $this->listMeasureProfiles($strategyMap);
+        
+        foreach ($leadMeasures as $leadMeasure) {
+            if ($leadMeasure->objective->id == $measureProfile->objective->id && $leadMeasure->indicator->id == $measureProfile->indicator->id) {
+                throw new ServiceException("Measure Profile already defined");
+            }
+        }
+        $this->daoSource->updateMeasureProfile($measureProfile);
     }
 
 }
