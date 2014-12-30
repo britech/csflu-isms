@@ -189,10 +189,21 @@ class MeasureProfile extends Model {
         $measureProfile->indicator = $this->indicator;
         $measureProfile->measureType = $this->measureType;
         $measureProfile->frequencyOfMeasure = $this->frequencyOfMeasure;
-        $measureProfile->leadOffices = $this->leadOffices;
-        $measureProfile->targets = $this->targets;
         $measureProfile->measureProfileEnvironmentStatus = $this->measureProfileEnvironmentStatus;
         $measureProfile->timelineStart = $this->timelineStart;
         $measureProfile->timelineEnd = $this->timelineEnd;
+
+        $clonedLeadOffices = array();
+        foreach ($this->leadOffices as $leadOffice) {
+            array_push($clonedLeadOffices, clone $leadOffice);
+        }
+        $measureProfile->leadOffices = $clonedLeadOffices;
+
+        $clonedTargets = array();
+        foreach ($this->targets as $target) {
+            array_push($clonedTargets, clone $target);
+        }
+        $measureProfile->targets = $clonedTargets;
     }
+
 }
