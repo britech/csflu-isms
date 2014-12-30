@@ -107,7 +107,7 @@ class MeasureController extends Controller {
 
     public function update($id = null) {
         if (is_null($id)) {
-            $this->validatePostData(array('MeasureProfile', 'Objective', 'Indicator', 'StrategyMap'));
+            $this->validatePostData(array('MeasureProfile', 'Objective', 'Indicator'));
             $this->processProfileUpdate();
         }
 
@@ -142,9 +142,7 @@ class MeasureController extends Controller {
         $measureProfileData = $this->getFormData('MeasureProfile');
         $objectiveData = $this->getFormData('Objective');
         $indicatorData = $this->getFormData('Indicator');
-        $strategyMapData = $this->getFormData('StrategyMap');
-
-        $strategyMap = $this->loadMapModel($strategyMapData['id']);
+        
         $oldMeasureProfile = clone $this->loadModel($measureProfileData['id']);
 
         $measureProfile = $this->loadModel($measureProfileData['id']);
