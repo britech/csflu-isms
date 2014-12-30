@@ -67,6 +67,7 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
         </div>
         <?php echo $form->renderHiddenField($objectiveModel, 'id', array('id' => 'objective')); ?>
         <?php echo $form->renderHiddenField($mapModel, 'id', array('id' => 'map')); ?>
+        <?php echo $form->renderHiddenField($model, 'id'); ?>
         <?php echo $form->renderHiddenField($model, 'timelineStart'); ?>
         <?php echo $form->renderHiddenField($model, 'timelineEnd'); ?>
         <?php echo $form->renderHiddenField($indicatorModel, 'id', array('id' => 'indicator')); ?>

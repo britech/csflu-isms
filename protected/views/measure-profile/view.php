@@ -6,6 +6,7 @@ use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\indicator\Indicator;
 ?>
 <script type="text/javascript" src="protected/js/measure-profile/view.js"></script>
+<?php $this->renderPartial('commons/_notification', array('notif' => $params['notif'])); ?>
 <table class="ink-table alternating bordered">
     <tbody>
         <tr>

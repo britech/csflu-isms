@@ -108,6 +108,7 @@ class MeasureController extends Controller {
     public function update($id = null) {
         if (is_null($id)) {
             $this->validatePostData(array('MeasureProfile', 'Objective', 'Indicator', 'StrategyMap'));
+            $this->processProfileUpdate();
         }
 
         $measureProfile = $this->loadModel($id);
@@ -135,6 +136,27 @@ class MeasureController extends Controller {
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
+    }
+
+    public function processProfileUpdate() {
+        $measureProfileData = $this->getFormData('MeasureProfile');
+        $objectiveData = $this->getFormData('Objective');
+        $indicatorData = $this->getFormData('Indicator');
+        $strategyMapData = $this->getFormData('StrategyMap');
+
+        $strategyMap = $this->loadMapModel($strategyMapData['id']);
+
+        $measureProfile = new MeasureProfile();
+        $measureProfile->bindValuesUsingArray(array('measureprofile' => $measureProfileData), $measureProfile);
+        $measureProfile->objective = $this->mapService->getObjective($objectiveData['id']);
+        $measureProfile->indicator = $this->indicatorService->retrieveIndicator($indicatorData['id']);
+
+        if (!$measureProfile->validate()) {
+            $this->setSessionData('validation', $measureProfile->validationMessages);
+            $this->redirect(array('measure/index', 'map' => $strategyMap->id));
+        }
+        $this->setSessionData('notif', array('class' => 'info', 'message' => 'Measure Profile updated'));
+        $this->redirect(array('measure/view', 'id' => $measureProfile->id));
     }
 
     public function validateInput() {
@@ -185,8 +207,10 @@ class MeasureController extends Controller {
                     )
                 )
             ),
-            'model' => $measureProfile
+            'model' => $measureProfile,
+            'notif' => $this->getSessionData('notif')
         ));
+        $this->unsetSessionData('notif');
     }
 
     public function manageOffices($profile) {
