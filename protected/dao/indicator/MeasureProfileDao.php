@@ -32,6 +32,12 @@ interface MeasureProfileDao {
      * @throws DataAccessException
      */
     public function insertMeasureProfile(MeasureProfile $measureProfile);
+    
+    /**
+     * @param MeasureProfile $measureProfile
+     * @throws DataAccessException
+     */
+    public function updateMeasureProfile(MeasureProfile $measureProfile);
 
     /**
      * @param MeasureProfile $measureProfile

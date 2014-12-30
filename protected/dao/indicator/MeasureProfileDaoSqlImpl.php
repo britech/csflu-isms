@@ -192,4 +192,32 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
         }
     }
 
+    public function updateMeasureProfile(MeasureProfile $measureProfile) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('UPDATE mp_main SET obj_ref=:objective, '
+                    . 'indicator_ref=:indicator, '
+                    . 'measure_type=:type, '
+                    . 'mp_freq=:frequency, '
+                    . 'mp_stat=:stat, '
+                    . 'period_start_date=:start, '
+                    . 'period_end_date=:end WHERE mp_id=:id');
+            $dbst->execute(array('objective' => $measureProfile->objective->id,
+                'indicator' => $measureProfile->indicator->id,
+                'type' => $measureProfile->measureType,
+                'frequency' => $measureProfile->frequencyOfMeasure,
+                'stat' => $measureProfile->measureProfileEnvironmentStatus,
+                'start' => $measureProfile->timelineStart->format('Y-m-d'),
+                'end' => $measureProfile->timelineEnd->format('Y-m-d'),
+                'id' => $measureProfile->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }
