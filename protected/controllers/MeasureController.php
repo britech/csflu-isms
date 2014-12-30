@@ -406,13 +406,16 @@ class MeasureController extends Controller {
         $profile = $this->getFormData('profile');
 
         $measureProfile = $this->loadModel($profile);
+        $uom = strlen($measureProfile->indicator->uom->symbol) == 0 ? $measureProfile->indicator->uom->description : $measureProfile->indicator->uom->symbol;
+
         $data = array();
         foreach ($measureProfile->targets as $target) {
+            $figure = is_numeric($target->value) ? number_format($target->value, 2) : $target->value;
             array_push($data, array(
                 'id' => $target->id,
                 'group' => $target->dataGroup,
                 'year' => $target->coveredYear,
-                'value' => $target->value,
+                'value' => $figure . '&nbsp;' . strval($uom),
                 'action' => ApplicationUtils::generateLink('#', 'View', array('id' => "view-{$target->id}"))
                 . '&nbsp;|&nbsp;' .
                 ApplicationUtils::generateLink(array('measure/updateTarget', 'id' => $target->id), 'Update')
