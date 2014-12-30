@@ -91,11 +91,10 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
             }
         }
 
-        $finalMeasureProfile = clone $measureProfile;
-        $finalMeasureProfile->leadOffices = $finalTargets;
-
-        if (count($finalMeasureProfile->targets) > 0) {
-            $this->daoSource->insertTargets($finalMeasureProfile);
+        $measureProfile->targets = $finalTargets;
+        
+        if (count($measureProfile->targets) > 0) {
+            $this->daoSource->insertTargets($measureProfile);
         } else {
             throw new ServiceException("No Target Data enlisted");
         }

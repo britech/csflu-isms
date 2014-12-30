@@ -322,9 +322,9 @@ class MeasureController extends Controller {
         if ($target->validate()) {
             $measureProfile->targets = array($target);
             try {
-                $this->setSessionData('notif', array('class' => 'success', 'message' => 'Target data successfully added'));
                 $this->scorecardService->insertTargets($measureProfile);
                 $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SCARD, $measureProfile->id, $target);
+                $this->setSessionData('notif', array('class' => 'success', 'message' => 'Target data successfully added'));
             } catch (ServiceException $ex) {
                 $this->logger->error($ex->getMessage(), $ex);
                 $this->setSessionData('validation', array($ex->getMessage()));
