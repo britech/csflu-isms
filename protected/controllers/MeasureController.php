@@ -105,6 +105,38 @@ class MeasureController extends Controller {
         }
     }
 
+    public function update($id = null) {
+        if (is_null($id)) {
+            $this->validatePostData(array('MeasureProfile', 'Objective', 'Indicator', 'StrategyMap'));
+        }
+
+        $measureProfile = $this->loadModel($id);
+        $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
+        $measureProfile->timelineStart = $measureProfile->timelineStart->format('Y-m-d');
+        $measureProfile->timelineEnd = $measureProfile->timelineEnd->format('Y-m-d');
+        $this->title = ApplicationConstants::APP_NAME . ' - Update Measure Profile';
+        $this->render('measure-profile/update', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Scorecard' => array('scorecard/manage', 'map' => $strategyMap->id),
+                'Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Profile' => array('measure/view', 'id' => $measureProfile->id),
+                'Update Profile' => 'active'
+            ),
+            'model' => $measureProfile,
+            'objectiveModel' => $measureProfile->objective,
+            'indicatorModel' => $measureProfile->indicator,
+            'mapModel' => $strategyMap,
+            'measureTypes' => MeasureProfile::getMeasureTypes(),
+            'frequencyTypes' => MeasureProfile::getFrequencyTypes(),
+            'statusTypes' => MeasureProfile::getEnvironmentStatusTypes(),
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+    }
+
     public function validateInput() {
         try {
             $this->validatePostData(array('MeasureProfile', 'Objective', 'Indicator'));
