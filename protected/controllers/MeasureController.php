@@ -145,9 +145,9 @@ class MeasureController extends Controller {
         $strategyMapData = $this->getFormData('StrategyMap');
 
         $strategyMap = $this->loadMapModel($strategyMapData['id']);
-        $oldMeasureProfile = $this->loadModel($measureProfileData['id']);
+        $oldMeasureProfile = clone $this->loadModel($measureProfileData['id']);
 
-        $measureProfile = new MeasureProfile();
+        $measureProfile = $this->loadModel($measureProfileData['id']);
         $measureProfile->bindValuesUsingArray(array('measureprofile' => $measureProfileData));
         $measureProfile->objective = $this->mapService->getObjective($objectiveData['id']);
         $measureProfile->indicator = $this->indicatorService->retrieveIndicator($indicatorData['id']);
