@@ -8,7 +8,7 @@ use org\csflu\isms\core\Model;
  * @property Integer $id
  * @property String $code
  * @property String $name
- 
+
  * @author britech
  *
  */
@@ -40,6 +40,13 @@ class Department extends Model {
 
     public function __get($name) {
         return $this->$name;
+    }
+
+    public function __clone() {
+        $department = new Department();
+        $department->id = $this->id;
+        $department->name = $this->name;
+        $department->code = $this->code;
     }
 
 }
