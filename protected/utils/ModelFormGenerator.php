@@ -15,8 +15,11 @@ class ModelFormGenerator extends FormGenerator {
 
     const KEY_REQUIRED = "required";
 
+    private $logger;
+
     public function __construct(array $properties) {
         parent::__construct($properties);
+        $this->logger = \Logger::getLogger(__CLASS__);
     }
 
     public function renderLabel(Model $model, $fieldName, array $properties = []) {
@@ -46,7 +49,15 @@ class ModelFormGenerator extends FormGenerator {
     }
 
     public function renderCheckBox(Model $model, $fieldName, $label, array $properties = []) {
-        $properties = $this->validateAndRetrieve($model, $fieldName, $properties);
+        if (!property_exists($model, $fieldName)) {
+            throw new ModelException("Property defined not found {$fieldName}");
+        }
+
+        $values = explode($model->arrayDelimiter, $model->$fieldName);
+        if (in_array($properties['value'], $values)) {
+            $properties = array_merge(array('checked' => true, 'value'=>$properties['value']));
+        }
+
         return parent::renderCheckBox($this->generateFieldName($model, $fieldName) . '[]', $label, $properties);
     }
 
