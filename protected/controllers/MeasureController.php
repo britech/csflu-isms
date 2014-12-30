@@ -145,9 +145,10 @@ class MeasureController extends Controller {
         $strategyMapData = $this->getFormData('StrategyMap');
 
         $strategyMap = $this->loadMapModel($strategyMapData['id']);
+        $oldMeasureProfile = $this->loadModel($measureProfileData['id']);
 
         $measureProfile = new MeasureProfile();
-        $measureProfile->bindValuesUsingArray(array('measureprofile' => $measureProfileData), $measureProfile);
+        $measureProfile->bindValuesUsingArray(array('measureprofile' => $measureProfileData));
         $measureProfile->objective = $this->mapService->getObjective($objectiveData['id']);
         $measureProfile->indicator = $this->indicatorService->retrieveIndicator($indicatorData['id']);
 
@@ -155,7 +156,10 @@ class MeasureController extends Controller {
             $this->setSessionData('validation', $measureProfile->validationMessages);
             $this->redirect(array('measure/index', 'map' => $strategyMap->id));
         }
-        $this->setSessionData('notif', array('class' => 'info', 'message' => 'Measure Profile updated'));
+
+        if ($measureProfile->computePropertyChanges($oldMeasureProfile) > 0) {
+            $this->setSessionData('notif', array('class' => 'info', 'message' => 'Measure Profile updated'));
+        }
         $this->redirect(array('measure/view', 'id' => $measureProfile->id));
     }
 

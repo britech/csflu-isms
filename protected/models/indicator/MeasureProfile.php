@@ -174,6 +174,80 @@ class MeasureProfile extends Model {
                 . "Timeline:\t{$this->timelineStart->format('F-Y')} - {$this->timelineEnd->format('F-Y')}";
     }
 
+    public function computePropertyChanges(MeasureProfile $measureProfile) {
+        $counter = 0;
+
+        if ($measureProfile->frequencyOfMeasure != $this->frequencyOfMeasure) {
+            $counter++;
+        }
+
+        if ($measureProfile->indicator->id != $this->indicator->id) {
+            $counter++;
+        }
+
+        if ($measureProfile->objective->id != $this->objective->id) {
+            $counter++;
+        }
+
+        if ($measureProfile->measureType != $this->measureType) {
+            $counter++;
+        }
+
+        if ($measureProfile->measureProfileEnvironmentStatus != $this->measureProfileEnvironmentStatus) {
+            $counter++;
+        }
+
+        if ($measureProfile->timelineStart->format('Y-m-d') != $this->timelineStart->format('Y-m-d')) {
+            $counter++;
+        }
+
+        if ($measureProfile->timelineEnd->format('Y-m-d') != $this->timelineEnd->format('Y-m-d')) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
+    public function getModelTranslationAsUpdatedEntity(MeasureProfile $measureProfile) {
+        $message = "[Measure Profile updated]\n\n";
+        $data = array();
+
+        if ($measureProfile->frequencyOfMeasure != $this->frequencyOfMeasure) {
+            $frequencyInputs = explode($this->arrayDelimiter, $this->frequencyOfMeasure);
+            $frequencyValues = array();
+            foreach ($frequencyInputs as $input) {
+                array_push($frequencyValues, self::getFrequencyTypes()[$input]);
+            }
+            array_push($data, "Frequency:\t" . implode($this->arrayDelimiter, $frequencyValues));
+        }
+
+        if ($measureProfile->indicator->id != $this->indicator->id) {
+            array_push($data, "Indicator:\t{$this->indicator->description}");
+        }
+
+        if ($measureProfile->objective->id != $this->objective->id) {
+            array_push($data, "Objective:\t{$this->objective->description}");
+        }
+
+        if ($measureProfile->measureType != $this->measureType) {
+            array_push($data, "Measure Type:\t{$this->getMeasureTypes()[$this->measureType]}");
+        }
+
+        if ($measureProfile->measureProfileEnvironmentStatus != $this->measureProfileEnvironmentStatus) {
+            array_push($data, "Status:\t{$this->getEnvironmentStatusTypes()[$this->measureProfileEnvironmentStatus]}");
+        }
+
+        if ($measureProfile->timelineStart->format('Y-m-d') != $this->timelineStart->format('Y-m-d')) {
+            array_push($data, "Period Start:\t{$this->timelineStart->format('F-Y')}");
+        }
+
+        if ($measureProfile->timelineEnd->format('Y-m-d') != $this->timelineEnd->format('Y-m-d')) {
+            array_push($data, "Period End:\t{$this->timelineEnd->format('F-Y')}");
+        }
+
+        return $message . implode("\n", $data);
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
