@@ -58,11 +58,15 @@ class MeasureController extends Controller {
             ),
             'sidebar' => array(
                 'data' => array('header' => 'Actions',
-                    'links' => array('Create Measure Profile' => array('measure/create'))
+                    'links' => array('Create Measure Profile' => array('measure/create', 'map' => $strategyMap->id))
                 )
             ),
             'map' => $strategyMap->id
         ));
+    }
+
+    public function create($map) {
+        
     }
 
     public function insert() {
