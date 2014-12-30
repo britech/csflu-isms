@@ -127,7 +127,7 @@ class MapController extends Controller {
                 $additionalLinks = array('Update Entry Data' => array('map/update', 'id' => $strategyMap->id),
                     'Manage Objectives' => array('objective/manage', 'map' => $strategyMap->id),
                     'Update Status' => array('map/updateStatus', 'id' => $strategyMap->id),
-                    'Manage Scorecard' => array('scorecard/manage', 'map' => $strategyMap->id));
+                    'Manage Lead Measures' => array('measure/index', 'map' => $strategyMap->id));
                 $links = array_merge($links, $additionalLinks);
                 break;
             case StrategyMap::STATUS_INACTIVE:
