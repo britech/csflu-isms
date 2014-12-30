@@ -99,6 +99,13 @@ class LeadOffice extends Model {
         return $this->$name;
     }
 
+    public function __clone() {
+        $leadOffice = new LeadOffice();
+        $leadOffice->id = $this->id;
+        $leadOffice->department = $this->department;
+        $leadOffice->designation = $this->designation
+    }
+
     public function __toString() {
         return "[LeadOffice] (id=>{$this->id}, department=>{$this->department->id}-{$this->department->name}, designation=>{$this->designation})";
     }
