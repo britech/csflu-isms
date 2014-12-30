@@ -106,9 +106,9 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
     public function updateMeasureProfile(MeasureProfile $measureProfile) {
         $strategyMap = $this->mapDaoSource->getStrategyMapByObjective($measureProfile->objective);
         $leadMeasures = $this->listMeasureProfiles($strategyMap);
-        
+
         foreach ($leadMeasures as $leadMeasure) {
-            if ($leadMeasure->objective->id == $measureProfile->objective->id && $leadMeasure->indicator->id == $measureProfile->indicator->id) {
+            if ($measureProfile->id != $leadMeasure->id && $leadMeasure->objective->id == $measureProfile->objective->id && $leadMeasure->indicator->id == $measureProfile->indicator->id) {
                 throw new ServiceException("Measure Profile already defined");
             }
         }
