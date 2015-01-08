@@ -177,13 +177,13 @@ class MeasureController extends Controller {
                 $this->scorecardService->updateMeasureProfile($measureProfile);
                 $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_SCARD, $measureProfile->id, $measureProfile, $oldMeasureProfile);
                 $this->setSessionData('notif', array('class' => 'info', 'message' => 'Measure Profile updated'));
-                $this->redirect(array('measure/view', 'id' => $measureProfile->id));
             } catch (ServiceException $ex) {
                 $this->logger->error($ex->getMessage(), $ex);
                 $this->setSessionData('validation', array($ex->getMessage()));
                 $this->redirect(array('measure/update', 'id' => $measureProfile->id));
             }
         }
+        $this->redirect(array('measure/view', 'id' => $measureProfile->id));
     }
 
     public function validateInput() {
