@@ -139,8 +139,7 @@ class MeasureController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Manage Scorecard' => array('scorecard/manage', 'map' => $strategyMap->id),
-                'Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
                 'Profile' => array('measure/view', 'id' => $measureProfile->id),
                 'Update Profile' => 'active'
             ),
@@ -221,8 +220,7 @@ class MeasureController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Manage Scorecard' => array('scorecard/manage', 'map' => $strategyMap->id),
-                'Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
                 'Profile' => 'active'
             ),
             'sidebar' => array(
@@ -254,8 +252,7 @@ class MeasureController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Manage Scorecard' => array('scorecard/manage', 'map' => $strategyMap->id),
-                'Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
                 'Profile' => array('measure/view', 'id' => $measureProfile->id),
                 'Manage Lead Offices' => 'active'
             ),
@@ -363,8 +360,7 @@ class MeasureController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Manage Scorecard' => array('scorecard/manage', 'map' => $strategyMap->id),
-                'Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
                 'Profile' => array('measure/view', 'id' => $measureProfile->id),
                 'Manage Targets' => 'active'
             ),
