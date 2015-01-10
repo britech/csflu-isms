@@ -9,6 +9,7 @@ use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\indicator\LeadOffice;
+use org\csflu\isms\models\indicator\Target;
 
 /**
  * Description of ScorecardManagementServiceSimpleImpl
@@ -42,11 +43,13 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
         return $this->daoSource->insertMeasureProfile($measureProfile);
     }
 
-    public function getMeasureProfile($id = null, LeadOffice $leadOffice = null) {
+    public function getMeasureProfile($id = null, LeadOffice $leadOffice = null, Target $target = null) {
         if (!is_null($id)) {
             return $this->daoSource->getMeasureProfile($id);
         } elseif (!is_null($leadOffice)) {
             return $this->daoSource->getMeasureProfileByLeadOffice($leadOffice);
+        } elseif (!is_null($target)) {
+            return $this->daoSource->getMeasureProfileByTarget($target);
         }
     }
 
@@ -136,6 +139,16 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
 
     public function deleteLeadOffice($id) {
         $this->daoSource->deleteLeadOffice($id);
+    }
+
+    public function getTarget(MeasureProfile $measureProfile, $id) {
+        $targets = $this->daoSource->listTargets($measureProfile);
+
+        foreach ($targets as $target) {
+            if ($target->id == $id) {
+                return $target;
+            }
+        }
     }
 
 }
