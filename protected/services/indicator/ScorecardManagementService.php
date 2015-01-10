@@ -3,6 +3,7 @@
 namespace org\csflu\isms\service\indicator;
 
 use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\indicator\LeadOffice;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\exceptions\ServiceException;
 
@@ -21,10 +22,11 @@ interface ScorecardManagementService {
 
     /**
      * Retrieves the selected Measure Profile
-     * @param String $id
+     * @param String $id Search the profile by its identifier
+     * @param LeadOffice $leadOffice Search the profile by its underlying LeadOffice
      * @return MeasureProfile
      */
-    public function getMeasureProfile($id);
+    public function getMeasureProfile($id = null, LeadOffice $leadOffice = null);
 
     /**
      * Inserts the Measure Profile entity
@@ -41,6 +43,14 @@ interface ScorecardManagementService {
      * @throws ServiceException
      */
     public function updateMeasureProfile(MeasureProfile $measureProfile);
+
+    /**
+     * Gets the Lead Office entity under the selected Measure Profile;
+     * @param MeasureProfile $measureProfile
+     * @param String $id
+     * @throws ServiceException
+     */
+    public function getLeadOffice(MeasureProfile $measureProfile, $id);
 
     /**
      * Inserts LeadOffice entities in a given Measure Profile entity

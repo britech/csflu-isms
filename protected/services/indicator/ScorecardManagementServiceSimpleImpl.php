@@ -8,6 +8,7 @@ use org\csflu\isms\dao\map\StrategyMapDaoSqlImpl as StrategyMapDao;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\indicator\LeadOffice;
 
 /**
  * Description of ScorecardManagementServiceSimpleImpl
@@ -41,8 +42,12 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
         return $this->daoSource->insertMeasureProfile($measureProfile);
     }
 
-    public function getMeasureProfile($id) {
-        return $this->daoSource->getMeasureProfile($id);
+    public function getMeasureProfile($id = null, LeadOffice $leadOffice = null) {
+        if (!is_null($id)) {
+            return $this->daoSource->getMeasureProfile($id);
+        } elseif (!is_null($leadOffice)) {
+            return $this->daoSource->getMeasureProfileByLeadOffice($leadOffice);
+        }
     }
 
     public function insertLeadOffices(MeasureProfile $measureProfile) {
@@ -113,6 +118,18 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
             }
         }
         $this->daoSource->updateMeasureProfile($measureProfile);
+    }
+
+    public function getLeadOffice(MeasureProfile $measureProfile, $id) {
+        $leadOffices = $this->daoSource->listLeadOffices($measureProfile);
+
+        foreach ($leadOffices as $leadOffice) {
+            if ($leadOffice->id == $id) {
+                return $leadOffice;
+            }
+        }
+
+        throw new ServiceException("Lead Measure not found");
     }
 
 }
