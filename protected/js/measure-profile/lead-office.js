@@ -1,32 +1,34 @@
 $(document).ready(function() {
-    $("#department-input").jqxComboBox({
-        source: new $.jqx.dataAdapter({
-            datatype: 'json',
-            datafields: [
-                {name: 'id'},
-                {name: 'name'}
-            ],
-            url: '?r=department/listDepartments'
-        }),
-        valueMember: 'id',
-        displayMember: 'name',
-        width: '100%',
-        searchMode: 'containsignorecase',
-        autoComplete: true,
-        theme: 'office',
-        height: '35px',
-        animationType: 'none',
-        multiSelect: true
-    }).on('change', function() {
-        var input = [];
-        var items = $("#department-input").jqxComboBox('getSelectedItems');
-        var i = 0;
-        $.each(items, function() {
-            input[i] = this.value;
-            i++;
+    if ($("[name*=validationMode]").val() === 1) {
+        $("#department-input").jqxComboBox({
+            source: new $.jqx.dataAdapter({
+                datatype: 'json',
+                datafields: [
+                    {name: 'id'},
+                    {name: 'name'}
+                ],
+                url: '?r=department/listDepartments'
+            }),
+            valueMember: 'id',
+            displayMember: 'name',
+            width: '100%',
+            searchMode: 'containsignorecase',
+            autoComplete: true,
+            theme: 'office',
+            height: '35px',
+            animationType: 'none',
+            multiSelect: true
+        }).on('change', function() {
+            var input = [];
+            var items = $("#department-input").jqxComboBox('getSelectedItems');
+            var i = 0;
+            $.each(items, function() {
+                input[i] = this.value;
+                i++;
+            });
+            $("#department").val(input.join("/"));
         });
-        $("#department").val(input.join("/"));
-    });
+    }
 
     $("#lead-offices").jqxDataTable({
         source: new $.jqx.dataAdapter({
@@ -79,7 +81,8 @@ $(document).ready(function() {
                 },
                 "Department": {
                     'id': $("#department").val()
-                }
+                },
+                "mode": $("[name*=validationMode]").val()
             },
             async: false,
             success: function(data) {
