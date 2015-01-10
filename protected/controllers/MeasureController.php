@@ -542,6 +542,39 @@ class MeasureController extends Controller {
         ));
     }
 
+    public function updateTarget($id = null) {
+        if (is_null($id)) {
+            $this->validatePostData(array('Target', 'MeasureProfile'));
+        } elseif (!isset($id) || empty($id)) {
+            throw new ControllerException("Another parameter is needed to process this request");
+        }
+
+        $tempTarget = new Target();
+        $tempTarget->id = $id;
+        $measureProfile = $this->loadModel(null, null, $tempTarget);
+        $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
+        $target = $this->scorecardService->getTarget($measureProfile, $id);
+        $target->validationMode = Model::VALIDATION_MODE_UPDATE;
+        $this->title = ApplicationConstants::APP_NAME . ' - Update Targets';
+        $this->render('measure-profile/target', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Profile' => array('measure/view', 'id' => $measureProfile->id),
+                'Manage Targets' => array('measure/manageTargets', 'profile' => $measureProfile->id),
+                'Update Target Data' => 'active'
+            ),
+            'model' => $target,
+            'profileModel' => $measureProfile,
+            'uom' => $measureProfile->indicator->uom,
+            'baselineReference' => $measureProfile->indicator->baselineData[count($measureProfile->indicator->baselineData) - 1],
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+    }
+
     private function loadModel($id = null, LeadOffice $leadOffice = null, Target $target = null) {
         if (!is_null($id)) {
             $measureProfile = $this->scorecardService->getMeasureProfile($id);
