@@ -28,12 +28,14 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
         }
         ?>
+        <?php if($model->validationMode == \org\csflu\isms\core\Model::VALIDATION_MODE_UPDATE):?>
         <div class="control-group">
             <?php echo $form->renderLabel($model, 'department', array('required' => true)); ?>
             <div class="control">
                 <div id="department-input"></div>
             </div>
         </div>
+        <?php endif;?>
         <div class="control-group">
             <?php echo $form->renderLabel($model, 'designation', array('required' => true)); ?>
             <ul class="control unstyled" style="margin-top: 0px; margin-bottom: 0px;">
