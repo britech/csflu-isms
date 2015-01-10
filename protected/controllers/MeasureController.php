@@ -391,12 +391,17 @@ class MeasureController extends Controller {
         $leadOffice = new LeadOffice();
         $leadOffice->bindValuesUsingArray(array(
             'leadoffice' => $leadOfficeData,
-            'department'=>$departmentData));
+            'department' => $departmentData));
 
         $measureProfile = $this->loadModel(null, $leadOffice);
         $oldLeadOffice = clone $this->scorecardService->getLeadOffice($measureProfile, $leadOffice->id);
-        
-        $this->setSessionData('notif', array('class' => 'info', 'message' => 'Lead Office updated'));
+
+        if ($leadOffice->computePropertyChanges($oldLeadOffice) > 0) {
+            $this->scorecardService->updateLeadOffice($leadOffice);
+            $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_SCARD, $measureProfile->id, $leadOffice, $oldLeadOffice);
+            $this->setSessionData('notif', array('class' => 'info', 'message' => 'Lead Office updated'));
+        }
+
         $this->redirect(array('measure/manageOffices', 'profile' => $measureProfile->id));
     }
 
