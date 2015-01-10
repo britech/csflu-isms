@@ -352,15 +352,18 @@ class MeasureController extends Controller {
 
     public function updateLeadOffice($id = null) {
         if (is_null($id)) {
-            
+            $this->validatePostData(array('LeadOffice'));
+            $this->processLeadOfficeUpdate();
         }
 
-        $leadOffice = new LeadOffice();
-        $leadOffice->id = $id;
-        
-        $measureProfile = $this->loadModel(null, $leadOffice);
+        $temp = new LeadOffice();
+        $temp->id = $id;
+
+        $measureProfile = $this->loadModel(null, $temp);
         $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
-        
+        $leadOffice = $this->scorecardService->getLeadOffice($measureProfile, $id);
+        $leadOffice->validationMode = Model::VALIDATION_MODE_UPDATE;
+
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Lead Offices';
         $this->render('measure-profile/lead-office', array(
             'breadcrumb' => array(
@@ -369,15 +372,27 @@ class MeasureController extends Controller {
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
                 'Profile' => array('measure/view', 'id' => $measureProfile->id),
-                'Manage Lead Offices' => 'active'
+                'Manage Lead Offices' => array('measure/manageOffices', 'profile' => $measureProfile->id),
+                'Update Lead Office' => 'active'
             ),
-            'model' => $this->loadLeadOfficeModel($measureProfile, $id),
-            'departmentModel' => new Department,
+            'model' => $leadOffice,
+            'departmentModel' => $leadOffice->department,
             'measureProfileModel' => $measureProfile,
             'designationTypes' => LeadOffice::getDesignationOptions(),
             'validation' => $this->getSessionData('validation'),
         ));
         $this->unsetSessionData('validation');
+    }
+
+    private function processLeadOfficeUpdate() {
+        $leadOfficeData = $this->getFormData('LeadOffice');
+
+        $leadOffice = new LeadOffice();
+        $leadOffice->bindValuesUsingArray(array('leadoffice' => $leadOfficeData));
+
+        $measureProfile = $this->loadModel(null, $leadOffice);
+        $this->setSessionData('notif', array('class' => 'info', 'message' => 'Lead Office updated'));
+        $this->redirect(array('measure/manageOffices', 'profile' => $measureProfile->id));
     }
 
     public function manageTargets($profile) {
@@ -462,8 +477,7 @@ class MeasureController extends Controller {
                 'id' => $target->id,
                 'group' => $target->dataGroup,
                 'year' => $target->coveredYear,
-                'value' => $figure . '&nbsp;' . strval($uom),
-                'action' => ApplicationUtils::generateLink('#', 'View', array('id' => "view-{$target->id}"))
+                'value' => $figure . '&nbsp;' . strval($uom), 'action' => ApplicationUtils::generateLink('#', 'View', array('id' => "view-{$target->id}"))
                 . '&nbsp;|&nbsp;' .
                 ApplicationUtils::generateLink(array('measure/updateTarget', 'id' => $target->id), 'Update')
                 . '&nbsp;|&nbsp;' .
@@ -476,7 +490,7 @@ class MeasureController extends Controller {
     private function loadModel($id = null, LeadOffice $leadOffice = null) {
         if (!is_null($id)) {
             $measureProfile = $this->scorecardService->getMeasureProfile($id);
-        } elseif(!is_null($leadOffice)){
+        } elseif (!is_null($leadOffice)) {
             $measureProfile = $this->scorecardService->getMeasureProfile(null, $leadOffice);
         }
 
@@ -494,16 +508,6 @@ class MeasureController extends Controller {
             $this->redirect(array('map/index'));
         }
         return $map;
-    }
-
-    private function loadLeadOfficeModel(MeasureProfile $measureProfile, $id) {
-        $leadOffice = $this->scorecardService->getLeadOffice($measureProfile, $id);
-        if (is_null($leadOffice->id)) {
-            $this->setSessionData('notif', array('class' => '', 'message' => 'Lead Office not found'));
-            $this->redirect(array('measure/manageOffices', 'profile' => $measureProfile->id));
-        }
-        $leadOffice->validationMode = Model::VALIDATION_MODE_UPDATE;
-        return $leadOffice;
     }
 
 }
