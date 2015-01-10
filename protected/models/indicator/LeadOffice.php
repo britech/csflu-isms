@@ -92,6 +92,39 @@ class LeadOffice extends Model {
                 . "Designation:\t" . implode($this->arrayDelimiter, $designationValues);
     }
 
+    public function computePropertyChanges(LeadOffice $oldModel) {
+        $counter = 0;
+
+        if ($oldModel->department->id != $this->department->id) {
+            $counter++;
+        }
+
+        if ($oldModel->designation != $this->designation) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
+    public function getModelTranslationAsUpdatedEntity(LeadOffice $oldModel) {
+        $translation = "[LeadOffice updated]\n\n";
+
+        if ($oldModel->department->id != $this->department->id) {
+            $translation.="Department:\t{$this->department->name}\n";
+        }
+
+        if ($oldModel->designation != $this->designation) {
+            $designationInputs = explode($this->arrayDelimiter, $this->designation);
+            $designationValues = array();
+            foreach ($designationInputs as $input) {
+                array_push($designationValues, self::getDesignationOptions()[$input]);
+            }
+            $translation.="Designation:\t".implode($this->arrayDelimiter, $designationValues);
+        }
+
+        return $translation;
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }

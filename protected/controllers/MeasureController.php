@@ -352,7 +352,7 @@ class MeasureController extends Controller {
 
     public function updateLeadOffice($id = null) {
         if (is_null($id)) {
-            $this->validatePostData(array('LeadOffice'));
+            $this->validatePostData(array('LeadOffice', 'Department'));
             $this->processLeadOfficeUpdate();
         }
 
@@ -386,11 +386,16 @@ class MeasureController extends Controller {
 
     private function processLeadOfficeUpdate() {
         $leadOfficeData = $this->getFormData('LeadOffice');
+        $departmentData = $this->getFormData('Department');
 
         $leadOffice = new LeadOffice();
-        $leadOffice->bindValuesUsingArray(array('leadoffice' => $leadOfficeData));
+        $leadOffice->bindValuesUsingArray(array(
+            'leadoffice' => $leadOfficeData,
+            'department'=>$departmentData));
 
         $measureProfile = $this->loadModel(null, $leadOffice);
+        $oldLeadOffice = clone $this->scorecardService->getLeadOffice($measureProfile, $leadOffice->id);
+        
         $this->setSessionData('notif', array('class' => 'info', 'message' => 'Lead Office updated'));
         $this->redirect(array('measure/manageOffices', 'profile' => $measureProfile->id));
     }
