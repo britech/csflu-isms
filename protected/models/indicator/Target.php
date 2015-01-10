@@ -97,6 +97,12 @@ class Target extends Model {
         
         return $translation;
     }
+    
+    public function getModelTranslationAsDeletedEntity() {
+        return "[Target deleted]\n\n"
+        . "Covered Year:\t{$this->coveredYear}\n"
+        . "Value:\t{$this->value}\n";
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;
