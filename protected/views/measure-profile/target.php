@@ -112,7 +112,7 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
             </tr>
         </table>
         <div class="all-50 push-center align-center">
-            <button class="ink-button green flat" id="deny">OK</button>
+            <button class="ink-button green flat" id="close">OK</button>
         </div>
     </div>
 </div>

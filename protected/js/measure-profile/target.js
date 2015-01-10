@@ -56,18 +56,18 @@ $(document).ready(function() {
 //            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
 //        });
 //
-//        $("[id^=view]").click(function() {
-//            var id = $(this).attr('id').split("-")[1];
-//            $("#about-baseline").jqxWindow('open');
-//            $.post("?r=indicator/getBaseline",
-//                    {id: id},
-//            function(data) {
-//                var response = $.parseJSON(data);
-//                $("#yearCovered").html(response.coveredYear);
-//                $("#figureValue").html(response.figureValue);
-//                $("#others").html(response.notes);
-//            });
-//        });
+        $("[id^=view]").click(function() {
+            var id = $(this).attr('id').split("-")[1];
+            $("#about-target").jqxWindow('open');
+            $.post("?r=measure/getTarget",
+                    {id: id},
+            function(data) {
+                var response = $.parseJSON(data);
+                $("#yearCovered").html(response.coveredYear);
+                $("#figureValue").html(response.figureValue);
+                $("#others").html(response.notes);
+            });
+        });
     });
 
     $(".ink-form").submit(function() {
@@ -95,4 +95,22 @@ $(document).ready(function() {
         return result;
     });
 
+    $('#about-target').jqxWindow({
+        width: 500,
+        height: 300,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#close")
+    }).on("close", function() {
+        $("#target-list").jqxDataTable('updateBoundData');
+    });
+
+    $("#close").click(function() {
+        console.log("clicked!");
+        $("#target-list").jqxDataTable('updateBoundData');
+    });
 });

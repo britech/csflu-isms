@@ -520,11 +520,35 @@ class MeasureController extends Controller {
         $this->renderAjaxJsonResponse($data);
     }
 
-    private function loadModel($id = null, LeadOffice $leadOffice = null) {
+    public function getTarget() {
+        $this->validatePostData(array('id'));
+        $id = $this->getFormData('id');
+
+        $targetTemp = new Target();
+        $targetTemp->id = $id;
+
+        $measureProfile = $this->loadModel(null, null, $targetTemp);
+        $target = $this->scorecardService->getTarget($measureProfile, $id);
+
+        $uom = strlen($measureProfile->indicator->uom->symbol) == 0 ? $measureProfile->indicator->uom->description : $measureProfile->indicator->uom->symbol;
+        $dataGroupContent = strlen($target->dataGroup) == 0 ? "" : "Data Group: {$target->dataGroup}";
+        $notesContent = strlen($target->notes) == 0 ? "" : $target->notes;
+        $notes = nl2br("{$dataGroupContent}\n{$notesContent}");
+
+        $this->renderAjaxJsonResponse(array(
+            'coveredYear' => $target->coveredYear,
+            'figureValue' => $target->value . '&nbsp;' . strval($uom),
+            'notes' => $notes
+        ));
+    }
+
+    private function loadModel($id = null, LeadOffice $leadOffice = null, Target $target = null) {
         if (!is_null($id)) {
             $measureProfile = $this->scorecardService->getMeasureProfile($id);
         } elseif (!is_null($leadOffice)) {
             $measureProfile = $this->scorecardService->getMeasureProfile(null, $leadOffice);
+        } elseif (!is_null($target)) {
+            $measureProfile = $this->scorecardService->getMeasureProfile(null, null, $target);
         }
 
         if (is_null($measureProfile->id)) {
