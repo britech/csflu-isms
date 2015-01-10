@@ -124,6 +124,10 @@ class LeadOffice extends Model {
 
         return $translation;
     }
+    
+    public function getModelTranslationAsDeletedEntity() {
+        return "[LeadOffice deleted]\n\nDepartment:\t{$this->department->name}";
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;
