@@ -7,6 +7,7 @@ use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
+use org\csflu\isms\core\Model;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\Indicator;
@@ -499,6 +500,7 @@ class MeasureController extends Controller {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Lead Office not found'));
             $this->redirect(array('measure/manageOffices', 'profile' => $measureProfile->id));
         }
+        $leadOffice->validationMode = Model::VALIDATION_MODE_UPDATE;
         return $leadOffice;
     }
 
