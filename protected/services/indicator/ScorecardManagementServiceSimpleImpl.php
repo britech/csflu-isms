@@ -130,4 +130,8 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
         }
     }
 
+    public function updateLeadOffice(LeadOffice $leadOffice) {
+        $this->daoSource->updateLeadOffice($leadOffice);
+    }
+
 }
