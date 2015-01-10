@@ -48,6 +48,7 @@ interface ScorecardManagementService {
      * Gets the Lead Office entity under the selected Measure Profile;
      * @param MeasureProfile $measureProfile
      * @param String $id
+     * @return LeadOffice
      * @throws ServiceException
      */
     public function getLeadOffice(MeasureProfile $measureProfile, $id);
