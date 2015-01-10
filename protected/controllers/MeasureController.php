@@ -599,6 +599,23 @@ class MeasureController extends Controller {
         }
     }
 
+    public function deleteTargetData() {
+        $this->validatePostData(array('id'));
+        $id = $this->getFormData('id');
+
+        $tempTarget = new Target();
+        $tempTarget->id = $id;
+
+        $measureProfile = $this->scorecardService->getMeasureProfile(null, null, $tempTarget);
+        if (is_null($measureProfile->id)) {
+            $this->setSessionData('notif', array('class' => '', 'message' => 'Measure Profile not found'));
+            $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
+        }
+        $target = $this->scorecardService->getTarget($measureProfile, $id);
+        $this->setSessionData('notif', array('class'=>'', 'message'=>'Target data deleted'));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('measure/manageTargets', 'profile' => $measureProfile->id))));
+    }
+
     private function loadModel($id = null, LeadOffice $leadOffice = null, Target $target = null) {
         if (!is_null($id)) {
             $measureProfile = $this->scorecardService->getMeasureProfile($id);

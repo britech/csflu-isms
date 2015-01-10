@@ -49,12 +49,12 @@ $(document).ready(function() {
         pageable: true,
         pageSize: 50
     }).on("rowClick", function() {
-//        $("[id^=remove]").click(function() {
-//            var text = $(this).parent().siblings("td + td").html();
-//            $("#text").html("Delete baseline data with value of <strong>" + text + "</strong> in this Indicator.")
-//            $("#delete-baseline").jqxWindow('open');
-//            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
-//        });
+        $("[id^=remove]").click(function() {
+            var text = $(this).parent().siblings("td + td").html();
+            $("#text").html("Delete target data with value of <strong>" + text + "</strong> in this Measure Profile.");
+            $("#delete-target").jqxWindow('open');
+            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+        });
 //
         $("[id^=view]").click(function() {
             var id = $(this).attr('id').split("-")[1];
@@ -108,9 +108,33 @@ $(document).ready(function() {
     }).on("close", function() {
         $("#target-list").jqxDataTable('updateBoundData');
     });
+    
+    $('#delete-target').jqxWindow({
+        title: '<strong>Confirm Target Data Deletion</strong>',
+        width: 300,
+        height: 130,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+    }).on("close", function() {
+        $("#target-list").jqxDataTable('updateBoundData');
+    });
 
-    $("#close").click(function() {
-        console.log("clicked!");
+    $("[id^=accept]").click(function() {
+        var id = $(this).attr('id').split('-')[1];
+        $.post("?r=measure/deleteTargetData",
+                {id: id},
+        function(data) {
+            var response = $.parseJSON(data);
+            window.location = response.url;
+        });
+    });
+
+    $("#deny, #close").click(function() {
         $("#target-list").jqxDataTable('updateBoundData');
     });
 });
