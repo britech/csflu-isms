@@ -295,4 +295,18 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
         }
     }
 
+    public function deleteTarget($id) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('DELETE FROM mp_targets WHERE target_id=:id');
+            $dbst->execute(array('id' => $id));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

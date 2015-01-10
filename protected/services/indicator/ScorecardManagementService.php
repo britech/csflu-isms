@@ -88,6 +88,12 @@ interface ScorecardManagementService {
     public function updateTarget(Target $target);
     
     /**
+     * Deletes the Target entity
+     * @param String $id
+     */
+    public function deleteTarget($id);
+    
+    /**
      * Retrieves a Target entity under the selected Measure Profile
      * @param MeasureProfile $measureProfile
      * @param String $id

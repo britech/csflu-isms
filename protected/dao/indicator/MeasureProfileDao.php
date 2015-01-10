@@ -94,6 +94,12 @@ interface MeasureProfileDao {
     public function updateTarget(Target $target);
     
     /**
+     * @param String $id
+     * @throws DataAccessException
+     */
+    public function deleteTarget($id);
+    
+    /**
      * @param MeasureProfile $measureProfile
      * @return Target[]
      * @throws DataAccessException

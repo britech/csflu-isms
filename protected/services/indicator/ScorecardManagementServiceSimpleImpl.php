@@ -155,4 +155,8 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
         $this->daoSource->updateTarget($target);
     }
 
+    public function deleteTarget($id) {
+        $this->daoSource->deleteTarget($id);
+    }
+
 }
