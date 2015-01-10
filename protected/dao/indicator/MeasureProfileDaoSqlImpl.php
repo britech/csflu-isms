@@ -234,4 +234,18 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
         }
     }
 
+    public function updateLeadOffice(LeadOffice $leadOffice) {
+        try {
+            $this->db->beginTransaction();
+            
+            $dbst = $this->db->prepare('UPDATE mp_rc SET type=:type WHERE mprc_id=:id');
+            $dbst->execute(array('type'=>$leadOffice->designation, 'id'=>$leadOffice->id));
+            
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

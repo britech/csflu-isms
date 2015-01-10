@@ -61,6 +61,12 @@ interface MeasureProfileDao {
     public function insertLeadOffices(MeasureProfile $measureProfile);
     
     /**
+     * @param LeadOffice $leadOffice
+     * @throws DataAccessException
+     */
+    public function updateLeadOffice(LeadOffice $leadOffice);
+    
+    /**
      * @param MeasureProfile $measureProfile
      * @throws DataAccessException
      */
