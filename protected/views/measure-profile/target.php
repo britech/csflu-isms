@@ -82,3 +82,37 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
     </div>
 </div>
 
+<div id="delete-target">
+    <div id="deleteTargetContent" style="overflow: hidden">
+        <p id="text"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept">Yes</button>
+            <button class="ink-button green flat" id="deny">No</button>
+        </div>
+    </div>
+</div>
+
+<div id="about-target">
+    <div id="aboutTargetHeader">
+        <strong>About Baseline</strong>
+    </div>
+    <div id="aboutTargetContent" style="overflow: hidden">
+        <table class="ink-table alternating">
+            <tr>
+                <th style="text-align: right">Year Covered</th>
+                <td id="yearCovered" style="width: 70%">&nbsp;</td>
+            </tr>
+            <tr>
+                <th style="text-align: right">Value</th>
+                <td id="figureValue" style="width: 70%">&nbsp;</td>
+            </tr>
+            <tr>
+                <th style="text-align: right">Notes</th>
+                <td id="others" style="width: 70%">&nbsp;</td>
+            </tr>
+        </table>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button green flat" id="deny">OK</button>
+        </div>
+    </div>
+</div>
