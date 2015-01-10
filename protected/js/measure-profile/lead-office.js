@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    if ($("[name*=validationMode]").val() === 1) {
+    if ($("[name*=validationMode]").val() === "1") {
         $("#department-input").jqxComboBox({
             source: new $.jqx.dataAdapter({
                 datatype: 'json',
