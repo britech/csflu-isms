@@ -220,4 +220,18 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
         }
     }
 
+    public function getMeasureProfileByLeadOffice(LeadOffice $leadOffice) {
+        try {
+            $dbst = $this->db->prepare('SELECT mp_ref FROM mp_rc WHERE mprc_id=:id');
+            $dbst->execute(array('id' => $leadOffice->id));
+
+            while ($data = $dbst->fetch()) {
+                list($profile) = $data;
+            }
+            return $this->getMeasureProfile($profile);
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

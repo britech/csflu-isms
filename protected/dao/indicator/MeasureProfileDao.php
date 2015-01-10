@@ -4,6 +4,7 @@ namespace org\csflu\isms\dao\indicator;
 
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\indicator\LeadOffice;
 use org\csflu\isms\exceptions\DataAccessException;
 
 /**
@@ -25,6 +26,13 @@ interface MeasureProfileDao {
      * @throws DataAccessException
      */
     public function getMeasureProfile($id);
+    
+    /**
+     * @param LeadOffice $leadOffice
+     * @return MeasureProfile
+     * @throws DataAccessException
+     */
+    public function getMeasureProfileByLeadOffice(LeadOffice $leadOffice);
 
     /**
      * @param MeasureProfile $measureProfile
