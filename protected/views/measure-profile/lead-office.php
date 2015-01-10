@@ -46,6 +46,7 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
             <?php
             echo $form->renderHiddenField($departmentModel, 'id', array('id' => 'department'));
             echo $form->renderHiddenField($measureProfileModel, 'id', array('id' => 'profile'));
+            echo $form->renderHiddenField($model, 'validationMode');
             echo $form->renderHiddenField($model, 'id');
             if ($model->isNew()) {
                 echo $form->renderSubmitButton('Create', array('class' => 'ink-button green flat', 'style' => 'margin-top:1em; margin-left:0px;'));
