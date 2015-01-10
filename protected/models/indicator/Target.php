@@ -53,6 +53,50 @@ class Target extends Model {
     public function isNew() {
         return empty($this->id);
     }
+    
+    public function computePropertyChanges(Target $oldTarget) {
+        $counter = 0;
+
+        if($oldTarget->coveredYear != $this->coveredYear){
+            $counter++;
+        }
+        
+        if($oldTarget->dataGroup != $this->dataGroup){
+            $counter++;
+        }
+        
+        if($oldTarget->value != $this->value){
+            $counter++;
+        }
+        
+        if($oldTarget->notes != $this->notes){
+            $counter++;
+        }
+        
+        return $counter;
+    }
+    
+    public function getModelTranslationAsUpdatedEntity(Target $oldTarget) {
+        $translation = "[Target updated]\n\n";
+        
+        if($oldTarget->coveredYear != $this->coveredYear){
+            $translation.="Covered Year:\t{$this->coveredYear}\n";
+        }
+        
+        if($oldTarget->dataGroup != $this->dataGroup){
+            $translation.="Group:\t{$this->dataGroup}\n";
+        }
+        
+        if($oldTarget->notes != $this->notes){
+            $translation.="Notes:\t{$this->notes}\n";
+        }
+        
+        if($oldTarget->value != $this->value){
+            $translation.="Value:\t{$this->value}";
+        }
+        
+        return $translation;
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;
