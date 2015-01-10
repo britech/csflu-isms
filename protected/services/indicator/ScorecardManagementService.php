@@ -82,6 +82,12 @@ interface ScorecardManagementService {
     public function insertTargets(MeasureProfile $measureProfile);
     
     /**
+     * Updates the Target entity
+     * @param Target $target
+     */
+    public function updateTarget(Target $target);
+    
+    /**
      * Retrieves a Target entity under the selected Measure Profile
      * @param MeasureProfile $measureProfile
      * @param String $id

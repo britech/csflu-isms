@@ -88,6 +88,12 @@ interface MeasureProfileDao {
     public function insertTargets(MeasureProfile $measureProfile);
     
     /**
+     * @param Target $target
+     * @throws DataAccessException
+     */
+    public function updateTarget(Target $target);
+    
+    /**
      * @param MeasureProfile $measureProfile
      * @return Target[]
      * @throws DataAccessException

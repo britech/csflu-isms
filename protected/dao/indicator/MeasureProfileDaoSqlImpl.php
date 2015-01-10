@@ -91,7 +91,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
             while ($data = $dbst->fetch()) {
                 list($measureProfile->id, $measureProfile->measureType, $measureProfile->frequencyOfMeasure, $measureProfile->measureProfileEnvironmentStatus, $objective, $indicator, $start, $end) = $data;
             }
-            
+
             $measureProfile->indicator = $this->indicatorDataSource->retrieveIndicator($indicator);
             $measureProfile->objective = $this->objectiveDataSource->getObjective($objective);
             $measureProfile->timelineStart = \DateTime::createFromFormat('Y-m-d', $start);
@@ -261,7 +261,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
             throw new DataAccessException($ex->getMessage());
         }
     }
-    
+
     public function getMeasureProfileByTarget(Target $target) {
         try {
             $dbst = $this->db->prepare('SELECT mp_ref FROM mp_targets WHERE target_id=:id');
@@ -272,6 +272,25 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
             }
             return $this->getMeasureProfile($profile);
         } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function updateTarget(Target $target) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('UPDATE mp_targets SET data_group=:group, covered_year=:year, value=:value, notes=:notes WHERE target_id=:id');
+            $dbst->execute(array('group' => $target->dataGroup,
+                'year' => $target->coveredYear,
+                'value' => $target->value,
+                'notes' => $target->notes,
+                'id' => $target->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }
