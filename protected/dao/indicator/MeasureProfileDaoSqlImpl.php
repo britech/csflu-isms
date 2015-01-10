@@ -90,10 +90,10 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
 
             while ($data = $dbst->fetch()) {
                 list($measureProfile->id, $measureProfile->measureType, $measureProfile->frequencyOfMeasure, $measureProfile->measureProfileEnvironmentStatus, $objective, $indicator, $start, $end) = $data;
-                $measureProfile->indicator = $this->indicatorDataSource->retrieveIndicator($indicator);
-                $measureProfile->objective = $this->objectiveDataSource->getObjective($objective);
             }
-
+            
+            $measureProfile->indicator = $this->indicatorDataSource->retrieveIndicator($indicator);
+            $measureProfile->objective = $this->objectiveDataSource->getObjective($objective);
             $measureProfile->timelineStart = \DateTime::createFromFormat('Y-m-d', $start);
             $measureProfile->timelineEnd = \DateTime::createFromFormat('Y-m-d', $end);
             $measureProfile->leadOffices = $this->listLeadOffices($measureProfile);
@@ -258,6 +258,20 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+    
+    public function getMeasureProfileByTarget(Target $target) {
+        try {
+            $dbst = $this->db->prepare('SELECT mp_ref FROM mp_targets WHERE target_id=:id');
+            $dbst->execute(array('id' => $target->id));
+
+            while ($data = $dbst->fetch()) {
+                list($profile) = $data;
+            }
+            return $this->getMeasureProfile($profile);
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }
