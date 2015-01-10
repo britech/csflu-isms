@@ -422,6 +422,8 @@ class MeasureController extends Controller {
         if (is_null($leadOffice->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Lead Office not found'));
         }
+        $this->scorecardService->deleteLeadOffice($leadOffice->id);
+        $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SCARD, $measureProfile->id, $leadOffice);
         $this->setSessionData('notif', array('class' => '', 'message' => 'Lead Office deleted'));
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('measure/manageOffices', 'profile' => $measureProfile->id))));
     }
