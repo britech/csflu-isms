@@ -128,8 +128,6 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
                 return $leadOffice;
             }
         }
-
-        throw new ServiceException("Lead Measure not found");
     }
 
 }
