@@ -65,6 +65,12 @@ interface ScorecardManagementService {
      * @param LeadOffice $leadOffice
      */
     public function updateLeadOffice(LeadOffice $leadOffice);
+    
+    /**
+     * Deletes the LeadOffice entity
+     * @param LeadOffice $id
+     */
+    public function deleteLeadOffice($id);
 
     /**
      * Inserts Target entities in a given Measure Profile entity
