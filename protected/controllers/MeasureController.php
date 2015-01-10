@@ -270,7 +270,7 @@ class MeasureController extends Controller {
 
     public function validateLeadOfficeInput() {
         try {
-            $this->validatePostData(array('LeadOffice', 'Department'));
+            $this->validatePostData(array('LeadOffice', 'Department', 'mode'));
         } catch (\Exception $ex) {
             $this->logger->error($ex->getMessage(), $ex);
             $this->renderAjaxJsonResponse(array('respCode' => '70'));
@@ -278,8 +278,10 @@ class MeasureController extends Controller {
 
         $leadOfficeData = $this->getFormData('LeadOffice');
         $departmentData = $this->getFormData('Department');
+        $mode = $this->getFormData('mode');
 
         $leadOffice = new LeadOffice();
+        $leadOffice->validationMode = $mode;
         $leadOffice->bindValuesUsingArray(array(
             'leadoffice' => $leadOfficeData,
             'department' => $departmentData
