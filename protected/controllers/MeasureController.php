@@ -347,6 +347,36 @@ class MeasureController extends Controller {
         $this->redirect(array('measure/manageOffices', 'profile' => $measureProfile->id));
     }
 
+    public function updateLeadOffice($id = null) {
+        if (is_null($id)) {
+            
+        }
+
+        $leadOffice = new LeadOffice();
+        $leadOffice->id = $id;
+        
+        $measureProfile = $this->loadModel(null, $leadOffice);
+        $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
+        
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Lead Offices';
+        $this->render('measure-profile/lead-office', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Profile' => array('measure/view', 'id' => $measureProfile->id),
+                'Manage Lead Offices' => 'active'
+            ),
+            'model' => $this->loadLeadOfficeModel($measureProfile, $id),
+            'departmentModel' => new Department,
+            'measureProfileModel' => $measureProfile,
+            'designationTypes' => LeadOffice::getDesignationOptions(),
+            'validation' => $this->getSessionData('validation'),
+        ));
+        $this->unsetSessionData('validation');
+    }
+
     public function manageTargets($profile) {
         if (!isset($profile) || empty($profile)) {
             throw new ControllerException("Another parameter is needed to process this request");
@@ -440,8 +470,13 @@ class MeasureController extends Controller {
         $this->renderAjaxJsonResponse($data);
     }
 
-    private function loadModel($id) {
-        $measureProfile = $this->scorecardService->getMeasureProfile($id);
+    private function loadModel($id = null, LeadOffice $leadOffice = null) {
+        if (!is_null($id)) {
+            $measureProfile = $this->scorecardService->getMeasureProfile($id);
+        } elseif(!is_null($leadOffice)){
+            $measureProfile = $this->scorecardService->getMeasureProfile(null, $leadOffice);
+        }
+
         if (is_null($measureProfile->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Measure Profile not found'));
             $this->redirect(array('map/index'));
@@ -456,6 +491,15 @@ class MeasureController extends Controller {
             $this->redirect(array('map/index'));
         }
         return $map;
+    }
+
+    private function loadLeadOfficeModel(MeasureProfile $measureProfile, $id) {
+        $leadOffice = $this->scorecardService->getLeadOffice($measureProfile, $id);
+        if (is_null($leadOffice->id)) {
+            $this->setSessionData('notif', array('class' => '', 'message' => 'Lead Office not found'));
+            $this->redirect(array('measure/manageOffices', 'profile' => $measureProfile->id));
+        }
+        return $leadOffice;
     }
 
 }
