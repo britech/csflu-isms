@@ -306,7 +306,7 @@ class MeasureController extends Controller {
                     'designation' => LeadOffice::getDesignationOptions()[$designation],
                     'actions' => ApplicationUtils::generateLink(array('measure/updateLeadOffice', 'id' => $leadOffice->id), 'Update')
                     . '&nbsp;|&nbsp;' .
-                    ApplicationUtils::generateLink('#', 'Delete')
+                    ApplicationUtils::generateLink('#', 'Delete', array('id'=>"remove-{$leadOffice->id}"))
                 ));
             }
         }

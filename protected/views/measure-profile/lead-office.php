@@ -66,3 +66,13 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
         <div id="lead-offices"></div>
     </div>
 </div>
+
+<div id="delete-lead">
+    <div id="deleteLeadContent" style="overflow: hidden">
+        <p id="text"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept">Yes</button>
+            <button class="ink-button green flat" id="deny">No</button>
+        </div>
+    </div>
+</div>

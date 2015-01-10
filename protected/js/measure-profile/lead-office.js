@@ -56,6 +56,13 @@ $(document).ready(function() {
         ],
         width: '100%',
         pageable: true
+    }).on("rowClick", function() {
+        $("[id^=remove]").click(function() {
+            var text = $(this).parent().siblings("td").html();
+            $("#text").html("Do you want to delete this Lead Office? Continuing will remove the Lead Office, <strong>" + text + "</strong>, from the Measure Profile");
+            $("#delete-lead").jqxWindow('open');
+            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+        });
     });
 
     $(".ink-form").submit(function() {
@@ -96,5 +103,27 @@ $(document).ready(function() {
         });
 
         return result;
+    });
+    
+    $('#delete-lead').jqxWindow({
+        title: '<strong>Confirm Lead Office Deletion</strong>',
+        width: 300,
+        height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+    });
+
+    $("#deny").click(function() {
+        $("#lead-offices").jqxDataTable('updateBoundData');
+    });
+
+
+    $("[id^=accept]").click(function() {
+        console.log("clicked!");
     });
 });
