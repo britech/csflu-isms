@@ -23,7 +23,8 @@ class LeadOffice extends Model {
 
     public function validate() {
         $counter = 0;
-        if (strlen($this->department->id) == 0) {
+
+        if ($this->validationMode == Model::VALIDATION_MODE_INITIAL && strlen($this->department->id) == 0) {
             array_push($this->validationMessages, "- {$this->getAttributeNames()['department']} should be defined");
             $counter++;
         }
