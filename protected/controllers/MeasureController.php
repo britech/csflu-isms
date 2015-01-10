@@ -611,8 +611,10 @@ class MeasureController extends Controller {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Measure Profile not found'));
             $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
         }
-        $target = $this->scorecardService->getTarget($measureProfile, $id);
-        $this->setSessionData('notif', array('class'=>'', 'message'=>'Target data deleted'));
+        $target = clone $this->scorecardService->getTarget($measureProfile, $id);
+        $this->scorecardService->deleteTarget($target->id);
+        $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SCARD, $measureProfile->id, $target);
+        $this->setSessionData('notif', array('class' => '', 'message' => 'Target data deleted'));
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('measure/manageTargets', 'profile' => $measureProfile->id))));
     }
 
