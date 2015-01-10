@@ -542,10 +542,8 @@ class MeasureController extends Controller {
         ));
     }
 
-    public function updateTarget($id = null) {
-        if (is_null($id)) {
-            $this->validatePostData(array('Target', 'MeasureProfile'));
-        } elseif (!isset($id) || empty($id)) {
+    public function updateTarget($id) {
+        if (!isset($id) || empty($id)) {
             throw new ControllerException("Another parameter is needed to process this request");
         }
 
@@ -555,7 +553,7 @@ class MeasureController extends Controller {
         $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
         $target = $this->scorecardService->getTarget($measureProfile, $id);
         $target->validationMode = Model::VALIDATION_MODE_UPDATE;
-        $this->title = ApplicationConstants::APP_NAME . ' - Update Targets';
+        $this->title = ApplicationConstants::APP_NAME . ' - Update Target';
         $this->render('measure-profile/target', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
@@ -573,6 +571,32 @@ class MeasureController extends Controller {
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
+    }
+
+    public function updateTargetData() {
+        $this->validatePostData(array('Target', 'MeasureProfile'));
+
+        $measureProfileData = $this->getFormData('MeasureProfile');
+        $targetData = $this->getFormData('Target');
+
+        $measureProfile = $this->loadModel($measureProfileData['id']);
+
+        $target = new Target();
+        $target->bindValuesUsingArray(array('target' => $targetData), $target);
+
+        if ($target->validate()) {
+            $oldTarget = clone $this->scorecardService->getTarget($measureProfile, $target->id);
+
+            if ($target->computePropertyChanges($oldTarget) > 0) {
+                $this->scorecardService->updateTarget($target);
+                $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_SCARD, $measureProfile->id, $target, $oldTarget);
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Target data updated'));
+            }
+            $this->redirect(array('measure/manageTargets', 'profile' => $measureProfile->id));
+        } else {
+            $this->setSessionData('validation', $target->validationMessages);
+            $this->redirect(array('measure/updateTarget', 'id' => $target->id));
+        }
     }
 
     private function loadModel($id = null, LeadOffice $leadOffice = null, Target $target = null) {
