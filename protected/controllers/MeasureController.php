@@ -306,7 +306,7 @@ class MeasureController extends Controller {
                     'designation' => LeadOffice::getDesignationOptions()[$designation],
                     'actions' => ApplicationUtils::generateLink(array('measure/updateLeadOffice', 'id' => $leadOffice->id), 'Update')
                     . '&nbsp;|&nbsp;' .
-                    ApplicationUtils::generateLink('#', 'Delete', array('id'=>"remove-{$leadOffice->id}"))
+                    ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$leadOffice->id}"))
                 ));
             }
         }
@@ -403,6 +403,27 @@ class MeasureController extends Controller {
         }
 
         $this->redirect(array('measure/manageOffices', 'profile' => $measureProfile->id));
+    }
+
+    public function deleteLeadOffice() {
+        $this->validatePostData(array('id'));
+        $id = $this->getFormData('id');
+
+        $tempLeadOffice = new LeadOffice();
+        $tempLeadOffice->id = $id;
+
+        $measureProfile = $this->scorecardService->getMeasureProfile(null, $tempLeadOffice);
+        if (is_null($measureProfile->id)) {
+            $this->setSessionData('notif', array('class' => '', 'message' => 'Measure Profile not found'));
+            $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
+        }
+
+        $leadOffice = $this->scorecardService->getLeadOffice($measureProfile, $id);
+        if (is_null($leadOffice->id)) {
+            $this->setSessionData('notif', array('class' => '', 'message' => 'Lead Office not found'));
+        }
+        $this->setSessionData('notif', array('class' => '', 'message' => 'Lead Office deleted'));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('measure/manageOffices', 'profile' => $measureProfile->id))));
     }
 
     public function manageTargets($profile) {

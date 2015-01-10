@@ -104,7 +104,7 @@ $(document).ready(function() {
 
         return result;
     });
-    
+
     $('#delete-lead').jqxWindow({
         title: '<strong>Confirm Lead Office Deletion</strong>',
         width: 300,
@@ -124,6 +124,12 @@ $(document).ready(function() {
 
 
     $("[id^=accept]").click(function() {
-        console.log("clicked!");
+        var id = $(this).attr('id').split('-')[1];
+        $.post("?r=measure/deleteLeadOffice",
+                {id: id},
+        function(data) {
+            var response = $.parseJSON(data);
+            window.location = response.url;
+        });
     });
 });
