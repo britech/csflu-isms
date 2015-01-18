@@ -51,6 +51,12 @@ require_once 'models/map/Perspective.php';
 require_once 'models/map/Theme.php';
 require_once 'models/map/Objective.php';
 
+require_once 'models/initiative/Initiative.php';
+require_once 'models/initiative/ImplementingOffice.php';
+require_once 'models/initiative/Phase.php';
+require_once 'models/initiative/Component.php';
+require_once 'models/initiative/Activity.php';
+
 #dao-interfaces
 require_once 'dao/commons/DepartmentDao.php';
 require_once 'dao/commons/PositionDao.php';
