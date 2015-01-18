@@ -43,7 +43,7 @@ $form = new Form(array(
             </div>
         </div>
         <div class="control-group column-group half-gutters">
-            <?php echo $form->renderLabel($model, 'theme', array('class' => 'all-20 align-right', 'required' => true)); ?>
+            <?php echo $form->renderLabel($model, 'theme', array('class' => 'all-20 align-right')); ?>
             <div class="control all-80">
                 <?php echo $form->renderDropDownList($themeModel, 'id', $themes, array('id' => 'theme-id')); ?>
             </div>

@@ -131,39 +131,17 @@ class ObjectiveController extends Controller {
     }
 
     private function resolveBreadcrumbs(StrategyMap $strategyMap, Objective $objective = null) {
-        switch ($strategyMap->strategyEnvironmentStatus) {
-            case StrategyMap::STATUS_DRAFT:
-                return is_null($objective) ? $this->getIntialBreadcrumbs($strategyMap) : $this->getUpdateBreadcrumbs($strategyMap);
-            case StrategyMap::STATUS_ACTIVE:
-                return is_null($objective) ? $this->getInitialBreadcrumbsForActivatedStrategyMap($strategyMap) : $this->getUpdateBreadcrumbsForActivatedStrategyMap($strategyMap);
-        }
+        return is_null($objective) ? $this->getInitialBreadcrumbs($strategyMap) : $this->getUpdateBreadcrumbs($strategyMap);
     }
 
-    private function getIntialBreadcrumbs(StrategyMap $strategyMap) {
+    private function getInitialBreadcrumbs(StrategyMap $strategyMap) {
         return array('Home' => array('site/index'),
             'Strategy Map Directory' => array('map/index'),
             'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-            'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
             'Manage Objectives' => 'active');
     }
 
     private function getUpdateBreadcrumbs(StrategyMap $strategyMap) {
-        return array('Home' => array('site/index'),
-            'Strategy Map Directory' => array('map/index'),
-            'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-            'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
-            'Manage Objectives' => array('objective/manage', 'map' => $strategyMap->id),
-            'Update Objective' => 'active');
-    }
-
-    private function getInitialBreadcrumbsForActivatedStrategyMap(StrategyMap $strategyMap) {
-        return array('Home' => array('site/index'),
-            'Strategy Map Directory' => array('map/index'),
-            'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-            'Manage Objectives' => 'active');
-    }
-
-    private function getUpdateBreadcrumbsForActivatedStrategyMap(StrategyMap $strategyMap) {
         return array('Home' => array('site/index'),
             'Strategy Map Directory' => array('map/index'),
             'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
@@ -218,13 +196,10 @@ class ObjectiveController extends Controller {
         $objective = clone $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $objective);
 
-        if ($strategyMap->strategyEnvironmentStatus != StrategyMap::STATUS_DRAFT) {
-            $this->setSessionData('notif', array('class' => 'error', 'message' => 'Direct Deletion of Objectives are not allowed for strategy maps that not under the "Draft Stage".'));
-        } elseif ($strategyMap->strategyEnvironmentStatus == StrategyMap::STATUS_DRAFT) {
-            $this->mapService->deleteObjective($id);
-            $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SMAP, $strategyMap->id, $objective);
-            $this->setSessionData('notif', array('class' => '', 'message' => 'Objective deleted'));
-        }
+        $this->mapService->deleteObjective($id);
+        $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SMAP, $strategyMap->id, $objective);
+        $this->setSessionData('notif', array('class' => '', 'message' => 'Objective deleted'));
+        
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('objective/manage', 'map' => $strategyMap->id))));
     }
 
