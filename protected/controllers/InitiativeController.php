@@ -41,7 +41,8 @@ class InitiativeController extends Controller {
                         'Create an Initiative' => array('initiative/create', 'map' => $strategyMap->id)
                     )
                 )
-            )
+            ),
+            'map' => $strategyMap->id
         ));
     }
 
