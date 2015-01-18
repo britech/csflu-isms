@@ -147,12 +147,14 @@ class StrategyMap extends Model {
     }
 
     public function getModelTranslationAsNewEntity() {
-        return "[Strategy Map Added]\n\nStrategy Map:\t" . $this->name
-                . "\nVision Statement:\t" . $this->visionStatement
-                . "\nMission Statement:\t" . $this->missionStatement
-                . "\nValues Statement:\t" . $this->valuesStatement
-                . "\nStrategy Type:\t" . self::getStrategyTypes()[$this->strategyType]
-                . "\nPeriod Dates:\t" . $this->startingPeriodDate->format('F-Y') . ' - ' . $this->endingPeriodDate->format('F-Y');
+        return "[Strategy Map Added]\n\nStrategy Map:\t{$this->name}"
+                . "\nVision Statement:\t{$this->visionStatement}"
+                . "\nMission Statement:\t{$this->missionStatement}"
+                . "\nValues Statement:\t{$this->valuesStatement}"
+                . "\nStrategy Type:\t{$this->getStrategyTypes()[$this->strategyType]}"
+                . "\nPeriod Start:\t{$this->startingPeriodDate->format('F-Y')}"
+                . "\nPeriod End:\t{$this->endingPeriodDate->format('F-Y')}"
+                . "\nStatus:\t{$this->getEnvironmentStatusTypes()[$this->strategyEnvironmentStatus]}";
     }
 
     public function computePropertyChanges($oldModel) {
