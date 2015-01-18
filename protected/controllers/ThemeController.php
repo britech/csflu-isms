@@ -9,7 +9,6 @@ use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapService;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
-use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Theme;
 
 /**
@@ -42,7 +41,6 @@ class ThemeController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
                 'Manage Themes' => 'active'),
             'themes' => $this->mapService->listThemes($strategyMap),
             'model' => new Theme(),
@@ -94,7 +92,6 @@ class ThemeController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
                 'Manage Themes' => array('map/manageThemes', 'map' => $strategyMap->id),
                 'Update Theme' => 'active'),
             'themes' => $this->mapService->listThemes($strategyMap),
@@ -160,12 +157,6 @@ class ThemeController extends Controller {
     private function loadMapModel($id = null, Theme $theme = null) {
         $strategyMap = $this->mapService->getStrategyMap($id, null, null, $theme);
 
-        if($strategyMap->strategyEnvironmentStatus != StrategyMap::STATUS_DRAFT){
-            $this->setSessionData('notif', array('class'=>'error', 'message'=>'CRUD access is only granted for Strategy Maps that are under "Draft Stage" ONLY.'));
-            $this->redirect(array('map/index'));
-            return;
-        }
-        
         if (is_null($strategyMap->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Strategy Map not found'));
             $this->redirect(array('map/index'));

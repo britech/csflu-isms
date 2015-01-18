@@ -12,37 +12,37 @@ $form = new Form(array(
         ));
 ?>
 <script type="text/javascript" src="protected/js/perspective/theme.js"></script>
-<?php
-if (isset($params['notif']) && !empty($params['notif'])) {
-    $this->renderPartial('commons/_notification', array('notif' => $params['notif']));
-}
-echo $form->startComponent();
-echo $form->constructHeader($model->isNew() ? 'Add Theme' : 'Update Theme', array('style' => 'margin-bottom:10px;'));
-if (isset($params['validation']) && !empty($params['validation'])) {
-    $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
-}
-?>
-<div class="control-group column-group half-gutters">
-    <?php echo $form->renderLabel($model, 'description', array('class' => 'all-20 align-right')); ?>
-    <div class="all-80">
-        <div id="description-input"></div>
+<div class="column-group quarter-gutters">
+    <div class="all-50">
         <?php
-        echo $form->renderHiddenField($model, 'description', array('id' => 'description'));
-        echo $form->renderHiddenField($mapModel, 'id');
-        if ($model->isNew()) {
-            echo $form->renderSubmitButton('Add', array('class' => 'ink-button green flat', 'style' => 'margin-top: 1em; margin-left: 0px;'));
-        } else {
-            echo $form->renderHiddenField($model, 'id');
-            echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat', 'style' => 'margin-top: 1em; margin-left: 0px;'));
+        echo $form->startComponent();
+        echo $form->constructHeader($model->isNew() ? 'Add Theme' : 'Update Theme', array('style' => 'margin-bottom:10px;'));
+        if (isset($params['validation']) && !empty($params['validation'])) {
+            $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
+        }
+        if (isset($params['notif']) && !empty($params['notif'])) {
+            $this->renderPartial('commons/_notification', array('notif' => $params['notif']));
         }
         ?>
+        <div class="control-group column-group quarter-gutters">
+            <?php echo $form->renderLabel($model, 'description', array('class' => 'all-20 align-right')); ?>
+            <div class="all-80">
+                <div id="description-input"></div>
+                <?php
+                echo $form->renderHiddenField($model, 'description', array('id' => 'description'));
+                echo $form->renderHiddenField($mapModel, 'id');
+                if ($model->isNew()) {
+                    echo $form->renderSubmitButton('Add', array('class' => 'ink-button green flat', 'style' => 'margin-top: 1em; margin-left: 0px;'));
+                } else {
+                    echo $form->renderHiddenField($model, 'id');
+                    echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat', 'style' => 'margin-top: 1em; margin-left: 0px;'));
+                }
+                ?>
+            </div>
+        </div>
+        <?php echo $form->endComponent(); ?>
     </div>
-</div>
-
-<?php echo $form->endComponent(); ?>
-<div class="column-group quarter-gutters">
-    <div class="all-100"></div>
-    <div class="all-50 push-center">
+    <div class="all-50">
         <table class="ink-table bordered alternating">
             <thead>
                 <tr>
@@ -58,7 +58,7 @@ if (isset($params['validation']) && !empty($params['validation'])) {
                             <td style="text-align: center;">
                                 <?php echo ApplicationUtils::generateLink(array('theme/update', 'id' => $theme->id), '<i class="fa fa-save">&nbsp;</i>') ?>
                                 &nbsp;|&nbsp;
-                                <?php echo ApplicationUtils::generateLink('#', '<i class="fa fa-trash-o">&nbsp;</i>', array('id' => 'del-' . $theme->id)) ?>
+                                <?php echo ApplicationUtils::generateLink('#', '<i class="fa fa-trash-o">&nbsp;</i>', array('id' => 'remove-' . $theme->id)) ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
