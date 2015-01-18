@@ -46,59 +46,33 @@ class StrategyMap extends Model {
 
     public function validate() {
         $counter = 0;
-        if ($this->validationMode == Model::VALIDATION_MODE_INITIAL) {
-            if (empty($this->name)) {
-                array_push($this->validationMessages, '- Map Description should be defined');
-                $counter++;
-            }
+        if (empty($this->name)) {
+            array_push($this->validationMessages, '- Map Description should be defined');
+            $counter++;
+        }
 
-            if (empty($this->visionStatement)) {
-                array_push($this->validationMessages, '- Vision Statement should be defined');
-                $counter++;
-            }
+        if (empty($this->visionStatement)) {
+            array_push($this->validationMessages, '- Vision Statement should be defined');
+            $counter++;
+        }
 
-            /*             * if (empty($this->missionStatement)) {
-              array_push($this->validationMessages, '- Mission Statement should be defined');
-              $counter++;
-              }
+        if (empty($this->missionStatement)) {
+            array_push($this->validationMessages, '- Mission Statement should be defined');
+            $counter++;
+        }
 
-              if (empty($this->valuesStatement)) {
-              array_push($this->validationMessages, '- Values Statement should be defined');
-              $counter++;
-              }* */
+        if (empty($this->valuesStatement)) {
+            array_push($this->validationMessages, '- Values Statement should be defined');
+            $counter++;
+        }
 
-            if (empty($this->startingPeriodDate) || empty($this->endingPeriodDate)) {
-                array_push($this->validationMessages, '- Periods should be defined');
-                $counter++;
-            } else {
-                $this->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->startingPeriodDate, new \DateTimeZone('Asia/Manila'));
-                $this->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->endingPeriodDate, new \DateTimeZone('Asia/Manila'));
-                $counter+=$this->validateDateRange();
-            }
-        } elseif ($this->validationMode == Model::VALIDATION_MODE_UPDATE && $this->strategyEnvironmentStatus == self::STATUS_DRAFT) {
-            if (empty($this->visionStatement)) {
-                array_push($this->validationMessages, '- Vision Statement should be defined');
-                $counter++;
-            }
-
-            if (empty($this->missionStatement)) {
-                array_push($this->validationMessages, '- Mission Statement should be defined');
-                $counter++;
-            }
-
-            if (empty($this->valuesStatement)) {
-                array_push($this->validationMessages, '- Values Statement should be defined');
-                $counter++;
-            }
-
-            $this->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->startingPeriodDate, new \DateTimeZone('Asia/Manila'));
-            $this->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->endingPeriodDate, new \DateTimeZone('Asia/Manila'));
-            $counter+=$this->validateDateRange();
-        } elseif ($this->validationMode == Model::VALIDATION_MODE_UPDATE && $this->strategyEnvironmentStatus != self::STATUS_DRAFT) {
-            $this->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->startingPeriodDate, new \DateTimeZone('Asia/Manila'));
-            $this->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->endingPeriodDate, new \DateTimeZone('Asia/Manila'));
+        if (empty($this->startingPeriodDate) || empty($this->endingPeriodDate)) {
+            array_push($this->validationMessages, '- Periods should be defined');
+            $counter++;
+        } else {
             $counter+=$this->validateDateRange();
         }
+
         return $counter == 0;
     }
 
@@ -127,6 +101,12 @@ class StrategyMap extends Model {
             array_push($this->validationMessages, "- Selected Period Range does not match the Strategy Type selected ({$this->getStrategyTypes()[$this->strategyType]})");
         }
         return $counter;
+    }
+
+    public function bindValuesUsingArray(array $valueArray) {
+        parent::bindValuesUsingArray($valueArray, $this);
+        $this->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->startingPeriodDate);
+        $this->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $this->endingPeriodDate);
     }
 
     public static function getStrategyTypes() {
