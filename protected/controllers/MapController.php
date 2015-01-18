@@ -80,15 +80,14 @@ class MapController extends Controller {
         $this->validatePostData(array('StrategyMap'));
         $strategyMapData = $this->getFormData('StrategyMap');
         $strategyMap = new StrategyMap();
-        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData), $strategyMap);
-        $strategyMap->validationMode = Model::VALIDATION_MODE_INITIAL;
+        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData));
         if (!$strategyMap->validate()) {
             $this->setSessionData('validation', $strategyMap->validationMessages);
             $this->redirect(array('map/create'));
         } else {
             $id = $this->mapService->insert($strategyMap);
             $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SMAP, $id, $strategyMap);
-            $this->redirect(array('map/complete', 'id' => $id));
+            $this->redirect(array('map/view', 'id' => $id));
         }
     }
 
