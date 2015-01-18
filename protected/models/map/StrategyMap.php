@@ -14,8 +14,6 @@ use org\csflu\isms\models\map\Objective;
  * @property String $strategyType
  * @property \DateTime $startingPeriodDate
  * @property \DateTime $endingPeriodDate
- * @property \DateTime $implementationDate
- * @property \DateTime $terminationDate
  * @property String $strategyEnvironmentStatus
  * @property Objective[] $objectives
  *
@@ -26,7 +24,6 @@ class StrategyMap extends Model {
     const TYPE_LONG = 'LT';
     const TYPE_MEDIUM = 'MT';
     const TYPE_SHORT = 'ST';
-    const STATUS_DRAFT = 'D';
     const STATUS_ACTIVE = 'A';
     const STATUS_INACTIVE = 'I';
     const STATUS_COMPLETED = 'C';
@@ -44,9 +41,7 @@ class StrategyMap extends Model {
     private $strategyType;
     private $startingPeriodDate;
     private $endingPeriodDate;
-    private $implementationDate;
-    private $terminationDate;
-    private $strategyEnvironmentStatus = self::STATUS_DRAFT;
+    private $strategyEnvironmentStatus = self::STATUS_ACTIVE;
     private $objectives;
 
     public function validate() {
@@ -144,7 +139,6 @@ class StrategyMap extends Model {
 
     public static function getEnvironmentStatusTypes() {
         return array(
-            self::STATUS_DRAFT => 'Draft Stage',
             self::STATUS_ACTIVE => 'Active',
             self::STATUS_INACTIVE => 'Inactive',
             self::STATUS_COMPLETED => 'Completed',
@@ -159,9 +153,7 @@ class StrategyMap extends Model {
             'visionStatement' => 'Vision Statement',
             'missionStatement' => 'Mission Statement',
             'valuesStatement' => 'Values Statement',
-            'strategyEnvironmentStatus' => 'Status',
-            'implementationDate' => 'Date Implemented',
-            'terminationDate' => 'Date Deactivated/Terminated'
+            'strategyEnvironmentStatus' => 'Status'
         );
     }
 
@@ -213,14 +205,6 @@ class StrategyMap extends Model {
             $counter++;
         }
 
-        if ($oldModel->implementationDate != $this->implementationDate) {
-            $counter++;
-        }
-
-        if ($oldModel->terminationDate != $this->terminationDate) {
-            $counter++;
-        }
-
         if ($oldModel->strategyEnvironmentStatus != $this->strategyEnvironmentStatus) {
             $counter++;
         }
@@ -260,20 +244,6 @@ class StrategyMap extends Model {
             array_push($changes, "Ending Period Date:\t{$this->endingPeriodDate->format('F-Y')}");
         }
 
-        if ($oldModel->implementationDate != $this->implementationDate) {
-            array_push($changes, "Date Implemented:\t{$this->implementationDate->format('M d, Y')}");
-        }
-
-        if ($oldModel->terminationDate != $this->terminationDate) {
-            if ($this->strategyEnvironmentStatus == self::STATUS_COMPLETED) {
-                array_push($changes, "Date Completed:\t{$this->implementationDate->format('M d, Y')}");
-            } elseif ($this->strategyEnvironmentStatus == self::STATUS_INACTIVE) {
-                array_push($changes, "Date Deactivated:\t{$this->implementationDate->format('M d, Y')}");
-            } elseif ($this->strategyEnvironmentStatus == self::STATUS_TERMINATED) {
-                array_push($changes, "Date Terminated:\t{$this->implementationDate->format('M d, Y')}");
-            }
-        }
-
         if ($oldModel->strategyEnvironmentStatus != $this->strategyEnvironmentStatus) {
             array_push($changes, "Status:\t" . self::getEnvironmentStatusTypes()[$this->strategyEnvironmentStatus]);
         }
@@ -292,12 +262,11 @@ class StrategyMap extends Model {
         $strategyMap->strategyType = $this->strategyType;
         $strategyMap->startingPeriodDate = $this->startingPeriodDate;
         $strategyMap->endingPeriodDate = $this->endingPeriodDate;
-        $strategyMap->implementationDate = $this->implementationDate;
-        $strategyMap->terminationDate = $this->terminationDate;
         $strategyMap->strategyEnvironmentStatus = $this->strategyEnvironmentStatus;
     }
 
     public function isNew() {
         return empty($this->id);
     }
+
 }
