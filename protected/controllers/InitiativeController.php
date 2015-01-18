@@ -25,7 +25,7 @@ class InitiativeController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
-        $this->logger = new \Logger(__CLASS__);
+        $this->logger = \Logger::getLogger(__CLASS__);
         $this->mapService = new StrategyMapManagementService();
         $this->initiativeService = new InitiativeManagementService();
     }
@@ -98,6 +98,31 @@ class InitiativeController extends Controller {
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
+    }
+
+    public function insert() {
+        $this->validatePostData(array('Initiative', 'Objective', 'MeasureProfile', 'Department', 'StrategyMap'));
+
+        $initiativeData = $this->getFormData('Initiative');
+        $objectiveData = $this->getFormData('Objective');
+        $measureData = $this->getFormData('MeasureProfile');
+        $departmentData = $this->getFormData('Department');
+
+        $strategyMapData = $this->getFormData('StrategyMap');
+        $strategyMap = $this->loadMapModel($strategyMapData['id']);
+
+        $initiative = new Initiative();
+        $initiative->bindValuesUsingArray(array(
+            'initiative' => $initiativeData,
+            'objectives' => $objectiveData,
+            'leadMeasures' => $measureData,
+            'implementingOffices' => $departmentData
+        ));
+
+        if (!$initiative->validate()) {
+            $this->setSessionData('validation', $initiative->validationMessages);
+            $this->redirect(array('initiative/create', 'map' => $strategyMap->id));
+        }
     }
 
     private function loadMapModel($id) {
