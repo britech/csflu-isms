@@ -153,6 +153,7 @@ class StrategyMap extends Model {
             'visionStatement' => 'Vision Statement',
             'missionStatement' => 'Mission Statement',
             'valuesStatement' => 'Values Statement',
+            'strategyType' => 'Strategy Type',
             'strategyEnvironmentStatus' => 'Status'
         );
     }
