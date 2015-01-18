@@ -199,7 +199,7 @@ class ObjectiveController extends Controller {
         $this->mapService->deleteObjective($id);
         $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_SMAP, $strategyMap->id, $objective);
         $this->setSessionData('notif', array('class' => '', 'message' => 'Objective deleted'));
-        
+
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('objective/manage', 'map' => $strategyMap->id))));
     }
 
@@ -238,7 +238,9 @@ class ObjectiveController extends Controller {
         $objectives = $this->mapService->listObjectives($strategyMap);
         $data = array();
         foreach ($objectives as $objective) {
-            array_push($data, array('id' => $objective->id,
+            array_push($data, array(
+                'id' => $objective->id,
+                'objective' => $objective->description,
                 'description' => "{$objective->description}&nbsp;({$objective->perspective->description})"
             ));
         }
