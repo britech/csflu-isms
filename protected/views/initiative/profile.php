@@ -65,13 +65,13 @@ $form = new Form(array(
             </div>
         </div>
         <div class="control-group">
-            <?php echo $form->renderLabel($model, 'eoNumber', array('required' => true)); ?>
+            <?php echo $form->renderLabel($model, 'eoNumber'); ?>
             <div class="control">
                 <?php echo $form->renderTextField($model, 'eoNumber'); ?>
             </div>
         </div>
         <div class="control-group">
-            <?php echo $form->renderLabel($model, 'advisers', array('required' => true)); ?>
+            <?php echo $form->renderLabel($model, 'advisers'); ?>
             <div class="control">
                 <?php echo $form->renderTextArea($model, 'advisers'); ?>
             </div>
