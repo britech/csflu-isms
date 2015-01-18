@@ -44,6 +44,8 @@ class PerspectiveController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $map),
                 'Manage Perspectives' => 'active'),
+            'model' => new Perspective(),
+            'mapModel' => $strategyMap,
             'id' => $strategyMap->id,
             'perspectiveList' => $this->mapService->listPerspectives($strategyMap),
             'validation' => $this->getSessionData('validation'),
@@ -98,7 +100,7 @@ class PerspectiveController extends Controller {
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Manage Perspectives' => array('perspective/manage', 'map' => $strategyMap->id),
                 'Update Perspective' => 'active'),
-            'perspective' => $perspective,
+            'model' => $perspective,
             'validation' => $this->getSessionData('validation'),
         ));
         $this->unsetSessionData('validation');
@@ -133,11 +135,11 @@ class PerspectiveController extends Controller {
             $this->redirect(array('map/updatePerspective', 'id' => $perspective->id));
         }
     }
-    
+
     public function delete() {
         $this->validatePostData(array('id'));
         $id = $this->getFormData('id');
-        
+
         $perspective = clone $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $perspective);
         $this->mapService->deletePerspective($id);
@@ -169,11 +171,11 @@ class PerspectiveController extends Controller {
     }
 
     public function validate() {
-        try{
+        try {
             $this->validatePostData(array('Perspective', 'mode'));
         } catch (\Exception $ex) {
             $this->logger->error($ex->getMessage(), $ex);
-            $this->renderAjaxJsonResponse(array('respCode'=>'70'));
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
         }
 
         $perspectiveData = $this->getFormData('Perspective');
@@ -196,4 +198,5 @@ class PerspectiveController extends Controller {
         }
         $this->renderAjaxJsonResponse($perspectiveArray);
     }
+
 }

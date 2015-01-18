@@ -45,6 +45,13 @@ class Perspective extends Model {
         return 0;
     }
 
+    public function getAttributeNames() {
+        return array(
+            'description' => 'Perspective',
+            'positionOrder' => 'Position Order'
+        );
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }

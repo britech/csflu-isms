@@ -2,21 +2,22 @@
 
 namespace org\csflu\isms\views;
 
-use org\csflu\isms\util\FormGenerator as Form;
+use org\csflu\isms\util\ModelFormGenerator as Form;
 use org\csflu\isms\util\ApplicationUtils;
-
-$perspectives = $params['perspectiveList'];
 
 $form = new Form(array(
     'action' => array('perspective/insert'),
-    'class' => 'ink-form'
+    'class' => 'ink-form',
+    'hasFieldset' => true
         ));
 ?>
 <script type="text/javascript" src="protected/js/perspective/insert.js"></script>
-<?php echo $form->startComponent(); ?>
+
 <div class="column-group quarter-gutters">
     <div class="all-50">
-        <div class="ink-alert block info" style="margin-top: 0px;">
+        <?php echo $form->startComponent(); ?>
+        <?php echo $form->constructHeader('Add Perspective');?>
+        <div class="ink-alert block info">
             <h4>Important Notes</h4>
             <p>
                 -&nbsp;Fields with * are required.<br/>
@@ -33,20 +34,20 @@ $form = new Form(array(
         }
         ?>
         <div class="control-group column-group quarter-gutters">
-            <?php echo $form->renderLabel('Perspective&nbsp;*', array('class' => 'all-30 align-right')); ?>
+            <?php echo $form->renderLabel($model, 'description', array('class' => 'all-30 align-right', 'required' => true)); ?>
             <div class="control all-70">
                 <div id="description-input"></div>
             </div>
         </div>
         <div class="control-group column-group quarter-gutters">
-            <?php echo $form->renderLabel('Position Order&nbsp;*', array('class' => 'all-30 align-right')); ?>
+            <?php echo $form->renderLabel($model, 'positionOrder', array('class' => 'all-30 align-right', 'required' => true)); ?>
             <div class="control all-70">
                 <div id="positionOrder"></div>
                 <?php echo $form->renderSubmitButton("Add", array('class' => 'ink-button green flat', 'style' => 'margin-left: 0px; margin-top: 1em')); ?>
             </div>
-            <?php echo $form->renderHiddenField('Perspective[description]', array('id' => 'description')); ?>
-            <?php echo $form->renderHiddenField('Perspective[positionOrder]', array('id' => 'position-order')); ?>
-            <?php echo $form->renderHiddenField('StrategyMap[id]', array('value' => $params['id'], 'id' => 'strategy-id')); ?>
+            <?php echo $form->renderHiddenField($model, 'description', array('id' => 'description')); ?>
+            <?php echo $form->renderHiddenField($model, 'positionOrder', array('id' => 'position-order')); ?>
+            <?php echo $form->renderHiddenField($mapModel, 'id', array('id' => 'strategy-id')); ?>
         </div>
         <?php echo $form->endComponent(); ?>
     </div>
@@ -60,12 +61,12 @@ $form = new Form(array(
                 </tr>
             </thead>
             <tbody>
-                <?php if (count($perspectives) < 1): ?>
+                <?php if (count($perspectiveList) < 1): ?>
                     <tr>
                         <td colspan="3">No perspectives defined</td>
                     </tr>
                 <?php else: ?>
-                    <?php foreach ($perspectives as $perspective): ?>
+                    <?php foreach ($perspectiveList as $perspective): ?>
                         <tr>
                             <td style="text-align:center;">
                                 <?php echo $perspective->positionOrder; ?>
