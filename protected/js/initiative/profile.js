@@ -66,7 +66,7 @@ $(document).ready(function() {
                 datatype: 'json',
                 datafields: [
                     {name: 'id'},
-                    {name: 'description'}
+                    {name: 'objective'}
                 ],
                 url: '?r=objective/listObjectives',
                 type: 'POST',
@@ -75,7 +75,7 @@ $(document).ready(function() {
                 }
             }),
             valueMember: 'id',
-            displayMember: 'description',
+            displayMember: 'objective',
             width: '100%',
             searchMode: 'containsignorecase',
             autoComplete: true,
@@ -148,7 +148,7 @@ $(document).ready(function() {
             multiSelect: true
         }).on('change', function() {
             var input = [];
-            var items = $("#office-input").jqxComboBox('getSelectedItems');
+            var items = $("#offices-input").jqxComboBox('getSelectedItems');
             var i = 0;
             $.each(items, function() {
                 input[i] = this.value;
