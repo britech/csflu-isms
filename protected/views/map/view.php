@@ -1,3 +1,4 @@
+<?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
 <div class="column-group quarter-gutters">
     <div class="all-100">
         <div class="ink-alert block info align-center" style="margin-bottom: 0px; margin-top:0px;">
