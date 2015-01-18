@@ -47,26 +47,26 @@ $(document).ready(function() {
                 break;
         }
 
-        $("[name*=startingPeriodDate]").val(startingDate.getFullYear() + "-" + (startingDate.getMonth() + 1) + "-" + startingDate.getDate());
+        $("[name*=startingPeriodDate]").val(startingDate.getFullYear() + "-" + (startingDate.getMonth() + 1) + "-1");
         $("[name*=endingPeriodDate]").val(endingDate.getFullYear() + "-" + (endingDate.getMonth() + 1) + "-" + lastDayOfEndingDate);
         $("[name*=name]").val(endingDate.getFullYear() + " Development Strategy");
     });
-    
+
     $("#mission, #values").tagEditor({
-        delimiter:'+;',
+        delimiter: '+;',
         maxLength: -1,
         forceLowercase: false
     });
-    
-    
+
+
     var startingDate = $("[name*=startingPeriodDate]").val();
     var endingDate = $("[name*=endingPeriodDate]").val();
-    
-    if(startingDate!=='' && endingDate!==''){
+
+    if (startingDate !== '' && endingDate !== '') {
         $("#periodDate").jqxDateTimeInput('setRange', startingDate, endingDate);
     }
-    
-    $(".ink-form").submit(function(){
+
+    $(".ink-form").submit(function() {
         var result = false;
 
         $.ajax({
@@ -75,12 +75,12 @@ $(document).ready(function() {
             data: {"StrategyMap": {
                     'visionStatement': $("[name*=visionStatement]").val(),
                     'missionStatement': $("[name*=missionStatement]").val(),
-                    'valuesStatement':$("[name*=valuesStatement]").val(),
-                    'strategyType':$("[name*=strategyType]").val(),
-                    'startingPeriodDate':$("[name*=startingPeriodDate]").val(),
-                    'endingPeriodDate':$("[name*=endingPeriodDate]").val(),
-                    'name':$("[name*=endingPeriodDate]").val()},
-                "mode": $("[name=mode]").val()},
+                    'valuesStatement': $("[name*=valuesStatement]").val(),
+                    'strategyType': $("[name*=strategyType]").val(),
+                    'startingPeriodDate': $("[name*=startingPeriodDate]").val(),
+                    'endingPeriodDate': $("[name*=endingPeriodDate]").val(),
+                    'name': $("[name*=endingPeriodDate]").val()}
+            },
             async: false,
             success: function(data) {
                 try {
@@ -92,6 +92,6 @@ $(document).ready(function() {
             }
         });
 
-        return result; 
+        return result;
     });
 });

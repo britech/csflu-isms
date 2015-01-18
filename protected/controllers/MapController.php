@@ -69,6 +69,8 @@ class MapController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Create a Strategy Map' => 'active'),
             'model' => new StrategyMap(),
+            'strategyTypes' => StrategyMap::getStrategyTypes(),
+            'statusTypes' => StrategyMap::getEnvironmentStatusTypes(),
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
@@ -233,16 +235,17 @@ class MapController extends Controller {
     }
 
     public function validateStrategyMap() {
-        $condition = array_key_exists('StrategyMap', filter_input_array(INPUT_POST)) && array_key_exists('mode', filter_input_array(INPUT_POST));
-        if (!(count(filter_input_array(INPUT_POST)) > 0 && $condition)) {
-            $this->renderAjaxJsonResponse(array('respCode' => '50'));
+        try {
+            $this->validatePostData(array('StrategyMap'));
+        } catch (ControllerException $ex) {
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+            $this->logger->error($ex->getMessage(), $ex);
         }
-        $validationMode = filter_input_array(INPUT_POST)['mode'];
 
-        $strategyMapData = filter_input_array(INPUT_POST)['StrategyMap'];
+        $strategyMapData = $this->getFormData('StrategyMap');
+
         $strategyMap = new StrategyMap();
-        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData), $strategyMap);
-        $strategyMap->validationMode = $validationMode;
+        $strategyMap->bindValuesUsingArray(array('strategymap' => $strategyMapData));
 
         $this->remoteValidateModel($strategyMap);
     }
