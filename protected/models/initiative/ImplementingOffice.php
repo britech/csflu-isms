@@ -20,7 +20,7 @@ class ImplementingOffice extends Model {
     const DESIGNATION_MEMBER = "M";
 
     private $id;
-    private $deparment;
+    private $department;
     private $designation = self::DESIGNATION_OWNER;
 
     public static function getDesignationTypes() {
