@@ -43,7 +43,6 @@ class PerspectiveController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $map),
-                'Complete Strategy Map' => array('map/complete', 'id' => $map),
                 'Manage Perspectives' => 'active'),
             'id' => $strategyMap->id,
             'perspectiveList' => $this->mapService->listPerspectives($strategyMap),
@@ -97,7 +96,6 @@ class PerspectiveController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Complete Strategy Map' => array('map/complete', 'id' => $strategyMap->id),
                 'Manage Perspectives' => array('perspective/manage', 'map' => $strategyMap->id),
                 'Update Perspective' => 'active'),
             'perspective' => $perspective,
@@ -162,12 +160,6 @@ class PerspectiveController extends Controller {
     private function loadMapModel($id = null, Perspective $perspective = null) {
         $strategyMap = $this->mapService->getStrategyMap($id, $perspective);
 
-        if($strategyMap->strategyEnvironmentStatus != StrategyMap::STATUS_DRAFT){
-            $this->setSessionData('notif', array('class'=>'error', 'message'=>'CRUD access is only granted for Strategy Maps that are under "Draft Stage" ONLY.'));
-            $this->redirect(array('map/index'));
-            return;
-        }
-        
         if (is_null($strategyMap->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Strategy Map not found'));
             $this->redirect(array('map/index'));

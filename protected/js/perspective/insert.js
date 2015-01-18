@@ -21,7 +21,7 @@ $(document).ready(function() {
             type: "POST",
             url: "?r=perspective/validate",
             data: {"Perspective": {
-                    'description': $("#description-input").val(),
+                    'description': $("#description").val(),
                     'positionOrder': $("#positionOrder").val()},
                 "mode": 1},
             async: false,
@@ -29,7 +29,7 @@ $(document).ready(function() {
                 try {
                     response = $.parseJSON(data);
                     if (response.respCode === '00') {
-                        $("#description").val($("#description-input").val());
+                        $("#description").val($("#description").val());
                         $("#positionOrder").val($("#position-order").val());
                     }
                     result = response.respCode === '00';
