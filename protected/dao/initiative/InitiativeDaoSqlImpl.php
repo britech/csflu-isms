@@ -42,7 +42,7 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
         try {
             $this->db->beginTransaction();
 
-            $dbst = $this->db->prepare('INSERT INTO ini_main(ini_name, ini_desc, ini_benf, period_start_date, period_end_date, eo_num, ini_advisers, map_ref) VALUES(:name, :description, :beneficiaries, :start, :end, :eoNumber, :advisers, :map)');
+            $dbst = $this->db->prepare('INSERT INTO ini_main(ini_name, ini_desc, ini_benf, period_start_date, period_end_date, eo_num, ini_advisers, ini_stat, map_ref) VALUES(:name, :description, :beneficiaries, :start, :end, :eoNumber, :advisers, :status, :map)');
             $dbst->execute(array(
                 'name' => $initiative->title,
                 'description' => $initiative->description,
@@ -51,6 +51,7 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
                 'end' => $initiative->endingPeriod->format('Y-m-d'),
                 'eoNumber' => $initiative->eoNumber,
                 'advisers' => $initiative->advisers,
+                'status' => $initiative->initiativeEnvironmentStatus,
                 'map' => $strategyMap->id
             ));
 
@@ -143,7 +144,7 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
 
             $initiative->startingPeriod = \DateTime::createFromFormat('Y-m-d', $start);
             $initiative->endingPeriod = \DateTime::createFromFormat('Y-m-d', $end);
-            
+
             return $initiative;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
