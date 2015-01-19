@@ -250,13 +250,16 @@ class InitiativeController extends Controller {
                         'Manage Activities' => array('initiative/manageActivities', 'id' => $id)
                     )
                 )
-            )
+            ),
+            'notif' => $this->getSessionData('notif')
         ));
+        $this->unsetSessionData('notif');
     }
 
     public function update($id = null) {
         if (is_null($id)) {
-            
+            $this->validatePostData(array('Initiative'));
+            $this->processEntryDataUpdate();
         }
         $initiative = $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $initiative);
@@ -282,6 +285,26 @@ class InitiativeController extends Controller {
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
+    }
+
+    private function processEntryDataUpdate() {
+        $initiativeData = $this->getFormData('Initiative');
+
+        $oldInitiative = $this->loadModel($initiativeData['id']);
+        $initiative = new Initiative();
+        $initiative->bindValuesUsingArray(array(
+            'initiative' => $initiativeData
+        ));
+
+        if (!$initiative->validate()) {
+            $this->setSessionData('validation', $initiative->validationMessages);
+            $this->redirect(array('initiative/update', 'id' => $initiative->id));
+        }
+
+        if ($initiative->computePropertyChanges($oldInitiative) > 0) {
+            $this->setSessionData('notif', array('class' => 'info', 'message' => 'Initiative updated'));
+        }
+        $this->redirect(array('initiative/manage', 'id' => $initiative->id));
     }
 
     private function loadModel($id) {
