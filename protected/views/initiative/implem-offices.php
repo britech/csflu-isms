@@ -15,6 +15,13 @@ $form = new Form(array(
     <div class="all-50">
         <?php echo $form->startComponent(); ?>
         <?php echo $form->constructHeader('Add Implementing Offices'); ?>
+        <div class="ink-alert basic info">
+            <strong>Important Note:&nbsp;</strong>Fields with * are required
+        </div>
+        <div class="ink-alert block" id="validation-container">
+            <h4 id="validation-header"></h4>
+            <p id="validation-content"></p>
+        </div>
         <div class="control-group">
             <?php echo $form->renderLabel($model, 'department', array('required' => true)); ?>
             <div class="control">

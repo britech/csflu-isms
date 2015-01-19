@@ -55,4 +55,16 @@ $(document).ready(function() {
         });
         $("#offices").val(input.join("/"));
     });
+
+    $("#validation-container").hide();
+    $(".ink-form").submit(function() {
+        if ($("#offices").val().length === 0) {
+            $("#validation-container").show();
+            $("#validation-header").html("Validation error. Please check your entries.");
+            $("#validation-content").html("Implementing offices should be defined");
+            return false;
+        } else {
+            return true;
+        }
+    });
 });
