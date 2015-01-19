@@ -62,7 +62,7 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         }
 
         if (!is_null($initiative) && !empty($initiative)) {
-            return null;
+            return $this->mapDaoSource->getStrategyMapByInitiative($initiative);
         }
     }
 

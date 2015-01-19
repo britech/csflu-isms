@@ -7,6 +7,7 @@ use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\map\Perspective;
 use org\csflu\isms\models\map\Theme;
+use org\csflu\isms\models\initiative\Initiative;
 /**
  *
  * @author britech
@@ -46,6 +47,13 @@ interface StrategyMapDao {
      * @throws DataAccessException
      */
     public function getStrategyMapByObjective(Objective $objective);
+    
+    /**
+     * @param Initiative $initiative
+     * @return StrategyMap
+     * @throws DataAccessException
+     */
+    public function getStrategyMapByInitiative(Initiative $initiative);
     
     /**
      * @param StrategyMap $strategyMap
