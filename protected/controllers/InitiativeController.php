@@ -302,9 +302,16 @@ class InitiativeController extends Controller {
         }
 
         if ($initiative->computePropertyChanges($oldInitiative) > 0) {
-            $this->setSessionData('notif', array('class' => 'info', 'message' => 'Initiative updated'));
+            try {
+                $this->initiativeService->updateInitiative($initiative);
+                $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_INITIATIVE, $initiative->id, $initiative, $oldInitiative);
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Initiative updated'));
+                $this->redirect(array('initiative/manage', 'id' => $initiative->id));
+            } catch (ServiceException $ex) {
+                $this->setSessionData('validation', array($ex->getMessage()));
+                $this->redirect(array('initiative/update', 'id' => $initiative->id));
+            }
         }
-        $this->redirect(array('initiative/manage', 'id' => $initiative->id));
     }
 
     private function loadModel($id) {
