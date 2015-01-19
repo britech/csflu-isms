@@ -5,8 +5,10 @@ namespace org\csflu\isms\dao\initiative;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\initiative\Initiative;
+use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\initiative\InitiativeDao;
+use org\csflu\isms\dao\commons\DepartmentDaoSqlImpl;
 
 /**
  * Description of InitiativeDaoSqlImpl
@@ -16,9 +18,11 @@ use org\csflu\isms\dao\initiative\InitiativeDao;
 class InitiativeDaoSqlImpl implements InitiativeDao {
 
     private $db;
+    private $departmentDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
+        $this->departmentDaoSource = new DepartmentDaoSqlImpl();
     }
 
     public function listInitiatives(StrategyMap $strategyMap) {
@@ -144,6 +148,7 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
 
             $initiative->startingPeriod = \DateTime::createFromFormat('Y-m-d', $start);
             $initiative->endingPeriod = \DateTime::createFromFormat('Y-m-d', $end);
+            $initiative->implementingOffices = $this->listImplementingOffices($initiative);
 
             return $initiative;
         } catch (\PDOException $ex) {
@@ -171,6 +176,26 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function listImplementingOffices(Initiative $initiative) {
+        try {
+            $dbst = $this->db->prepare('SELECT team_id, team_type, dept_ref FROM ini_teams WHERE ini_ref=:initiative');
+            $dbst->execute(array('initiative' => $initiative->id));
+
+            $implementingOffices = array();
+
+            while ($data = $dbst->fetch()) {
+                $implementingOffice = new ImplementingOffice();
+                list($implementingOffice->id, $implementingOffice->designation, $department) = $data;
+                $implementingOffice->department = $this->departmentDaoSource->getDepartmentById($department);
+                array_push($implementingOffices, $implementingOffice);
+            }
+
+            return $implementingOffices;
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }

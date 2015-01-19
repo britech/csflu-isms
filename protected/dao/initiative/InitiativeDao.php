@@ -4,6 +4,7 @@ namespace org\csflu\isms\dao\initiative;
 
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\initiative\Initiative;
+use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\exceptions\DataAccessException;
 /**
  *
@@ -43,6 +44,13 @@ interface InitiativeDao {
      * @throws DataAccessException
      */
     public function addImplementingOffices(Initiative $initiative);
+    
+    /**
+     * @param Initiative $initiative
+     * @return ImplementingOffice[]
+     * @throws DataAccessException
+     */
+    public function listImplementingOffices(Initiative $initiative);
     
     /**
      * @param String $id
