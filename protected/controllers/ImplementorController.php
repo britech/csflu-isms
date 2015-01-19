@@ -5,11 +5,15 @@ namespace org\csflu\isms\controllers;
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
+use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\models\commons\Department;
+use org\csflu\isms\models\commons\RevisionHistory;
+use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl as InitiativeManagementService;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
+use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl as DepartmentService;
 
 /**
  * Description of ImplementorController
@@ -21,11 +25,13 @@ class ImplementorController extends Controller {
     private $logger;
     private $initiativeService;
     private $mapService;
+    private $departmentService;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->initiativeService = new InitiativeManagementService();
         $this->mapService = new StrategyMapManagementService();
+        $this->departmentService = new DepartmentService();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -45,8 +51,12 @@ class ImplementorController extends Controller {
             ),
             'model' => new ImplementingOffice(),
             'departmentModel' => new Department(),
-            'initiativeModel' => $data
+            'initiativeModel' => $data,
+            'validation' => $this->getSessionData('validation'),
+            'notif' => $this->getSessionData('notif')
         ));
+        $this->unsetSessionData('validation');
+        $this->unsetSessionData('notif');
     }
 
     public function listOffices() {
@@ -64,6 +74,47 @@ class ImplementorController extends Controller {
             ));
         }
         $this->renderAjaxJsonResponse($data);
+    }
+
+    public function link() {
+        $this->validatePostData(array('Initiative', 'Department'));
+
+        $initiativeData = $this->getFormData('Initiative');
+        $departmentData = $this->getFormData('Department');
+        $initiative = new Initiative();
+        $initiative->bindValuesUsingArray(array(
+            'initiative' => $initiativeData,
+            'implementingOffices' => $departmentData
+        ));
+
+        if (count($initiative->implementingOffices) == 0) {
+            $this->setSessionData('validation', "Implementing offices should be defined");
+            $this->redirect(array('implementor/index', 'initiative' => $initiative->id));
+        }
+
+        $purifiedInitiative = $this->purifyInput($initiative);
+        try {
+            $officeToLog = $this->initiativeService->addImplementingOffices($purifiedInitiative);
+            foreach ($officeToLog as $office) {
+                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $purifiedInitiative->id, $office);
+            }
+            $this->setSessionData('notif', array('class'=>'success', 'message'=>'Implementing Office/s added'));
+        } catch (ServiceException $ex) {
+            $this->setSessionData('validation', array($ex->getMessage()));
+        }
+        $this->redirect(array('implementor/index', 'initiative' => $purifiedInitiative->id));
+    }
+
+    private function purifyInput(Initiative $initiative) {
+        $data = array();
+        foreach ($initiative->implementingOffices as $implementingOffice) {
+            $implementingOffice->department = $this->departmentService->getDepartmentDetail(array(
+                'id' => $implementingOffice->department->id
+            ));
+            array_push($data, $implementingOffice);
+        }
+        $initiative->implementingOffices = $data;
+        return $initiative;
     }
 
     private function loadModel($id) {

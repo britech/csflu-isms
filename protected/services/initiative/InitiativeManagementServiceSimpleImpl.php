@@ -71,4 +71,28 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $this->daoSource->updateInitiative($initiative);
     }
 
+    public function addImplementingOffices(Initiative $initiative) {
+        $implementingOffices = $this->daoSource->listImplementingOffices($initiative);
+
+        $implementingOfficesToInsert = array();
+        foreach ($initiative->implementingOffices as $implementingOffice) {
+            $found = false;
+            foreach ($implementingOffices as $data) {
+                if ($implementingOffice->department->id == $data->department->id) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                array_push($implementingOfficesToInsert, $implementingOffice);
+            }
+        }
+        if (count($implementingOfficesToInsert) == 0) {
+            throw new ServiceException("No Implementing Offices added");
+        }
+        $initiative->implementingOffices = $implementingOfficesToInsert;
+        $this->daoSource->addImplementingOffices($initiative);
+        return $implementingOfficesToInsert;
+    }
+
 }

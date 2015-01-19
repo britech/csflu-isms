@@ -22,6 +22,12 @@ $form = new Form(array(
             <h4 id="validation-header"></h4>
             <p id="validation-content"></p>
         </div>
+        <?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
+        <?php
+        if (isset($params['validation']) && !empty($params['validation'])) {
+            $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
+        }
+        ?>
         <div class="control-group">
             <?php echo $form->renderLabel($model, 'department', array('required' => true)); ?>
             <div class="control">

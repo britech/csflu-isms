@@ -4,6 +4,7 @@ namespace org\csflu\isms\service\initiative;
 
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\initiative\Initiative;
+use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\exceptions\ServiceException;
 
 /**
@@ -41,4 +42,11 @@ interface InitiativeManagementService {
      * @throws ServiceException
      */
     public function updateInitiative(Initiative $initiative);
+    
+    /**
+     * @param Initiative $initiative
+     * @return ImplementingOffice[]
+     * @throws ServiceException
+     */
+    public function addImplementingOffices(Initiative $initiative);
 }
