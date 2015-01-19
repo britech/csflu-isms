@@ -46,4 +46,8 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         return $initiative->id;
     }
 
+    public function getInitiative($id) {
+        return $this->daoSource->getInitiative($id);
+    }
+
 }

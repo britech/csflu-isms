@@ -27,4 +27,11 @@ interface InitiativeManagementService {
      * @throws ServiceException
      */
     public function addInitiative(Initiative $initiative, StrategyMap $strategyMap);
+    
+    /**
+     * Gets the selected Initiative
+     * @param String $id
+     * @return Initiative
+     */
+    public function getInitiative($id);
 }
