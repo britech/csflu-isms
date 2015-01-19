@@ -52,7 +52,7 @@ class InitiativeController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Manage Initiatives' => 'active'
+                'Initiative Directory' => 'active'
             ),
             'sidebar' => array(
                 'data' => array(
@@ -98,7 +98,7 @@ class InitiativeController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Manage Initiatives' => array('initiative/index', 'map' => $strategyMap->id),
+                'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
                 'Create an Initiative' => 'active'
             ),
             'model' => $model,
@@ -226,11 +226,20 @@ class InitiativeController extends Controller {
     }
 
     public function manage($id) {
+        $initiative = $this->loadModel($id);
+        $strategyMap = $this->loadMapModel(null, $initiative);
 
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Initiative';
 
         $this->layout = 'column-2';
         $this->render('initiative/manage', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
+                'Manage Initiative' => 'active'
+            ),
             'sidebar' => array(
                 'data' => array(
                     'header' => 'Actions',
@@ -243,6 +252,15 @@ class InitiativeController extends Controller {
                 )
             )
         ));
+    }
+
+    private function loadModel($id) {
+        $initiative = $this->initiativeService->getInitiative($id);
+        if (is_null($initiative->id)) {
+            $this->setSessionData('notif', array('class' => '', 'message' => 'Initiative not found'));
+            $this->redirect(array('map/index'));
+        }
+        return $initiative;
     }
 
     private function loadMapModel($id = null, Initiative $initiative = null) {
