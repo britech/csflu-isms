@@ -6,6 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ServiceException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\models\commons\Department;
@@ -98,11 +99,30 @@ class ImplementorController extends Controller {
             foreach ($officeToLog as $office) {
                 $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $purifiedInitiative->id, $office);
             }
-            $this->setSessionData('notif', array('class'=>'success', 'message'=>'Implementing Office/s added'));
+            $this->setSessionData('notif', array('class' => 'success', 'message' => 'Implementing Office/s added'));
         } catch (ServiceException $ex) {
             $this->setSessionData('validation', array($ex->getMessage()));
         }
         $this->redirect(array('implementor/index', 'initiative' => $purifiedInitiative->id));
+    }
+
+    public function unlink() {
+        try {
+            $this->validatePostData(array('id'));
+        } catch (ControllerException $ex) {
+            $this->setSessionData('notif', array('message' => $ex->getMessage(), 'class' => 'error'));
+            $this->renderAjaxJsonResponse(array('url' => array('map/index')));
+        }
+
+        $id = $this->getFormData('id');
+        //$initiative = $this->initiativeService->getInitiative($id);
+        if (is_null($initiative->id)) {
+            $this->setSessionData('notif', array('message' => 'Initiative not found'));
+            //$this->renderAjaxJsonResponse(array('url' => array('map/index')));
+        } else {
+            $this->setSessionData('notif', array('message' => 'Implementing Office unlinked in the Initiative'));
+            //$this->renderAjaxJsonResponse(array('url' => array('implementor/index', 'initiative' => $initiative->id)));
+        }
     }
 
     private function purifyInput(Initiative $initiative) {

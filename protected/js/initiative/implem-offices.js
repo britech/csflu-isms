@@ -53,12 +53,12 @@ $(document).ready(function() {
     
     $("[id^=accept]").click(function() {
         var id = $(this).attr('id').split('-')[1];
-//        $.post("?r=measure/deleteLeadOffice",
-//                {id: id},
-//        function(data) {
-//            var response = $.parseJSON(data);
-//            window.location = response.url;
-//        });
+        $.post("?r=implementor/unlink",
+                {id: id},
+        function(data) {
+            var response = $.parseJSON(data);
+            window.location = response.url;
+        });
     });
 
     $("#offices-input").jqxComboBox({
