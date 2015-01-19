@@ -15,7 +15,7 @@ $(document).ready(function() {
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Initiative</span>', dataField: 'indicator', width: '90%'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Initiative</span>', dataField: 'initiative', width: '90%'},
             {text: '', dataField: 'action', width: '10%', cellsAlign: 'center'}
         ],
         width: '100%',
