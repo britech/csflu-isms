@@ -17,4 +17,30 @@ interface InitiativeDao {
      * @throws DataAccessException
      */
     public function listInitiatives(StrategyMap $strategyMap);
+    
+    /**
+     * @param Initiative $initiative
+     * @param StrategyMap $strategyMap
+     * @return String
+     * @throws DataAccessException
+     */
+    public function insertInitiative(Initiative $initiative, StrategyMap $strategyMap);
+    
+    /**
+     * @param Initiative $initiative
+     * @throws DataAccessException
+     */
+    public function linkObjectives(Initiative $initiative);
+    
+    /**
+     * @param Initiative $initiative
+     * @throws DataAccessException
+     */
+    public function linkLeadMeasures(Initiative $initiative);
+    
+    /**
+     * @param Initiative $initiative
+     * @throws DataAccessException
+     */
+    public function addImplementingOffices(Initiative $initiative);
 }

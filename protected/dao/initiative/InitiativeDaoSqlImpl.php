@@ -38,4 +38,89 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
         }
     }
 
+    public function insertInitiative(Initiative $initiative, StrategyMap $strategyMap) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('INSERT INTO ini_main(ini_name, ini_desc, ini_benf, period_start_date, period_end_date, eo_num, ini_advisers, map_ref) VALUES(:name, :description, :beneficiaries, :start, :end, :eoNumber, :advisers, :map)');
+            $dbst->execute(array(
+                'name' => $initiative->title,
+                'description' => $initiative->description,
+                'beneficiaries' => $initiative->beneficiaries,
+                'start' => $initiative->startingPeriod->format('Y-m-d'),
+                'end' => $initiative->endingPeriod->format('Y-m-d'),
+                'eoNumber' => $initiative->eoNumber,
+                'advisers' => $initiative->advisers,
+                'map' => $strategyMap->id
+            ));
+
+            $id = $this->db->lastInsertId();
+
+            $this->db->commit();
+
+            return $id;
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function addImplementingOffices(Initiative $initiative) {
+        try {
+            $this->db->beginTransaction();
+
+            foreach ($initiative->implementingOffices as $implementingOffice) {
+                $dbst = $this->db->prepare('INSERT INTO ini_teams(ini_ref, dept_ref, team_type) VALUES(:initiative, :department, :designation)');
+                $dbst->execute(array(
+                    'initiative' => $initiative->id,
+                    'department' => $implementingOffice->department->id,
+                    'designation' => $implementingOffice->designation
+                ));
+            }
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function linkLeadMeasures(Initiative $initiative) {
+        try {
+            $this->db->beginTransaction();
+
+            foreach ($initiative->leadMeasures as $leadMeasure) {
+                $dbst = $this->db->prepare('INSERT INTO ini_indicator_mapping VALUES(:initiative, :leadMeasure)');
+                $dbst->execute(array(
+                    'initiative' => $initiative->id,
+                    'leadMeasure' => $leadMeasure->id
+                ));
+            }
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function linkObjectives(Initiative $initiative) {
+        try {
+            $this->db->beginTransaction();
+
+            foreach ($initiative->objectives as $objective) {
+                $dbst = $this->db->prepare('INSERT INTO ini_objective_mapping VALUES(:initiative, :objective)');
+                $dbst->execute(array(
+                    'initiative' => $initiative->id,
+                    'objective' => $objective->id
+                ));
+            }
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }
