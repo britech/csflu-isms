@@ -65,8 +65,8 @@ class Initiative extends Model {
         if (empty($this->description)) {
             array_push($this->validationMessages, "- {$this->getAttributeNames()['description']} should be defined");
         }
-        
-        if(empty($this->beneficiaries)){
+
+        if (empty($this->beneficiaries)) {
             array_push($this->validationMessages, "- {$this->getAttributeNames()['beneficiaries']} should be defined");
         }
 
@@ -140,19 +140,95 @@ class Initiative extends Model {
             'initiativeEnvironmentStatus' => 'Status'
         );
     }
-    
+
     public function getModelTranslationAsNewEntity() {
         return "[Initiative added]\n\n"
-        . "Title:\t{$this->title}\n"
-        . "Description:\t{$this->description}\n"
-        . "Beneficiaries:\t{$this->beneficiaries}\n"
-        . "Starting Period:\t{$this->startingPeriod->format('F-Y')}\n"
-        . "Ending Period:\t{$this->endingPeriod->format('F-Y')}\n"
-        . "Status:\t{$this->getEnvironmentStatusTypes()[$this->initiativeEnvironmentStatus]}\n"
-        . "EO Number:\t{$this->eoNumber}\n"
-        . "Advisers:\t{$this->advisers}";
+                . "Title:\t{$this->title}\n"
+                . "Description:\t{$this->description}\n"
+                . "Beneficiaries:\t{$this->beneficiaries}\n"
+                . "Starting Period:\t{$this->startingPeriod->format('F-Y')}\n"
+                . "Ending Period:\t{$this->endingPeriod->format('F-Y')}\n"
+                . "Status:\t{$this->getEnvironmentStatusTypes()[$this->initiativeEnvironmentStatus]}\n"
+                . "EO Number:\t{$this->eoNumber}\n"
+                . "Advisers:\t{$this->advisers}";
     }
-    
+
+    public function computePropertyChanges(Initiative $oldInitiative) {
+        $counter = 0;
+
+        if ($oldInitiative->title != $this->title) {
+            $counter++;
+        }
+
+        if ($oldInitiative->description != $this->description) {
+            $counter++;
+        }
+
+        if ($oldInitiative->beneficiaries != $this->beneficiaries) {
+            $counter++;
+        }
+
+        if ($oldInitiative->startingPeriod->format('Y-m-d') != $this->startingPeriod->format('Y-m-d')) {
+            $counter++;
+        }
+
+        if ($oldInitiative->endingPeriod->format('Y-m-md') != $this->endingPeriod->format('Y-m-d')) {
+            $counter++;
+        }
+
+        if ($oldInitiative->initiativeEnvironmentStatus != $this->initiativeEnvironmentStatus) {
+            $counter++;
+        }
+
+        if ($oldInitiative->eoNumber != $this->eoNumber) {
+            $counter++;
+        }
+
+        if ($oldInitiative->advisers != $this->advisers) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
+    public function getModelTranslationAsUpdatedEntity(Initiative $oldInitiative) {
+        $translation = "[Initiative updated]\n\n";
+        
+        if ($oldInitiative->title != $this->title) {
+            $translation.="Title:\t{$this->title}\n";
+        }
+
+        if ($oldInitiative->description != $this->description) {
+            $translation.="Description:\t{$this->description}\n";
+        }
+
+        if ($oldInitiative->beneficiaries != $this->beneficiaries) {
+            $translation.="Beneficiaries:\t{$this->beneficiaries}\n";
+        }
+
+        if ($oldInitiative->startingPeriod->format('Y-m-d') != $this->startingPeriod->format('Y-m-d')) {
+            $translation.="Starting Period:\t{$this->startingPeriod->format('F-Y')}\n";
+        }
+
+        if ($oldInitiative->endingPeriod->format('Y-m-md') != $this->endingPeriod->format('Y-m-d')) {
+            $translation.="Ending Period:\t{$this->endingPeriod->format('F-Y')}\n";
+        }
+
+        if ($oldInitiative->initiativeEnvironmentStatus != $this->initiativeEnvironmentStatus) {
+            $translation.="Status:\t{$this->getEnvironmentStatusTypes()[$this->initiativeEnvironmentStatus]}\n";
+        }
+
+        if ($oldInitiative->eoNumber != $this->eoNumber) {
+            $translation.="EO Number:\t{$this->eoNumber}\n";
+        }
+
+        if ($oldInitiative->advisers != $this->advisers) {
+            $translation.="Advisers:\t{$this->advisers}\n";
+        }
+        
+        return $translation;
+    }
+
     public function isNew() {
         return empty($this->id);
     }
