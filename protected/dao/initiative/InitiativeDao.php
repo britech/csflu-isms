@@ -43,4 +43,11 @@ interface InitiativeDao {
      * @throws DataAccessException
      */
     public function addImplementingOffices(Initiative $initiative);
+    
+    /**
+     * @param String $id
+     * @return Initiative
+     * @throws DataAccessException
+     */
+    public function getInitiative($id);
 }

@@ -123,4 +123,31 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
         }
     }
 
+    public function getInitiative($id) {
+        try {
+            $dbst = $this->db->prepare('SELECT ini_id, ini_name, ini_desc, ini_benf, period_start_date, period_end_date, eo_num, ini_advisers, ini_stat FROM ini_main WHERE ini_id=:id');
+            $dbst->execute(array('id' => $id));
+
+            $initiative = new Initiative();
+            while ($data = $dbst->fetch()) {
+                list($initiative->id,
+                        $initiative->title,
+                        $initiative->description,
+                        $initiative->beneficiaries,
+                        $start,
+                        $end,
+                        $initiative->eoNumber,
+                        $initiative->advisers,
+                        $initiative->initiativeEnvironmentStatus) = $data;
+            }
+
+            $initiative->startingPeriod = \DateTime::createFromFormat('Y-m-d', $start);
+            $initiative->endingPeriod = \DateTime::createFromFormat('Y-m-d', $end);
+            
+            return $initiative;
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }
