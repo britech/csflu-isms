@@ -4,7 +4,10 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\core\Model;
 use org\csflu\isms\util\ApplicationUtils;
+use org\csflu\isms\exceptions\ControllerException;
+use org\csflu\isms\exceptions\ModelException;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\commons\Department;
@@ -123,6 +126,41 @@ class InitiativeController extends Controller {
             $this->setSessionData('validation', $initiative->validationMessages);
             $this->redirect(array('initiative/create', 'map' => $strategyMap->id));
         }
+    }
+
+    public function validateInitiativeInput() {
+        $initiative = new Initiative();
+        try {
+            $this->validatePostData(array('mode'));
+            $mode = $this->getFormData('mode');
+            
+            if ($mode == Model::VALIDATION_MODE_INITIAL) {
+                $this->validatePostData(array('Initiative', 'Objective', 'MeasureProfile', 'Department'));
+                $initiativeData = $this->getFormData('Initiative');
+                $objectiveData = $this->getFormData('Objective');
+                $measureData = $this->getFormData('MeasureProfile');
+                $departmentData = $this->getFormData('Department');
+                $initiative->bindValuesUsingArray(array(
+                    'initiative' => $initiativeData,
+                    'objectives' => $objectiveData,
+                    'leadMeasures' => $measureData,
+                    'implementingOffices' => $departmentData
+                ));
+            } elseif ($mode == Model::VALIDATION_MODE_UPDATE) {
+                $this->validatePostData(array('Initiative'));
+                $initiativeData = $this->getFormData('Initiative');
+                $initiative->bindValuesUsingArray(array(
+                    'initiative' => $initiativeData,
+                ));
+            }
+        } catch (ControllerException $ex) {
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+            $this->logger->error($ex->getMessage(), $ex);
+        } catch (ModelException $ex) {
+            $this->renderAjaxJsonResponse(array('respCode' => '60'));
+            $this->logger->error($ex->getMessage(), $ex);
+        }
+        $this->remoteValidateModel($initiative);
     }
 
     private function loadMapModel($id) {
