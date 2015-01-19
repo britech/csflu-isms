@@ -8,6 +8,9 @@ use org\csflu\isms\core\Model;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ModelException;
+use org\csflu\isms\exceptions\ServiceException;
+use org\csflu\isms\models\commons\RevisionHistory;
+use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\commons\Department;
@@ -134,7 +137,26 @@ class InitiativeController extends Controller {
         }
 
         $purifiedInitiative = $this->purifyInitiativeInput($initiative);
-        $this->logger->debug($purifiedInitiative);
+        try {
+            $id = $this->initiativeService->addInitiative($initiative, $strategyMap);
+            $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $id, $purifiedInitiative);
+
+            foreach ($initiative->objectives as $objective) {
+                $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $id, "[Objective linked]\n\nObjective:\t{$objective->description}");
+            }
+
+            foreach ($initiative->leadMeasures as $leadMeasure) {
+                $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $id, "[LeadMeasure linked]\n\nLead Measure:\t{$leadMeasure->indicator->description}");
+            }
+
+            foreach ($initiative->implementingOffices as $implementingOffice) {
+                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $id, $implementingOffice);
+            }
+            $this->redirect(array('initiative/manage', 'id' => $id));
+        } catch (ServiceException $ex) {
+            $this->setSessionData('validation', array($ex->getMessage()));
+            $this->redirect(array('initiative/create', 'map' => $strategyMap->id));
+        }
     }
 
     private function purifyInitiativeInput(Initiative $initiative) {
@@ -155,21 +177,17 @@ class InitiativeController extends Controller {
             }
             $initiative->leadMeasures = $leadMeasures;
         }
-        
+
         //purify implementingOffices
-        if(count($initiative->implementingOffices) > 0){
+        if (count($initiative->implementingOffices) > 0) {
             $implementingOffices = array();
-            foreach($initiative->implementingOffices as $data){
-                $data->department = $this->departmentService->getDepartmentDetail(array('id'=>$data->department->id));
+            foreach ($initiative->implementingOffices as $data) {
+                $data->department = $this->departmentService->getDepartmentDetail(array('id' => $data->department->id));
                 array_push($implementingOffices, $data);
             }
             $initiative->implementingOffices = $implementingOffices;
         }
         return $initiative;
-    }
-    
-    private function logInitiative(){
-        
     }
 
     public function validateInitiativeInput() {
