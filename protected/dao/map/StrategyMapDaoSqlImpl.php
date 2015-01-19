@@ -10,6 +10,7 @@ use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\map\Perspective;
 use org\csflu\isms\models\map\Theme;
+use org\csflu\isms\models\initiative\Initiative;
 
 /**
  *
@@ -166,6 +167,20 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
         try {
             $dbst = $this->db->prepare('SELECT map_ref FROM smap_objectives WHERE obj_id=:id');
             $dbst->execute(array('id' => $objective->id));
+
+            while ($data = $dbst->fetch()) {
+                list($map) = $data;
+            }
+            return $this->getStrategyMap($map);
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getStrategyMapByInitiative(Initiative $initiative) {
+        try {
+            $dbst = $this->db->prepare('SELECT map_ref FROM ini_main WHERE ini_id=:id');
+            $dbst->execute(array('id' => $initiative->id));
 
             while ($data = $dbst->fetch()) {
                 list($map) = $data;

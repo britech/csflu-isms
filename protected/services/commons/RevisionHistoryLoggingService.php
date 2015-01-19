@@ -39,4 +39,10 @@ interface RevisionHistoryLoggingService {
      * Logs deleted entries of subcomponents of a Core Entity
      */
     public function logDeleteAction($revisionHistory, $model);
+    
+    /**
+     * Logs custom action not covered by the CRUD operations
+     * @param RevisionHistory $revisionHistory
+     */
+    public function logCustomAction(RevisionHistory $revisionHistory);
 }

@@ -107,6 +107,20 @@ class Controller {
         }
     }
 
+    protected function logCustomRevision($revisionType, $module, $referenceId, $notes) {
+        $this->loggingService = new RevisionHistoryLoggingService();
+        
+        $revision = new RevisionHistory();
+        $revision->employee = new Employee();
+        $revision->employee->id = $_SESSION['employee'];
+        $revision->module = $module;
+        $revision->referenceId = $referenceId;
+        $revision->revisionType = $revisionType;
+        $revision->notes = $notes;
+
+        $this->loggingService->logCustomAction($revision);
+    }
+
     protected function remoteValidateModel(Model $model) {
         if (!$model->validate()) {
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $model->validationMessages));
@@ -140,8 +154,8 @@ class Controller {
     protected function getArgumentData($argumentName) {
         return htmlentities(filter_input(INPUT_GET, $argumentName));
     }
-    
-    protected function getServerData($argumentName){
+
+    protected function getServerData($argumentName) {
         return filter_input(INPUT_SERVER, $argumentName);
     }
 

@@ -2,6 +2,7 @@
 
 namespace org\csflu\isms\service\commons;
 
+use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\service\commons\RevisionHistoryLoggingService;
 use org\csflu\isms\dao\commons\RevisionHistoryLoggingDaoSqlImpl as RevisionHistoryLoggingDao;
 
@@ -34,6 +35,10 @@ class RevisionHistoryLoggingServiceImpl implements RevisionHistoryLoggingService
 
     public function logDeleteAction($revisionHistory, $model) {
         $revisionHistory->notes = $model->getModelTranslationAsDeletedEntity();
+        $this->daoSource->log($revisionHistory);
+    }
+
+    public function logCustomAction(RevisionHistory $revisionHistory) {
         $this->daoSource->log($revisionHistory);
     }
 

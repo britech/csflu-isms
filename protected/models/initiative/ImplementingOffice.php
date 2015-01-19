@@ -20,7 +20,7 @@ class ImplementingOffice extends Model {
     const DESIGNATION_MEMBER = "M";
 
     private $id;
-    private $deparment;
+    private $department;
     private $designation = self::DESIGNATION_OWNER;
 
     public static function getDesignationTypes() {
@@ -40,6 +40,12 @@ class ImplementingOffice extends Model {
             'department' => 'Implementing Office',
             'designation' => 'Designation'
         );
+    }
+    
+    public function getModelTranslationAsNewEntity() {
+        return "[ImplementingOffice added]\n\n"
+        . "Department:\t{$this->department->name}\n"
+        . "Designation:\t{$this->getDesignationTypes()[$this->designation]}";
     }
 
     public function __set($name, $value) {

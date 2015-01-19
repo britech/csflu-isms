@@ -70,6 +70,7 @@ require_once 'dao/indicator/MeasureProfileDao.php';
 require_once 'dao/map/StrategyMapDao.php';
 require_once 'dao/map/PerspectiveDao.php';
 require_once 'dao/map/ObjectiveDao.php';
+require_once 'dao/initiative/InitiativeDao.php';
 
 #dao-implementations
 require_once 'dao/commons/DepartmentDaoSqlImpl.php';
@@ -84,6 +85,7 @@ require_once 'dao/indicator/MeasureProfileDaoSqlImpl.php';
 require_once 'dao/map/StrategyMapDaoSqlImpl.php';
 require_once 'dao/map/PerspectiveDaoSqlImpl.php';
 require_once 'dao/map/ObjectiveDaoSqlImpl.php';
+require_once 'dao/initiative/InitiativeDaoSqlImpl.php';
 
 #service-interfaces
 require_once 'services/commons/DepartmentService.php';
@@ -94,6 +96,7 @@ require_once 'services/uam/UserManagementService.php';
 require_once 'services/indicator/IndicatorManagementService.php';
 require_once 'services/indicator/ScorecardManagementService.php';
 require_once 'services/map/StrategyMapManagementService.php';
+require_once 'services/initiative/InitiativeManagementService.php';
 
 #service-implementations
 require_once 'services/commons/DepartmentServiceSimpleImpl.php';
@@ -104,6 +107,7 @@ require_once 'services/uam/SimpleUserManagementServiceImpl.php';
 require_once 'services/indicator/IndicatorManagementServiceSimpleImpl.php';
 require_once 'services/indicator/ScorecardManagementServiceSimpleImpl.php';
 require_once 'services/map/StrategyMapManagementServiceSimpleImpl.php';
+require_once 'services/initiative/InitiativeManagementServiceSimpleImpl.php';
 
 session_start();
 ob_start();

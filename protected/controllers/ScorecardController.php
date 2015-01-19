@@ -72,8 +72,9 @@ class ScorecardController extends Controller {
                         break;
                 }
             }
-            
+
             array_push($data, array(
+                'id' => $leadMeasure->id,
                 'perspective' => $leadMeasure->objective->perspective->positionOrder . '&nbsp;-&nbsp;' . $leadMeasure->objective->perspective->description,
                 'objective' => $leadMeasure->objective->description,
                 'indicator' => $leadMeasure->indicator->description,

@@ -11,6 +11,7 @@ use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Perspective;
 use org\csflu\isms\models\map\Theme;
 use org\csflu\isms\models\map\Objective;
+use org\csflu\isms\models\initiative\Initiative;
 
 /**
  *
@@ -43,7 +44,7 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         $this->objectiveDaoSource->updateObjectivesCoveragePeriodsByStrategyMap($strategyMap);
     }
 
-    public function getStrategyMap($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null) {
+    public function getStrategyMap($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null, Initiative $initiative = null) {
         if (!is_null($id) && !empty($id)) {
             return $this->mapDaoSource->getStrategyMap($id);
         }
@@ -58,6 +59,10 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
 
         if (!is_null($theme) && !empty($theme)) {
             return $this->mapDaoSource->getStrategyMapByTheme($theme);
+        }
+
+        if (!is_null($initiative) && !empty($initiative)) {
+            return $this->mapDaoSource->getStrategyMapByInitiative($initiative);
         }
     }
 
@@ -195,7 +200,7 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
     }
 
     public function updateObjective(Objective $objective) {
-        
+
         $this->objectiveDaoSource->updateObjective($objective);
     }
 
