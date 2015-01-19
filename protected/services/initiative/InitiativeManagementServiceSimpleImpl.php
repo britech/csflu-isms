@@ -43,6 +43,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $this->daoSource->addImplementingOffices($initiative);
         $this->daoSource->linkObjectives($initiative);
         $this->daoSource->linkLeadMeasures($initiative);
+        return $initiative->id;
     }
 
 }

@@ -118,7 +118,7 @@ class Controller {
         $revision->revisionType = $revisionType;
         $revision->notes = $notes;
 
-        $this->loggingService->logCustomAction($revisionHistory);
+        $this->loggingService->logCustomAction($revision);
     }
 
     protected function remoteValidateModel(Model $model) {
