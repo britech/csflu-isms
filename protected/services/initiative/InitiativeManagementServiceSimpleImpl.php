@@ -7,6 +7,7 @@ use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\initiative\InitiativeManagementService;
 use org\csflu\isms\dao\initiative\InitiativeDaoSqlImpl as InitiativeDao;
+use org\csflu\isms\dao\map\StrategyMapDaoSqlImpl as StrategyMapDao;
 
 /**
  * Description of InitiativeManagementServiceSimpleImpl
@@ -16,9 +17,11 @@ use org\csflu\isms\dao\initiative\InitiativeDaoSqlImpl as InitiativeDao;
 class InitiativeManagementServiceSimpleImpl implements InitiativeManagementService {
 
     private $daoSource;
+    private $mapDaoSource;
 
     public function __construct() {
         $this->daoSource = new InitiativeDao();
+        $this->mapDaoSource = new StrategyMapDao();
     }
 
     public function listInitiatives(StrategyMap $strategyMap) {
@@ -27,16 +30,16 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
 
     public function addInitiative(Initiative $initiative, StrategyMap $strategyMap) {
         $initiatives = $this->daoSource->listInitiatives($strategyMap);
-        
+
         $found = false;
-        foreach($initiatives as $data){
-            if($data->title == $initiative->title){
+        foreach ($initiatives as $data) {
+            if ($data->title == $initiative->title) {
                 $found = true;
                 break;
             }
         }
-        
-        if($found){
+
+        if ($found) {
             throw new ServiceException("Initiative already defined. Please use the update facility instead");
         }
         $initiative->id = $this->daoSource->insertInitiative($initiative, $strategyMap);
@@ -48,6 +51,24 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
 
     public function getInitiative($id) {
         return $this->daoSource->getInitiative($id);
+    }
+
+    public function updateInitiative(Initiative $initiative) {
+        $strategyMap = $this->mapDaoSource->getStrategyMapByInitiative($initiative);
+        $initiatives = $this->daoSource->listInitiatives($strategyMap);
+
+        $found = false;
+        foreach ($initiatives as $data) {
+            if ($data->id != $initiative->id && $data->title == $initiative->title) {
+                $found = true;
+                break;
+            }
+        }
+
+        if ($found) {
+            throw new ServiceException("Initiative not updated. Invalid argument data");
+        }
+        $this->daoSource->updateInitiative($initiative);
     }
 
 }

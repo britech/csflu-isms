@@ -151,4 +151,28 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
         }
     }
 
+    public function updateInitiative(Initiative $initiative) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('UPDATE ini_main SET ini_name=:name, ini_desc=:description, ini_benf=:beneficiaries, period_start_date=:start, period_end_date=:end, eo_num=:eoNumber, ini_advisers=:advisers, ini_stat=:status WHERE ini_id=:id');
+            $dbst->execute(array(
+                'name' => $initiative->title,
+                'description' => $initiative->description,
+                'beneficiaries' => $initiative->beneficiaries,
+                'start' => $initiative->startingPeriod->format('Y-m-d'),
+                'end' => $initiative->endingPeriod->format('Y-m-d'),
+                'eoNumber' => $initiative->eoNumber,
+                'advisers' => $initiative->advisers,
+                'status' => $initiative->initiativeEnvironmentStatus,
+                'id' => $initiative->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

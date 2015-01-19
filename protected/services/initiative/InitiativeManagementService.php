@@ -34,4 +34,11 @@ interface InitiativeManagementService {
      * @return Initiative
      */
     public function getInitiative($id);
+    
+    /**
+     * Updates the Initiative entity
+     * @param Initiative $initiative
+     * @throws ServiceException
+     */
+    public function updateInitiative(Initiative $initiative);
 }

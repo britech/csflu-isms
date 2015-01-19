@@ -50,4 +50,10 @@ interface InitiativeDao {
      * @throws DataAccessException
      */
     public function getInitiative($id);
+    
+    /**
+     * @param Initiative $initiative
+     * @throws DataAccessException
+     */
+    public function updateInitiative(Initiative $initiative);
 }
