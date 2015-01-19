@@ -157,4 +157,42 @@ $(document).ready(function() {
             $("#offices").val(input.join("/"));
         });
     }
+
+    $(".ink-form").submit(function() {
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=initiative/validateInitiativeInput",
+            data: {
+                "Initiative": {
+                    'title': $("[name*=title]").val(),
+                    'description': $("[name*=description]").val(),
+                    'beneficiaries': $("[name*=beneficiaries]").val(),
+                    'validationMode': $("[name*=validationMode]").val()
+                },
+                "Objective": {
+                    "id": $("#objectives").val()
+                },
+                "MeasureProfile": {
+                    "id": $("#measures").val()
+                },
+                "Department": {
+                    "id": $("#offices").val()
+                },
+                "mode": $("[name*=validationMode]").val()
+            },
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result;
+    });
 });
