@@ -225,8 +225,28 @@ class InitiativeController extends Controller {
         $this->remoteValidateModel($initiative);
     }
 
-    private function loadMapModel($id) {
-        $map = $this->mapService->getStrategyMap($id);
+    public function manage($id) {
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Initiative';
+
+        $this->layout = 'column-2';
+        $this->render('initiative/manage', array(
+            'sidebar' => array(
+                'data' => array(
+                    'header' => 'Actions',
+                    'links' => array(
+                        'Update Entry Data' => array('initiative/update', 'id' => $id),
+                        'Manage Implementing Offices' => array('initiative/manageOffices', 'id' => $id),
+                        'Manage Strategy Alignments' => array('initiative/manageAlignments', 'id' => $id),
+                        'Manage Activities' => array('initiative/manageActivities', 'id' => $id)
+                    )
+                )
+            )
+        ));
+    }
+
+    private function loadMapModel($id = null, Initiative $initiative = null) {
+        $map = $this->mapService->getStrategyMap($id, null, null, null, $initiative);
         if (is_null($map->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Strategy Map not found'));
             $this->redirect(array('map/index'));
