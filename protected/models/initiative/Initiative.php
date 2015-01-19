@@ -15,6 +15,7 @@ use org\csflu\isms\models\commons\Department;
  * @property String $id
  * @property String $title
  * @property String $description
+ * @property String $beneficiaries
  * @property \DateTime $startingPeriod
  * @property \DateTime $endingPeriod
  * @property String $eoNumber
