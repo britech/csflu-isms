@@ -25,6 +25,40 @@ $(document).ready(function() {
         filterMode: 'simple',
         sortable: true,
         selectionMode: 'singleRow'
+    }).on("rowClick", function() {
+        $("[id^=remove]").click(function() {
+            var text = $(this).parent().siblings("td").html();
+            $("#text").html("Do you want to delete this Implementing Office? Continuing will remove the Implementing Office, <strong>" + text + "</strong>, from the Initiative");
+            $("#delete-implem").jqxWindow('open');
+            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+        });
+    });
+
+    $('#delete-implem').jqxWindow({
+        title: '<strong>Confirm Implementing Office Deletion</strong>',
+        width: 300,
+        height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+    });
+
+    $("#deny").click(function() {
+        $("#implem-list").jqxDataTable('updateBoundData');
+    });
+    
+    $("[id^=accept]").click(function() {
+        var id = $(this).attr('id').split('-')[1];
+//        $.post("?r=measure/deleteLeadOffice",
+//                {id: id},
+//        function(data) {
+//            var response = $.parseJSON(data);
+//            window.location = response.url;
+//        });
     });
 
     $("#offices-input").jqxComboBox({
