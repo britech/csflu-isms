@@ -254,12 +254,43 @@ class InitiativeController extends Controller {
         ));
     }
 
+    public function update($id = null) {
+        if (is_null($id)) {
+            
+        }
+        $initiative = $this->loadModel($id);
+        $strategyMap = $this->loadMapModel(null, $initiative);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Update Initiative';
+
+        $initiative->startingPeriod = $initiative->startingPeriod->format('Y-m-d');
+        $initiative->endingPeriod = $initiative->endingPeriod->format('Y-m-d');
+        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
+
+        $this->render('initiative/profile', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
+                'Update Initiative' => 'active'
+            ),
+            'model' => $initiative,
+            'mapModel' => $strategyMap,
+            'statusTypes' => Initiative::getEnvironmentStatusTypes(),
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+    }
+
     private function loadModel($id) {
         $initiative = $this->initiativeService->getInitiative($id);
         if (is_null($initiative->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Initiative not found'));
             $this->redirect(array('map/index'));
         }
+        $initiative->validationMode = Model::VALIDATION_MODE_UPDATE;
         return $initiative;
     }
 

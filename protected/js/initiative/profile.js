@@ -22,7 +22,7 @@ $(document).ready(function() {
         enableBrowserBoundsDetection: true,
         animationType: 'none'
     }).on('change', function() {
-        var dates = $("#periods").jqxDateTimeInput('getRange');
+        var dates = $("#timeline-input").jqxDateTimeInput('getRange');
 
         var startingDate = dates.from;
         var endingDate = dates.to;

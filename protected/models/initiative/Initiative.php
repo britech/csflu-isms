@@ -152,6 +152,10 @@ class Initiative extends Model {
         . "EO Number:\t{$this->eoNumber}\n"
         . "Advisers:\t{$this->advisers}";
     }
+    
+    public function isNew() {
+        return empty($this->id);
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;
