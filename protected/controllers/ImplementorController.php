@@ -4,6 +4,7 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\models\commons\Department;
@@ -46,6 +47,23 @@ class ImplementorController extends Controller {
             'departmentModel' => new Department(),
             'initiativeModel' => $data
         ));
+    }
+
+    public function listOffices() {
+        $this->validatePostData(array('initiative'));
+
+        $id = $this->getFormData('initiative');
+        $initiative = $this->loadModel($id);
+
+        $data = array();
+        foreach ($initiative->implementingOffices as $implementingOffice) {
+            array_push($data, array(
+                'id' => $implementingOffice->id,
+                'office' => $implementingOffice->department->name,
+                'action' => ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$implementingOffice->id}"))
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     private function loadModel($id) {

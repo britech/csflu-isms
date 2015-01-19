@@ -10,6 +10,7 @@ $form = new Form(array(
     'hasFieldset' => true
         ));
 ?>
+<script src="protected/js/initiative/implem-offices.js" type="text/javascript"></script>
 <div class="column-group quarter-gutters">
     <div class="all-50">
         <?php echo $form->startComponent(); ?>
