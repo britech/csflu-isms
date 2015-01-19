@@ -140,6 +140,18 @@ class Initiative extends Model {
             'initiativeEnvironmentStatus' => 'Status'
         );
     }
+    
+    public function getModelTranslationAsNewEntity() {
+        return "[Initiative added]\n\n"
+        . "Title:\t{$this->title}\n"
+        . "Description:\t{$this->description}\n"
+        . "Beneficiaries:\t{$this->beneficiaries}\n"
+        . "Starting Period:\t{$this->startingPeriod->format('F-Y')}\n"
+        . "Ending Period:\t{$this->endingPeriod->format('F-Y')}\n"
+        . "Status:\t{$this->getEnvironmentStatusTypes()[$this->initiativeEnvironmentStatus]}\n"
+        . "EO Number:\t{$this->eoNumber}\n"
+        . "Advisers:\t{$this->advisers}";
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;

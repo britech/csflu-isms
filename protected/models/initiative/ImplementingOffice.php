@@ -41,6 +41,12 @@ class ImplementingOffice extends Model {
             'designation' => 'Designation'
         );
     }
+    
+    public function getModelTranslationAsNewEntity() {
+        return "[ImplementingOffice added]\n\n"
+        . "Department:\t{$this->department->name}\n"
+        . "Designation:\t{$this->getDesignationTypes()[$this->designation]}";
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;
