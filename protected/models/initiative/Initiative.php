@@ -82,6 +82,7 @@ class Initiative extends Model {
                 array_push($this->validationMessages, "- {$this->getAttributeNames()['implementingOffices']} should be defined");
             }
         }
+        return count($this->validationMessages) == 0;
     }
 
     public function bindValuesUsingArray(array $valueArray) {
