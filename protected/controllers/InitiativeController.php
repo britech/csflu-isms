@@ -13,6 +13,8 @@ use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
+use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
+use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl as DepartmentService;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl as InitiativeManagementService;
 
 /**
@@ -24,12 +26,16 @@ class InitiativeController extends Controller {
 
     private $logger;
     private $mapService;
+    private $scorecardService;
+    private $departmentService;
     private $initiativeService;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->mapService = new StrategyMapManagementService();
+        $this->scorecardService = new ScorecardManagementService();
+        $this->departmentService = new DepartmentService();
         $this->initiativeService = new InitiativeManagementService();
     }
 
@@ -126,6 +132,44 @@ class InitiativeController extends Controller {
             $this->setSessionData('validation', $initiative->validationMessages);
             $this->redirect(array('initiative/create', 'map' => $strategyMap->id));
         }
+
+        $purifiedInitiative = $this->purifyInitiativeInput($initiative);
+        $this->logger->debug($purifiedInitiative);
+    }
+
+    private function purifyInitiativeInput(Initiative $initiative) {
+        //purify objectives
+        if (count($initiative->objectives) > 0) {
+            $objectives = array();
+            foreach ($initiative->objectives as $data) {
+                array_push($objectives, $this->mapService->getObjective($data->id));
+            }
+            $initiative->objectives = $objectives;
+        }
+
+        //purify leadMeasures
+        if (count($initiative->leadMeasures) > 0) {
+            $leadMeasures = array();
+            foreach ($initiative->leadMeasures as $data) {
+                array_push($leadMeasures, $this->scorecardService->getMeasureProfile($data->id));
+            }
+            $initiative->leadMeasures = $leadMeasures;
+        }
+        
+        //purify implementingOffices
+        if(count($initiative->implementingOffices) > 0){
+            $implementingOffices = array();
+            foreach($initiative->implementingOffices as $data){
+                $data->department = $this->departmentService->getDepartmentDetail(array('id'=>$data->department->id));
+                array_push($implementingOffices, $data);
+            }
+            $initiative->implementingOffices = $implementingOffices;
+        }
+        return $initiative;
+    }
+    
+    private function logInitiative(){
+        
     }
 
     public function validateInitiativeInput() {
@@ -133,7 +177,7 @@ class InitiativeController extends Controller {
         try {
             $this->validatePostData(array('mode'));
             $mode = $this->getFormData('mode');
-            
+
             if ($mode == Model::VALIDATION_MODE_INITIAL) {
                 $this->validatePostData(array('Initiative', 'Objective', 'MeasureProfile', 'Department'));
                 $initiativeData = $this->getFormData('Initiative');
