@@ -47,6 +47,12 @@ class ImplementingOffice extends Model {
         . "Department:\t{$this->department->name}\n"
         . "Designation:\t{$this->getDesignationTypes()[$this->designation]}";
     }
+    
+    public function getModelTranslationAsDeletedEntity() {
+        return "[ImplementingOffice deleted]\n\n"
+        . "Department:\t{$this->department->name}\n"
+        . "Designation:\t{$this->getDesignationTypes()[$this->designation]}";
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;
@@ -54,6 +60,13 @@ class ImplementingOffice extends Model {
 
     public function __get($name) {
         return $this->$name;
+    }
+    
+    public function __clone() {
+        $implementingOffice = new ImplementingOffice();
+        $implementingOffice->id = $this->id;
+        $implementingOffice->department = $this->department;
+        $implementingOffice->designation = $this->designation;
     }
 
 }
