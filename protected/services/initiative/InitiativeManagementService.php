@@ -44,9 +44,25 @@ interface InitiativeManagementService {
     public function updateInitiative(Initiative $initiative);
     
     /**
+     * Adds implementing offices in a given initiative 
+     * and returns the implementing offices that are to be added
      * @param Initiative $initiative
      * @return ImplementingOffice[]
      * @throws ServiceException
      */
     public function addImplementingOffices(Initiative $initiative);
+    
+    /**
+     * Retrieves the ImplementingOffice entity
+     * @param Initiative $initiative
+     * @param String $id
+     * @return ImplementingOffice
+     */
+    public function getImplementingOffice(Initiative $initiative, $id);
+    
+    /**
+     * Deletes the ImplementingOffice
+     * @param ImplementingOffice $implementingOffice
+     */
+    public function deleteImplementingOffice(ImplementingOffice $implementingOffice);
 }

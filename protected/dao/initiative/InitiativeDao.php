@@ -46,6 +46,12 @@ interface InitiativeDao {
     public function addImplementingOffices(Initiative $initiative);
     
     /**
+     * @param ImplementingOffice $implementingOffice
+     * @throws DataAccessException
+     */
+    public function deleteImplementingOffice(ImplementingOffice $implementingOffice);
+    
+    /**
      * @param Initiative $initiative
      * @return ImplementingOffice[]
      * @throws DataAccessException

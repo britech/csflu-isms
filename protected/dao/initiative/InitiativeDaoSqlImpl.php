@@ -200,4 +200,18 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
         }
     }
 
+    public function deleteImplementingOffice(ImplementingOffice $implementingOffice) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('DELETE FROM ini_teams WHERE team_id=:id');
+            $dbst->execute(array('id' => $implementingOffice->id));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

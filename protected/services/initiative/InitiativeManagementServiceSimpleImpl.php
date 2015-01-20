@@ -4,6 +4,7 @@ namespace org\csflu\isms\service\initiative;
 
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\initiative\Initiative;
+use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\initiative\InitiativeManagementService;
 use org\csflu\isms\dao\initiative\InitiativeDaoSqlImpl as InitiativeDao;
@@ -93,6 +94,20 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $initiative->implementingOffices = $implementingOfficesToInsert;
         $this->daoSource->addImplementingOffices($initiative);
         return $implementingOfficesToInsert;
+    }
+
+    public function deleteImplementingOffice(ImplementingOffice $implementingOffice) {
+        $this->daoSource->deleteImplementingOffice($implementingOffice);
+    }
+
+    public function getImplementingOffice(Initiative $initiative, $id) {
+        $implementingOffices = $this->daoSource->listImplementingOffices($initiative);
+        
+        foreach ($implementingOffices as $implementingOffice) {
+            if($implementingOffice->id ==  $id){
+                return $implementingOffice;
+            }
+        }
     }
 
 }
