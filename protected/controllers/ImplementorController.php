@@ -121,10 +121,16 @@ class ImplementorController extends Controller {
         if (is_null($initiative->id)) {
             $this->setSessionData('notif', array('message' => 'Initiative not found'));
             $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
-        } else {
-            $this->setSessionData('notif', array('message' => 'Implementing Office unlinked in the Initiative'));
-            $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('implementor/index', 'initiative' => $initiative->id))));
+            return;
         }
+        $implementingOfficeToLog = $this->initiativeService->getImplementingOffice($initiative, $id);
+        $implementingOfficeToDelete = clone $implementingOfficeToLog;
+
+        $this->initiativeService->deleteImplementingOffice($implementingOfficeToDelete);
+        $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_INITIATIVE, $initiative->id, $implementingOfficeToLog);
+        
+        $this->setSessionData('notif', array('message' => 'Implementing Office unlinked in the Initiative'));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('implementor/index', 'initiative' => $initiative->id))));
     }
 
     private function purifyInput(Initiative $initiative) {
