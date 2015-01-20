@@ -53,8 +53,10 @@ $(document).ready(function() {
     
     $("[id^=accept]").click(function() {
         var id = $(this).attr('id').split('-')[1];
+        var initiative = $("#initiative").val();
         $.post("?r=implementor/unlink",
-                {id: id},
+                {id: id, 
+                 initiative: initiative},
         function(data) {
             var response = $.parseJSON(data);
             window.location = response.url;

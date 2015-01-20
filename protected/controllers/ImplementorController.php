@@ -108,20 +108,22 @@ class ImplementorController extends Controller {
 
     public function unlink() {
         try {
-            $this->validatePostData(array('id'));
+            $this->validatePostData(array('id', 'initiative'));
         } catch (ControllerException $ex) {
             $this->setSessionData('notif', array('message' => $ex->getMessage(), 'class' => 'error'));
-            $this->renderAjaxJsonResponse(array('url' => array('map/index')));
+            $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
+            return;
         }
 
         $id = $this->getFormData('id');
-        //$initiative = $this->initiativeService->getInitiative($id);
+        $initiativeId = $this->getFormData('initiative');
+        $initiative = $this->initiativeService->getInitiative($initiativeId);
         if (is_null($initiative->id)) {
             $this->setSessionData('notif', array('message' => 'Initiative not found'));
-            //$this->renderAjaxJsonResponse(array('url' => array('map/index')));
+            $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
         } else {
             $this->setSessionData('notif', array('message' => 'Implementing Office unlinked in the Initiative'));
-            //$this->renderAjaxJsonResponse(array('url' => array('implementor/index', 'initiative' => $initiative->id)));
+            $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('implementor/index', 'initiative' => $initiative->id))));
         }
     }
 
