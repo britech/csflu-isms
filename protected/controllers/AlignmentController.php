@@ -53,6 +53,27 @@ class AlignmentController extends Controller {
         $this->unsetSessionData('validation');
     }
 
+    public function insertInitiativeAlignment() {
+        $this->validatePostData(array('Objective', 'MeasureProfile', 'Initiative'));
+
+        $objectiveData = $this->getFormData('Objective');
+        $measureData = $this->getFormData('MeasureProfile');
+        $initiativeData = $this->getFormData('Initiative');
+
+        $initiative = new Initiative();
+        $initiative->bindValuesUsingArray(array(
+            'objectives' => $objectiveData,
+            'leadMeasures' => $measureData,
+            'initiative' => $initiativeData
+        ));
+
+        if (count($initiative->objectives) == 0 && count($initiative->leadMeasures) == 0) {
+            $this->setSessionData('validation', array("An Objective or Measure should be selected"));
+        }
+        $this->setSessionData('notif', array('class' => 'success', 'message' => 'Alignment added'));
+        $this->redirect(array('alignment/manageInitiative', 'id' => $initiative->id));
+    }
+
     private function loadMapModel(Initiative $initiative) {
         $map = $this->mapService->getStrategyMap(null, null, null, null, $initiative);
         if (is_null($map->id)) {
