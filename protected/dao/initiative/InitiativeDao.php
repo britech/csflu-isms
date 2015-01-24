@@ -3,6 +3,8 @@
 namespace org\csflu\isms\dao\initiative;
 
 use org\csflu\isms\models\map\StrategyMap;
+use org\csflu\isms\models\map\Objective;
+use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\exceptions\DataAccessException;
@@ -29,9 +31,23 @@ interface InitiativeDao {
     
     /**
      * @param Initiative $initiative
+     * @return Objective[]
+     * @throws DataAccessException
+     */
+    public function listObjectives(Initiative $initiative);
+    
+    /**
+     * @param Initiative $initiative
      * @throws DataAccessException
      */
     public function linkObjectives(Initiative $initiative);
+    
+    /**
+     * @param Initiative $initiative
+     * @return MeasureProfile[]
+     * @throws DataAccessException
+     */
+    public function listLeadMeasures(Initiative $initiative);
     
     /**
      * @param Initiative $initiative

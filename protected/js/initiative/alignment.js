@@ -65,17 +65,94 @@ $(document).ready(function() {
         });
         $("#measures").val(input.join("/"));
     });
-    
+
     $("#validation-container").hide();
-    $(".ink-form").submit(function(){
+    $(".ink-form").submit(function() {
         var objectives = $("#objectives").val();
         var measures = $("#measures").val();
-        
-        if(objectives === '' && measures === ''){
+
+        if (objectives === '' && measures === '') {
             $("#validation-container").show();
             $("#validation-header").html("Validation error. Please check your entries");
             $("#validation-content").html("An Objective or Measure should be selected");
             return false;
         }
+    });
+
+    $("#alignment-list").jqxNavigationBar({
+        expandMode: 'multiple',
+        expandedIndexes: [0, 1],
+        animationType: 'none',
+        theme: 'office'
+    });
+
+    $("#objectives-list").jqxDataTable({
+        source: new $.jqx.dataAdapter({
+            datatype: 'json',
+            datafields: [
+                {name: 'objective'},
+                {name: 'action'}
+            ],
+            url: '?r=alignment/listInitiativeObjectivesAlignment',
+            type: 'POST',
+            data: {
+                initiative: $("#initiative").val()
+            }
+        }),
+        columnsresize: false,
+        theme: 'office',
+        columns: [
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Objective</span>', dataField: 'objective', width: '90%'},
+            {text: '', dataField: 'action', width: '10%', cellsAlign: 'center'}
+        ],
+        width: '100%',
+        pageable: true,
+        pageSize: 25,
+        filterable: true,
+        filterMode: 'simple',
+        sortable: true,
+        selectionMode: 'singleRow'
+    }).on("rowClick", function() {
+//        $("[id^=remove]").click(function() {
+//            var text = $(this).parent().siblings("td").html();
+//            $("#text").html("Do you want to delete this Implementing Office? Continuing will remove the Implementing Office, <strong>" + text + "</strong>, from the Initiative");
+//            $("#delete-implem").jqxWindow('open');
+//            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+//        });
+    });
+    
+    $("#measures-list").jqxDataTable({
+        source: new $.jqx.dataAdapter({
+            datatype: 'json',
+            datafields: [
+                {name: 'indicator'},
+                {name: 'action'}
+            ],
+            url: '?r=alignment/listInitiativeIndicatorsAlignment',
+            type: 'POST',
+            data: {
+                initiative: $("#initiative").val()
+            }
+        }),
+        columnsresize: false,
+        theme: 'office',
+        columns: [
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Indicator</span>', dataField: 'indicator', width: '90%'},
+            {text: '', dataField: 'action', width: '10%', cellsAlign: 'center'}
+        ],
+        width: '100%',
+        pageable: true,
+        pageSize: 25,
+        filterable: true,
+        filterMode: 'simple',
+        sortable: true,
+        selectionMode: 'singleRow'
+    }).on("rowClick", function() {
+//        $("[id^=remove]").click(function() {
+//            var text = $(this).parent().siblings("td").html();
+//            $("#text").html("Do you want to delete this Implementing Office? Continuing will remove the Implementing Office, <strong>" + text + "</strong>, from the Initiative");
+//            $("#delete-implem").jqxWindow('open');
+//            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+//        });
     });
 });

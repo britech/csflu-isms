@@ -4,6 +4,7 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
@@ -72,6 +73,36 @@ class AlignmentController extends Controller {
         }
         $this->setSessionData('notif', array('class' => 'success', 'message' => 'Alignment added'));
         $this->redirect(array('alignment/manageInitiative', 'id' => $initiative->id));
+    }
+
+    public function listInitiativeObjectivesAlignment() {
+        $this->validatePostData(array('initiative'));
+        $id = $this->getFormData('initiative');
+
+        $initiative = $this->loadInitiativeModel($id);
+        $data = array();
+        foreach ($initiative->objectives as $objective) {
+            array_push($data, array(
+                'objective' => $objective->description,
+                'action' => ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$objective->id}"))
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
+    }
+    
+    public function listInitiativeIndicatorsAlignment() {
+        $this->validatePostData(array('initiative'));
+        $id = $this->getFormData('initiative');
+
+        $initiative = $this->loadInitiativeModel($id);
+        $data = array();
+        foreach ($initiative->leadMeasures as $leadMeasure) {
+            array_push($data, array(
+                'indicator' => $leadMeasure->indicator->description,
+                'action' => ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$leadMeasure->id}"))
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     private function loadMapModel(Initiative $initiative) {

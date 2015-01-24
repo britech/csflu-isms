@@ -9,6 +9,8 @@ use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\initiative\InitiativeDao;
 use org\csflu\isms\dao\commons\DepartmentDaoSqlImpl;
+use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl;
+use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl;
 
 /**
  * Description of InitiativeDaoSqlImpl
@@ -19,10 +21,14 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
 
     private $db;
     private $departmentDaoSource;
+    private $objectiveDaoSource;
+    private $measureProfileDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
         $this->departmentDaoSource = new DepartmentDaoSqlImpl();
+        $this->objectiveDaoSource = new ObjectiveDaoSqlImpl();
+        $this->measureProfileDaoSource = new MeasureProfileDaoSqlImpl();
     }
 
     public function listInitiatives(StrategyMap $strategyMap) {
@@ -149,6 +155,8 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
             $initiative->startingPeriod = \DateTime::createFromFormat('Y-m-d', $start);
             $initiative->endingPeriod = \DateTime::createFromFormat('Y-m-d', $end);
             $initiative->implementingOffices = $this->listImplementingOffices($initiative);
+            $initiative->objectives = $this->listObjectives($initiative);
+            $initiative->leadMeasures = $this->listLeadMeasures($initiative);
 
             return $initiative;
         } catch (\PDOException $ex) {
@@ -210,6 +218,38 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function listObjectives(Initiative $initiative) {
+        try {
+            $dbst = $this->db->prepare('SELECT obj_ref FROM ini_objective_mapping WHERE ini_ref=:ref');
+            $dbst->execute(array('ref' => $initiative->id));
+
+            $objectives = array();
+            while ($data = $dbst->fetch()) {
+                list($objective) = $data;
+                array_push($objectives, $this->objectiveDaoSource->getObjective($objective));
+            }
+            return $objectives;
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function listLeadMeasures(Initiative $initiative) {
+        try {
+            $dbst = $this->db->prepare('SELECT mp_ref FROM ini_indicator_mapping WHERE ini_ref=:ref');
+            $dbst->execute(array('ref' => $initiative->id));
+
+            $leadMeasures = array();
+            while ($data = $dbst->fetch()) {
+                list($leadMeasure) = $data;
+                array_push($leadMeasures, $this->measureProfileDaoSource->getMeasureProfile($leadMeasure));
+            }
+            return $leadMeasures;
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }

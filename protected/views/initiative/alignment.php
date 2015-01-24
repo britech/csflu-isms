@@ -46,7 +46,17 @@ $form = new Form(array(
         <?php echo $form->endComponent(); ?>
     </div>
     <div class="all-50">
-
+        <div id="alignment-list">
+            <div style="font-weight: bold;">Objectives</div>
+            <div>
+                <div id="objectives-list"></div>
+            </div>
+            
+            <div style="font-weight: bold;">Lead Measures</div>
+            <div>
+                <div id="measures-list"></div>
+            </div>
+        </div>
     </div>
 </div>
 
