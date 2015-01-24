@@ -14,7 +14,7 @@ $form = new Form(array(
 <div class="column-group quarter-gutters">
     <div class="all-50">
         <?php echo $form->startComponent(); ?>
-        <?php echo $form->constructHeader('Link Objectives/Lead Measures'); ?>
+        <?php echo $form->constructHeader('Link Objectives/Lead Measures', array('style'=>'margin-bottom: 10px;')); ?>
         <div class="ink-alert block" id="validation-container">
             <h4 id="validation-header"></h4>
             <p id="validation-content"></p>

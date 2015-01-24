@@ -65,4 +65,17 @@ $(document).ready(function() {
         });
         $("#measures").val(input.join("/"));
     });
+    
+    $("#validation-container").hide();
+    $(".ink-form").submit(function(){
+        var objectives = $("#objectives").val();
+        var measures = $("#measures").val();
+        
+        if(objectives === '' && measures === ''){
+            $("#validation-container").show();
+            $("#validation-header").html("Validation error. Please check your entries");
+            $("#validation-content").html("An Objective or Measure should be selected");
+            return false;
+        }
+    });
 });
