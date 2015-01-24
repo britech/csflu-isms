@@ -110,4 +110,5 @@ require_once 'services/map/StrategyMapManagementServiceSimpleImpl.php';
 require_once 'services/initiative/InitiativeManagementServiceSimpleImpl.php';
 
 session_start();
+session_regenerate_id(true);
 ob_start();
