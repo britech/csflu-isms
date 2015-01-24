@@ -5,6 +5,9 @@ namespace org\csflu\isms\controllers;
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
+use org\csflu\isms\exceptions\ServiceException;
+use org\csflu\isms\models\commons\RevisionHistory;
+use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
@@ -71,7 +74,18 @@ class AlignmentController extends Controller {
         if (count($initiative->objectives) == 0 && count($initiative->leadMeasures) == 0) {
             $this->setSessionData('validation', array("An Objective or Measure should be selected"));
         }
-        $this->setSessionData('notif', array('class' => 'success', 'message' => 'Alignment added'));
+        try {
+            $updatedInitiative = $this->initiativeService->addAlignments($initiative);
+            foreach ($updatedInitiative->objectives as $objective) {
+                $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $updatedInitiative->id, "[Objective linked]\n\nObjective:\t{$objective->description}");
+            }
+            foreach ($updatedInitiative->leadMeasures as $leadMeasure) {
+                $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $updatedInitiative->id, "[LeadMeasure linked]\n\nIndicator:\t{$leadMeasure->indicator->description}");
+            }
+            $this->setSessionData('notif', array('class' => 'success', 'message' => 'Alignment added'));
+        } catch (ServiceException $ex) {
+            $this->setSessionData('validation', array($ex->getMessage()));
+        }
         $this->redirect(array('alignment/manageInitiative', 'id' => $initiative->id));
     }
 
@@ -89,7 +103,7 @@ class AlignmentController extends Controller {
         }
         $this->renderAjaxJsonResponse($data);
     }
-    
+
     public function listInitiativeIndicatorsAlignment() {
         $this->validatePostData(array('initiative'));
         $id = $this->getFormData('initiative');

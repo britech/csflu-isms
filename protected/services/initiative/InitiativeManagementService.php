@@ -3,6 +3,7 @@
 namespace org\csflu\isms\service\initiative;
 
 use org\csflu\isms\models\map\StrategyMap;
+use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\exceptions\ServiceException;
@@ -65,4 +66,12 @@ interface InitiativeManagementService {
      * @param ImplementingOffice $implementingOffice
      */
     public function deleteImplementingOffice(ImplementingOffice $implementingOffice);
+    
+    /**
+     * Adds the linked objectives/lead measures in a given Initiative entity
+     * @param Initiative $initiative
+     * @return Initiative
+     * @throws ServiceException
+     */
+    public function addAlignments(Initiative $initiative);
 }
