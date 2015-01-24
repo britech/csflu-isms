@@ -10,6 +10,7 @@ $form = new Form(array(
     'hasFieldset' => true
         ));
 ?>
+<script type="text/javascript" src="protected/js/initiative/alignment.js"></script>
 <div class="column-group quarter-gutters">
     <div class="all-50">
         <?php echo $form->startComponent(); ?>
@@ -34,10 +35,11 @@ $form = new Form(array(
             <?php echo $form->renderLabel($initiativeModel, 'leadMeasures'); ?>
             <div class="control">
                 <div id="measures-input"></div>
-                <?php echo $form->renderHiddenField($measureModel, 'id', array('id' => 'leadMeasures')); ?>
+                <?php echo $form->renderHiddenField($measureModel, 'id', array('id' => 'measures')); ?>
                 <?php echo $form->renderHiddenField($objectiveModel, 'id', array('id' => 'objectives')); ?>
                 <?php echo $form->renderHiddenField($initiativeModel, 'id', array('id' => 'initiative')); ?>
-                <?php echo $form->renderSubmitButton('Link', array('class'=>'ink-button green flat', 'style'=>'margin-top: 1em; margin-left: 0px;'))?>
+                <?php echo $form->renderHiddenField($mapModel, 'id', array('id' => 'map')); ?>
+                <?php echo $form->renderSubmitButton('Link', array('class' => 'ink-button green flat', 'style' => 'margin-top: 1em; margin-left: 0px;')) ?>
             </div>
         </div>
 

@@ -45,6 +45,7 @@ class AlignmentController extends Controller {
             'measureModel' => new MeasureProfile(),
             'objectiveModel' => new Objective(),
             'initiativeModel' => $initiative,
+            'mapModel' => $strategyMap,
             'notif' => $this->getSessionData('notif'),
             'validation' => $this->getSessionData('validation')
         ));
