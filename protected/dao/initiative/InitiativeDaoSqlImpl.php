@@ -5,6 +5,7 @@ namespace org\csflu\isms\dao\initiative;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Objective;
+use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\exceptions\DataAccessException;
@@ -263,6 +264,23 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
             $dbst->execute(array(
                 'initiative' => $initiative->id,
                 'objective' => $objective->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function unlinkLeadMeasure(Initiative $initiative, MeasureProfile $measureProfile) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('DELETE FROM ini_indicator_mapping WHERE ini_ref=:initiative AND mp_ref=:measure');
+            $dbst->execute(array(
+                'initiative' => $initiative->id,
+                'measure' => $measureProfile->id
             ));
 
             $this->db->commit();

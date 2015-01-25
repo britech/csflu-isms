@@ -64,6 +64,13 @@ interface InitiativeDao {
     
     /**
      * @param Initiative $initiative
+     * @param MeasureProfile $measureProfile
+     * @throws DataAccessException
+     */
+    public function unlinkLeadMeasure(Initiative $initiative, MeasureProfile $measureProfile);
+    
+    /**
+     * @param Initiative $initiative
      * @throws DataAccessException
      */
     public function addImplementingOffices(Initiative $initiative);

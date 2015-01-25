@@ -181,9 +181,13 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         if ($checkpoint) {
             throw new ServiceException("An objective or measure profile should be defined.");
         }
-        
+
         if (!is_null($objective)) {
             $this->daoSource->unlinkObjective($initiative, $objective);
+        }
+
+        if (!is_null($measureProfile)) {
+            $this->daoSource->unlinkLeadMeasure($initiative, $measureProfile);
         }
     }
 

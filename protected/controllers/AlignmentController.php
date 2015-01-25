@@ -14,6 +14,7 @@ use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl as InitiativeManagementService;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
+use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
 
 /**
  * Description of AlignmentController
@@ -25,11 +26,13 @@ class AlignmentController extends Controller {
     private $logger;
     private $initiativeService;
     private $mapService;
+    private $scorecardService;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->initiativeService = new InitiativeManagementService();
         $this->mapService = new StrategyMapManagementService();
+        $this->scorecardService = new ScorecardManagementService();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -144,6 +147,31 @@ class AlignmentController extends Controller {
         
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('alignment/manageInitiative', 'id' => $initiativeId))));
     }
+    
+    public function unlinkLeadMeasure(){
+         try {
+            $this->validatePostData(array('initiative', 'measure'));
+        } catch (ControllerException $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+            $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
+            return;
+        }
+        $initiativeId = $this->getFormData('initiative');
+        $measureId = $this->getFormData('measure');
+        
+        $initiative = $this->loadInitiativeModel($initiativeId, true);
+        $measureProfile = $this->loadMeasureProfileModel($measureId, true);
+        
+        try {
+            $this->initiativeService->unlinkAlignments($initiative, null, $measureProfile);
+            $this->logCustomRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[LeadMeasure unlinked]\n\nIndicator:\t{$measureProfile->indicator->description}");
+            $this->setSessionData('notif', array('class' => 'error', 'message' => 'Lead Measure unlinked in the Initiative'));
+        } catch (ServiceException $ex) {
+            $this->setSessionData('validation', array($ex->getMessage()));
+        }
+        
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('alignment/manageInitiative', 'id' => $initiativeId))));
+    }
 
     private function loadMapModel(Initiative $initiative) {
         $map = $this->mapService->getStrategyMap(null, null, null, null, $initiative);
@@ -180,6 +208,20 @@ class AlignmentController extends Controller {
             }
         }
         return $objective;
+    }
+    
+    public function loadMeasureProfileModel($id, $remote = false){
+        $measureProfile = $this->scorecardService->getMeasureProfile($id);
+        if(is_null($measureProfile->id)){
+            $this->setSessionData('notif', array('message' => 'Linked Lead Measure not found'));
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
+                return;
+            } else {
+                $this->redirect(array('map/index'));
+            }
+        }
+        return $measureProfile;
     }
 
 }

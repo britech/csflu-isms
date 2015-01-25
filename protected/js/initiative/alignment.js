@@ -181,7 +181,7 @@ $(document).ready(function() {
             var text = $(this).parent().siblings("td").html();
             $("#text-measure").html("Do you want to unlink this Lead Measure? Continuing will remove the Lead Measure, <strong>" + text + "</strong>, from the Initiative");
             $("#delete-measure").jqxWindow('open');
-            //$("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+            $("#accept-measure").prop('id', "accept-measure-" + $(this).attr('id').split('-')[1]);
         });
     });
 
@@ -200,5 +200,17 @@ $(document).ready(function() {
     
     $("#deny-measure").click(function() {
         $("#measures-list").jqxDataTable('updateBoundData');
+    });
+    
+    $("[id^=accept-measure]").click(function() {
+        var id = $(this).attr('id').split('-')[2];
+        var initiative = $("#initiative").val();
+        $.post("?r=alignment/unlinkLeadMeasure",
+                {measure: id, 
+                 initiative: initiative},
+        function(data) {
+            var response = $.parseJSON(data);
+            window.location = response.url;
+        });
     });
 });
