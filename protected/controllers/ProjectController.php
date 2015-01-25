@@ -4,6 +4,8 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\core\Model;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\Phase;
@@ -51,6 +53,22 @@ class ProjectController extends Controller {
         ));
         $this->unsetSessionData('notif');
         $this->unsetSessionData('validation');
+    }
+
+    public function validatePhaseInput() {
+        try {
+            $this->validatePostData(array('Phase'));
+        } catch (ControllerException $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+        }
+
+        $phaseData = $this->getFormData('Phase');
+        $phase = new Phase();
+        $phase->bindValuesUsingArray(array(
+            'phase' => $phaseData
+        ));
+        $this->remoteValidateModel($phase);
     }
 
     private function loadInitiativeModel($id, $remote = false) {

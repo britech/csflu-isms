@@ -10,10 +10,6 @@ $form = new Form(array(
     'hasFieldset' => true
         ));
 ?>
-<link href="assets/flick/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
-<link href="assets/tag-editor/jquery.tag-editor.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="assets/jquery/jquery-ui-1.10.4.custom.js"></script>
-<script type="text/javascript" src="assets/tag-editor/jquery.tag-editor.js"></script>
 <script src="protected/js/initiative/phases.js" type="text/javascript"></script>
 <div class="column-group quarter-gutters">
     <div class="all-50">
@@ -22,6 +18,7 @@ $form = new Form(array(
         <div class="ink-alert basic info">
             <strong>Important Note:&nbsp;</strong>Fields with * are required.
         </div>
+        <div id="validation-container"></div>
         <?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
         <?php
         if (isset($params['validation']) && !empty($params['validation'])) {
@@ -37,19 +34,13 @@ $form = new Form(array(
         <div class="control-group">
             <?php echo $form->renderLabel($phase, 'title', array('required' => true)); ?>
             <div class="control">
-                <?php echo $form->renderTextField($phase, 'title'); ?>
+                <?php echo $form->renderTextArea($phase, 'title'); ?>
             </div>
         </div>
         <div class="control-group">
             <?php echo $form->renderLabel($phase, 'description', array('required' => true)); ?>
             <div class="control">
-                <?php echo $form->renderTextField($phase, 'description'); ?>
-            </div>
-        </div>
-        <div class="control-group">
-            <?php echo $form->renderLabel($phase, 'components', array('required' => true)); ?>
-            <div class="control">
-                <?php echo $form->renderTextArea($component, 'description', array('id' => 'components')); ?>
+                <?php echo $form->renderTextArea($phase, 'description'); ?>
             </div>
         </div>
         <?php echo $form->renderHiddenField($phase, 'validationMode');?>

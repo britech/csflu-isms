@@ -8,15 +8,34 @@ $(document).ready(function() {
         height: '35px',
         textAlign: 'left',
         width: '150px'
-    });
-
-    $("#phaseNumber-input").on('valuechanged', function(event) {
+    }).on("valuechanged", function(event) {
         $("[name*=phaseNumber]").val(event.args.value);
     });
-    
-    $("#components").tagEditor({
-        delimiter: '+;',
-        maxLength: -1,
-        forceLowercase: false
+
+    $(".ink-form").submit(function() {
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=project/validatePhaseInput",
+            data: {
+                "Phase": {
+                    'phaseNumber': $("[name*=phaseNumber]").val(),
+                    'title': $("[name*=title]").val(),
+                    'description': $("[name*=description]").val()
+                }
+            },
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result;
     });
 });
