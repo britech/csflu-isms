@@ -24,7 +24,7 @@ class Application {
     }
 
     public function runApplication() {
-        $this->logger->debug("[Client: " . filter_input(INPUT_SERVER, 'REMOTE_ADDR') . "]" . " Route Expression: " . filter_input(INPUT_GET, 'r'));
+        $this->logger->info("[Client: " . filter_input(INPUT_SERVER, 'REMOTE_ADDR') . "]" . " Route Expression: " . filter_input(INPUT_GET, 'r'));
         $request = filter_input(INPUT_GET, 'r');
         try {
             $this->resolveAndDispatchRequest($request);
