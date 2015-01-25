@@ -44,6 +44,13 @@ interface InitiativeDao {
     
     /**
      * @param Initiative $initiative
+     * @param Objective $objective
+     * @throws DataAccessException
+     */
+    public function unlinkObjective(Initiative $initiative, Objective $objective);
+    
+    /**
+     * @param Initiative $initiative
      * @return MeasureProfile[]
      * @throws DataAccessException
      */

@@ -4,6 +4,7 @@ namespace org\csflu\isms\service\initiative;
 
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Objective;
+use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\exceptions\ServiceException;
@@ -74,4 +75,13 @@ interface InitiativeManagementService {
      * @throws ServiceException
      */
     public function addAlignments(Initiative $initiative);
+    
+    /**
+     * Unlinks the selected objective/lead measure in given Initiative entity
+     * @param Initiative $initiative
+     * @param Objective $objective
+     * @param MeasureProfile $measureProfile
+     * @throws ServiceException
+     */
+    public function unlinkAlignments(Initiative $initiative, Objective $objective = null, MeasureProfile $measureProfile = null);
 }

@@ -3,6 +3,8 @@
 namespace org\csflu\isms\service\initiative;
 
 use org\csflu\isms\models\map\StrategyMap;
+use org\csflu\isms\models\map\Objective;
+use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\exceptions\ServiceException;
@@ -121,16 +123,16 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
     public function addAlignments(Initiative $initiative) {
         $initiative->objectives = $this->filterAlignedObjectives($initiative);
         $initiative->leadMeasures = $this->filterAlignedLeadMeasures($initiative);
-        
-        if(count($initiative->objectives) == 0 && count($initiative->leadMeasures) == 0){
+
+        if (count($initiative->objectives) == 0 && count($initiative->leadMeasures) == 0) {
             throw new ServiceException("No Strategy Alignments performed");
         }
-        
-        if(count($initiative->objectives) > 0){
+
+        if (count($initiative->objectives) > 0) {
             $this->daoSource->linkObjectives($initiative);
         }
-        
-        if(count($initiative->leadMeasures) > 0){
+
+        if (count($initiative->leadMeasures) > 0) {
             $this->daoSource->linkLeadMeasures($initiative);
         }
         return $initiative;
@@ -154,8 +156,8 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         }
         return $objectivesToLink;
     }
-    
-    private function filterAlignedLeadMeasures(Initiative $initiative){
+
+    private function filterAlignedLeadMeasures(Initiative $initiative) {
         $linkedMeasures = $this->daoSource->listLeadMeasures($initiative);
         $measuresToLink = array();
         foreach ($initiative->leadMeasures as $leadMeasure) {
@@ -172,6 +174,17 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
             }
         }
         return $measuresToLink;
+    }
+
+    public function unlinkAlignments(Initiative $initiative, Objective $objective = null, MeasureProfile $measureProfile = null) {
+        $checkpoint = is_null($objective) && is_null($measureProfile);
+        if ($checkpoint) {
+            throw new ServiceException("An objective or measure profile should be defined.");
+        }
+        
+        if (!is_null($objective)) {
+            $this->daoSource->unlinkObjective($initiative, $objective);
+        }
     }
 
 }

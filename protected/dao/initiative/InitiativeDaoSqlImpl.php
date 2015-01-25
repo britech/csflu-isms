@@ -4,6 +4,7 @@ namespace org\csflu\isms\dao\initiative;
 
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\models\map\StrategyMap;
+use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\exceptions\DataAccessException;
@@ -250,6 +251,23 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
             }
             return $leadMeasures;
         } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function unlinkObjective(Initiative $initiative, Objective $objective) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('DELETE FROM ini_objective_mapping WHERE ini_ref=:initiative AND obj_ref=:objective');
+            $dbst->execute(array(
+                'initiative' => $initiative->id,
+                'objective' => $objective->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }
