@@ -60,3 +60,23 @@ $form = new Form(array(
     </div>
 </div>
 
+<div id="delete-objective">
+    <div id="deleteObjectiveContent" style="overflow: hidden">
+        <p id="text-objective"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept-objective">Yes</button>
+            <button class="ink-button green flat" id="deny-objective">No</button>
+        </div>
+    </div>
+</div>
+
+<div id="delete-measure">
+    <div id="deleteMeasureContent" style="overflow: hidden">
+        <p id="text-measure"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept-measure">Yes</button>
+            <button class="ink-button green flat" id="deny-measure">No</button>
+        </div>
+    </div>
+</div>
+

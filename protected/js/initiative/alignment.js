@@ -113,14 +113,43 @@ $(document).ready(function() {
         sortable: true,
         selectionMode: 'singleRow'
     }).on("rowClick", function() {
-//        $("[id^=remove]").click(function() {
-//            var text = $(this).parent().siblings("td").html();
-//            $("#text").html("Do you want to delete this Implementing Office? Continuing will remove the Implementing Office, <strong>" + text + "</strong>, from the Initiative");
-//            $("#delete-implem").jqxWindow('open');
-//            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
-//        });
+        $("[id^=remove]").click(function() {
+            var text = $(this).parent().siblings("td").html();
+            $("#text-objective").html("Do you want unlink this objective Continuing will remove the Objective, <strong>" + text + "</strong>, from the Initiative");
+            $("#delete-objective").jqxWindow('open');
+            $("#accept-objective").prop('id', "accept-objective-" + $(this).attr('id').split('-')[1]);
+        });
+    });
+
+    $('#delete-objective').jqxWindow({
+        title: '<strong>Confirm Objective Unlinking</strong>',
+        width: 300,
+        height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny-objective")
+    });
+
+    $("#deny-objective").click(function() {
+        $("#objectives-list").jqxDataTable('updateBoundData');
     });
     
+    $("[id^=accept-objective]").click(function() {
+        var id = $(this).attr('id').split('-')[2];
+        var initiative = $("#initiative").val();
+        $.post("?r=alignment/unlinkObjective",
+                {objective: id, 
+                 initiative: initiative},
+        function(data) {
+            var response = $.parseJSON(data);
+            window.location = response.url;
+        });
+    });
+
     $("#measures-list").jqxDataTable({
         source: new $.jqx.dataAdapter({
             datatype: 'json',
@@ -148,11 +177,28 @@ $(document).ready(function() {
         sortable: true,
         selectionMode: 'singleRow'
     }).on("rowClick", function() {
-//        $("[id^=remove]").click(function() {
-//            var text = $(this).parent().siblings("td").html();
-//            $("#text").html("Do you want to delete this Implementing Office? Continuing will remove the Implementing Office, <strong>" + text + "</strong>, from the Initiative");
-//            $("#delete-implem").jqxWindow('open');
-//            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
-//        });
+        $("[id^=remove]").click(function() {
+            var text = $(this).parent().siblings("td").html();
+            $("#text-measure").html("Do you want to unlink this Lead Measure? Continuing will remove the Lead Measure, <strong>" + text + "</strong>, from the Initiative");
+            $("#delete-measure").jqxWindow('open');
+            //$("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+        });
+    });
+
+    $('#delete-measure').jqxWindow({
+        title: '<strong>Confirm Lead Measure Unlinking</strong>',
+        width: 300,
+        height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny-measure")
+    });
+    
+    $("#deny-measure").click(function() {
+        $("#measures-list").jqxDataTable('updateBoundData');
     });
 });

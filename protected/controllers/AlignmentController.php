@@ -6,6 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ServiceException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\initiative\Initiative;
@@ -119,6 +120,31 @@ class AlignmentController extends Controller {
         $this->renderAjaxJsonResponse($data);
     }
 
+    public function unlinkObjective() {
+        try {
+            $this->validatePostData(array('initiative', 'objective'));
+        } catch (ControllerException $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+            $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
+            return;
+        }
+        $initiativeId = $this->getFormData('initiative');
+        $objectiveId = $this->getFormData('objective');
+
+        $initiative = $this->loadInitiativeModel($initiativeId, true);
+        $objective = $this->loadObjectiveModel($objectiveId, true);
+
+        try {
+            $this->initiativeService->unlinkAlignments($initiative, $objective);
+            $this->logCustomRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[Objective unlinked]\n\nObjective:\t{$objective->description}");
+            $this->setSessionData('notif', array('class' => 'error', 'message' => 'Objective unlinked in the Initiative'));
+        } catch (ServiceException $ex) {
+            $this->setSessionData('validation', array($ex->getMessage()));
+        }
+        
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('alignment/manageInitiative', 'id' => $initiativeId))));
+    }
+
     private function loadMapModel(Initiative $initiative) {
         $map = $this->mapService->getStrategyMap(null, null, null, null, $initiative);
         if (is_null($map->id)) {
@@ -128,13 +154,32 @@ class AlignmentController extends Controller {
         return $map;
     }
 
-    private function loadInitiativeModel($id) {
+    private function loadInitiativeModel($id, $remote = false) {
         $initiative = $this->initiativeService->getInitiative($id);
         if (is_null($initiative->id)) {
             $this->setSessionData('notif', array('message' => 'Initiative not found'));
-            $this->redirect(array('map/index'));
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
+                return;
+            } else {
+                $this->redirect(array('map/index'));
+            }
         }
         return $initiative;
+    }
+
+    private function loadObjectiveModel($id, $remote = false) {
+        $objective = $this->mapService->getObjective($id);
+        if (is_null($objective->id)) {
+            $this->setSessionData('notif', array('message' => 'Linked Objective not found'));
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
+                return;
+            } else {
+                $this->redirect(array('map/index'));
+            }
+        }
+        return $objective;
     }
 
 }
