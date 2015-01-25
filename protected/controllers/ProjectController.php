@@ -7,6 +7,7 @@ use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\Phase;
+use org\csflu\isms\models\initiative\Component;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl as InitiativeManagementService;
 
@@ -41,8 +42,15 @@ class ProjectController extends Controller {
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
                 'Initiative' => array('initiative/manage', 'id' => $initiativeModel->id),
                 'Manage Phases' => 'active'
-            )
+            ),
+            'phase' => new Phase(),
+            'component' => new Component(),
+            'initiative' => $initiativeModel,
+            'notif' => $this->getSessionData('notif'),
+            'validation' => $this->getSessionData('validation')
         ));
+        $this->unsetSessionData('notif');
+        $this->unsetSessionData('validation');
     }
 
     private function loadInitiativeModel($id, $remote = false) {
