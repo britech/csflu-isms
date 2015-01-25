@@ -7,6 +7,7 @@ use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
+use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\exceptions\ServiceException;
 
 /**
@@ -84,4 +85,12 @@ interface InitiativeManagementService {
      * @throws ServiceException
      */
     public function unlinkAlignments(Initiative $initiative, Objective $objective = null, MeasureProfile $measureProfile = null);
+    
+    /**
+     * Adds the Phase entity in a given Initiative
+     * @param Phase $phase
+     * @param Initiative $initiative
+     * @throws ServiceException
+     */
+    public function addPhase(Phase $phase, Initiative $initiative);
 }

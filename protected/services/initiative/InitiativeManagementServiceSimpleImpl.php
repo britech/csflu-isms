@@ -7,9 +7,11 @@ use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
+use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\initiative\InitiativeManagementService;
 use org\csflu\isms\dao\initiative\InitiativeDaoSqlImpl as InitiativeDao;
+use org\csflu\isms\dao\initiative\PhaseDaoSqlImpl as PhaseDao;
 use org\csflu\isms\dao\map\StrategyMapDaoSqlImpl as StrategyMapDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
@@ -23,12 +25,14 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
 
     private $logger;
     private $daoSource;
+    private $phaseDaoSource;
     private $mapDaoSource;
     private $objectiveDaoSource;
     private $mpDaoSource;
 
     public function __construct() {
         $this->daoSource = new InitiativeDao();
+        $this->phaseDaoSource = new PhaseDao();
         $this->mapDaoSource = new StrategyMapDao();
         $this->objectiveDaoSource = new ObjectiveDao();
         $this->mpDaoSource = new MeasureProfileDao();
@@ -189,6 +193,16 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         if (!is_null($measureProfile)) {
             $this->daoSource->unlinkLeadMeasure($initiative, $measureProfile);
         }
+    }
+
+    public function addPhase(Phase $phase, Initiative $initiative) {
+        $phases = $this->phaseDaoSource->listPhases($initiative);
+        foreach($phases as $data){
+            if($phase->title == $data->title){
+                throw new ServiceException("Phase already defined. Please use the update facility instead");
+            }
+        }
+        $this->phaseDaoSource->addPhase($phase, $initiative);
     }
 
 }

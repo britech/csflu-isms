@@ -6,7 +6,10 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\core\Model;
 use org\csflu\isms\exceptions\ControllerException;
+use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\util\ApplicationUtils;
+use org\csflu\isms\models\commons\RevisionHistory;
+use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\models\initiative\Component;
@@ -69,6 +72,32 @@ class ProjectController extends Controller {
             'phase' => $phaseData
         ));
         $this->remoteValidateModel($phase);
+    }
+
+    public function enlistPhase() {
+        $this->validatePostData(array('Initiative', 'Phase'));
+
+        $initiativeData = $this->getFormData('Initiative');
+        $phaseData = $this->getFormData('Phase');
+
+        $initiative = $this->loadInitiativeModel($initiativeData['id']);
+        $phase = new Phase();
+        $phase->bindValuesUsingArray(array(
+            'phase' => $phaseData
+        ));
+
+        if ($phase->validate()) {
+            try {
+                $this->initiativeService->addPhase($phase, $initiative);
+                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $initiative->id, $phase);
+                $this->setSessionData('notif', array('class' => 'success', 'message' => 'Phase successfully added to Initiative'));
+            } catch (ServiceException $ex) {
+                $this->setSessionData('validation', array($ex->getMessage()));
+            }
+        } else {
+            $this->setSessionData('validation', $phase->validationMessages);
+        }
+        $this->redirect(array('project/managePhases', 'initiative' => $initiative->id));
     }
 
     private function loadInitiativeModel($id, $remote = false) {
