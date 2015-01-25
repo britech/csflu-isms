@@ -41,11 +41,11 @@ class Phase extends Model {
         }
         return count($this->validationMessages) == 0;
     }
-    
+
     public function bindValuesUsingArray(array $valueArray) {
-        if(array_key_exists('components', $valueArray)){
-            $components = explode("+", $this->components);
-            foreach($components as $component){
+        if (array_key_exists('components', $valueArray) && !empty($valueArray['components']['description'])) {
+            $components = explode("+", $valueArray['components']['description']);
+            foreach ($components as $component) {
                 $data = new Component();
                 $data->description = $component;
                 array_push($this->components, $data);
