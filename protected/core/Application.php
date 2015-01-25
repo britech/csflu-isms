@@ -15,18 +15,16 @@ class Application {
     private function __construct() {
         $this->logger = \Logger::getLogger(__CLASS__);
     }
-    
-    public static function getInstance(){
-        if(empty(self::$instance)){
+
+    public static function getInstance() {
+        if (empty(self::$instance)) {
             self::$instance = new Application();
         }
         return self::$instance;
     }
 
     public function runApplication() {
-        $this->logger->debug("Arguments captured");
-        $this->logger->debug(filter_input_array(INPUT_GET));
-
+        $this->logger->debug("[Client: " . filter_input(INPUT_SERVER, 'REMOTE_ADDR') . "]" . " Route Expression: " . filter_input(INPUT_GET, 'r'));
         $request = filter_input(INPUT_GET, 'r');
         try {
             $this->resolveAndDispatchRequest($request);
