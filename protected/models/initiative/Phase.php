@@ -51,6 +51,12 @@ class Phase extends Model {
         parent::bindValuesUsingArray($valueArray, $this);
     }
 
+    public function getModelTranslationAsNewEntity() {
+        return "[Phase added]\n\nNumber:\t{$this->phaseNumber}\n"
+        . "Title:\t{$this->title}\n"
+        . "Description:\t{$this->description}";
+    }
+
     public function getAttributeNames() {
         return array(
             'phaseNumber' => 'Phase Number',
