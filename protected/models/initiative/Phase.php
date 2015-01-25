@@ -36,9 +36,6 @@ class Phase extends Model {
             array_push($this->validationMessages, "- {$this->getAttributeNames()['description']} should be defined");
         }
 
-        if ($this->validationMode == self::VALIDATION_MODE_INITIAL && count($this->components) == 0) {
-            array_push($this->validationMessages, "- {$this->getAttributeNames()['components']} should be defined");
-        }
         return count($this->validationMessages) == 0;
     }
 
