@@ -247,7 +247,9 @@ class InitiativeController extends Controller {
                         'Update Entry Data' => array('initiative/update', 'id' => $id),
                         'Manage Implementing Offices' => array('implementor/index', 'initiative' => $id),
                         'Manage Strategy Alignments' => array('alignment/manageInitiative', 'id' => $id),
-                        'Manage Activities' => array('initiative/manageActivities', 'id' => $id)
+                        'Manage Phases' => array('project/managePhases', 'initiative' => $id),
+                        'Manage Components' => array('project/manageComponents', 'initiative' => $id),
+                        'Manage Activities' => array('project/manageActivities', 'initiative' => $id)
                     )
                 )
             ),
