@@ -29,7 +29,7 @@ class Application {
         try {
             $this->resolveAndDispatchRequest($request);
         } catch (\Exception $e) {
-            $this->logger->error($e->getMessage(), $e);
+            $this->logger->error("[Client: " . filter_input(INPUT_SERVER, 'REMOTE_ADDR') . "]", $e);
             $controller = new Controller();
             $controller->title = ApplicationConstants::APP_NAME;
             $controller->viewErrorPage($e);
