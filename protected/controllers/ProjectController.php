@@ -4,7 +4,6 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
-use org\csflu\isms\core\Model;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\util\ApplicationUtils;
@@ -98,6 +97,25 @@ class ProjectController extends Controller {
             $this->setSessionData('validation', $phase->validationMessages);
         }
         $this->redirect(array('project/managePhases', 'initiative' => $initiative->id));
+    }
+
+    public function listPhases() {
+        $this->validatePostData(array('initiative'));
+
+        $id = $this->getFormData('initiative');
+        $initiative = $this->loadInitiativeModel($id);
+        $data = array();
+        foreach ($initiative->phases as $phase) {
+            array_push($data, array(
+                'id' => $phase->id,
+                'phaseNumber' => $phase->phaseNumber,
+                'phase' => "{$phase->phaseNumber} - {$phase->title}",
+                'title' => $phase->title,
+                'description' => $phase->description,
+                'actions' => ApplicationUtils::generateLink(array('project/updatePhase', 'id' => $phase->id), 'Update') . '&nbsp|&nbsp' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$phase->id}"))
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     private function loadInitiativeModel($id, $remote = false) {

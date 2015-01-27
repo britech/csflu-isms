@@ -43,13 +43,13 @@ $form = new Form(array(
                 <?php echo $form->renderTextArea($phase, 'description'); ?>
             </div>
         </div>
-        <?php echo $form->renderHiddenField($phase, 'validationMode');?>
+        <?php echo $form->renderHiddenField($phase, 'validationMode'); ?>
         <?php echo $form->renderHiddenField($phase, 'phaseNumber'); ?>
-        <?php echo $form->renderHiddenField($initiative, 'id'); ?>
+        <?php echo $form->renderHiddenField($initiative, 'id', array('id' => 'initiative')); ?>
         <?php echo $form->renderSubmitButton('Enlist', array('class' => 'ink-button green flat', 'style' => 'margin-top:1em; margin-left: 0px;')); ?>
         <?php echo $form->endComponent(); ?>
     </div>
     <div class="all-50">
-
+        <div id="phase-list"></div>
     </div>
 </div>

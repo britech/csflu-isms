@@ -13,6 +13,7 @@ use org\csflu\isms\dao\initiative\InitiativeDao;
 use org\csflu\isms\dao\commons\DepartmentDaoSqlImpl;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl;
+use org\csflu\isms\dao\initiative\PhaseDaoSqlImpl;
 
 /**
  * Description of InitiativeDaoSqlImpl
@@ -25,12 +26,14 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
     private $departmentDaoSource;
     private $objectiveDaoSource;
     private $measureProfileDaoSource;
+    private $phaseDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
         $this->departmentDaoSource = new DepartmentDaoSqlImpl();
         $this->objectiveDaoSource = new ObjectiveDaoSqlImpl();
         $this->measureProfileDaoSource = new MeasureProfileDaoSqlImpl();
+        $this->phaseDaoSource = new PhaseDaoSqlImpl();
     }
 
     public function listInitiatives(StrategyMap $strategyMap) {
@@ -159,6 +162,7 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
             $initiative->implementingOffices = $this->listImplementingOffices($initiative);
             $initiative->objectives = $this->listObjectives($initiative);
             $initiative->leadMeasures = $this->listLeadMeasures($initiative);
+            $initiative->phases = $this->phaseDaoSource->listPhases($initiative);
 
             return $initiative;
         } catch (\PDOException $ex) {
