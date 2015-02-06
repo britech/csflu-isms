@@ -34,10 +34,11 @@ interface InitiativeManagementService {
     
     /**
      * Gets the selected Initiative
-     * @param String $id
+     * @param String $id Load the initiative by its Identifier
+     * @param Phase $phase Load the initiative by Phase
      * @return Initiative
      */
-    public function getInitiative($id);
+    public function getInitiative($id = null, Phase $phase = null);
     
     /**
      * Updates the Initiative entity

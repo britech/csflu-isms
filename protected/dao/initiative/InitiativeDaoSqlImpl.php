@@ -8,6 +8,7 @@ use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
+use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\initiative\InitiativeDao;
 use org\csflu\isms\dao\commons\DepartmentDaoSqlImpl;
@@ -290,6 +291,23 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getInitiativeByPhase(Phase $phase) {
+        try {
+            $dbst = $this->db->prepare('SELECT ini_ref FROM ini_phases WHERE phase_id=:id');
+            $dbst->execute(array(
+                'id' => $phase->id
+            ));
+
+            while ($data = $dbst->fetch()) {
+                list($initiative) = $data;
+            }
+            
+            return $this->getInitiative($initiative);
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }

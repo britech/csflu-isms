@@ -64,8 +64,14 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         return $initiative->id;
     }
 
-    public function getInitiative($id) {
-        return $this->daoSource->getInitiative($id);
+    public function getInitiative($id = null, Phase $phase = null) {
+        if(!is_null($id)){
+            return $this->daoSource->getInitiative($id);
+        }
+        
+        if(!is_null($phase)){
+            return $this->daoSource->getInitiativeByPhase($phase);
+        }
     }
 
     public function updateInitiative(Initiative $initiative) {
@@ -198,7 +204,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
     public function addPhase(Phase $phase, Initiative $initiative) {
         $phases = $this->phaseDaoSource->listPhases($initiative);
         foreach($phases as $data){
-            if($phase->title == $data->title){
+            if($phase->phaseNumber == $data->phaseNumber){
                 throw new ServiceException("Phase already defined. Please use the update facility instead");
             }
         }
