@@ -195,6 +195,30 @@ class ProjectController extends Controller {
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('project/managePhases', 'initiative' => $initiative->id))));
     }
 
+    public function manageComponents($initiative) {
+        $initiativeModel = $this->loadInitiativeModel($initiative);
+        $strategyMap = $this->loadMapModel($initiativeModel);
+
+        $this->title = ApplicationConstants::APP_NAME . " - Enlist Component";
+        $this->render('initiative/components', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
+                'Initiative' => array('initiative/manage', 'id' => $initiativeModel->id),
+                'Manage Components' => 'active'
+            ),
+            'model' => new Component(),
+            'phaseModel' => new Phase(),
+            'initiativeModel' => $initiativeModel,
+            'notif' => $this->getSessionData('notif'),
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('notif');
+        $this->unsetSessionData('validation');
+    }
+
     private function loadInitiativeModel($id = null, Phase $phase = null, $remote = false) {
         $initiative = $this->initiativeService->getInitiative($id, $phase);
         if (is_null($initiative->id)) {
