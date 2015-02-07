@@ -78,4 +78,18 @@ class PhaseDaoSqlImpl implements PhaseDao {
         }
     }
 
+    public function deletePhase($id) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('DELETE FROM ini_phases WHERE phase_id=:id');
+            $dbst->execute(array('id' => $id));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

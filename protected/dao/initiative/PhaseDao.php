@@ -31,4 +31,10 @@ interface PhaseDao {
      * @throws DataAccessException
      */
     public function updatePhase(Phase $phase);
+    
+    /**
+     * @param String $id
+     * @throws DataAccessException
+     */
+    public function deletePhase($id);
 }

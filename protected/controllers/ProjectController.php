@@ -188,6 +188,8 @@ class ProjectController extends Controller {
         if (is_null($phase->id)) {
             $this->setSessionData('notif', array('message' => 'Phase not found'));
         } else {
+            $this->initiativeService->deletePhase($id);
+            $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_INITIATIVE, $initiative->id, $phase);
             $this->setSessionData('notif', array('class' => 'error', 'message' => 'Phase deleted'));
         }
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('project/managePhases', 'initiative' => $initiative->id))));

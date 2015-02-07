@@ -103,6 +103,12 @@ interface InitiativeManagementService {
     public function updatePhase(Phase $phase);
     
     /**
+     * Deletes the Phase entity
+     * @param String $id
+     */
+    public function deletePhase($id);
+    
+    /**
      * Retrieves the Phase entity via its Id in a given initiative
      * @param String $id
      * @param Initiative $initiative

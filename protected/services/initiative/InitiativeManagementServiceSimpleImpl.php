@@ -237,4 +237,8 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $this->phaseDaoSource->updatePhase($phase);
     }
 
+    public function deletePhase($id) {
+        $this->phaseDaoSource->deletePhase($id);
+    }
+
 }
