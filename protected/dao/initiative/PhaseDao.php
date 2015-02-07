@@ -25,4 +25,10 @@ interface PhaseDao {
      * @throws DataAccessException
      */
     public function addPhase(Phase $phase, Initiative $initiative);
+    
+    /**
+     * @param Phase $phase
+     * @throws DataAccessException
+     */
+    public function updatePhase(Phase $phase);
 }

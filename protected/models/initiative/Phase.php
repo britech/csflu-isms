@@ -77,7 +77,7 @@ class Phase extends Model {
             $translation.="Phase:\t{$this->title}";
         }
         
-        if($oldModel->title != $this->title){
+        if($oldModel->description != $this->description){
             $translation.="Description:\t{$this->description}";
         }
         return $translation;

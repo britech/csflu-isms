@@ -226,4 +226,15 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         return null;
     }
 
+    public function updatePhase(Phase $phase) {
+        $initiative = $this->daoSource->getInitiativeByPhase($phase);
+        $phaseList = $this->phaseDaoSource->listPhases($initiative);
+        foreach($phaseList as $data){
+            if($data->title == $phase->title && $data->id != $phase->id){
+                throw new ServiceException("Phase not updated.");
+            }
+        }
+        $this->phaseDaoSource->updatePhase($phase);
+    }
+
 }

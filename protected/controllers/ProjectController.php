@@ -165,8 +165,12 @@ class ProjectController extends Controller {
         $oldPhase = clone $this->initiativeService->getPhase($phase->id, $initiative);
         
         if($phase->validate() && $phase->computePropertyChanges($oldPhase) > 0){
-            if($phase->computePropertyChanges($oldPhase) > 0){
+            try{
+                $this->initiativeService->updatePhase($phase);
+                $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_INITIATIVE, $initiative->id, $phase, $oldPhase);
                 $this->setSessionData('notif', array('class' => 'info', 'message' => 'Phase updated'));
+            } catch (ServiceException $ex) {
+                $this->setSessionData('validation', array($ex->getMessage()));
             }
         } elseif(!$phase->validate()) {
             $this->setSessionData('validation', $phase->validationMessages);

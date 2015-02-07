@@ -59,4 +59,23 @@ class PhaseDaoSqlImpl implements PhaseDao {
         }
     }
 
+    public function updatePhase(Phase $phase) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('UPDATE ini_phases SET phase_number=:number, phase_title=:title, phase_desc=:description WHERE phase_id=:id');
+            $dbst->execute(array(
+                'number' => $phase->phaseNumber,
+                'title' => $phase->title,
+                'description' => $phase->description,
+                'id' => $phase->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

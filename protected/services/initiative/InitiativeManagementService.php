@@ -96,7 +96,17 @@ interface InitiativeManagementService {
     public function addPhase(Phase $phase, Initiative $initiative);
     
     /**
+     * Updates the Phase entity
+     * @param Phase $phase
+     * @throws ServiceException
+     */
+    public function updatePhase(Phase $phase);
+    
+    /**
      * Retrieves the Phase entity via its Id in a given initiative
+     * @param String $id
+     * @param Initiative $initiative
+     * @return Phase
      */
     public function getPhase($id, Initiative $initiative);
 }
