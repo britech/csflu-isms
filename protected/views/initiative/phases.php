@@ -32,7 +32,7 @@ $form = new Form(array(
                     <div id="phaseNumber-input"></div>
                     <?php echo $form->renderHiddenField($phase, 'phaseNumber'); ?>
                 <?php else: ?>
-                    <?php echo $form->renderTextField($phase, 'phaseNumber', array('disabled' => true)); ?>
+                    <?php echo $form->renderTextField($phase, 'phaseNumber', array('readonly' => true)); ?>
                 <?php endif; ?>
             </div>
         </div>

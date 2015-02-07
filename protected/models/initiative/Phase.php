@@ -56,6 +56,32 @@ class Phase extends Model {
         . "Title:\t{$this->title}\n"
         . "Description:\t{$this->description}";
     }
+    
+    public function computePropertyChanges(Phase $oldModel) {
+        $counter = 0;
+        
+        if($oldModel->description != $this->description){
+            $counter++;
+        }
+        
+        if($oldModel->title != $this->title){
+            $counter++;
+        }
+        
+        return $counter;
+    }
+    
+    public function getModelTranslationAsUpdatedEntity(Phase $oldModel) {
+        $translation = "[Phase updated]\n\n";
+        if($oldModel->title != $this->title){
+            $translation.="Phase:\t{$this->title}";
+        }
+        
+        if($oldModel->title != $this->title){
+            $translation.="Description:\t{$this->description}";
+        }
+        return $translation;
+    }
 
     public function getAttributeNames() {
         return array(
@@ -78,4 +104,11 @@ class Phase extends Model {
         return $this->$name;
     }
 
+    public function __clone() {
+        $phase = new Phase();
+        $phase->id = $this->id;
+        $phase->title = $this->title;
+        $phase->description = $this->description;
+        $phase->phaseNumber = $this->phaseNumber;
+    }
 }

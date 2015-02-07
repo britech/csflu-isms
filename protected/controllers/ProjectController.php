@@ -118,8 +118,64 @@ class ProjectController extends Controller {
         $this->renderAjaxJsonResponse($data);
     }
 
-    private function loadInitiativeModel($id, $remote = false) {
-        $initiative = $this->initiativeService->getInitiative($id);
+    public function updatePhase($id = null) {
+        if (is_null($id)) {
+            $this->validatePostData(array('Phase'));
+            $this->processPhaseUpdate();
+        }
+
+        $phase = new Phase();
+        $phase->id = $id;
+
+        $initiative = $this->loadInitiativeModel(null, $phase);
+        $strategyMap = $this->loadMapModel($initiative);
+        $phaseModel = $this->initiativeService->getPhase($id, $initiative);
+        $phaseModel->validationMode = \org\csflu\isms\core\Model::VALIDATION_MODE_UPDATE;
+
+        $this->title = ApplicationConstants::APP_NAME . " - Update Phase";
+        $this->render('initiative/phases', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
+                'Initiative' => array('initiative/manage', 'id' => $initiative->id),
+                'Manage Phases' => array('project/managePhases', 'initiative' => $initiative->id),
+                'Update Phase' => 'active'
+            ),
+            'phase' => $phaseModel,
+            'initiative' => $initiative,
+            'notif' => $this->getSessionData('notif'),
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('notif');
+        $this->unsetSessionData('validation');
+    }
+
+    private function processPhaseUpdate() {
+        $phaseData = $this->getFormData('Phase');
+        $initiativeData = $this->getFormData('Initiative');
+
+        $initiative = $this->loadInitiativeModel($initiativeData['id']);
+
+        $phase = new Phase();
+        $phase->bindValuesUsingArray(array(
+            'phase' => $phaseData
+        ));
+        $oldPhase = clone $this->initiativeService->getPhase($phase->id, $initiative);
+        
+        if($phase->validate() && $phase->computePropertyChanges($oldPhase) > 0){
+            if($phase->computePropertyChanges($oldPhase) > 0){
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Phase updated'));
+            }
+        } elseif(!$phase->validate()) {
+            $this->setSessionData('validation', $phase->validationMessages);
+        }
+        $this->redirect(array('project/managePhases', 'initiative' => $initiative->id));
+    }
+
+    private function loadInitiativeModel($id = null, Phase $phase = null, $remote = false) {
+        $initiative = $this->initiativeService->getInitiative($id, $phase);
         if (is_null($initiative->id)) {
             $this->setSessionData('notif', array('message' => 'Initiative not found'));
             if ($remote) {
