@@ -44,14 +44,46 @@ $(document).ready(function() {
         sortable: true,
         selectionMode: 'singleRow'
     }).on("rowClick", function() {
-//        $("[id^=remove]").click(function() {
-//            var text = $(this).parent().siblings("td").html();
-//            $("#text").html("Do you want to delete this Implementing Office? Continuing will remove the Implementing Office, <strong>" + text + "</strong>, from the Initiative");
-//            $("#delete-implem").jqxWindow('open');
-//            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
-//        });
+        $("[id^=remove]").click(function() {
+            var text = $(this).parent().siblings("td + td").html();
+            console.log(text);
+            $("#text").html("Do you want to delete the Phase, <strong>" + text + "</strong>, from the Initiative");
+            $("#delete-phase").jqxWindow('open');
+            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+        });
     });
 
+    $('#delete-phase').jqxWindow({
+        title: '<strong>Confirm Phase Data Deletion</strong>',
+        width: 300,
+        height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+    });
+
+    $("#deny").click(function() {
+        $("#phase-list").jqxDataTable('updateBoundData');
+    });
+
+    $("[id^=accept]").click(function() {
+        var id = $(this).attr('id').split('-')[1];
+        $.post("?r=project/deletePhase",
+                {phase: id},
+        function(data) {
+            try {
+                var response = $.parseJSON(data);
+                window.location = response.url;
+            } catch(e){
+                $("#delete-phase").jqxWindow('close');
+                $("#phase-list").jqxDataTable('updateBoundData');
+            }
+        });
+    });
     $(".ink-form").submit(function() {
         var result = false;
 

@@ -163,19 +163,34 @@ class ProjectController extends Controller {
             'phase' => $phaseData
         ));
         $oldPhase = clone $this->initiativeService->getPhase($phase->id, $initiative);
-        
-        if($phase->validate() && $phase->computePropertyChanges($oldPhase) > 0){
-            try{
+
+        if ($phase->validate() && $phase->computePropertyChanges($oldPhase) > 0) {
+            try {
                 $this->initiativeService->updatePhase($phase);
                 $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_INITIATIVE, $initiative->id, $phase, $oldPhase);
                 $this->setSessionData('notif', array('class' => 'info', 'message' => 'Phase updated'));
             } catch (ServiceException $ex) {
                 $this->setSessionData('validation', array($ex->getMessage()));
             }
-        } elseif(!$phase->validate()) {
+        } elseif (!$phase->validate()) {
             $this->setSessionData('validation', $phase->validationMessages);
         }
         $this->redirect(array('project/managePhases', 'initiative' => $initiative->id));
+    }
+
+    public function deletePhase() {
+        $this->validatePostData(array('phase'));
+        $id = $this->getFormData('phase');
+
+        $initiative = $this->loadInitiativeModel(null, new Phase($id), true);
+        $phase = $this->initiativeService->getPhase($id, $initiative);
+
+        if (is_null($phase->id)) {
+            $this->setSessionData('notif', array('message' => 'Phase not found'));
+        } else {
+            $this->setSessionData('notif', array('class' => 'error', 'message' => 'Phase deleted'));
+        }
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('project/managePhases', 'initiative' => $initiative->id))));
     }
 
     private function loadInitiativeModel($id = null, Phase $phase = null, $remote = false) {
