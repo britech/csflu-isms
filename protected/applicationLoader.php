@@ -72,6 +72,7 @@ require_once 'dao/map/PerspectiveDao.php';
 require_once 'dao/map/ObjectiveDao.php';
 require_once 'dao/initiative/InitiativeDao.php';
 require_once 'dao/initiative/PhaseDao.php';
+require_once 'dao/initiative/ComponentDao.php';
 
 #dao-implementations
 require_once 'dao/commons/DepartmentDaoSqlImpl.php';
@@ -88,6 +89,7 @@ require_once 'dao/map/PerspectiveDaoSqlImpl.php';
 require_once 'dao/map/ObjectiveDaoSqlImpl.php';
 require_once 'dao/initiative/InitiativeDaoSqlImpl.php';
 require_once 'dao/initiative/PhaseDaoSqlImpl.php';
+require_once 'dao/initiative/ComponentDaoSqlImpl.php';
 
 #service-interfaces
 require_once 'services/commons/DepartmentService.php';
