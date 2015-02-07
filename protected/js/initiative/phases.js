@@ -1,16 +1,19 @@
 $(document).ready(function() {
-    $("#phaseNumber-input").jqxNumberInput({
-        inputMode: 'simple',
-        spinButtons: true,
-        min: 1,
-        max: 100,
-        decimalDigits: 0,
-        height: '35px',
-        textAlign: 'left',
-        width: '150px'
-    }).on("valuechanged", function(event) {
-        $("[name*=phaseNumber]").val(event.args.value);
-    });
+
+    if ($("[name*=validationMode]").val() === '1') {
+        $("#phaseNumber-input").jqxNumberInput({
+            inputMode: 'simple',
+            spinButtons: true,
+            min: 1,
+            max: 100,
+            decimalDigits: 0,
+            height: '35px',
+            textAlign: 'left',
+            width: '150px'
+        }).on("valuechanged", function(event) {
+            $("[name*=phaseNumber]").val(event.args.value);
+        });
+    }
 
     $("#phase-list").jqxDataTable({
         source: new $.jqx.dataAdapter({
