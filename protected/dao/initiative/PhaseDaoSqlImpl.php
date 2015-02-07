@@ -7,6 +7,7 @@ use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\initiative\PhaseDao;
+use org\csflu\isms\dao\initiative\ComponentDaoSqlImpl;
 
 /**
  * Description of PhaseDaoSqlImpl
@@ -16,9 +17,11 @@ use org\csflu\isms\dao\initiative\PhaseDao;
 class PhaseDaoSqlImpl implements PhaseDao {
 
     private $db;
+    private $componentDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
+        $this->componentDaoSource = new ComponentDaoSqlImpl();
     }
 
     public function addPhase(Phase $phase, Initiative $initiative) {
@@ -51,6 +54,7 @@ class PhaseDaoSqlImpl implements PhaseDao {
             while ($data = $dbst->fetch()) {
                 $phase = new Phase();
                 list($phase->id, $phase->phaseNumber, $phase->title, $phase->description) = $data;
+                $phase->components = $this->componentDaoSource->listComponents($phase);
                 array_push($phases, $phase);
             }
             return $phases;
