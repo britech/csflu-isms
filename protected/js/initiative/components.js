@@ -68,4 +68,26 @@ $(document).ready(function() {
 //            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
 //        });
     });
+    
+    $("#validation-container").hide();
+
+    $(".ink-form").submit(function() {
+        var component = $("[name*=description]").val();
+        var phase = $("#phase").val();
+        
+        if(component === '' && phase === ''){
+            $("#validation-content").html("-&nbsp;Component should be defined<br/>-&nbsp;Phase should be defined");
+            $("#validation-container").show();
+            return false;
+        } else if(component === ''){
+            $("#validation-content").html("-&nbsp;Component should be defined");
+            $("#validation-container").show();
+            return false;
+        } else if(phase === ''){
+            $("#validation-content").html("-&nbsp;Phase should be defined");
+            $("#validation-container").show();
+            return false;
+        }
+        return true;
+    });
 });

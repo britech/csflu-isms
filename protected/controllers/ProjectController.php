@@ -235,8 +235,9 @@ class ProjectController extends Controller {
                 ));
             }
         }
+        $this->renderAjaxJsonResponse($data);
     }
-
+    
     private function loadInitiativeModel($id = null, Phase $phase = null, $remote = false) {
         $initiative = $this->initiativeService->getInitiative($id, $phase);
         if (is_null($initiative->id)) {

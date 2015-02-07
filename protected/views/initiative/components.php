@@ -18,7 +18,10 @@ $form = new Form(array(
         <div class="ink-alert basic info">
             <strong>Important Note:&nbsp;</strong>Fields with * are required.
         </div>
-        <div id="validation-container"></div>
+        <div id="validation-container" class="ink-alert block">
+            <h4>Validation error/s. Please check your entries</h4>
+            <p id="validation-content"></p>
+        </div>
         <?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
         <?php
         if (isset($params['validation']) && !empty($params['validation'])) {
