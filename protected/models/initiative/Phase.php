@@ -23,6 +23,12 @@ class Phase extends Model {
     private $description;
     private $components;
 
+    public function __construct($id = null) {
+        if (!is_null($id)) {
+            $this->id = $id;
+        }
+    }
+
     public function validate() {
         if (empty($this->phaseNumber)) {
             array_push($this->validationMessages, "- {$this->getAttributeNames()['phaseNumber']} should be defined");
@@ -53,34 +59,36 @@ class Phase extends Model {
 
     public function getModelTranslationAsNewEntity() {
         return "[Phase added]\n\nNumber:\t{$this->phaseNumber}\n"
-        . "Title:\t{$this->title}\n"
-        . "Description:\t{$this->description}";
+                . "Title:\t{$this->title}\n"
+                . "Description:\t{$this->description}";
     }
-    
+
     public function computePropertyChanges(Phase $oldModel) {
         $counter = 0;
-        
-        if($oldModel->description != $this->description){
+        if ($oldModel->description != $this->description) {
             $counter++;
         }
-        
-        if($oldModel->title != $this->title){
+
+        if ($oldModel->title != $this->title) {
             $counter++;
         }
-        
         return $counter;
     }
-    
+
     public function getModelTranslationAsUpdatedEntity(Phase $oldModel) {
         $translation = "[Phase updated]\n\n";
-        if($oldModel->title != $this->title){
+        if ($oldModel->title != $this->title) {
             $translation.="Phase:\t{$this->title}";
         }
-        
-        if($oldModel->description != $this->description){
+
+        if ($oldModel->description != $this->description) {
             $translation.="Description:\t{$this->description}";
         }
         return $translation;
+    }
+
+    public function getModelTranslationAsDeletedEntity() {
+        return "[Phase deleted]\n\nTitle:\t{$this->title}";
     }
 
     public function getAttributeNames() {
@@ -111,4 +119,5 @@ class Phase extends Model {
         $phase->description = $this->description;
         $phase->phaseNumber = $this->phaseNumber;
     }
+
 }
