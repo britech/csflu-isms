@@ -211,4 +211,19 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $this->phaseDaoSource->addPhase($phase, $initiative);
     }
 
+    public function getPhase($id, Initiative $initiative) {
+        $phases = $this->phaseDaoSource->listPhases($initiative);
+        foreach($phases as $data){
+            if($id == $data->id){
+                $phase = new Phase();
+                $phase->id = $data->id;
+                $phase->phaseNumber = $data->phaseNumber;
+                $phase->title = $data->title;
+                $phase->description = $data->description;
+                return $phase;
+            }
+        }
+        return null;
+    }
+
 }

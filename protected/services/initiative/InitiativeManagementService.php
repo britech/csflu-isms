@@ -94,4 +94,9 @@ interface InitiativeManagementService {
      * @throws ServiceException
      */
     public function addPhase(Phase $phase, Initiative $initiative);
+    
+    /**
+     * Retrieves the Phase entity via its Id in a given initiative
+     */
+    public function getPhase($id, Initiative $initiative);
 }
