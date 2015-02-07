@@ -219,6 +219,24 @@ class ProjectController extends Controller {
         $this->unsetSessionData('validation');
     }
 
+    public function listComponents() {
+        $this->validatePostData(array('initiative'));
+        $id = $this->getFormData('initiative');
+
+        $initiative = $this->loadInitiativeModel($id);
+        $data = array();
+        foreach ($initiative->phases as $phase) {
+            foreach ($phase->components as $component) {
+                array_push($data, array(
+                    'id' => $component->id,
+                    'phase' => "{$phase->phaseNumber} - {$phase->title}",
+                    'component' => $component->description,
+                    'actions' => ApplicationUtils::generateLink(array('project/updateComponent', 'id' => $component->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$component->id}"))
+                ));
+            }
+        }
+    }
+
     private function loadInitiativeModel($id = null, Phase $phase = null, $remote = false) {
         $initiative = $this->initiativeService->getInitiative($id, $phase);
         if (is_null($initiative->id)) {
