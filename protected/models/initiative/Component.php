@@ -19,16 +19,24 @@ class Component extends Model {
     private $description;
     private $activities;
 
-    public function __construct($description = null) {
-        if(!is_null($description)){
+    public function __construct($description = null, $id = null) {
+        if (!is_null($description)) {
             $this->description = $description;
         }
+
+        if (!is_null($id)) {
+            $this->id = $id;
+        }
     }
-    
+
     public function validate() {
         
     }
 
+    public function isNew() {
+        return empty($this->id);
+    }
+    
     public function __set($name, $value) {
         $this->$name = $value;
     }
