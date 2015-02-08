@@ -15,8 +15,13 @@ $form = new Form(array(
     <div class="all-50">
         <?php echo $form->startComponent(); ?>
         <?php echo $form->constructHeader("Enlist Activity"); ?>
-        <div class="ink-alert basic info">
-            <strong>Important Note:</strong>&nbsp;Fields with * are required.
+        <div class="ink-alert block info">
+            <h4>Important Notes</h4>
+            <p>
+                -&nbsp;Fields with * are <strong>required</strong>.
+                <br/>
+                -&nbsp;Budget Amount <strong>SHOULD NOT</strong> be separated by comma's.
+            </p>        
         </div>
         <div id="validation-container"></div>
         <?php

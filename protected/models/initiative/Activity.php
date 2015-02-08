@@ -39,7 +39,36 @@ class Activity extends Model {
     private $activityEnvironmentStatus = self::STATUS_PENDING;
 
     public function validate() {
-        
+
+        if (strlen($this->title) < 1) {
+            array_push($this->validationMessages, '- Activity should be defined');
+        }
+
+        if (strlen($this->descriptionOfTarget) < 1 && strlen($this->targetFigure) < 1) {
+            array_push($this->validationMessages, '- Either target in descriptive or numerical representation must be defined');
+        } elseif (strlen($this->descriptionOfTarget) < 1) {
+            array_push($this->validationMessages, '- Target in descriptive representation must be defined');
+        }
+
+        if (strlen($this->indicator) < 1) {
+            array_push($this->validationMessages, '- Indicator should be defined');
+        }
+
+        if (strlen($this->budgetAmount) > 1 && !is_numeric($this->budgetAmount)) {
+            array_push($this->validationMessages, '- Budget Amount should be in numerical representation');
+        }
+
+        if (strlen($this->budgetAmount) > 1 && strlen($this->sourceOfBudget) < 1) {
+            array_push($this->validationMessages, '- Source of Budget must be defined');
+        }
+
+        return count($this->validationMessages) == 0;
+    }
+
+    public function bindValuesUsingArray(array $valueArray) {
+        parent::bindValuesUsingArray($valueArray, $this);
+        $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
+        $this->endingPeriod = \DateTime::createFromFormat('Y-m-d', $this->endingPeriod);
     }
 
     public function getAttributeNames() {

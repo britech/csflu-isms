@@ -343,7 +343,7 @@ class ProjectController extends Controller {
     public function manageActivities($initiative) {
         $initiativeModel = $this->loadInitiativeModel($initiative);
         $strategyMap = $this->loadMapModel($initiativeModel);
-        
+
         $initiativeModel->startingPeriod = $initiativeModel->startingPeriod->format('Y-m-d');
         $initiativeModel->endingPeriod = $initiativeModel->endingPeriod->format('Y-m-d');
         $this->title = ApplicationConstants::APP_NAME . " - Enlist Activity";
@@ -364,6 +364,29 @@ class ProjectController extends Controller {
         ));
         $this->unsetSessionData('notif');
         $this->unsetSessionData('validation');
+    }
+
+    public function validateActivityInput() {
+        $this->validatePostData(array('Activity', 'Component'));
+
+        $activityData = $this->getFormData('Activity');
+        $componentData = $this->getFormData('Component');
+
+        $activity = new Activity();
+        $activity->bindValuesUsingArray(array('activity' => $activityData));
+        $component = new Component(null, $componentData['id']);
+
+        if (!$activity->validate()) {
+            $data = $activity->validationMessages;
+            if (strlen($component->id) < 1) {
+                array_push($data, '- Component should be defined');
+            }
+            $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $data));
+        } elseif (strlen($component->id) < 1) {
+            $this->viewWarningPage('Validation error. Please check your entries', "- Component should be defined");
+        } else {
+            $this->renderAjaxJsonResponse(array('respCode' => '00'));
+        }
     }
 
     private function loadComponentModel($id, Phase $phase, $options = array()) {

@@ -82,4 +82,38 @@ $(document).ready(function() {
         $("#activity-start").val(startingDate.getFullYear() + "-" + (startingDate.getMonth() + 1) + "-1");
         $("#activity-end").val(endingDate.getFullYear() + "-" + (endingDate.getMonth() + 1) + "-" + lastDayOfEndingDate);
     }).jqxDateTimeInput('setRange', $("#activity-start").val(), $("#activity-end").val());
+    
+    $(".ink-form").submit(function() {
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=project/validateActivityInput",
+            data: {
+                "Activity": {
+                    'title': $("[name*=title]").val(),
+                    'descriptionOfTarget': $("[name*=descriptionOfTarget]").val(),
+                    'targetFigure': $("[name*=targetFigure]").val(),
+                    'budgetAmount': $("[name*=budgetAmount]").val(),
+                    'sourceOfBudget': $("[name*=sourceOfBudget]").val(),
+                    'startingPeriod': $("#activity-start").val(),
+                    'endingPeriod': $("#activity-end").val()
+                },
+                "Component": {
+                    "id": $("#component").val()
+                }
+            },
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result;
+    });
 });
