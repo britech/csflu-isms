@@ -7,6 +7,7 @@ use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\models\initiative\Component;
 use org\csflu\isms\exceptions\DataAccessException;
+use org\csflu\isms\dao\initiative\ActivityDaoSqlImpl;
 
 /**
  * Description of ComponentDaoSqlImpl
@@ -16,9 +17,11 @@ use org\csflu\isms\exceptions\DataAccessException;
 class ComponentDaoSqlImpl implements ComponentDao {
 
     private $db;
+    private $activityDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
+        $this->activityDaoSource = new ActivityDaoSqlImpl();
     }
 
     public function addComponent(Component $component, Phase $phase) {
@@ -47,6 +50,7 @@ class ComponentDaoSqlImpl implements ComponentDao {
             while ($data = $dbst->fetch()) {
                 $component = new Component();
                 list($component->id, $component->description) = $data;
+                $component->activities = $this->activityDaoSource->listActivities($component);
                 array_push($components, $component);
             }
             return $components;

@@ -9,11 +9,13 @@ use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\models\initiative\Component;
+use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\initiative\InitiativeManagementService;
 use org\csflu\isms\dao\initiative\InitiativeDaoSqlImpl as InitiativeDao;
 use org\csflu\isms\dao\initiative\PhaseDaoSqlImpl as PhaseDao;
 use org\csflu\isms\dao\initiative\ComponentDaoSqlImpl as ComponentDao;
+use org\csflu\isms\dao\initiative\ActivityDaoSqlImpl as ActivityDao;
 use org\csflu\isms\dao\map\StrategyMapDaoSqlImpl as StrategyMapDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
@@ -29,6 +31,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
     private $daoSource;
     private $phaseDaoSource;
     private $componentDaoSource;
+    private $activityDaoSource;
     private $mapDaoSource;
     private $objectiveDaoSource;
     private $mpDaoSource;
@@ -37,6 +40,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $this->daoSource = new InitiativeDao();
         $this->phaseDaoSource = new PhaseDao();
         $this->componentDaoSource = new ComponentDao();
+        $this->activityDaoSource = new ActivityDao();
         $this->mapDaoSource = new StrategyMapDao();
         $this->objectiveDaoSource = new ObjectiveDao();
         $this->mpDaoSource = new MeasureProfileDao();
@@ -252,7 +256,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
                 throw new ServiceException("Component already defined");
             }
         }
-        if($component->isNew()){
+        if ($component->isNew()) {
             $this->componentDaoSource->addComponent($component, $phase);
         } else {
             $this->componentDaoSource->updateComponent($component, $phase);
@@ -274,13 +278,23 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
 
     public function getPhaseByComponent(Component $component, Initiative $initiative) {
         $phases = $this->phaseDaoSource->listPhases($initiative);
-        foreach($phases as $phase){
-            foreach($phase->components as $data){
-                if($component->id == $data->id){
+        foreach ($phases as $phase) {
+            foreach ($phase->components as $data) {
+                if ($component->id == $data->id) {
                     return $this->getPhase($phase->id, $initiative);
                 }
             }
         }
+    }
+
+    public function manageActivity(Activity $activity, Component $component) {
+        $activities = $this->activityDaoSource->listActivities($component);
+        foreach ($activities as $data) {
+            if(strcasecmp($activity->title, $data->title) == 0 && $activity->startingPeriod->format('Y-m-d') == $data->startingPeriod->format('Y-m-d') && $activity->endingPeriod->format('Y-m-d') == $data->endingPeriod->format('Y-m-d')){
+                throw new ServiceException("Activity already defined. Please use the update facility instead");
+            }
+        }
+        //$this->activityDaoSource->addActivity($activity, $component);
     }
 
 }

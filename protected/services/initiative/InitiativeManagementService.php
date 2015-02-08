@@ -9,6 +9,7 @@ use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\models\initiative\Component;
+use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\exceptions\ServiceException;
 
 /**
@@ -145,4 +146,11 @@ interface InitiativeManagementService {
      * @param String $id
      */
     public function deleteComponent($id);
+    
+    /**
+     * Enlists/Updates the activity on a given component entity
+     * @param Activity $activity
+     * @param Component $component
+     */
+    public function manageActivity(Activity $activity, Component $component);
 }
