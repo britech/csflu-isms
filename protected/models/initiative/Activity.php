@@ -14,6 +14,7 @@ use org\csflu\isms\core\Model;
  * @property String $indicator
  * @property String $budgetAmount
  * @property String $sourceOfBudget
+ * @property String $owners
  * @property \DateTime $startingPeriod
  * @property \DateTime $endingPeriod
  * @property String $activityEnvironmentStatus
@@ -34,6 +35,7 @@ class Activity extends Model {
     private $indicator;
     private $budgetAmount;
     private $sourceOfBudget;
+    private $owners;
     private $startingPeriod;
     private $endingPeriod;
     private $activityEnvironmentStatus = self::STATUS_PENDING;
@@ -78,7 +80,8 @@ class Activity extends Model {
             'targetFigure' => 'Target (in numerical representation)',
             'indicator' => 'Indicator',
             'budgetAmount' => 'Budget',
-            'sourceOfBudget' => 'Source of Budget'
+            'sourceOfBudget' => 'Source of Budget',
+            'owners' => 'Implementing Entities'
         );
     }
 
