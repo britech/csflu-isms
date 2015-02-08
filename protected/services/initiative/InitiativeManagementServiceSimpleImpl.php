@@ -245,14 +245,18 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $this->phaseDaoSource->deletePhase($id);
     }
 
-    public function addComponent(Component $component, Phase $phase) {
+    public function manageComponent(Component $component, Phase $phase) {
         $components = $this->componentDaoSource->listComponents($phase);
         foreach ($components as $data) {
             if (strcasecmp($data->description, $component->description) == 0) {
                 throw new ServiceException("Component already defined");
             }
         }
-        $this->componentDaoSource->addComponent($component, $phase);
+        if($component->isNew()){
+            $this->componentDaoSource->addComponent($component, $phase);
+        } else {
+            $this->componentDaoSource->updateComponent($component, $phase);
+        }
     }
 
     public function getComponent($id, Phase $phase) {

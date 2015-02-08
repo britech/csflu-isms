@@ -126,10 +126,16 @@ interface InitiativeManagementService {
     public function getComponent($id, Phase $phase);
     
     /**
-     * Enlist the component on a given phase entity
+     * Enlists/Updates the component on a given phase entity
      * @param Component $component
      * @param Phase $phase
      * @throws ServiceException
      */
-    public function addComponent(Component $component, Phase $phase);
+    public function manageComponent(Component $component, Phase $phase);
+    
+    /**
+     * Deletes the component entity
+     * @param String $id
+     */
+    public function deleteComponent($id);
 }

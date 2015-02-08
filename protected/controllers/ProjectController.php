@@ -256,7 +256,7 @@ class ProjectController extends Controller {
             $this->setSessionData('validation', array('-&nbsp;Component should be defined'));
         } else {
             try {
-                $this->initiativeService->addComponent($component, $phase);
+                $this->initiativeService->manageComponent($component, $phase);
                 $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[Component added]\n\nComponent:\t{$component->description}\nPhase:\t{$phase->title}");
                 $this->setSessionData('notif', array('class' => 'success', 'message' => 'Component added'));
             } catch (ServiceException $ex) {
