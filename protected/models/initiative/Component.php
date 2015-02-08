@@ -45,4 +45,9 @@ class Component extends Model {
         return $this->$name;
     }
 
+    public function __clone() {
+        $component = new Component();
+        $component->id = $this->id;
+        $component->description = $this->description;
+    }
 }
