@@ -69,11 +69,11 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
     }
 
     public function getInitiative($id = null, Phase $phase = null) {
-        if(!is_null($id)){
+        if (!is_null($id)) {
             return $this->daoSource->getInitiative($id);
         }
-        
-        if(!is_null($phase)){
+
+        if (!is_null($phase)) {
             return $this->daoSource->getInitiativeByPhase($phase);
         }
     }
@@ -207,8 +207,8 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
 
     public function addPhase(Phase $phase, Initiative $initiative) {
         $phases = $this->phaseDaoSource->listPhases($initiative);
-        foreach($phases as $data){
-            if($phase->phaseNumber == $data->phaseNumber){
+        foreach ($phases as $data) {
+            if ($phase->phaseNumber == $data->phaseNumber) {
                 throw new ServiceException("Phase already defined. Please use the update facility instead");
             }
         }
@@ -217,8 +217,8 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
 
     public function getPhase($id, Initiative $initiative) {
         $phases = $this->phaseDaoSource->listPhases($initiative);
-        foreach($phases as $data){
-            if($id == $data->id){
+        foreach ($phases as $data) {
+            if ($id == $data->id) {
                 $phase = new Phase();
                 $phase->id = $data->id;
                 $phase->phaseNumber = $data->phaseNumber;
@@ -233,8 +233,8 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
     public function updatePhase(Phase $phase) {
         $initiative = $this->daoSource->getInitiativeByPhase($phase);
         $phaseList = $this->phaseDaoSource->listPhases($initiative);
-        foreach($phaseList as $data){
-            if($data->title == $phase->title && $data->id != $phase->id){
+        foreach ($phaseList as $data) {
+            if ($data->title == $phase->title && $data->id != $phase->id) {
                 throw new ServiceException("Phase not updated.");
             }
         }
@@ -247,12 +247,21 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
 
     public function addComponent(Component $component, Phase $phase) {
         $components = $this->componentDaoSource->listComponents($phase);
-        foreach($components as $data){
-            if(strcasecmp($data->description, $component->description) == 0){
-               throw new ServiceException("Component already defined");
+        foreach ($components as $data) {
+            if (strcasecmp($data->description, $component->description) == 0) {
+                throw new ServiceException("Component already defined");
             }
         }
         $this->componentDaoSource->addComponent($component, $phase);
+    }
+
+    public function getComponent($id, Phase $phase) {
+        $components = $this->componentDaoSource->listComponents($phase);
+        foreach ($components as $data) {
+            if ($id == $data->id) {
+                return new Component($data->description, $data->id);
+            }
+        }
     }
 
 }

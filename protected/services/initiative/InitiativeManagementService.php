@@ -118,6 +118,14 @@ interface InitiativeManagementService {
     public function getPhase($id, Initiative $initiative);
     
     /**
+     * Retrieves the component entity in a given phase
+     * @param String $id
+     * @param Phase $phase
+     * @return Component
+     */
+    public function getComponent($id, Phase $phase);
+    
+    /**
      * Enlist the component on a given phase entity
      * @param Component $component
      * @param Phase $phase
