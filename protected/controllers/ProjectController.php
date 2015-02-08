@@ -231,7 +231,7 @@ class ProjectController extends Controller {
                     'id' => $component->id,
                     'phase' => "{$phase->phaseNumber} - {$phase->title}",
                     'component' => $component->description,
-                    'actions' => ApplicationUtils::generateLink(array('project/updateComponent', 'id' => $component->id, 'phase' => $phase->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$component->id}"))
+                    'actions' => ApplicationUtils::generateLink(array('project/updateComponent', 'id' => $component->id, 'phase' => $phase->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$component->id}-{$phase->id}"))
                 ));
             }
         }
@@ -317,6 +317,25 @@ class ProjectController extends Controller {
             }
         }
         $this->redirect(array('project/manageComponents', 'initiative' => $initiative->id));
+    }
+
+    public function deleteComponent() {
+        try {
+            $this->validatePostData(array('component', 'phase'));
+        } catch (ControllerException $ex) {
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+        }
+
+        $componentId = $this->getFormData('component');
+        $phaseId = $this->getFormData('phase');
+
+        $initiative = $this->loadInitiativeModel(null, new Phase($phaseId), true);
+        $component = clone $this->loadComponentModel($componentId, new Phase($phaseId), array('url' => array('project/manageComponents', 'initiative' => $initiative->id), 'remote' => true));
+
+        $this->initiativeService->deleteComponent($component->id);
+        $this->logCustomRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[Component deleted]\n\nComponent:{$component->description}");
+        $this->setSessionData('notif', array('message' => 'Component deleted'));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('project/manageComponents', 'initiative' => $initiative->id))));
     }
 
     private function loadComponentModel($id, Phase $phase, $options = array()) {

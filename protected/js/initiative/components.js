@@ -29,6 +29,8 @@ $(document).ready(function() {
         $("#phase-input").val($("#phase").val());
     });
 
+    var componentId = 0;
+    var phaseId = 0;
     $("#component-list").jqxDataTable({
         source: new $.jqx.dataAdapter({
             datatype: 'json',
@@ -61,29 +63,66 @@ $(document).ready(function() {
             return "<strong>" + value + "</strong>";
         }
     }).on("rowClick", function() {
-//        $("[id^=remove]").click(function() {
-//            var text = $(this).parent().siblings("td").html();
-//            $("#text").html("Do you want to delete this objective? Continuing will remove the objective, <strong>" + text + "</strong>, in the Strategy Map")
-//            $("#delete-objective").jqxWindow('open');
-//            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
-//        });
+        $("[id^=remove]").click(function() {
+            var text = $(this).parent().siblings("td").html();
+            $("#text").html("Do you want to delete the component, <strong>" + text + "</strong>, in the Initiative");
+            $("#delete-component").jqxWindow('open');
+            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+
+            var data = $(this).attr('id').split('-');
+            componentId = data[1];
+            phaseId = data[2];
+        });
     });
-    
+
+    $('#delete-component').jqxWindow({
+        title: '<strong>Confirm Component Data Deletion</strong>',
+        width: 500,
+        height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+    });
+
+    $("#deny").click(function() {
+        $("#component-list").jqxDataTable('updateBoundData');
+    });
+
+    $("#accept").click(function() {
+        var id = $(this).attr('id').split('-')[1];
+        $.post("?r=project/deleteComponent",
+                {component: componentId,
+                 phase: phaseId},
+        function(data) {
+            try {
+                var response = $.parseJSON(data);
+                window.location = response.url;
+            } catch (e) {
+                $("#delete-phase").jqxWindow('close');
+                $("#phase-list").jqxDataTable('updateBoundData');
+            }
+        });
+    });
+
     $("#validation-container").hide();
 
     $(".ink-form").submit(function() {
         var component = $("[name*=description]").val();
         var phase = $("#phase").val();
-        
-        if(component === '' && phase === ''){
+
+        if (component === '' && phase === '') {
             $("#validation-content").html("-&nbsp;Component should be defined<br/>-&nbsp;Phase should be defined");
             $("#validation-container").show();
             return false;
-        } else if(component === ''){
+        } else if (component === '') {
             $("#validation-content").html("-&nbsp;Component should be defined");
             $("#validation-container").show();
             return false;
-        } else if(phase === ''){
+        } else if (phase === '') {
             $("#validation-content").html("-&nbsp;Phase should be defined");
             $("#validation-container").show();
             return false;

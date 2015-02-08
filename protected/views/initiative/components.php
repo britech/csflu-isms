@@ -56,3 +56,13 @@ $form = new Form(array(
         <div id="component-list"></div>
     </div>
 </div>
+
+<div id="delete-component">
+    <div id="deleteComponentContent" style="overflow: hidden">
+        <p id="text"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept">Yes</button>
+            <button class="ink-button green flat" id="deny">No</button>
+        </div>
+    </div>
+</div>
