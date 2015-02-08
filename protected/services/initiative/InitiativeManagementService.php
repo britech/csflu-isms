@@ -118,7 +118,7 @@ interface InitiativeManagementService {
     public function getPhase($id, Initiative $initiative);
     
     /**
-     * Enlist the component on  given phase entity
+     * Enlist the component on a given phase entity
      * @param Component $component
      * @param Phase $phase
      * @throws ServiceException
