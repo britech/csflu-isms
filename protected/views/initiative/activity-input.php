@@ -49,6 +49,18 @@ $form = new Form(array(
             </div>
         </div>
         <div class="control-group">
+            <?php echo $form->renderLabel($model, 'budgetAmount'); ?>
+            <div class="control">
+                <?php echo $form->renderTextField($model, 'budgetAmount'); ?>
+            </div>
+        </div>
+        <div class="control-group">
+            <?php echo $form->renderLabel($model, 'sourceOfBudget'); ?>
+            <div class="control">
+                <?php echo $form->renderTextField($model, 'sourceOfBudget'); ?>
+            </div>
+        </div>
+        <div class="control-group">
             <label>Timeline&nbsp;*</label>
             <div class="control">
                 <div id="timeline"></div>
