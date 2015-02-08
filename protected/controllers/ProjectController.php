@@ -231,7 +231,7 @@ class ProjectController extends Controller {
                     'id' => $component->id,
                     'phase' => "{$phase->phaseNumber} - {$phase->title}",
                     'component' => $component->description,
-                    'actions' => ApplicationUtils::generateLink(array('project/updateComponent', 'id' => $component->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$component->id}"))
+                    'actions' => ApplicationUtils::generateLink(array('project/updateComponent', 'id' => $component->id, 'phase' => $phase->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$component->id}"))
                 ));
             }
         }
@@ -264,6 +264,51 @@ class ProjectController extends Controller {
             }
         }
         $this->redirect(array('project/manageComponents', 'initiative' => $initiative->id));
+    }
+
+    public function updateComponent($id = null, $phase = null) {
+        if (is_null($id) && is_null($phase)) {
+            $this->validatePostData(array('Component', 'Phase'));
+        }
+
+        $initiative = $this->loadInitiativeModel(null, new Phase($phase));
+        $strategyMap = $this->loadMapModel($initiative);
+        $component = $this->loadComponentModel($id, new Phase($phase), array('url' => array('project/manageComponents', 'initiative' => $initiative->id)));
+
+        $this->title = ApplicationConstants::APP_NAME . " - Enlist Component";
+        $this->render('initiative/components', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
+                'Initiative' => array('initiative/manage', 'id' => $initiative->id),
+                'Manage Components' => array('project/manageComponents', 'initiative' => $initiative->id),
+                'Update Component' => 'active'
+            ),
+            'model' => $component,
+            'phaseModel' => $this->loadPhaseModel($phase, $initiative),
+            'initiativeModel' => $initiative,
+            'notif' => $this->getSessionData('notif'),
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+    }
+
+    private function loadComponentModel($id, Phase $phase, $options = array()) {
+        $component = $this->initiativeService->getComponent($id, $phase);
+        if (is_null($component->id)) {
+            if (!array_key_exists('url', $options)) {
+                throw new ControllerException("Redirection URL should be defined");
+            }
+            $this->setSessionData('notif', array('message' => 'Phase not found'));
+            if (array_key_exists('remote', $options) && $options['remote']) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($options['url'])));
+            } else {
+                $this->redirect($options['url']);
+            }
+        }
+        return $component;
     }
 
     private function loadPhaseModel($id, Initiative $initiative, $options = array()) {

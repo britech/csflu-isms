@@ -26,7 +26,7 @@ $(document).ready(function() {
             $("#phase").val(event.args.item.value);
         }
     }).on("bindingComplete", function() {
-//        $("#description-input").val($("#description").val());
+        $("#phase-input").val($("#phase").val());
     });
 
     $("#component-list").jqxDataTable({

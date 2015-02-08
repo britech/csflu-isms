@@ -5,7 +5,7 @@ namespace org\csflu\isms\views;
 use org\csflu\isms\util\ModelFormGenerator as Form;
 
 $form = new Form(array(
-    'action' => array('project/insertComponent'),
+    'action' => array($model->isNew() ? 'project/insertComponent' : 'project/updateComponent'),
     'class' => 'ink-form',
     'hasFieldset' => true
         ));
@@ -14,7 +14,7 @@ $form = new Form(array(
 <div class="column-group quarter-gutters">
     <div class="all-50">
         <?php echo $form->startComponent(); ?>
-        <?php echo $form->constructHeader('Enlist Component'); ?>
+        <?php echo $form->constructHeader($model->isNew() ? 'Enlist Component' : 'Update Component'); ?>
         <div class="ink-alert basic info">
             <strong>Important Note:&nbsp;</strong>Fields with * are required.
         </div>
@@ -38,9 +38,16 @@ $form = new Form(array(
             <label>Phase&nbsp;*</label>
             <div class="control">
                 <div id="phase-input"></div>
-                <?php echo $form->renderSubmitButton('Enlist', array('class'=>'ink-button green flat', 'style'=>'margin-top:1em; margin-left:0px;'))?>
+                <?php
+                if ($model->isNew()) {
+                    echo $form->renderSubmitButton('Enlist', array('class' => 'ink-button green flat', 'style' => 'margin-top:1em; margin-left:0px;'));
+                } else {
+                    echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat', 'style' => 'margin-top:1em; margin-left:0px;'));
+                }
+                ?>
             </div>
         </div>
+        <?php echo $form->renderHiddenField($model, 'id'); ?>
         <?php echo $form->renderHiddenField($phaseModel, 'id', array('id' => 'phase')); ?>
         <?php echo $form->renderHiddenField($initiativeModel, 'id', array('id' => 'initiative')); ?>
         <?php echo $form->endComponent(); ?>
