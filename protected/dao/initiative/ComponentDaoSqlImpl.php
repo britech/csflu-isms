@@ -40,7 +40,7 @@ class ComponentDaoSqlImpl implements ComponentDao {
 
     public function listComponents(Phase $phase) {
         try {
-            $dbst = $this->db->prepare('SELECT component_id, component_desc FROM ini_components WHERE phase_ref=:ref');
+            $dbst = $this->db->prepare('SELECT component_id, component_desc FROM ini_components WHERE phase_ref=:ref ORDER BY component_desc');
             $dbst->execute(array('ref' => $phase->id));
 
             $components = array();
@@ -51,6 +51,38 @@ class ComponentDaoSqlImpl implements ComponentDao {
             }
             return $components;
         } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function deleteComponent($id) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('DELETE FROM ini_components WHERE component_id=:id');
+            $dbst->execute(array('id' => $id));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function updateComponent(Component $component, Phase $phase) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('UPDATE ini_components SET component_desc=:description, phase_ref=:phase WHERE component_id=:id');
+            $dbst->execute(array(
+                'description' => $component->description,
+                'phase' => $phase->id,
+                'id' => $component->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }

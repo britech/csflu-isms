@@ -24,4 +24,17 @@ interface ComponentDao {
      * @throws DataAccessException
      */
     public function addComponent(Component $component, Phase $phase);
+    
+    /**
+     * @param Component $component
+     * @param Phase $phase
+     * @throws DataAccessException
+     */
+    public function updateComponent(Component $component, Phase $phase);
+    
+    /**
+     * @param String $id
+     * @throws DataAccessException
+     */
+    public function deleteComponent($id);
 }
