@@ -237,7 +237,51 @@ class ProjectController extends Controller {
         }
         $this->renderAjaxJsonResponse($data);
     }
-    
+
+    public function insertComponent() {
+        $this->validatePostData(array('Phase', 'Component'));
+
+        $phaseData = $this->getFormData('Phase');
+        $componentData = $this->getFormData('Component');
+
+        $component = new Component($componentData['description']);
+        $initiative = $this->loadInitiativeModel(null, new Phase($phaseData['id']));
+        $phase = $this->loadPhaseModel($phaseData['id'], $initiative, array('url' => array('project/manageComponents', 'initiative' => $initiative->id)));
+
+        if (is_null($phase->id) && is_null($component->description)) {
+            $this->setSessionData('validation', array('-&nbsp;Component should be defined', '-&nbsp;Phase should be defined'));
+        } elseif (is_null($phase->id)) {
+            $this->setSessionData('validation', array('-&nbsp;Phase should be defined'));
+        } elseif (is_null($component->description)) {
+            $this->setSessionData('validation', array('-&nbsp;Component should be defined'));
+        } else {
+            try {
+                $this->initiativeService->addComponent($component, $phase);
+                $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[Component added]\n\nComponent:\t{$component->description}\nPhase:\t{$phase->title}");
+                $this->setSessionData('notif', array('class' => 'success', 'message' => 'Component added'));
+            } catch (ServiceException $ex) {
+                $this->setSessionData('validation', array($ex->getMessage()));
+            }
+        }
+        $this->redirect(array('project/manageComponents', 'initiative' => $initiative->id));
+    }
+
+    private function loadPhaseModel($id, Initiative $initiative, $options = array()) {
+        $phase = $this->initiativeService->getPhase($id, $initiative);
+        if (is_null($phase->id)) {
+            if (!array_key_exists('url', $options)) {
+                throw new ControllerException("Redirection URL should be defined");
+            }
+            $this->setSessionData('notif', array('message' => 'Phase not found'));
+            if (array_key_exists('remote', $options) && $options['remote']) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($options['url'])));
+            } else {
+                $this->redirect($options['url']);
+            }
+        }
+        return $phase;
+    }
+
     private function loadInitiativeModel($id = null, Phase $phase = null, $remote = false) {
         $initiative = $this->initiativeService->getInitiative($id, $phase);
         if (is_null($initiative->id)) {

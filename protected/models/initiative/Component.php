@@ -19,6 +19,12 @@ class Component extends Model {
     private $description;
     private $activities;
 
+    public function __construct($description = null) {
+        if(!is_null($description)){
+            $this->description = $description;
+        }
+    }
+    
     public function validate() {
         
     }

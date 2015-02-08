@@ -8,10 +8,12 @@ use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\models\initiative\Phase;
+use org\csflu\isms\models\initiative\Component;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\initiative\InitiativeManagementService;
 use org\csflu\isms\dao\initiative\InitiativeDaoSqlImpl as InitiativeDao;
 use org\csflu\isms\dao\initiative\PhaseDaoSqlImpl as PhaseDao;
+use org\csflu\isms\dao\initiative\ComponentDaoSqlImpl as ComponentDao;
 use org\csflu\isms\dao\map\StrategyMapDaoSqlImpl as StrategyMapDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
@@ -26,6 +28,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
     private $logger;
     private $daoSource;
     private $phaseDaoSource;
+    private $componentDaoSource;
     private $mapDaoSource;
     private $objectiveDaoSource;
     private $mpDaoSource;
@@ -33,6 +36,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
     public function __construct() {
         $this->daoSource = new InitiativeDao();
         $this->phaseDaoSource = new PhaseDao();
+        $this->componentDaoSource = new ComponentDao();
         $this->mapDaoSource = new StrategyMapDao();
         $this->objectiveDaoSource = new ObjectiveDao();
         $this->mpDaoSource = new MeasureProfileDao();
@@ -239,6 +243,16 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
 
     public function deletePhase($id) {
         $this->phaseDaoSource->deletePhase($id);
+    }
+
+    public function addComponent(Component $component, Phase $phase) {
+        $components = $this->componentDaoSource->listComponents($phase);
+        foreach($components as $data){
+            if(strcasecmp($data->description, $component->description) == 0){
+               throw new ServiceException("Component already defined");
+            }
+        }
+        $this->componentDaoSource->addComponent($component, $phase);
     }
 
 }

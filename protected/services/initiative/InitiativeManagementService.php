@@ -8,6 +8,7 @@ use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\models\initiative\Phase;
+use org\csflu\isms\models\initiative\Component;
 use org\csflu\isms\exceptions\ServiceException;
 
 /**
@@ -115,4 +116,12 @@ interface InitiativeManagementService {
      * @return Phase
      */
     public function getPhase($id, Initiative $initiative);
+    
+    /**
+     * Enlist the component on  given phase entity
+     * @param Component $component
+     * @param Phase $phase
+     * @throws ServiceException
+     */
+    public function addComponent(Component $component, Phase $phase);
 }
