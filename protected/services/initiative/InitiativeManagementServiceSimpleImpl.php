@@ -272,4 +272,15 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $this->componentDaoSource->deleteComponent($id);
     }
 
+    public function getPhaseByComponent(Component $component, Initiative $initiative) {
+        $phases = $this->phaseDaoSource->listPhases($initiative);
+        foreach($phases as $phase){
+            foreach($phase->components as $data){
+                if($component->id == $data->id){
+                    return $this->getPhase($phase->id, $initiative);
+                }
+            }
+        }
+    }
+
 }
