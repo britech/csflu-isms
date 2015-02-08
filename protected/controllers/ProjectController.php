@@ -269,6 +269,7 @@ class ProjectController extends Controller {
     public function updateComponent($id = null, $phase = null) {
         if (is_null($id) && is_null($phase)) {
             $this->validatePostData(array('Component', 'Phase'));
+            $this->processComponentUpdate();
         }
 
         $initiative = $this->loadInitiativeModel(null, new Phase($phase));
@@ -293,6 +294,29 @@ class ProjectController extends Controller {
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
+    }
+
+    private function processComponentUpdate() {
+        $phaseData = $this->getFormData('Phase');
+        $componentData = $this->getFormData('Component');
+
+        $initiative = $this->loadInitiativeModel(null, new Phase($phaseData['id']));
+        $phase = $this->loadPhaseModel($phaseData['id'], $initiative);
+
+        $component = new Component($componentData['description'], $componentData['id']);
+        $oldPhase = $this->initiativeService->getPhaseByComponent(new Component(null, $componentData['id']), $initiative);
+        $oldComponent = $this->loadComponentModel($componentData['id'], $oldPhase);
+
+        if ($oldComponent->description != $component->description || $oldPhase->id != $phase->id) {
+            try {
+                $this->initiativeService->manageComponent($component, $phase);
+                $this->logCustomRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[Component updated]\n\nComponent:\t{$component->description}\nPhase:\t{$phase->description}");
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Component updated'));
+            } catch (ServiceException $ex) {
+                $this->setSessionData('validation', array($ex->getMessage()));
+            }
+        }
+        $this->redirect(array('project/manageComponents', 'initiative' => $initiative->id));
     }
 
     private function loadComponentModel($id, Phase $phase, $options = array()) {
