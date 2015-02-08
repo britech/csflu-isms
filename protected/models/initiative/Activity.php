@@ -7,6 +7,16 @@ use org\csflu\isms\core\Model;
 /**
  * Description of Activity
  *
+ * @property String $id
+ * @property String $title
+ * @property String $descriptionOfTarget
+ * @property String $targetFigure
+ * @property String $indicator
+ * @property String $budgetAmount
+ * @property String $sourceOfBudget
+ * @property \DateTime $startingPeriod
+ * @property \DateTime $endingPeriod
+ * @property String $activityEnvironmentStatus
  * @author britech
  */
 class Activity extends Model {
@@ -21,6 +31,7 @@ class Activity extends Model {
     private $title;
     private $descriptionOfTarget;
     private $targetFigure;
+    private $indicator;
     private $budgetAmount;
     private $sourceOfBudget;
     private $startingPeriod;
@@ -29,6 +40,17 @@ class Activity extends Model {
 
     public function validate() {
         
+    }
+
+    public function getAttributeNames() {
+        return array(
+            'title' => 'Activity',
+            'descriptionOfTarget' => 'Target (in description)',
+            'targetFigure' => 'Target (in numerical representation)',
+            'indicator' => 'Indicator',
+            'budgetAmount' => 'Budget',
+            'sourceOfBudget' => 'Source of Budget'
+        );
     }
 
     public function __set($name, $value) {

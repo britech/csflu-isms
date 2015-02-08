@@ -12,6 +12,7 @@ use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\models\initiative\Component;
+use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl as InitiativeManagementService;
 
@@ -231,6 +232,7 @@ class ProjectController extends Controller {
                     'id' => $component->id,
                     'phase' => "{$phase->phaseNumber} - {$phase->title}",
                     'component' => $component->description,
+                    'description' => "Phase {$phase->phaseNumber} - {$component->description}",
                     'actions' => ApplicationUtils::generateLink(array('project/updateComponent', 'id' => $component->id, 'phase' => $phase->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$component->id}-{$phase->id}"))
                 ));
             }
@@ -336,6 +338,32 @@ class ProjectController extends Controller {
         $this->logCustomRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[Component deleted]\n\nComponent:{$component->description}");
         $this->setSessionData('notif', array('message' => 'Component deleted'));
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('project/manageComponents', 'initiative' => $initiative->id))));
+    }
+
+    public function manageActivities($initiative) {
+        $initiativeModel = $this->loadInitiativeModel($initiative);
+        $strategyMap = $this->loadMapModel($initiativeModel);
+        
+        $initiativeModel->startingPeriod = $initiativeModel->startingPeriod->format('Y-m-d');
+        $initiativeModel->endingPeriod = $initiativeModel->endingPeriod->format('Y-m-d');
+        $this->title = ApplicationConstants::APP_NAME . " - Enlist Activity";
+        $this->render('initiative/activity-input', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
+                'Initiative' => array('initiative/manage', 'id' => $initiativeModel->id),
+                'Manage Activities' => 'active'
+            ),
+            'model' => new Activity(),
+            'componentModel' => new Component(),
+            'initiativeModel' => $initiativeModel,
+            'notif' => $this->getSessionData('notif'),
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('notif');
+        $this->unsetSessionData('validation');
     }
 
     private function loadComponentModel($id, Phase $phase, $options = array()) {
