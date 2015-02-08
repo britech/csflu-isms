@@ -268,4 +268,8 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         }
     }
 
+    public function deleteComponent($id) {
+        $this->componentDaoSource->deleteComponent($id);
+    }
+
 }
