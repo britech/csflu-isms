@@ -10,6 +10,10 @@ $form = new Form(array(
     'hasFieldset' => true
         ));
 ?>
+<link href="assets/flick/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
+<link href="assets/tag-editor/jquery.tag-editor.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="assets/jquery/jquery-ui-1.10.4.custom.js"></script>
+<script type="text/javascript" src="assets/tag-editor/jquery.tag-editor.js"></script>
 <script type="text/javascript" src="protected/js/initiative/activity-input.js"></script>
 <div class="column-group half-gutters">
     <div class="all-50">
@@ -63,6 +67,12 @@ $form = new Form(array(
             <?php echo $form->renderLabel($model, 'sourceOfBudget'); ?>
             <div class="control">
                 <?php echo $form->renderTextField($model, 'sourceOfBudget'); ?>
+            </div>
+        </div>
+        <div class="control-group">
+            <?php echo $form->renderLabel($model, 'owners', array('required' => true)); ?>
+            <div class="control">
+                <?php echo $form->renderTextArea($model, 'owners'); ?>
             </div>
         </div>
         <div class="control-group">

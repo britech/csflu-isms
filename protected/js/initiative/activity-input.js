@@ -27,6 +27,12 @@ $(document).ready(function() {
     }).on("bindingComplete", function() {
         //$("#phase-input").val($("#phase").val());
     });
+    
+    $("[name*=owners]").tagEditor({
+        delimiter: '+;',
+        maxLength: -1,
+        forceLowercase: false
+    });
 
     var startDate = $("#initiative-start").val().split('-');
     var endDate = $("#initiative-end").val().split('-');
@@ -96,6 +102,7 @@ $(document).ready(function() {
                     'targetFigure': $("[name*=targetFigure]").val(),
                     'budgetAmount': $("[name*=budgetAmount]").val(),
                     'sourceOfBudget': $("[name*=sourceOfBudget]").val(),
+                    'owners': $("[name*=owners]").val(),
                     'startingPeriod': $("#activity-start").val(),
                     'endingPeriod': $("#activity-end").val()
                 },
