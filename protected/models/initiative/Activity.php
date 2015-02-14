@@ -52,6 +52,10 @@ class Activity extends Model {
             array_push($this->validationMessages, '- Target in descriptive representation must be defined');
         }
 
+        if(strlen($this->targetFigure) > 1 && !is_numeric($this->targetFigure)){
+            array_push($this->validationMessages, '- Target in numerical representation must be in numbers.');
+        }
+        
         if (strlen($this->indicator) < 1) {
             array_push($this->validationMessages, '- Indicator should be defined');
         }
@@ -64,7 +68,7 @@ class Activity extends Model {
             array_push($this->validationMessages, '- Budget Amount should be in numerical representation');
         }
 
-        if (!empty($this->budgetAmount) && strlen($this->sourceOfBudget) < 1) {
+        if (!empty(floatval($this->budgetAmount)) && strlen($this->sourceOfBudget) < 1) {
             array_push($this->validationMessages, '- Source of Budget must be defined');
         }
         
@@ -91,6 +95,10 @@ class Activity extends Model {
             'sourceOfBudget' => 'Source of Budget',
             'owners' => 'Implementing Entities'
         );
+    }
+    
+    public function isNew() {
+        return empty($this->id);
     }
     
     public function getModelTranslationAsNewEntity() {
