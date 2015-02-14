@@ -49,7 +49,7 @@ class ActivityDaoSqlImpl implements ActivityDao {
 
     public function listActivities(Component $component) {
         try {
-            $dbst = $this->db->prepare('SELECT activity_id, activity_desc FROM ini_activities WHERE component_ref=:component ORDER BY activity_desc ASC');
+            $dbst = $this->db->prepare('SELECT activity_id, activity_desc FROM ini_activities WHERE component_ref=:component ORDER BY period_start_date ASC');
             $dbst->execute(array('component' => $component->id));
 
             $activities = array();
@@ -68,9 +68,9 @@ class ActivityDaoSqlImpl implements ActivityDao {
         try {
             $dbst = $this->db->prepare('SELECT activity_id, activity_desc, target_desc, target_figure, indicator, budget_figure, source, owners, period_start_date, period_end_date, activity_status FROM ini_activities WHERE activity_id=:id');
             $dbst->execute(array('id' => $id));
-            
+
             $activity = new Activity();
-            while($data = $dbst->fetch()){
+            while ($data = $dbst->fetch()) {
                 list($activity->id,
                         $activity->title,
                         $activity->descriptionOfTarget,
@@ -85,9 +85,45 @@ class ActivityDaoSqlImpl implements ActivityDao {
             }
             $activity->startingPeriod = \DateTime::createFromFormat('Y-m-d', $activity->startingPeriod);
             $activity->endingPeriod = \DateTime::createFromFormat('Y-m-d', $activity->endingPeriod);
-            
+
             return $activity;
         } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function updateActivity(Activity $activity, Component $component) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('UPDATE ini_activities SET activity_desc=:description, '
+                    . 'target_desc=:targetDescription, '
+                    . 'target_figure=:targetFigure, '
+                    . 'indicator=:indicator, '
+                    . 'budget_figure=:budget, '
+                    . 'source=:source, '
+                    . 'owners=:owners, '
+                    . 'period_start_date=:start, '
+                    . 'period_end_date=:end, '
+                    . 'component_ref=:component '
+                    . 'WHERE activity_id=:id');
+
+            $dbst->execute(array(
+                'description' => $activity->title,
+                'targetDescription' => $activity->descriptionOfTarget,
+                'targetFigure' => $activity->targetFigure,
+                'indicator' => $activity->indicator,
+                'budget' => $activity->budgetAmount,
+                'source' => $activity->sourceOfBudget,
+                'owners' => $activity->owners,
+                'start' => $activity->startingPeriod->format('Y-m-d'),
+                'end' => $activity->endingPeriod->format('Y-m-d'),
+                'component' => $component->id,
+                'id' => $activity->id
+            ));
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }
