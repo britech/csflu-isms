@@ -99,6 +99,55 @@ $(document).ready(function() {
         console.log($("#budgetAmount-input").val());
         $("#budgetAmount").val($("#budgetAmount-input").val());
     });
+    
+    $("#activity-list").jqxDataTable({
+        source: new $.jqx.dataAdapter({
+            datatype: 'json',
+            datafields: [
+                {name: 'phase'},
+                {name: 'component'},
+                {name: 'activity'},
+                {name: 'actions'}
+            ],
+            url: '?r=project/listActivities',
+            type: 'POST',
+            data: {
+                initiative: $("#initiative").val()
+            }
+        }),
+        columnsresize: false,
+        theme: 'office',
+        columns: [
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Activity</span>', dataField: 'activity', width: '80%'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Actions</span>', dataField: 'actions', cellsAlign: 'center'}
+        ],
+        width: '100%',
+        pageable: true,
+        pageSize: '100',
+        filterable: true,
+        filterMode: 'simple',
+        sortable: true,
+        selectionMode: 'singleRow',
+        groups: ['phase', 'component'],
+        groupsRenderer: function(value, rowData, level) {
+            if(level === 0){
+                return "<strong>" + value + "</strong>";
+            } else if(level === 1){
+                return "<strong style=\"margin-left: 10px; font-style:italic\">" + value + "</strong>";
+            }
+        }
+    }).on("rowClick", function() {
+//        $("[id^=remove]").click(function() {
+//            var text = $(this).parent().siblings("td").html();
+//            $("#text").html("Do you want to delete the component, <strong>" + text + "</strong>, in the Initiative");
+//            $("#delete-component").jqxWindow('open');
+//            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+//
+//            var data = $(this).attr('id').split('-');
+//            componentId = data[1];
+//            phaseId = data[2];
+//        });
+    });
 
     $(".ink-form").submit(function() {
         var result = false;

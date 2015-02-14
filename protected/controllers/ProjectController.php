@@ -366,6 +366,28 @@ class ProjectController extends Controller {
         $this->unsetSessionData('validation');
     }
 
+    public function listActivities() {
+        $this->validatePostData(array('initiative'));
+        $id = $this->getFormData('initiative');
+
+        $initiative = $this->loadInitiativeModel($id);
+
+        $data = array();
+        foreach ($initiative->phases as $phase) {
+            foreach ($phase->components as $component) {
+                foreach ($component->activities as $activity) {
+                    array_push($data, array(
+                        'phase' => $phase->phaseNumber . ' - ' . $phase->title,
+                        'component' => $component->description,
+                        'activity' => $activity->title,
+                        'actions' => ApplicationUtils::generateLink(array('project/updateActivity', 'id' => $activity->id, 'component' => $component->id), 'Update') . "&nbsp;|&nbsp;" . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$activity->id}"))
+                    ));
+                }
+            }
+        }
+        $this->renderAjaxJsonResponse($data);
+    }
+
     public function validateActivityInput() {
         $this->validatePostData(array('Activity', 'Component'));
 
@@ -399,7 +421,7 @@ class ProjectController extends Controller {
         $activity = new Activity();
         $activity->bindValuesUsingArray(array('activity' => $activityData));
         $component = new Component(null, $componentData['id']);
-        
+
         if (!$activity->validate()) {
             $data = $activity->validationMessages;
             if (strlen($component->id) < 1) {
@@ -409,14 +431,14 @@ class ProjectController extends Controller {
         } elseif (strlen($component->id) < 1) {
             $this->setSessionData('validation', array('- Component should be defined'));
         } else {
-            $this->setSessionData('notif', array('class'=>'success', 'message'=>'Activity successfully added'));
+            $this->setSessionData('notif', array('class' => 'success', 'message' => 'Activity successfully added'));
         }
 
         $initiative = $this->loadInitiativeModel($initiativeData['id']);
         try {
             $this->initiativeService->manageActivity($activity, $component);
             $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $initiative->id, $activity);
-            $this->setSessionData('notif', array('class'=>'success', 'message'=>'Activity successfully added.'));
+            $this->setSessionData('notif', array('class' => 'success', 'message' => 'Activity successfully added.'));
         } catch (ServiceException $ex) {
             $this->setSessionData('validation', array($ex->getMessage()));
         }
