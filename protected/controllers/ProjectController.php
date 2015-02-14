@@ -380,7 +380,7 @@ class ProjectController extends Controller {
                         'phase' => $phase->phaseNumber . ' - ' . $phase->title,
                         'component' => $component->description,
                         'activity' => $activity->title,
-                        'actions' => ApplicationUtils::generateLink(array('project/updateActivity', 'id' => $activity->id, 'component' => $component->id), 'Update') . "&nbsp;|&nbsp;" . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$activity->id}"))
+                        'actions' => ApplicationUtils::generateLink(array('project/updateActivity', 'id' => $activity->id, 'component' => $component->id, 'phase' => $phase->id), 'Update') . "&nbsp;|&nbsp;" . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$activity->id}"))
                     ));
                 }
             }
