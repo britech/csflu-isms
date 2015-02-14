@@ -68,7 +68,7 @@ class Activity extends Model {
             array_push($this->validationMessages, '- Budget Amount should be in numerical representation');
         }
 
-        if (!empty(floatval($this->budgetAmount)) && strlen($this->sourceOfBudget) < 1) {
+        if (is_numeric($this->budgetAmount) && !empty(floatval($this->budgetAmount)) && strlen($this->sourceOfBudget) < 1) {
             array_push($this->validationMessages, '- Source of Budget must be defined');
         }
         
