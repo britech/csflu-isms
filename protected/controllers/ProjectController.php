@@ -341,8 +341,6 @@ class ProjectController extends Controller {
         $initiativeModel = $this->loadInitiativeModel($initiative);
         $strategyMap = $this->loadMapModel($initiativeModel);
 
-        $initiativeModel->startingPeriod = $initiativeModel->startingPeriod->format('Y-m-d');
-        $initiativeModel->endingPeriod = $initiativeModel->endingPeriod->format('Y-m-d');
         $this->title = ApplicationConstants::APP_NAME . " - Enlist Activity";
         $this->render('initiative/activity-input', array(
             'breadcrumb' => array(
@@ -442,6 +440,55 @@ class ProjectController extends Controller {
         $this->redirect(array('project/manageActivities', 'initiative' => $initiative->id));
     }
 
+    public function updateActivity($id = null) {
+        if (is_null($id)) {
+            /**
+             * @todo update activity here
+             */
+        }
+
+        $activity = $this->loadActivityModel($id);
+        $component = $this->loadComponentModel(null, $activity);
+        $initiative = $this->loadInitiativeModel(null, $this->loadPhaseModel(null, $component));
+        $strategyMap = $this->loadMapModel($initiative);
+
+        $this->title = ApplicationConstants::APP_NAME . " - Update Activity";
+        $this->render('initiative/activity-input', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
+                'Initiative' => array('initiative/manage', 'id' => $initiative->id),
+                'Manage Activities' => array('project/manageActivities', 'initiative' => $initiative->id),
+                'Update Activity' => 'active'
+            ),
+            'model' => $activity,
+            'componentModel' => $component,
+            'initiativeModel' => $initiative,
+            'notif' => $this->getSessionData('notif'),
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+    }
+
+    
+    
+    private function loadActivityModel($id, $remote = false) {
+        $activity = $this->initiativeService->getActivity($id);
+        if (is_null($activity->id)) {
+            $this->setSessionData('notif', array('message' => 'Activity not found'));
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
+            } else {
+                $this->redirect(array('map/index'));
+            }
+        }
+        $activity->startingPeriod = $activity->startingPeriod->format('Y-m-d');
+        $activity->endingPeriod = $activity->endingPeriod->format('Y-m-d');
+        return $activity;
+    }
+
     private function loadComponentModel($id = null, Activity $activity = null, $remote = false) {
         $component = $this->initiativeService->getComponent($id, $activity);
         if (is_null($component->id)) {
@@ -479,6 +526,8 @@ class ProjectController extends Controller {
                 $this->redirect(array('map/index'));
             }
         }
+        $initiative->startingPeriod = $initiative->startingPeriod->format('Y-m-d');
+        $initiative->endingPeriod = $initiative->endingPeriod->format('Y-m-d');
         return $initiative;
     }
 

@@ -18,7 +18,7 @@ $form = new Form(array(
 <div class="column-group half-gutters">
     <div class="all-50">
         <?php echo $form->startComponent(); ?>
-        <?php echo $form->constructHeader("Enlist Activity"); ?>
+        <?php echo $form->constructHeader($model->isNew() ? "Enlist Activity" : "Update Activity"); ?>
         <div class="ink-alert basic info">
             <strong>Important Note:&nbsp;</strong>Fields with * are required.
         </div>
@@ -81,7 +81,13 @@ $form = new Form(array(
             <label>Timeline&nbsp;*</label>
             <div class="control">
                 <div id="timeline"></div>
-                <?php echo $form->renderSubmitButton('Enlist', array('class' => 'ink-button green flat', 'style' => 'margin-left:0px; margin-top:1em;')); ?>
+                <?php
+                if ($model->isNew()) {
+                    echo $form->renderSubmitButton('Enlist', array('class' => 'ink-button green flat', 'style' => 'margin-left:0px; margin-top:1em;'));
+                } else {
+                    echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat', 'style' => 'margin-left:0px; margin-top:1em;'));
+                }
+                ?>
             </div>
         </div>
         <?php echo $form->renderHiddenField($model, 'budgetAmount', array('id' => 'budgetAmount')); ?>

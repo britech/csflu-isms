@@ -25,7 +25,7 @@ $(document).ready(function() {
             $("#component").val(event.args.item.value);
         }
     }).on("bindingComplete", function() {
-        //$("#phase-input").val($("#phase").val());
+        $("#component-input").val($("#component").val());
     });
     
     $("[name*=owners]").tagEditor({
