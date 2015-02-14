@@ -19,6 +19,13 @@ interface ActivityDao {
     public function listActivities(Component $component);
     
     /**
+     * @param String $id
+     * @return Activity
+     * @throws DataAccessException
+     */
+    public function getActivity($id);
+    
+    /**
      * @param Activity $activity
      * @param Component $component
      * @throws DataAccessException

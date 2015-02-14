@@ -278,4 +278,8 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $this->activityDaoSource->addActivity($activity, $component);
     }
 
+    public function getActivity($id) {
+        return $this->activityDaoSource->getActivity($id);
+    }
+
 }

@@ -64,4 +64,32 @@ class ActivityDaoSqlImpl implements ActivityDao {
         }
     }
 
+    public function getActivity($id) {
+        try {
+            $dbst = $this->db->prepare('SELECT activity_id, activity_desc, target_desc, target_figure, indicator, budget_figure, source, owners, period_start_date, period_end_date, activity_status FROM ini_activities WHERE activity_id=:id');
+            $dbst->execute(array('id' => $id));
+            
+            $activity = new Activity();
+            while($data = $dbst->fetch()){
+                list($activity->id,
+                        $activity->title,
+                        $activity->descriptionOfTarget,
+                        $activity->targetFigure,
+                        $activity->indicator,
+                        $activity->budgetAmount,
+                        $activity->sourceOfBudget,
+                        $activity->owners,
+                        $activity->startingPeriod,
+                        $activity->endingPeriod,
+                        $activity->activityEnvironmentStatus) = $data;
+            }
+            $activity->startingPeriod = \DateTime::createFromFormat('Y-m-d', $activity->startingPeriod);
+            $activity->endingPeriod = \DateTime::createFromFormat('Y-m-d', $activity->endingPeriod);
+            
+            return $activity;
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

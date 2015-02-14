@@ -147,4 +147,11 @@ interface InitiativeManagementService {
      * @param Component $component
      */
     public function manageActivity(Activity $activity, Component $component);
+    
+    /**
+     * Retrieves the Activity entity
+     * @param String $id
+     * @return Activity
+     */
+    public function getActivity($id);
 }
