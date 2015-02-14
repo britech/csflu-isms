@@ -60,7 +60,7 @@ $form = new Form(array(
         <div class="control-group">
             <?php echo $form->renderLabel($model, 'budgetAmount'); ?>
             <div class="control">
-                <?php echo $form->renderTextField($model, 'budgetAmount'); ?>
+                <div id="budgetAmount-input" style="padding-left: 10px;"></div>
             </div>
         </div>
         <div class="control-group">
@@ -82,6 +82,7 @@ $form = new Form(array(
                 <?php echo $form->renderSubmitButton('Enlist', array('class' => 'ink-button green flat', 'style' => 'margin-left:0px; margin-top:1em;')); ?>
             </div>
         </div>
+        <?php echo $form->renderHiddenField($model, 'budgetAmount');?>
         <?php echo $form->renderHiddenField($model, 'startingPeriod', array('id' => 'activity-start')); ?>
         <?php echo $form->renderHiddenField($model, 'endingPeriod', array('id' => 'activity-end')); ?>
         <?php echo $form->renderHiddenField($model, 'id'); ?>

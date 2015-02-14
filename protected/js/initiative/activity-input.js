@@ -89,6 +89,17 @@ $(document).ready(function() {
         $("#activity-end").val(endingDate.getFullYear() + "-" + (endingDate.getMonth() + 1) + "-" + lastDayOfEndingDate);
     }).jqxDateTimeInput('setRange', $("#activity-start").val(), $("#activity-end").val());
     
+    $("#budgetAmount-input").jqxNumberInput({ 
+        theme: 'office',
+        height: '35px',
+        textAlign: 'left',
+        digits: 12,
+        symbol: 'PhP'
+    }).on("valuechanged", function(event) {
+        console.log($("#budgetAmount-input").val());
+        $("[name*=budgetAmount]").val($("#budgetAmount-input").val());
+    });
+
     $(".ink-form").submit(function() {
         var result = false;
 
