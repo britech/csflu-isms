@@ -78,7 +78,7 @@ class Phase extends Model {
     public function getModelTranslationAsUpdatedEntity(Phase $oldModel) {
         $translation = "[Phase updated]\n\n";
         if ($oldModel->title != $this->title) {
-            $translation.="Phase:\t{$this->title}";
+            $translation.="Phase:\t{$this->title}\n";
         }
 
         if ($oldModel->description != $this->description) {

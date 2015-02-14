@@ -219,19 +219,12 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $this->phaseDaoSource->addPhase($phase, $initiative);
     }
 
-    public function getPhase($id, Initiative $initiative) {
-        $phases = $this->phaseDaoSource->listPhases($initiative);
-        foreach ($phases as $data) {
-            if ($id == $data->id) {
-                $phase = new Phase();
-                $phase->id = $data->id;
-                $phase->phaseNumber = $data->phaseNumber;
-                $phase->title = $data->title;
-                $phase->description = $data->description;
-                return $phase;
-            }
+    public function getPhase($id = null, Component $component = null) {
+        if(!is_null($id)){
+            return $this->phaseDaoSource->getPhaseByIdentifier($id);
+        } else if(!is_null($component)){
+            return $this->phaseDaoSource->getPhaseByComponent($component);
         }
-        return null;
     }
 
     public function updatePhase(Phase $phase) {
@@ -263,28 +256,16 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         }
     }
 
-    public function getComponent($id, Phase $phase) {
-        $components = $this->componentDaoSource->listComponents($phase);
-        foreach ($components as $data) {
-            if ($id == $data->id) {
-                return new Component($data->description, $data->id);
-            }
-        }
+    public function getComponent($id = null, Activity $activity = null) {
+       if(!is_null($id)){
+           return $this->componentDaoSource->getComponentByIdentifier($id);
+       } elseif (!is_null($activity)){
+           return $this->componentDaoSource->getComponentByActivity($activity);
+       }
     }
 
     public function deleteComponent($id) {
         $this->componentDaoSource->deleteComponent($id);
-    }
-
-    public function getPhaseByComponent(Component $component, Initiative $initiative) {
-        $phases = $this->phaseDaoSource->listPhases($initiative);
-        foreach ($phases as $phase) {
-            foreach ($phase->components as $data) {
-                if ($component->id == $data->id) {
-                    return $this->getPhase($phase->id, $initiative);
-                }
-            }
-        }
     }
 
     public function manageActivity(Activity $activity, Component $component) {

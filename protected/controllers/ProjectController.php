@@ -4,6 +4,7 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\core\Model;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\util\ApplicationUtils;
@@ -125,13 +126,9 @@ class ProjectController extends Controller {
             $this->processPhaseUpdate();
         }
 
-        $phase = new Phase();
-        $phase->id = $id;
-
+        $phase = $this->loadPhaseModel($id);
         $initiative = $this->loadInitiativeModel(null, $phase);
         $strategyMap = $this->loadMapModel($initiative);
-        $phaseModel = $this->initiativeService->getPhase($id, $initiative);
-        $phaseModel->validationMode = \org\csflu\isms\core\Model::VALIDATION_MODE_UPDATE;
 
         $this->title = ApplicationConstants::APP_NAME . " - Update Phase";
         $this->render('initiative/phases', array(
@@ -144,7 +141,7 @@ class ProjectController extends Controller {
                 'Manage Phases' => array('project/managePhases', 'initiative' => $initiative->id),
                 'Update Phase' => 'active'
             ),
-            'phase' => $phaseModel,
+            'phase' => $phase,
             'initiative' => $initiative,
             'notif' => $this->getSessionData('notif'),
             'validation' => $this->getSessionData('validation')
@@ -163,7 +160,7 @@ class ProjectController extends Controller {
         $phase->bindValuesUsingArray(array(
             'phase' => $phaseData
         ));
-        $oldPhase = clone $this->initiativeService->getPhase($phase->id, $initiative);
+        $oldPhase = clone $this->loadPhaseModel($phase->id);
 
         if ($phase->validate() && $phase->computePropertyChanges($oldPhase) > 0) {
             try {
@@ -183,8 +180,8 @@ class ProjectController extends Controller {
         $this->validatePostData(array('phase'));
         $id = $this->getFormData('phase');
 
-        $initiative = $this->loadInitiativeModel(null, new Phase($id), true);
-        $phase = $this->initiativeService->getPhase($id, $initiative);
+        $phase = $this->loadPhaseModel($id, null, true);
+        $initiative = $this->loadInitiativeModel(null, $phase, true);
 
         if (is_null($phase->id)) {
             $this->setSessionData('notif', array('message' => 'Phase not found'));
@@ -233,7 +230,7 @@ class ProjectController extends Controller {
                     'phase' => "{$phase->phaseNumber} - {$phase->title}",
                     'component' => $component->description,
                     'description' => "Phase {$phase->phaseNumber} - {$component->description}",
-                    'actions' => ApplicationUtils::generateLink(array('project/updateComponent', 'id' => $component->id, 'phase' => $phase->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$component->id}-{$phase->id}"))
+                    'actions' => ApplicationUtils::generateLink(array('project/updateComponent', 'id' => $component->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$component->id}-{$phase->id}"))
                 ));
             }
         }
@@ -268,15 +265,16 @@ class ProjectController extends Controller {
         $this->redirect(array('project/manageComponents', 'initiative' => $initiative->id));
     }
 
-    public function updateComponent($id = null, $phase = null) {
-        if (is_null($id) && is_null($phase)) {
+    public function updateComponent($id = null) {
+        if (is_null($id)) {
             $this->validatePostData(array('Component', 'Phase'));
             $this->processComponentUpdate();
         }
 
-        $initiative = $this->loadInitiativeModel(null, new Phase($phase));
+        $component = $this->loadComponentModel($id, null);
+        $phase = $this->loadPhaseModel(null, $component);
+        $initiative = $this->loadInitiativeModel(null, $phase);
         $strategyMap = $this->loadMapModel($initiative);
-        $component = $this->loadComponentModel($id, new Phase($phase), array('url' => array('project/manageComponents', 'initiative' => $initiative->id)));
 
         $this->title = ApplicationConstants::APP_NAME . " - Enlist Component";
         $this->render('initiative/components', array(
@@ -290,7 +288,7 @@ class ProjectController extends Controller {
                 'Update Component' => 'active'
             ),
             'model' => $component,
-            'phaseModel' => $this->loadPhaseModel($phase, $initiative),
+            'phaseModel' => $phase,
             'initiativeModel' => $initiative,
             'notif' => $this->getSessionData('notif'),
             'validation' => $this->getSessionData('validation')
@@ -302,17 +300,17 @@ class ProjectController extends Controller {
         $phaseData = $this->getFormData('Phase');
         $componentData = $this->getFormData('Component');
 
-        $initiative = $this->loadInitiativeModel(null, new Phase($phaseData['id']));
-        $phase = $this->loadPhaseModel($phaseData['id'], $initiative);
+        $selectedPhase = $this->loadPhaseModel($phaseData['id']);
+        $initiative = $this->loadInitiativeModel(null, $selectedPhase);
 
         $component = new Component($componentData['description'], $componentData['id']);
-        $oldPhase = $this->initiativeService->getPhaseByComponent(new Component(null, $componentData['id']), $initiative);
-        $oldComponent = $this->loadComponentModel($componentData['id'], $oldPhase);
+        $oldPhase = $this->loadPhaseModel(null, $component);
+        $oldComponent = $this->loadComponentModel($componentData['id']);
 
-        if ($oldComponent->description != $component->description || $oldPhase->id != $phase->id) {
+        if ($oldComponent->description != $component->description || $oldPhase->id != $selectedPhase->id) {
             try {
-                $this->initiativeService->manageComponent($component, $phase);
-                $this->logCustomRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[Component updated]\n\nComponent:\t{$component->description}\nPhase:\t{$phase->description}");
+                $this->initiativeService->manageComponent($component, $selectedPhase);
+                $this->logCustomRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[Component updated]\n\nComponent:\t{$component->description}\nPhase:\t{$selectedPhase->title}");
                 $this->setSessionData('notif', array('class' => 'info', 'message' => 'Component updated'));
             } catch (ServiceException $ex) {
                 $this->setSessionData('validation', array($ex->getMessage()));
@@ -323,19 +321,18 @@ class ProjectController extends Controller {
 
     public function deleteComponent() {
         try {
-            $this->validatePostData(array('component', 'phase'));
+            $this->validatePostData(array('component'));
         } catch (ControllerException $ex) {
             $this->renderAjaxJsonResponse(array('respCode' => '70'));
         }
 
-        $componentId = $this->getFormData('component');
-        $phaseId = $this->getFormData('phase');
-
-        $initiative = $this->loadInitiativeModel(null, new Phase($phaseId), true);
-        $component = clone $this->loadComponentModel($componentId, new Phase($phaseId), array('url' => array('project/manageComponents', 'initiative' => $initiative->id), 'remote' => true));
+        $id = $this->getFormData('component');
+        $component = clone $this->loadComponentModel($id, null, true);
+        $phase = $this->loadPhaseModel(null, $component, true);
+        $initiative = $this->loadInitiativeModel(null, $phase, true);
 
         $this->initiativeService->deleteComponent($component->id);
-        $this->logCustomRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[Component deleted]\n\nComponent:{$component->description}");
+        $this->logCustomRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[Component deleted]\n\nComponent:\t{$component->description}");
         $this->setSessionData('notif', array('message' => 'Component deleted'));
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('project/manageComponents', 'initiative' => $initiative->id))));
     }
@@ -445,35 +442,30 @@ class ProjectController extends Controller {
         $this->redirect(array('project/manageActivities', 'initiative' => $initiative->id));
     }
 
-    private function loadComponentModel($id, Phase $phase, $options = array()) {
-        $component = $this->initiativeService->getComponent($id, $phase);
+    private function loadComponentModel($id = null, Activity $activity = null, $remote = false) {
+        $component = $this->initiativeService->getComponent($id, $activity);
         if (is_null($component->id)) {
-            if (!array_key_exists('url', $options)) {
-                throw new ControllerException("Redirection URL should be defined");
-            }
-            $this->setSessionData('notif', array('message' => 'Phase not found'));
-            if (array_key_exists('remote', $options) && $options['remote']) {
-                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($options['url'])));
+            $this->setSessionData('notif', array('message' => 'Component not found'));
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
             } else {
-                $this->redirect($options['url']);
+                $this->redirect(array('map/index'));
             }
         }
         return $component;
     }
 
-    private function loadPhaseModel($id, Initiative $initiative, $options = array()) {
-        $phase = $this->initiativeService->getPhase($id, $initiative);
+    private function loadPhaseModel($id = null, Component $component = null, $remote = false) {
+        $phase = $this->initiativeService->getPhase($id, $component);
         if (is_null($phase->id)) {
-            if (!array_key_exists('url', $options)) {
-                throw new ControllerException("Redirection URL should be defined");
-            }
             $this->setSessionData('notif', array('message' => 'Phase not found'));
-            if (array_key_exists('remote', $options) && $options['remote']) {
-                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($options['url'])));
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
             } else {
-                $this->redirect($options['url']);
+                $this->redirect(array('map/index'));
             }
         }
+        $phase->validationMode = Model::VALIDATION_MODE_UPDATE;
         return $phase;
     }
 

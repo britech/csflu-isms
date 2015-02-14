@@ -111,27 +111,21 @@ interface InitiativeManagementService {
     public function deletePhase($id);
     
     /**
-     * Retrieves the Phase entity via its Id in a given initiative
-     * @param String $id
-     * @param Initiative $initiative
+     * Retrieves the Phase entity
+     * @param String $id Retrieve by its identifier
+     * @param Component $component Retrieve by its underlying Component object
      * @return Phase
+     * @throws ServiceException
      */
-    public function getPhase($id, Initiative $initiative);
-    
+    public function getPhase($id = null, Component $component = null);
+        
     /**
-     * Retrieves the Phase entity via underlying component entity
-     * @param Component $component
-     *  
-     */
-    public function getPhaseByComponent(Component $component, Initiative $initiative);
-    
-    /**
-     * Retrieves the component entity in a given phase
-     * @param String $id
-     * @param Phase $phase
+     * Retrieves the Component entity
+     * @param String $id Retrieve by its identifier
+     * @param Activity $activity Retrieve by its underlying Component object
      * @return Component
      */
-    public function getComponent($id, Phase $phase);
+    public function getComponent($id = null, Activity $activity = null);
     
     /**
      * Enlists/Updates the component on a given phase entity

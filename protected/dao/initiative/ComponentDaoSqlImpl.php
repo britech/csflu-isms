@@ -6,6 +6,7 @@ use org\csflu\isms\dao\initiative\ComponentDao;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\models\initiative\Component;
+use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\initiative\ActivityDaoSqlImpl;
 
@@ -87,6 +88,35 @@ class ComponentDaoSqlImpl implements ComponentDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getComponentByActivity(Activity $activity) {
+        try {
+            $dbst = $this->db->prepare('SELECT component_ref FROM ini_activities WHERE activity_id=:id');
+            $dbst->execute(array('id' => $activity->id));
+            
+            while($data = $dbst->fetch()){
+                list($id) = $data;
+            }
+            return $this->getComponentByIdentifier($id);
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getComponentByIdentifier($id) {
+        try {
+            $dbst = $this->db->prepare('SELECT component_id, component_desc FROM ini_components WHERE component_id=:id');
+            $dbst->execute(array('id' => $id));
+
+            $component = new Component();
+            while ($data = $dbst->fetch()) {
+                list($component->id, $component->description) = $data;
+            }
+            return $component;
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }

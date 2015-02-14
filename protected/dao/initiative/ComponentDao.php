@@ -4,6 +4,7 @@ namespace org\csflu\isms\dao\initiative;
 
 use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\models\initiative\Component;
+use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\exceptions\DataAccessException;
 /**
  *
@@ -17,6 +18,20 @@ interface ComponentDao {
      * @throws DataAccessException
      */
     public function listComponents(Phase $phase);
+    
+    /**
+     * @param String $id
+     * @return Component
+     * @throws DataAccessException
+     */
+    public function getComponentByIdentifier($id);
+    
+    /**
+     * @param Activity $activity
+     * @return Component
+     * @throws DataAccessException
+     */
+    public function getComponentByActivity(Activity $activity);
     
     /**
      * @param Component $component

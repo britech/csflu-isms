@@ -4,6 +4,7 @@ namespace org\csflu\isms\dao\initiative;
 
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\models\initiative\Phase;
+use org\csflu\isms\models\initiative\Component;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\initiative\PhaseDao;
@@ -92,6 +93,35 @@ class PhaseDaoSqlImpl implements PhaseDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getPhaseByComponent(Component $component) {
+        try {
+            $dbst = $this->db->prepare('SELECT phase_ref FROM ini_components WHERE component_id=:component');
+            $dbst->execute(array('component' => $component->id));
+            
+            while($data = $dbst->fetch()){
+                list($id) = $data;
+            }
+            return $this->getPhaseByIdentifier($id);
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getPhaseByIdentifier($id) {
+        try {
+            $dbst = $this->db->prepare('SELECT phase_id, phase_number, phase_title, phase_desc FROM ini_phases WHERE phase_id=:id');
+            $dbst->execute(array('id' => $id));
+
+            $phase = new Phase();
+            while ($data = $dbst->fetch()) {
+                list($phase->id, $phase->phaseNumber, $phase->title, $phase->description) = $data;
+            }
+            return $phase;
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }
