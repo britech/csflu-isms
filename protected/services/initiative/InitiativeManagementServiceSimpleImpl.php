@@ -294,7 +294,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
                 throw new ServiceException("Activity already defined. Please use the update facility instead");
             }
         }
-        //$this->activityDaoSource->addActivity($activity, $component);
+        $this->activityDaoSource->addActivity($activity, $component);
     }
 
 }

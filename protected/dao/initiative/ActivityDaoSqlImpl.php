@@ -30,7 +30,7 @@ class ActivityDaoSqlImpl implements ActivityDao {
                 'component' => $component->id,
                 'activity' => $activity->title,
                 'target' => $activity->descriptionOfTarget,
-                'figure' => $activity->budgetAmount,
+                'figure' => $activity->targetFigure,
                 'indicator' => $activity->indicator,
                 'budget' => $activity->budgetAmount,
                 'source' => $activity->sourceOfBudget,
