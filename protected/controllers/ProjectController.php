@@ -244,8 +244,8 @@ class ProjectController extends Controller {
         $componentData = $this->getFormData('Component');
 
         $component = new Component($componentData['description']);
-        $initiative = $this->loadInitiativeModel(null, new Phase($phaseData['id']));
-        $phase = $this->loadPhaseModel($phaseData['id'], $initiative, array('url' => array('project/manageComponents', 'initiative' => $initiative->id)));
+        $phase = $this->loadPhaseModel($phaseData['id']);
+        $initiative = $this->loadInitiativeModel(null, $phase);
 
         if (is_null($phase->id) && is_null($component->description)) {
             $this->setSessionData('validation', array('-&nbsp;Component should be defined', '-&nbsp;Phase should be defined'));
