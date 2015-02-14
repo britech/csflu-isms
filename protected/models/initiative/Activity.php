@@ -92,6 +92,16 @@ class Activity extends Model {
             'owners' => 'Implementing Entities'
         );
     }
+    
+    public function getModelTranslationAsNewEntity() {
+        return "[Activity added]\n\n"
+        . "Activity:\t{$this->title}\n"
+        . "Target Definition:\t{$this->descriptionOfTarget}\n"
+        . "Indicator:\t{$this->indicator}\n"
+        . "Budget:\t{$this->budgetAmount} ({$this->sourceOfBudget})\n"
+        . "Implementing Entities:\t{$this->owners}\n"
+        . "Timeline:\t{$this->startingPeriod->format('F-Y')} - {$this->endingPeriod->format('F-Y')}";
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;
