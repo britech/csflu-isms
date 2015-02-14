@@ -60,11 +60,11 @@ class Activity extends Model {
             array_push($this->validationMessages, '- Implementing Entities should be defined');
         }
 
-        if (strlen($this->budgetAmount) > 1 && !is_numeric($this->budgetAmount)) {
+        if (!empty($this->budgetAmount) && !is_numeric($this->budgetAmount)) {
             array_push($this->validationMessages, '- Budget Amount should be in numerical representation');
         }
 
-        if (strlen($this->budgetAmount) > 1 && strlen($this->sourceOfBudget) < 1) {
+        if (!empty($this->budgetAmount) && strlen($this->sourceOfBudget) < 1) {
             array_push($this->validationMessages, '- Source of Budget must be defined');
         }
         
