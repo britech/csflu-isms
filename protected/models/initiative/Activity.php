@@ -52,10 +52,10 @@ class Activity extends Model {
             array_push($this->validationMessages, '- Target in descriptive representation must be defined');
         }
 
-        if(strlen($this->targetFigure) > 1 && !is_numeric($this->targetFigure)){
+        if (strlen($this->targetFigure) > 1 && !is_numeric($this->targetFigure)) {
             array_push($this->validationMessages, '- Target in numerical representation must be in numbers.');
         }
-        
+
         if (strlen($this->indicator) < 1) {
             array_push($this->validationMessages, '- Indicator should be defined');
         }
@@ -71,8 +71,8 @@ class Activity extends Model {
         if (is_numeric($this->budgetAmount) && !empty(floatval($this->budgetAmount)) && strlen($this->sourceOfBudget) < 1) {
             array_push($this->validationMessages, '- Source of Budget must be defined');
         }
-        
-        if(!$this->startingPeriod instanceof \DateTime || !$this->endingPeriod instanceof \DateTime){
+
+        if (!$this->startingPeriod instanceof \DateTime || !$this->endingPeriod instanceof \DateTime) {
             array_push($this->validationMessages, '- Timeline should be defined');
         }
 
@@ -96,19 +96,102 @@ class Activity extends Model {
             'owners' => 'Implementing Entities'
         );
     }
-    
+
     public function isNew() {
         return empty($this->id);
     }
-    
+
     public function getModelTranslationAsNewEntity() {
         return "[Activity added]\n\n"
-        . "Activity:\t{$this->title}\n"
-        . "Target Definition:\t{$this->descriptionOfTarget}\n"
-        . "Indicator:\t{$this->indicator}\n"
-        . "Budget:\t{$this->budgetAmount} ({$this->sourceOfBudget})\n"
-        . "Implementing Entities:\t{$this->owners}\n"
-        . "Timeline:\t{$this->startingPeriod->format('F-Y')} - {$this->endingPeriod->format('F-Y')}";
+                . "Activity:\t{$this->title}\n"
+                . "Target Definition:\t{$this->descriptionOfTarget}\n"
+                . "Indicator:\t{$this->indicator}\n"
+                . "Budget:\t{$this->budgetAmount} ({$this->sourceOfBudget})\n"
+                . "Implementing Entities:\t{$this->owners}\n"
+                . "Timeline:\t{$this->startingPeriod->format('F-Y')} - {$this->endingPeriod->format('F-Y')}";
+    }
+
+    public function computePropertyChanges(Activity $oldModel) {
+        $counter = 0;
+
+        if ($this->title != $oldModel->title) {
+            $counter++;
+        }
+
+        if ($this->descriptionOfTarget != $oldModel->descriptionOfTarget) {
+            $counter++;
+        }
+
+        if ($this->targetFigure != $oldModel->targetFigure) {
+            $counter++;
+        }
+
+        if ($this->indicator != $oldModel->indicator) {
+            $counter++;
+        }
+
+        if ($this->owners != $oldModel->owners) {
+            $counter++;
+        }
+
+        if ($this->startingPeriod->format('Y-m-d') != $oldModel->startingPeriod->format('Y-m-d')) {
+            $counter++;
+        }
+
+        if ($this->endingPeriod->format('Y-m-d') != $oldModel->endingPeriod->format('Y-m-d')) {
+            $counter++;
+        }
+
+        if ($this->budgetAmount != $oldModel->budgetAmount) {
+            $counter++;
+        }
+
+        if ($this->sourceOfBudget != $oldModel->sourceOfBudget) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
+    public function getModelTranslationAsUpdatedEntity(Activity $oldModel) {
+        $translation = "[Activity updated]\n\n";
+        if ($this->title != $oldModel->title) {
+            $translation.="Activity:\t{$this->title}\n";
+        }
+
+        if ($this->descriptionOfTarget != $oldModel->descriptionOfTarget) {
+            $translation.="Description of Target:\t{$this->descriptionOfTarget}\n";
+        }
+
+        if ($this->targetFigure != $oldModel->targetFigure) {
+            $translation.="Target Figure:\t{$this->targetFigure}\n";
+        }
+
+        if ($this->indicator != $oldModel->indicator) {
+            $translation.="Indicator:\t{$this->indicator}\n";
+        }
+
+        if ($this->owners != $oldModel->owners) {
+            $translation.="Implementing Entities:\t{$this->owners}\n";
+        }
+
+        if ($this->startingPeriod->format('Y-m-d') != $oldModel->startingPeriod->format('Y-m-d')) {
+            $translation.="Starting Period:\t{$this->startingPeriod->format('F-Y')}\n";
+        }
+
+        if ($this->endingPeriod->format('Y-m-d') != $oldModel->endingPeriod->format('Y-m-d')) {
+            $translation.="Ending Period:\t{$this->endingPeriod->format('F-Y')}\n";
+        }
+
+        if ($this->budgetAmount != $oldModel->budgetAmount) {
+            $translation.="Budget Amount:\t{$this->budgetAmount}\n";
+        }
+
+        if ($this->sourceOfBudget != $oldModel->sourceOfBudget) {
+            $translation.="Source of Budget:\t{$this->sourceOfBudget}";
+        }
+        
+        return $translation;
     }
 
     public function __set($name, $value) {
@@ -117,6 +200,19 @@ class Activity extends Model {
 
     public function __get($name) {
         return $this->$name;
+    }
+
+    public function __clone() {
+        $activity = new Activity();
+        $activity->id = $this->id;
+        $activity->descriptionOfTarget = $this->descriptionOfTarget;
+        $activity->targetFigure = $this->targetFigure;
+        $activity->indicator = $this->indicator;
+        $activity->owners = $this->owners;
+        $activity->startingPeriod = $this->startingPeriod;
+        $activity->endingPeriod = $this->endingPeriod;
+        $activity->budgetAmount = $this->budgetAmount;
+        $activity->sourceOfBudget = $this->sourceOfBudget;
     }
 
 }
