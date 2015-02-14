@@ -19,15 +19,11 @@ $form = new Form(array(
     <div class="all-50">
         <?php echo $form->startComponent(); ?>
         <?php echo $form->constructHeader("Enlist Activity"); ?>
-        <div class="ink-alert block info">
-            <h4>Important Notes</h4>
-            <p>
-                -&nbsp;Fields with * are <strong>required</strong>.
-                <br/>
-                -&nbsp;Budget Amount <strong>SHOULD NOT</strong> be separated by comma's.
-            </p>        
+        <div class="ink-alert basic info">
+            <strong>Important Note:&nbsp;</strong>Fields with * are required.
         </div>
         <div id="validation-container"></div>
+        <?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
         <?php
         if (isset($params['validation']) && !empty($params['validation'])) {
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
@@ -58,6 +54,12 @@ $form = new Form(array(
             </div>
         </div>
         <div class="control-group">
+            <?php echo $form->renderLabel($model, 'indicator', array('required' => true)); ?>
+            <div class="control">
+                <?php echo $form->renderTextArea($model, 'indicator'); ?>
+            </div>
+        </div>
+        <div class="control-group">
             <?php echo $form->renderLabel($model, 'budgetAmount'); ?>
             <div class="control">
                 <div id="budgetAmount-input" style="padding-left: 10px;"></div>
@@ -82,7 +84,7 @@ $form = new Form(array(
                 <?php echo $form->renderSubmitButton('Enlist', array('class' => 'ink-button green flat', 'style' => 'margin-left:0px; margin-top:1em;')); ?>
             </div>
         </div>
-        <?php echo $form->renderHiddenField($model, 'budgetAmount');?>
+        <?php echo $form->renderHiddenField($model, 'budgetAmount', array('id' => 'budgetAmount')); ?>
         <?php echo $form->renderHiddenField($model, 'startingPeriod', array('id' => 'activity-start')); ?>
         <?php echo $form->renderHiddenField($model, 'endingPeriod', array('id' => 'activity-end')); ?>
         <?php echo $form->renderHiddenField($model, 'id'); ?>

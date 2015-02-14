@@ -97,7 +97,7 @@ $(document).ready(function() {
         symbol: 'PhP'
     }).on("valuechanged", function(event) {
         console.log($("#budgetAmount-input").val());
-        $("[name*=budgetAmount]").val($("#budgetAmount-input").val());
+        $("#budgetAmount").val($("#budgetAmount-input").val());
     });
 
     $(".ink-form").submit(function() {
@@ -110,8 +110,9 @@ $(document).ready(function() {
                 "Activity": {
                     'title': $("[name*=title]").val(),
                     'descriptionOfTarget': $("[name*=descriptionOfTarget]").val(),
+                    'indicator': $("[name*=indicator]").val(),
                     'targetFigure': $("[name*=targetFigure]").val(),
-                    'budgetAmount': $("[name*=budgetAmount]").val(),
+                    'budgetAmount': $("#budgetAmount").val(),
                     'sourceOfBudget': $("[name*=sourceOfBudget]").val(),
                     'owners': $("[name*=owners]").val(),
                     'startingPeriod': $("#activity-start").val(),
