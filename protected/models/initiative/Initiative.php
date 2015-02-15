@@ -172,7 +172,7 @@ class Initiative extends Model {
             $counter++;
         }
 
-        if ($oldInitiative->endingPeriod->format('Y-m-md') != $this->endingPeriod->format('Y-m-d')) {
+        if ($oldInitiative->endingPeriod->format('Y-m-d') != $this->endingPeriod->format('Y-m-d')) {
             $counter++;
         }
 
