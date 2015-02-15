@@ -44,7 +44,7 @@ class ComponentDaoSqlImpl implements ComponentDao {
 
     public function listComponents(Phase $phase) {
         try {
-            $dbst = $this->db->prepare('SELECT component_id, component_desc FROM ini_components WHERE phase_ref=:ref ORDER BY component_desc');
+            $dbst = $this->db->prepare('SELECT component_id, component_desc FROM ini_components WHERE phase_ref=:ref');
             $dbst->execute(array('ref' => $phase->id));
 
             $components = array();
