@@ -4,8 +4,9 @@ namespace org\csflu\isms\models\ubt;
 
 use org\csflu\isms\core\Model;
 use org\csflu\isms\models\map\Objective;
-use org\csflu\isms\models\indicator\Indicator;
+use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\ubt\LeadMeasure;
+
 /**
  * Description of UnitBreakthrough
  * 
@@ -16,7 +17,7 @@ use org\csflu\isms\models\ubt\LeadMeasure;
  * @property \DateTime $startingPeriod
  * @property \DateTime $endingPeriod
  * @property Objective[] $objectives
- * @property Indicator[] $indicators
+ * @property MeasureProfile[] $indicators
  * @property LeadMeasure[] $leadMeasures
  * @property String $unitBreakthroughEnvironmentStatus
  * @author britech
