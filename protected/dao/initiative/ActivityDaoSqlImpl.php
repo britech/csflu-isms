@@ -16,7 +16,7 @@ use org\csflu\isms\core\ConnectionManager;
 class ActivityDaoSqlImpl implements ActivityDao {
 
     private $db;
-
+    
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
     }
@@ -25,9 +25,10 @@ class ActivityDaoSqlImpl implements ActivityDao {
         try {
             $this->db->beginTransaction();
 
-            $dbst = $this->db->prepare('INSERT INTO ini_activities(component_ref, activity_desc, target_desc, target_figure, indicator, budget_figure, source, owners, period_start_date, period_end_date, activity_status) VALUES(:component, :activity, :target, :figure, :indicator, :budget, :source, :owners, :start, :end, :status)');
+            $dbst = $this->db->prepare('INSERT INTO ini_activities(component_ref, activity_number, activity_desc, target_desc, target_figure, indicator, budget_figure, source, owners, period_start_date, period_end_date, activity_status) VALUES(:component, :number, :activity, :target, :figure, :indicator, :budget, :source, :owners, :start, :end, :status)');
             $dbst->execute(array(
                 'component' => $component->id,
+                'number' => $activity->activityNumber,
                 'activity' => $activity->title,
                 'target' => $activity->descriptionOfTarget,
                 'figure' => $activity->targetFigure,
@@ -94,9 +95,11 @@ class ActivityDaoSqlImpl implements ActivityDao {
 
     public function updateActivity(Activity $activity, Component $component) {
         try {
+            $this->logger->debug($activity);
             $this->db->beginTransaction();
 
-            $dbst = $this->db->prepare('UPDATE ini_activities SET activity_desc=:description, '
+            $dbst = $this->db->prepare('UPDATE ini_activities SET activity_number=:number, '
+                    . 'activity_desc=:description, '
                     . 'target_desc=:targetDescription, '
                     . 'target_figure=:targetFigure, '
                     . 'indicator=:indicator, '
@@ -109,6 +112,7 @@ class ActivityDaoSqlImpl implements ActivityDao {
                     . 'WHERE activity_id=:id');
 
             $dbst->execute(array(
+                'number' => $activity->activityNumber,
                 'description' => $activity->title,
                 'targetDescription' => $activity->descriptionOfTarget,
                 'targetFigure' => $activity->targetFigure,
