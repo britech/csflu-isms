@@ -4,6 +4,10 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\models\ubt\UnitBreakthrough;
+use org\csflu\isms\models\map\Objective;
+use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 
 /**
@@ -41,12 +45,33 @@ class UbtController extends Controller {
         ));
     }
 
+    public function create($map) {
+        $strategyMap = $this->loadMapModel($map);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Create a UBT';
+        $this->render('ubt/form', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
+                'Create UBT' => 'active'),
+            'model' => new UnitBreakthrough(),
+            'objectiveModel' => new Objective(),
+            'measureProfileModel' => new MeasureProfile(),
+            'departmentModel' => new Department(),
+            'mapModel' => $strategyMap
+        ));
+    }
+
     private function loadMapModel($id) {
         $strategyMap = $this->mapService->getStrategyMap($id);
         if (is_null($strategyMap->id)) {
             $this->setSessionData('notif', array('message' => 'Map not found'));
             $this->redirect(array('map/index'));
         }
+        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
         return $strategyMap;
     }
 
