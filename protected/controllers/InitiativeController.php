@@ -253,7 +253,8 @@ class InitiativeController extends Controller {
                     )
                 )
             ),
-            'notif' => $this->getSessionData('notif')
+            'notif' => $this->getSessionData('notif'),
+            'model' => $initiative
         ));
         $this->unsetSessionData('notif');
     }
