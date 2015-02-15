@@ -4,6 +4,7 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
@@ -62,6 +63,34 @@ class UbtController extends Controller {
             'departmentModel' => new Department(),
             'mapModel' => $strategyMap
         ));
+    }
+
+    public function validateUbtInput() {
+        try {
+            $this->validatePostData(array('UnitBreakthrough', 'Objective', 'MeasureProfile', 'mode'));
+        } catch (ControllerException $ex) {
+            $this->logger->warn($ex->getMessage(), $ex);
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+        }
+
+        $mode = $this->getFormData('mode');
+        $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
+        $objectiveData = $this->getFormData('Objective');
+        $measureProfileData = $this->getFormData('MeasureProfile');
+
+        $unitBreakthrough = new UnitBreakthrough();
+        $unitBreakthrough->validationMode = $mode;
+        $unitBreakthrough->bindValuesUsingArray(array(
+            'unitbreakthrough' => $unitBreakthroughData,
+            'objectives' => $objectiveData,
+            'indicators' => $measureProfileData
+        ));
+
+        if (!$unitBreakthrough->validate()) {
+            $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $unitBreakthrough->validationMessages));
+        } else {
+            $this->renderAjaxJsonResponse(array('respCode' => '00'));
+        }
     }
 
     private function loadMapModel($id) {

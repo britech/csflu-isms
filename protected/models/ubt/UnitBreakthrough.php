@@ -36,9 +36,27 @@ class UnitBreakthrough extends Model {
     private $unitBreakthroughEnvironmentStatus;
 
     public function validate() {
+        if (empty($this->description)) {
+            array_push($this->validationMessages, '- Unit Breakthrough must be defined');
+        }
+
+        if (empty($this->startingPeriod) || empty($this->endingPeriod)) {
+            array_push($this->validationMessages, '- Timeline should be defined');
+        }
         
+        if($this->validationMode == parent::VALIDATION_MODE_INITIAL){
+            if(count($this->objectives) == 0){
+                array_push($this->validationMessages, '- Objectives to be aligned should be defined');
+            }
+            
+            if(count($this->indicators) == 0){
+                array_push($this->validationMessages, '- Measure Profile to be aligned should be defined');
+            }
+        }
+        
+        return count($this->validationMessages) == 0;
     }
-    
+
     public function bindValuesUsingArray(array $valueArray) {
         if (array_key_exists('objectives', $valueArray) && !empty($valueArray['objectives']['id'])) {
             $objectives = explode("/", $valueArray['objectives']['id']);

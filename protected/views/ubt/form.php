@@ -56,6 +56,7 @@ $form = new Form(array(
         </div>
         <?php echo $form->renderSubmitButton('Create', array('class' => 'ink-button green flat', 'style' => 'margin-top: 1em; margin-left:0px;')); ?>
         <?php echo $form->renderHiddenField($model, 'id'); ?>
+        <?php echo $form->renderHiddenField($model, 'validationMode'); ?>
         <?php echo $form->renderHiddenField($model, 'startingPeriod', array('id' => 'ubt-start')); ?>
         <?php echo $form->renderHiddenField($model, 'endingPeriod', array('id' => 'ubt-end')); ?>
         <?php echo $form->renderHiddenField($departmentModel, 'id', array('id' => 'department')); ?>

@@ -151,4 +151,41 @@ $(document).ready(function() {
             $("#department").val(event.args.item.value);
         }
     });
+    
+    $(".ink-form").submit(function() {
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=ubt/validateUbtInput",
+            data: {
+                "UnitBreakthrough": {
+                    'description': $("[name*=description]").val(),
+                    'startingPeriod': $("#ubt-start").val(),
+                    'endingPeriod': $("#ubt-end").val()
+                },
+                "Objective": {
+                    "id": $("#objectives").val()
+                },
+                "MeasureProfile": {
+                    "id": $("#measures").val()
+                },
+                "Department": {
+                    "id": $("#department").val()
+                },
+                "mode": $("[name*=validationMode]").val()
+            },
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result;
+    });
 });
