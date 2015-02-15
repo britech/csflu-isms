@@ -100,6 +100,10 @@ $(document).ready(function() {
         $("#budgetAmount").val($("#budgetAmount-input").val());
     });
     
+    if($("#budgetAmount").val() !== ''){
+        $("#budgetAmount-input").val($("#budgetAmount").val());
+    }
+    
     $("#activity-list").jqxDataTable({
         source: new $.jqx.dataAdapter({
             datatype: 'json',

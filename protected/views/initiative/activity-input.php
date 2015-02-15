@@ -5,7 +5,7 @@ namespace org\csflu\isms\views;
 use org\csflu\isms\util\ModelFormGenerator as Form;
 
 $form = new Form(array(
-    'action' => array('project/insertActivity'),
+    'action' => array($model->isNew() ? 'project/insertActivity' : 'project/updateActivity'),
     'class' => 'ink-form',
     'hasFieldset' => true
         ));

@@ -393,11 +393,9 @@ class ProjectController extends Controller {
         $activity->bindValuesUsingArray(array('activity' => $activityData));
         $component = new Component(null, $componentData['id']);
 
-        if (!$activity->validate()) {
+        if (!$activity->validate() && strlen($component->id) < 1) {
             $data = $activity->validationMessages;
-            if (strlen($component->id) < 1) {
-                array_push($data, '- Component should be defined');
-            }
+            array_push($data, '- Component should be defined');
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $data));
         } elseif (strlen($component->id) < 1) {
             $this->viewWarningPage('Validation error. Please check your entries', "- Component should be defined");
@@ -417,21 +415,17 @@ class ProjectController extends Controller {
         $activity->bindValuesUsingArray(array('activity' => $activityData));
         $component = new Component(null, $componentData['id']);
 
-        if (!$activity->validate()) {
+        if (!$activity->validate() && strlen($component->id) < 1) {
             $data = $activity->validationMessages;
-            if (strlen($component->id) < 1) {
-                array_push($data, '- Component should be defined');
-            }
+            array_push($data, '- Component should be defined');
             $this->setSessionData('validation', $data);
         } elseif (strlen($component->id) < 1) {
             $this->setSessionData('validation', array('- Component should be defined'));
-        } else {
-            $this->setSessionData('notif', array('class' => 'success', 'message' => 'Activity successfully added'));
         }
 
         $initiative = $this->loadInitiativeModel($initiativeData['id']);
         try {
-            $this->initiativeService->manageActivity($activity, $component);
+            $this->initiativeService->addActivity($activity, $component);
             $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $initiative->id, $activity);
             $this->setSessionData('notif', array('class' => 'success', 'message' => 'Activity successfully added.'));
         } catch (ServiceException $ex) {
@@ -442,9 +436,8 @@ class ProjectController extends Controller {
 
     public function updateActivity($id = null) {
         if (is_null($id)) {
-            /**
-             * @todo update activity here
-             */
+            $this->validatePostData(array('Activity', 'Component', 'Initiative'));
+            $this->processActivityUpdate();
         }
 
         $activity = $this->loadActivityModel($id);
@@ -452,6 +445,8 @@ class ProjectController extends Controller {
         $initiative = $this->loadInitiativeModel(null, $this->loadPhaseModel(null, $component));
         $strategyMap = $this->loadMapModel($initiative);
 
+        $activity->startingPeriod = $activity->startingPeriod->format('Y-m-d');
+        $activity->endingPeriod = $activity->endingPeriod->format('Y-m-d');
         $this->title = ApplicationConstants::APP_NAME . " - Update Activity";
         $this->render('initiative/activity-input', array(
             'breadcrumb' => array(
@@ -472,8 +467,38 @@ class ProjectController extends Controller {
         $this->unsetSessionData('validation');
     }
 
-    
-    
+    private function processActivityUpdate() {
+        $activityData = $this->getFormData('Activity');
+        $componentData = $this->getFormData('Component');
+        $initiativeData = $this->getFormData('Initiative');
+
+        $activity = new Activity();
+        $activity->bindValuesUsingArray(array('activity' => $activityData));
+        $component = $this->loadComponentModel($componentData['id']);
+
+        if (!$activity->validate() && strlen($component->id) < 1) {
+            $data = $activity->validationMessages;
+            array_push($data, '- Component should be defined');
+            $this->setSessionData('validation', $data);
+        } elseif (strlen($component->id) < 1) {
+            $this->setSessionData('validation', array('- Component should be defined'));
+        }
+
+        $initiative = $this->loadInitiativeModel($initiativeData['id']);
+        $oldActivityData = clone $this->loadActivityModel($activity->id);
+
+        if ($activity->computePropertyChanges($oldActivityData) > 0) {
+            try {
+                $this->initiativeService->updateActivity($activity, $component);
+                $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_INITIATIVE, $initiative->id, $activity, $oldActivityData);
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Activity successfully updated.'));
+            } catch (ServiceException $ex) {
+                $this->setSessionData('validation', array($ex->getMessage()));
+            }
+        }
+        $this->redirect(array('project/manageActivities', 'initiative' => $initiative->id));
+    }
+
     private function loadActivityModel($id, $remote = false) {
         $activity = $this->initiativeService->getActivity($id);
         if (is_null($activity->id)) {
@@ -484,8 +509,6 @@ class ProjectController extends Controller {
                 $this->redirect(array('map/index'));
             }
         }
-        $activity->startingPeriod = $activity->startingPeriod->format('Y-m-d');
-        $activity->endingPeriod = $activity->endingPeriod->format('Y-m-d');
         return $activity;
     }
 
