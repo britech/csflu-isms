@@ -374,6 +374,7 @@ class ProjectController extends Controller {
                     array_push($data, array(
                         'phase' => $phase->phaseNumber . ' - ' . $phase->title,
                         'component' => $component->description,
+                        'activityId' => $activity->activityNumber,
                         'activity' => $activity->title,
                         'actions' => ApplicationUtils::generateLink(array('project/updateActivity', 'id' => $activity->id), 'Update') . "&nbsp;|&nbsp;" . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$activity->id}"))
                     ));

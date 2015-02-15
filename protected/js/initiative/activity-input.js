@@ -110,6 +110,7 @@ $(document).ready(function() {
             datafields: [
                 {name: 'phase'},
                 {name: 'component'},
+                {name: 'activityId'},
                 {name: 'activity'},
                 {name: 'actions'}
             ],
@@ -122,7 +123,8 @@ $(document).ready(function() {
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Activity</span>', dataField: 'activity', width: '80%'},
+            {text: '', dataField: 'activityId', width: '10%'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Activity</span>', dataField: 'activity', width: '70%'},
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Actions</span>', dataField: 'actions', cellsAlign: 'center'}
         ],
         width: '100%',
@@ -135,9 +137,9 @@ $(document).ready(function() {
         groups: ['phase', 'component'],
         groupsRenderer: function(value, rowData, level) {
             if(level === 0){
-                return "<strong>" + value + "</strong>";
+                return "<strong style=\"font-size: 12px;\">" + value + "</strong>";
             } else if(level === 1){
-                return "<strong style=\"margin-left: 10px; font-style:italic\">" + value + "</strong>";
+                return "<strong style=\"margin-left: 5%; font-size: 11px;\">" + value + "</strong>";
             }
         }
     }).on("rowClick", function() {

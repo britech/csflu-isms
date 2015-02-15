@@ -49,7 +49,7 @@ class ActivityDaoSqlImpl implements ActivityDao {
 
     public function listActivities(Component $component) {
         try {
-            $dbst = $this->db->prepare('SELECT activity_id FROM ini_activities WHERE component_ref=:component ORDER BY period_start_date ASC');
+            $dbst = $this->db->prepare('SELECT activity_id FROM ini_activities WHERE component_ref=:component ORDER BY activity_number ASC');
             $dbst->execute(array('component' => $component->id));
 
             $activities = array();
@@ -65,12 +65,13 @@ class ActivityDaoSqlImpl implements ActivityDao {
 
     public function getActivity($id) {
         try {
-            $dbst = $this->db->prepare('SELECT activity_id, activity_desc, target_desc, target_figure, indicator, budget_figure, source, owners, period_start_date, period_end_date, activity_status FROM ini_activities WHERE activity_id=:id');
+            $dbst = $this->db->prepare('SELECT activity_id, activity_number ,activity_desc, target_desc, target_figure, indicator, budget_figure, source, owners, period_start_date, period_end_date, activity_status FROM ini_activities WHERE activity_id=:id');
             $dbst->execute(array('id' => $id));
 
             $activity = new Activity();
             while ($data = $dbst->fetch()) {
                 list($activity->id,
+                        $activity->activityNumber,
                         $activity->title,
                         $activity->descriptionOfTarget,
                         $activity->targetFigure,
