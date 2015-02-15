@@ -143,18 +143,46 @@ $(document).ready(function() {
             }
         }
     }).on("rowClick", function() {
-//        $("[id^=remove]").click(function() {
-//            var text = $(this).parent().siblings("td").html();
-//            $("#text").html("Do you want to delete the component, <strong>" + text + "</strong>, in the Initiative");
-//            $("#delete-component").jqxWindow('open');
-//            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
-//
-//            var data = $(this).attr('id').split('-');
-//            componentId = data[1];
-//            phaseId = data[2];
-//        });
+        $("[id^=remove]").click(function() {
+            var text = $(this).parent().siblings("td + td").html();
+            $("#text").html("Do you want to delete the activity, <strong>" + text + "</strong>, in the Initiative?");
+            $("#delete-activity").jqxWindow('open');
+            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+        });
     });
 
+    $('#delete-activity').jqxWindow({
+        title: '<strong>Confirm Activity Deletion</strong>',
+        width: 500,
+        height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+    });
+
+    $("#deny").click(function() {
+        $("#activity-list").jqxDataTable('updateBoundData');
+    });
+
+    $("[id^=accept]").click(function() {
+        var id = $(this).attr('id').split('-')[1];
+        $.post("?r=project/deleteActivity",
+                {id: id},
+        function(data) {
+            try {
+                var response = $.parseJSON(data);
+                window.location = response.url;
+            } catch (e) {
+                $("#delete-activity").jqxWindow('close');
+                $("#activity-list").jqxDataTable('updateBoundData');
+            }
+        });
+    });
+    
     $(".ink-form").submit(function() {
         var result = false;
 

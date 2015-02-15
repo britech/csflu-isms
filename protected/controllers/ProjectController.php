@@ -522,6 +522,21 @@ class ProjectController extends Controller {
         $this->redirect(array('project/manageActivities', 'initiative' => $initiative->id));
     }
 
+    public function deleteActivity() {
+        $this->validatePostData(array('id'));
+
+        $id = $this->getFormData('id');
+        $activity = $this->loadActivityModel($id, true);
+        $component = $this->loadComponentModel(null, $activity, true);
+        $phase = $this->loadPhaseModel(null, $component, true);
+        $initiative = $this->loadInitiativeModel(null, $phase, true);
+
+        $this->initiativeService->deleteActivity($id);
+        $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_INITIATIVE, $initiative->id, $activity);
+        $this->setSessionData('notif', array('class' => 'error', 'message' => 'Activity deleted'));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('project/manageActivities', 'initiative' => $initiative->id))));
+    }
+
     private function loadActivityModel($id, $remote = false) {
         $activity = $this->initiativeService->getActivity($id);
         if (is_null($activity->id)) {

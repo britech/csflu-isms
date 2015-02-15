@@ -211,6 +211,12 @@ class Activity extends Model {
         return $translation;
     }
 
+    public function getModelTranslationAsDeletedEntity() {
+        return "[Activity deleted]\n\n"
+                . "Number:\t{$this->activityNumber}\n"
+                . "Activity:\t{$this->title}\n";
+    }
+    
     public function __set($name, $value) {
         $this->$name = $value;
     }
