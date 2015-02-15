@@ -314,6 +314,8 @@ class InitiativeController extends Controller {
                 $this->setSessionData('validation', array($ex->getMessage()));
                 $this->redirect(array('initiative/update', 'id' => $initiative->id));
             }
+        } else {
+            $this->redirect(array('initiative/manage', 'id' => $initiative->id));
         }
     }
 
