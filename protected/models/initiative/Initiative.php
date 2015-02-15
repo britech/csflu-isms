@@ -210,7 +210,7 @@ class Initiative extends Model {
             $translation.="Starting Period:\t{$this->startingPeriod->format('F-Y')}\n";
         }
 
-        if ($oldInitiative->endingPeriod->format('Y-m-md') != $this->endingPeriod->format('Y-m-d')) {
+        if ($oldInitiative->endingPeriod->format('Y-m-d') != $this->endingPeriod->format('Y-m-d')) {
             $translation.="Ending Period:\t{$this->endingPeriod->format('F-Y')}\n";
         }
 
