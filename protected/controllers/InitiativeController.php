@@ -238,7 +238,7 @@ class InitiativeController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
-                'Manage Initiative' => 'active'
+                'Initiative' => 'active'
             ),
             'sidebar' => array(
                 'data' => array(
@@ -279,6 +279,7 @@ class InitiativeController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
+                'Initiative' => array('initiative/manage', 'id' => $initiative->id),
                 'Update Initiative' => 'active'
             ),
             'model' => $initiative,
