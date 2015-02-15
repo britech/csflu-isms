@@ -158,6 +158,12 @@ interface InitiativeManagementService {
     public function updateActivity(Activity $activity, Component $component);
     
     /**
+     * Deletes the Activity
+     * @param String $id
+     */
+    public function deleteActivity($id);
+    
+    /**
      * Retrieves the Activity entity
      * @param String $id
      * @return Activity

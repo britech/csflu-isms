@@ -38,4 +38,10 @@ interface ActivityDao {
      * @throws DataAccessException
      */
     public function updateActivity(Activity $activity, Component $component);
+    
+    /**
+     * @param String $id
+     * @throws DataAccessException
+     */
+    public function deleteActivity($id);
 }
