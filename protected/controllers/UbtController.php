@@ -67,19 +67,17 @@ class UbtController extends Controller {
 
     public function validateUbtInput() {
         try {
-            $this->validatePostData(array('UnitBreakthrough', 'Objective', 'MeasureProfile', 'mode'));
+            $this->validatePostData(array('UnitBreakthrough', 'Objective', 'MeasureProfile'));
         } catch (ControllerException $ex) {
             $this->logger->warn($ex->getMessage(), $ex);
             $this->renderAjaxJsonResponse(array('respCode' => '70'));
         }
-
-        $mode = $this->getFormData('mode');
+        
         $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
         $objectiveData = $this->getFormData('Objective');
         $measureProfileData = $this->getFormData('MeasureProfile');
 
         $unitBreakthrough = new UnitBreakthrough();
-        $unitBreakthrough->validationMode = $mode;
         $unitBreakthrough->bindValuesUsingArray(array(
             'unitbreakthrough' => $unitBreakthroughData,
             'objectives' => $objectiveData,
@@ -91,6 +89,10 @@ class UbtController extends Controller {
         } else {
             $this->renderAjaxJsonResponse(array('respCode' => '00'));
         }
+    }
+    
+    public function insert(){
+        $this->validatePostData(array('UnitBreakthrough', 'Objective', 'MeasureProfile', ''));
     }
 
     private function loadMapModel($id) {

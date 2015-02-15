@@ -162,7 +162,8 @@ $(document).ready(function() {
                 "UnitBreakthrough": {
                     'description': $("[name*=description]").val(),
                     'startingPeriod': $("#ubt-start").val(),
-                    'endingPeriod': $("#ubt-end").val()
+                    'endingPeriod': $("#ubt-end").val(),
+                    'validationMode': $("[name*=validationMode]").val()
                 },
                 "Objective": {
                     "id": $("#objectives").val()
@@ -172,8 +173,7 @@ $(document).ready(function() {
                 },
                 "Department": {
                     "id": $("#department").val()
-                },
-                "mode": $("[name*=validationMode]").val()
+                }
             },
             async: false,
             success: function(data) {
