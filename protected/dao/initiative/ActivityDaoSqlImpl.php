@@ -49,14 +49,13 @@ class ActivityDaoSqlImpl implements ActivityDao {
 
     public function listActivities(Component $component) {
         try {
-            $dbst = $this->db->prepare('SELECT activity_id, activity_desc FROM ini_activities WHERE component_ref=:component ORDER BY period_start_date ASC');
+            $dbst = $this->db->prepare('SELECT activity_id FROM ini_activities WHERE component_ref=:component ORDER BY period_start_date ASC');
             $dbst->execute(array('component' => $component->id));
 
             $activities = array();
             while ($data = $dbst->fetch()) {
-                $activity = new Activity();
-                list($activity->id, $activity->title) = $data;
-                array_push($activities, $activity);
+                list($id) = $data;
+                array_push($activities, $this->getActivity($id));
             }
             return $activities;
         } catch (\PDOException $ex) {

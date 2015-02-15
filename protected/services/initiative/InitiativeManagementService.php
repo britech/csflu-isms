@@ -142,11 +142,20 @@ interface InitiativeManagementService {
     public function deleteComponent($id);
     
     /**
-     * Enlists/Updates the activity on a given component entity
+     * Enlist the Activity on a given Component entity
      * @param Activity $activity
      * @param Component $component
+     * @throws ServiceException
      */
-    public function manageActivity(Activity $activity, Component $component);
+    public function addActivity(Activity $activity, Component $component);
+    
+    /**
+     * Updates the Activity and linked Component entity
+     * @param Activity $activity
+     * @param Component $component
+     * @throws ServiceException
+     */
+    public function updateActivity(Activity $activity, Component $component);
     
     /**
      * Retrieves the Activity entity

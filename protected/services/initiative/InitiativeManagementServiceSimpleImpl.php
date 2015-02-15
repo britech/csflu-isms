@@ -220,9 +220,9 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
     }
 
     public function getPhase($id = null, Component $component = null) {
-        if(!is_null($id)){
+        if (!is_null($id)) {
             return $this->phaseDaoSource->getPhaseByIdentifier($id);
-        } else if(!is_null($component)){
+        } else if (!is_null($component)) {
             return $this->phaseDaoSource->getPhaseByComponent($component);
         }
     }
@@ -257,30 +257,35 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
     }
 
     public function getComponent($id = null, Activity $activity = null) {
-       if(!is_null($id)){
-           return $this->componentDaoSource->getComponentByIdentifier($id);
-       } elseif (!is_null($activity)){
-           return $this->componentDaoSource->getComponentByActivity($activity);
-       }
+        if (!is_null($id)) {
+            return $this->componentDaoSource->getComponentByIdentifier($id);
+        } elseif (!is_null($activity)) {
+            return $this->componentDaoSource->getComponentByActivity($activity);
+        }
     }
 
     public function deleteComponent($id) {
         $this->componentDaoSource->deleteComponent($id);
     }
 
-    public function manageActivity(Activity $activity, Component $component) {
+    public function addActivity(Activity $activity, Component $component) {
         $activities = $this->activityDaoSource->listActivities($component);
         foreach ($activities as $data) {
-            if(strcasecmp($activity->title, $data->title) == 0 && $activity->startingPeriod->format('Y-m-d') == $data->startingPeriod->format('Y-m-d') && $activity->endingPeriod->format('Y-m-d') == $data->endingPeriod->format('Y-m-d')){
+            if (strcasecmp($activity->title, $data->title) == 0 && $activity->startingPeriod->format('Y-m-d') == $data->startingPeriod->format('Y-m-d') && $activity->endingPeriod->format('Y-m-d') == $data->endingPeriod->format('Y-m-d')) {
                 throw new ServiceException("Activity already defined. Please use the update facility instead");
             }
         }
-        
-        if($activity->isNew()){
-            $this->activityDaoSource->addActivity($activity, $component);
-        } else {
-            $this->activityDaoSource->updateActivity($activity, $component);
+        $this->activityDaoSource->addActivity($activity, $component);
+    }
+
+    public function updateActivity(Activity $activity, Component $component) {
+        $activities = $this->activityDaoSource->listActivities($component);
+        foreach ($activities as $data) {
+            if ($activity->id != $data->id && strcasecmp($activity->title, $data->title) == 0 && $activity->startingPeriod->format('Y-m-d') == $data->startingPeriod->format('Y-m-d') && $activity->endingPeriod->format('Y-m-d') == $data->endingPeriod->format('Y-m-d')) {
+                throw new ServiceException("Activity already defined. Update facility denied");
+            }
         }
+        $this->activityDaoSource->updateActivity($activity, $component);
     }
 
     public function getActivity($id) {
