@@ -57,6 +57,9 @@ require_once 'models/initiative/Phase.php';
 require_once 'models/initiative/Component.php';
 require_once 'models/initiative/Activity.php';
 
+require_once 'models/ubt/UnitBreakthrough.php';
+require_once 'models/ubt/LeadMeasure.php';
+
 #dao-interfaces
 require_once 'dao/commons/DepartmentDao.php';
 require_once 'dao/commons/PositionDao.php';
