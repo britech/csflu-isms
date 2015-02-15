@@ -163,6 +163,7 @@ $(document).ready(function() {
             url: "?r=project/validateActivityInput",
             data: {
                 "Activity": {
+                    'activityNumber': $("[name*=activityNumber]").val(),
                     'title': $("[name*=title]").val(),
                     'descriptionOfTarget': $("[name*=descriptionOfTarget]").val(),
                     'indicator': $("[name*=indicator]").val(),

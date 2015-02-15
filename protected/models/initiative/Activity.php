@@ -8,6 +8,7 @@ use org\csflu\isms\core\Model;
  * Description of Activity
  *
  * @property String $id
+ * @property String $activityNumber
  * @property String $title
  * @property String $descriptionOfTarget
  * @property String $targetFigure
@@ -29,6 +30,7 @@ class Activity extends Model {
     const STATUS_DROPPED = "D";
 
     private $id;
+    private $activityNumber;
     private $title;
     private $descriptionOfTarget;
     private $targetFigure;
@@ -41,6 +43,9 @@ class Activity extends Model {
     private $activityEnvironmentStatus = self::STATUS_PENDING;
 
     public function validate() {
+        if (strlen($this->activityNumber) < 1) {
+            array_push($this->validationMessages, '- Activity Number should be defined');
+        }
 
         if (strlen($this->title) < 1) {
             array_push($this->validationMessages, '- Activity should be defined');
@@ -81,12 +86,14 @@ class Activity extends Model {
 
     public function bindValuesUsingArray(array $valueArray) {
         parent::bindValuesUsingArray($valueArray, $this);
+        $this->activityNumber = strtoupper($this->activityNumber);
         $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
         $this->endingPeriod = \DateTime::createFromFormat('Y-m-d', $this->endingPeriod);
     }
 
     public function getAttributeNames() {
         return array(
+            'activityNumber' => 'Activity Number',
             'title' => 'Activity',
             'descriptionOfTarget' => 'Target (in description)',
             'targetFigure' => 'Target (in numerical representation)',
@@ -103,6 +110,7 @@ class Activity extends Model {
 
     public function getModelTranslationAsNewEntity() {
         return "[Activity added]\n\n"
+                . "Number:\t{$this->activityNumber}\n"
                 . "Activity:\t{$this->title}\n"
                 . "Target Definition:\t{$this->descriptionOfTarget}\n"
                 . "Indicator:\t{$this->indicator}\n"
@@ -114,6 +122,10 @@ class Activity extends Model {
     public function computePropertyChanges(Activity $oldModel) {
         $counter = 0;
 
+        if($this->activityNumber != $oldModel->activityNumber){
+            $counter++;
+        }
+        
         if ($this->title != $oldModel->title) {
             $counter++;
         }
@@ -155,6 +167,11 @@ class Activity extends Model {
 
     public function getModelTranslationAsUpdatedEntity(Activity $oldModel) {
         $translation = "[Activity updated]\n\n";
+        
+        if($this->activityNumber != $oldModel->activityNumber){
+            $translation.="Activity Number:\t{$this->activityNumber}";
+        }
+        
         if ($this->title != $oldModel->title) {
             $translation.="Activity:\t{$this->title}\n";
         }
@@ -190,7 +207,7 @@ class Activity extends Model {
         if ($this->sourceOfBudget != $oldModel->sourceOfBudget) {
             $translation.="Source of Budget:\t{$this->sourceOfBudget}";
         }
-        
+
         return $translation;
     }
 
@@ -205,6 +222,7 @@ class Activity extends Model {
     public function __clone() {
         $activity = new Activity();
         $activity->id = $this->id;
+        $activity->activityNumber = $this->activityNumber;
         $activity->descriptionOfTarget = $this->descriptionOfTarget;
         $activity->targetFigure = $this->targetFigure;
         $activity->indicator = $this->indicator;

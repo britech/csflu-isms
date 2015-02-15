@@ -36,6 +36,12 @@ $form = new Form(array(
             </div>
         </div>
         <div class="control-group">
+            <?php echo $form->renderLabel($model, 'activityNumber', array('required' => true)); ?>
+            <div class="control">
+                <?php echo $form->renderTextField($model, 'activityNumber');?>
+            </div>
+        </div>
+        <div class="control-group">
             <?php echo $form->renderLabel($model, 'title', array('required' => true)); ?>
             <div class="control">
                 <?php echo $form->renderTextArea($model, 'title'); ?>
