@@ -17,7 +17,7 @@ use org\csflu\isms\models\ubt\LeadMeasure;
  * @property \DateTime $startingPeriod
  * @property \DateTime $endingPeriod
  * @property Objective[] $objectives
- * @property MeasureProfile[] $indicators
+ * @property MeasureProfile[] $measures
  * @property LeadMeasure[] $leadMeasures
  * @property String $unitBreakthroughEnvironmentStatus
  * @author britech
@@ -31,7 +31,7 @@ class UnitBreakthrough extends Model {
     private $startingPeriod;
     private $endingPeriod;
     private $objectives;
-    private $indicators;
+    private $measures;
     private $leadMeasures;
     private $unitBreakthroughEnvironmentStatus;
 
@@ -49,7 +49,7 @@ class UnitBreakthrough extends Model {
                 array_push($this->validationMessages, '- Objectives to be aligned should be defined');
             }
             
-            if(count($this->indicators) == 0){
+            if(count($this->measures) == 0){
                 array_push($this->validationMessages, '- Measure Profile to be aligned should be defined');
             }
         }
@@ -77,7 +77,7 @@ class UnitBreakthrough extends Model {
                 $indicator->id = $id;
                 array_push($data, $indicator);
             }
-            $this->indicators = $data;
+            $this->measures = $data;
         }
         parent::bindValuesUsingArray($valueArray, $this);
         $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
