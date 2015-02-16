@@ -3,6 +3,7 @@
 namespace org\csflu\isms\models\ubt;
 
 use org\csflu\isms\core\Model;
+use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\ubt\LeadMeasure;
@@ -12,6 +13,7 @@ use org\csflu\isms\models\ubt\LeadMeasure;
  * 
  * @property String $id
  * @property String $description
+ * @property Department $unit
  * @property String $baselineFigure
  * @property String $targetFigure
  * @property \DateTime $startingPeriod
@@ -26,6 +28,7 @@ class UnitBreakthrough extends Model {
 
     private $id;
     private $description;
+    private $unit;
     private $baselineFigure;
     private $targetFigure;
     private $startingPeriod;
@@ -42,6 +45,10 @@ class UnitBreakthrough extends Model {
 
         if (empty($this->startingPeriod) || empty($this->endingPeriod)) {
             array_push($this->validationMessages, '- Timeline should be defined');
+        }
+        
+        if(is_null($this->unit->id)){
+            array_push($this->validationMessages, '- Implementing Office should be implemented');
         }
         
         if($this->validationMode == parent::VALIDATION_MODE_INITIAL){
@@ -79,6 +86,12 @@ class UnitBreakthrough extends Model {
             }
             $this->measures = $data;
         }
+        
+        if(array_key_exists('unit', $valueArray) && !empty($valueArray['unit']['id'])){
+            $this->unit = new Department();
+            $this->unit->bindValuesUsingArray(array('department'=>$valueArray['unit']), $this->unit);
+        }
+        
         parent::bindValuesUsingArray($valueArray, $this);
         $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
         $this->endingPeriod = \DateTime::createFromFormat('Y-m-d', $this->endingPeriod);

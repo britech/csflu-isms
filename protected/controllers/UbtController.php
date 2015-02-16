@@ -73,7 +73,7 @@ class UbtController extends Controller {
 
     public function validateUbtInput() {
         try {
-            $this->validatePostData(array('UnitBreakthrough', 'Objective', 'MeasureProfile'));
+            $this->validatePostData(array('UnitBreakthrough', 'Objective', 'MeasureProfile', 'Department'));
         } catch (ControllerException $ex) {
             $this->logger->warn($ex->getMessage(), $ex);
             $this->renderAjaxJsonResponse(array('respCode' => '70'));
@@ -82,14 +82,16 @@ class UbtController extends Controller {
         $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
         $objectiveData = $this->getFormData('Objective');
         $measureProfileData = $this->getFormData('MeasureProfile');
+        $departmentData = $this->getFormData('Department');
 
         $unitBreakthrough = new UnitBreakthrough();
         $unitBreakthrough->bindValuesUsingArray(array(
             'unitbreakthrough' => $unitBreakthroughData,
             'objectives' => $objectiveData,
-            'indicators' => $measureProfileData
+            'indicators' => $measureProfileData,
+            'unit' => $departmentData
         ));
-
+        
         if (!$unitBreakthrough->validate()) {
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $unitBreakthrough->validationMessages));
         } else {
