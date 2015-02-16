@@ -6,6 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
+use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\commons\Department;
@@ -64,11 +65,14 @@ class UbtController extends Controller {
                 'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
                 'Create UBT' => 'active'),
             'model' => new UnitBreakthrough(),
+            'leadMeasureModel' => new LeadMeasure(),
             'objectiveModel' => new Objective(),
             'measureProfileModel' => new MeasureProfile(),
             'departmentModel' => new Department(),
-            'mapModel' => $strategyMap
+            'mapModel' => $strategyMap, 
+            'validation' => $this->getSessionData('validation')
         ));
+        $this->unsetSessionData('validation');
     }
 
     public function validateUbtInput() {
@@ -112,19 +116,18 @@ class UbtController extends Controller {
         $unitBreakthrough->bindValuesUsingArray(array(
             'unitbreakthrough' => $unitBreakthroughData,
             'objectives' => $objectiveData,
-            'indicators' => $measureProfileData
+            'indicators' => $measureProfileData,
+            'unit' => $departmentData
         ));
 
         $strategyMap = $this->loadMapModel($strategyMapData['id']);
 
         if (!$unitBreakthrough->validate()) {
-            $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $unitBreakthrough->validationMessages));
+            $this->setSessionData('validation', $unitBreakthrough->validationMessages);
             $this->redirect(array('ubt/create', 'map' => $strategyMap->id));
         } else {
             $purifiedUnitBreakthrough = $this->purifyUbtInput($unitBreakthrough);
-            $department = $this->departmentService->getDepartmentDetail(array('id' => $departmentData['id']));
             $this->logger->debug($purifiedUnitBreakthrough);
-            $this->logger->debug($department);
         }
     }
 
@@ -146,6 +149,9 @@ class UbtController extends Controller {
             }
             $unitBreakthrough->measures = $indicators;
         }
+
+        //purify the department entity
+        $unitBreakthrough->unit = $this->departmentService->getDepartmentDetail(array('id' => $unitBreakthrough->unit->id));
         return $unitBreakthrough;
     }
 

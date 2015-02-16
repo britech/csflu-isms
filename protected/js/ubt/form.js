@@ -1,4 +1,10 @@
 $(document).ready(function() {
+    $("#leadMeasures").tagEditor({
+        delimiter: '+;',
+        maxLength: -1,
+        forceLowercase: false
+    });
+
     var startDate = $("#map-start").val().split('-');
     var endDate = $("#map-end").val().split('-');
 
