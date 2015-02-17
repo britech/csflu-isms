@@ -171,6 +171,9 @@ $(document).ready(function() {
                     'endingPeriod': $("#ubt-end").val(),
                     'validationMode': $("[name*=validationMode]").val()
                 },
+                "LeadMeasure": {
+                    'description': $("#leadMeasures").val()
+                },
                 "Objective": {
                     "id": $("#objectives").val()
                 },

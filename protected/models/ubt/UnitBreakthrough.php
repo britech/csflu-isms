@@ -59,6 +59,24 @@ class UnitBreakthrough extends Model {
             if(count($this->measures) == 0){
                 array_push($this->validationMessages, '- Measure Profile to be aligned should be defined');
             }
+
+            $leadMeasuresCount = count($this->leadMeasures);
+
+            switch($leadMeasuresCount){
+                case 0:
+                    array_push($this->validationMessages, '- Lead Measures should be defined');
+                    break;
+
+                case 1:
+                    array_push($this->validationMessages, '- Two (2) lead measures should be defined');
+                    break;
+
+                case 2:
+                    break;
+                
+                default:
+                    array_push($this->validationMessages, '- Only two (2) lead measures are allowed');
+            }
         }
         
         return count($this->validationMessages) == 0;
@@ -90,6 +108,17 @@ class UnitBreakthrough extends Model {
         if(array_key_exists('unit', $valueArray) && !empty($valueArray['unit']['id'])){
             $this->unit = new Department();
             $this->unit->bindValuesUsingArray(array('department'=>$valueArray['unit']), $this->unit);
+        }
+
+        if(array_key_exists('leadMeasures', $valueArray) && !empty($valueArray['leadMeasures']['description'])){
+            $leadMeasures = explode('+', $valueArray['leadMeasures']['description']);
+            $data = array();
+            foreach($leadMeasures as $description){
+                $leadMeasure = new LeadMeasure();
+                $leadMeasure->description = $description;
+                array_push($data, $leadMeasure);
+            }
+            $this->leadMeasures = $data;
         }
         
         parent::bindValuesUsingArray($valueArray, $this);
