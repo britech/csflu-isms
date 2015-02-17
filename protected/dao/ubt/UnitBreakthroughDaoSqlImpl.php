@@ -11,6 +11,7 @@ use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\dao\commons\DepartmentDaoSqlImpl as DepartmentDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
+use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl as LeadMeasureDao;
 
 /**
  * Description of UnitBreakthroughDaoSqlImpl
@@ -20,6 +21,7 @@ use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
 class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
 
     private $db;
+    private $leadMeasureDaoSource;
     private $departmentDaoSource;
     private $objectiveDaoSource;
     private $measureProfileDaoSource;
@@ -29,16 +31,17 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
         $this->departmentDaoSource = new DepartmentDao();
         $this->objectiveDaoSource = new ObjectiveDao();
         $this->measureProfileDaoSource = new MeasureProfileDao();
+        $this->leadMeasureDaoSource = new LeadMeasureDao();
     }
 
     public function getUnitBreakthroughByIdentifier($id) {
         try {
             $dbst = $this->db->prepare('SELECT ubt_id, ubt_stmt, period_date_start, period_date_end, ubt_stat, dept_ref FROM ubt_main WHERE ubt_id=:id');
-            $dbst->execute(array('id'=>$id));
+            $dbst->execute(array('id' => $id));
 
             $unitBreakthrough = new UnitBreakthrough();
-            while($data = $dbst->fetch()){
-                list($unitBreakthrough->id, 
+            while ($data = $dbst->fetch()) {
+                list($unitBreakthrough->id,
                         $unitBreakthrough->description,
                         $startingPeriod,
                         $endingPeriod,
@@ -75,6 +78,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
 
             $this->linkObjectives($unitBreakthrough);
             $this->linkMeasureProfiles($unitBreakthrough);
+            $this->leadMeasureDaoSource->insertLeadMeasures($unitBreakthrough);
             return $id;
         } catch (\PDOException $ex) {
             $this->db->rollBack();
@@ -121,12 +125,12 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             $dbst->execute(array('ref' => $unitBreakthrough->id));
 
             $measureProfiles = array();
-            while($data = $dbst->fetch()){
+            while ($data = $dbst->fetch()) {
                 list($measure) = $data;
                 array_push($measureProfiles, $this->measureProfileDaoSource->getMeasureProfile($measure));
             }
             return $measureProfiles;
-        } catch (\PDOException $ex){
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }
@@ -137,7 +141,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             $dbst->execute(array('ref' => $unitBreakthrough->id));
 
             $objectives = array();
-            while($data = $dbst->fetch()){
+            while ($data = $dbst->fetch()) {
                 list($objective) = $data;
                 array_push($objectives, $this->objectiveDaoSource->getObjective($objective));
             }
@@ -154,10 +158,10 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
     public function listUnitBreakthroughByStrategyMap(StrategyMap $strategyMap) {
         try {
             $dbst = $this->db->prepare('SELECT ubt_id FROM ubt_main WHERE map_ref=:ref');
-            $dbst->execute(array('ref'=>$strategyMap->id));
-            
+            $dbst->execute(array('ref' => $strategyMap->id));
+
             $unitBreakthroughs = array();
-            while($data = $dbst->fetch()){
+            while ($data = $dbst->fetch()) {
                 list($id) = $data;
                 array_push($unitBreakthroughs, $this->getUnitBreakthroughByIdentifier($id));
             }
