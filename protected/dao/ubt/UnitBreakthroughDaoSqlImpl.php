@@ -11,7 +11,7 @@ use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\dao\commons\DepartmentDaoSqlImpl as DepartmentDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
-use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl as LeadMeasureDao;
+use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl;
 
 /**
  * Description of UnitBreakthroughDaoSqlImpl
@@ -31,7 +31,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
         $this->departmentDaoSource = new DepartmentDao();
         $this->objectiveDaoSource = new ObjectiveDao();
         $this->measureProfileDaoSource = new MeasureProfileDao();
-        $this->leadMeasureDaoSource = new LeadMeasureDao();
+        $this->leadMeasureDaoSource = new LeadMeasureDaoSqlImpl();
     }
 
     public function getUnitBreakthroughByIdentifier($id) {
