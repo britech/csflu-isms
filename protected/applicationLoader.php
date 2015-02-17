@@ -78,6 +78,7 @@ require_once 'dao/initiative/PhaseDao.php';
 require_once 'dao/initiative/ComponentDao.php';
 require_once 'dao/initiative/ActivityDao.php';
 require_once 'dao/ubt/UnitBreakthroughDao.php';
+require_once 'dao/ubt/LeadMeasureDao.php';
 
 #dao-implementations
 require_once 'dao/commons/DepartmentDaoSqlImpl.php';
@@ -97,6 +98,7 @@ require_once 'dao/initiative/PhaseDaoSqlImpl.php';
 require_once 'dao/initiative/ComponentDaoSqlImpl.php';
 require_once 'dao/initiative/ActivityDaoSqlImpl.php';
 require_once 'dao/ubt/UnitBreakthroughDaoSqlImpl.php';
+require_once 'dao/ubt/LeadMeasureDaoSqlImpl.php';
 
 #service-interfaces
 require_once 'services/commons/DepartmentService.php';
