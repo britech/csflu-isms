@@ -39,4 +39,15 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         return $this->daoSource->listUnitBreakthroughByStrategyMap($strategyMap);
     }
 
+    public function updateUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap) {
+        $unitBreakthroughs = $this->daoSource->listUnitBreakthroughByStrategyMap($strategyMap);
+
+        foreach ($unitBreakthroughs as $data) {
+            if ($data->id != $unitBreakthrough->id && $unitBreakthrough->unit->id == $data->unit->id && $unitBreakthrough->description == $data->description) {
+                throw new ServiceException("UnitBreakthrough already defined. Please use the update facility instead");
+            }
+        }
+        $this->daoSource->updateUnitBreakthrough($unitBreakthrough);
+    }
+
 }

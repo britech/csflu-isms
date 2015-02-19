@@ -43,6 +43,12 @@ interface UnitBreakthroughDao {
      * @throws DataAccessException
      */
     public function insertUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap);
+    
+    /**
+     * @param UnitBreakthrough $unitBreakthrough
+     * @throws DataAccessException
+     */
+    public function updateUnitBreakthrough(UnitBreakthrough $unitBreakthrough);
 
     /**
      * @param UnitBreakthrough $unitBreakthrough

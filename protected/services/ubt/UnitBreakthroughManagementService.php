@@ -34,4 +34,12 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function insertUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap);
+    
+    /**
+     * Updates the UnitBreakthrough entity
+     * @param UnitBreakthrough $unitBreakthrough
+     * @param StrategyMap $strategyMap
+     * @throws ServiceException
+     */
+    public function updateUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap);
 }

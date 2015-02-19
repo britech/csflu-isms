@@ -55,7 +55,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             $unitBreakthrough->objectives = $this->listObjectives($unitBreakthrough);
             $unitBreakthrough->measures = $this->listMeasureProfiles($unitBreakthrough);
             $unitBreakthrough->leadMeasures = $this->leadMeasureDaoSource->listLeadMeasures($unitBreakthrough);
-            
+
             return $unitBreakthrough;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
@@ -171,6 +171,26 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             }
             return $unitBreakthroughs;
         } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function updateUnitBreakthrough(UnitBreakthrough $unitBreakthrough) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('UPDATE ubt_main SET ubt_stmt=:ubt, period_start_date=:start, period_end_date=:end, dept_ref=:unit WHERE ubt_id=:id');
+            $dbst->execute(array(
+                'ubt' => $unitBreakthrough->description,
+                'start' => $unitBreakthrough->startingPeriod->format('Y-m-d'),
+                'end' => $unitBreakthrough->endingPeriod->format('Y-m-d'),
+                'unit' => $unitBreakthrough->unit->id,
+                'id' => $unitBreakthrough->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }
