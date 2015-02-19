@@ -6,6 +6,7 @@ use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\ubt\LeadMeasureDao;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
+use org\csflu\isms\models\ubt\LeadMeasure;
 
 /**
  * Description of LeadMeasureDaoSqlImpl
@@ -35,6 +36,38 @@ class LeadMeasureDaoSqlImpl implements LeadMeasureDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function listLeadMeasures(UnitBreakthrough $unitBreakthrough) {
+        try {
+            $dbst = $this->db->prepare('SELECT lm_id FROM lm_main WHERE ubt_ref=:ubt');
+            $dbst->execute(array('ubt' => $unitBreakthrough->id));
+            
+            $leadMeasures = array();
+            while($data = $dbst->fetch()){
+                list($id) = $data;
+                array_push($leadMeasures, $this->getLeadMeasure($id));
+            }
+            
+            return $leadMeasures;
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getLeadMeasure($id) {
+        try {
+            $dbst = $this->db->prepare('SELECT lm_id, lm_desc FROM lm_main WHERE lm_id=:id');
+            $dbst->execute(array('id' => $id));
+
+            $leadMeasure = new LeadMeasure();
+            while ($data = $dbst->fetch()) {
+                list($leadMeasure->id, $leadMeasure->description) = $data;
+            }
+            return $leadMeasure;
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }

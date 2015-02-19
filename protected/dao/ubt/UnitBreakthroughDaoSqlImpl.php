@@ -54,7 +54,8 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             $unitBreakthrough->unit = $this->departmentDaoSource->getDepartmentById($department);
             $unitBreakthrough->objectives = $this->listObjectives($unitBreakthrough);
             $unitBreakthrough->measures = $this->listMeasureProfiles($unitBreakthrough);
-
+            $unitBreakthrough->leadMeasures = $this->leadMeasureDaoSource->listLeadMeasures($unitBreakthrough);
+            
             return $unitBreakthrough;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
