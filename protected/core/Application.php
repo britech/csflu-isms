@@ -47,12 +47,25 @@ class Application {
         $controller = $this->generateControllerClass($this->controller);
 
         if (method_exists($controller, $this->action)) {
+            $this->checkActionParameterIntegrity($controller);
             call_user_func_array([$controller, $this->action], $this->filterInputArguments(filter_input_array(INPUT_GET)));
         } else {
             throw new \Exception('Action does not exist');
         }
     }
 
+    private function checkActionParameterIntegrity($class){
+        $reflectionMethod = new \ReflectionMethod($class, $this->action);
+        $reflectionParameters = $reflectionMethod->getParameters();
+        
+        foreach($reflectionParameters as $reflectionParameter){
+            if(!array_key_exists($reflectionParameter->name, filter_input_array(INPUT_GET))){
+                throw new \Exception("Defined argument is not recognized as a parameter of the selected action");
+            }
+        }
+        return true;
+    }
+    
     private function generateControllerClass($controllerPrefix) {
         $controller = ucwords($controllerPrefix) . 'Controller';
 
