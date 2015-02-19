@@ -24,12 +24,12 @@ class Application {
     }
 
     public function runApplication() {
-        $this->logger->info("[Client: " . filter_input(INPUT_SERVER, 'REMOTE_ADDR') . "]" . " Route Expression: " . filter_input(INPUT_GET, 'r'));
+        $this->logger->info("[" . filter_input(INPUT_SERVER, 'REQUEST_METHOD') . "] " . "[Client: " . filter_input(INPUT_SERVER, 'REMOTE_ADDR') . "]" . " Route Expression: " . filter_input(INPUT_GET, 'r'));
         $request = filter_input(INPUT_GET, 'r');
         try {
             $this->resolveAndDispatchRequest($request);
         } catch (\Exception $e) {
-            $this->logger->error("[Client: " . filter_input(INPUT_SERVER, 'REMOTE_ADDR') . "]", $e);
+            $this->logger->error("[" . filter_input(INPUT_SERVER, 'REQUEST_METHOD') . "] " . "[Client: " . filter_input(INPUT_SERVER, 'REMOTE_ADDR') . "]", $e);
             $controller = new Controller();
             $controller->title = ApplicationConstants::APP_NAME;
             $controller->viewErrorPage($e);
@@ -54,18 +54,18 @@ class Application {
         }
     }
 
-    private function checkActionParameterIntegrity($class){
+    private function checkActionParameterIntegrity($class) {
         $reflectionMethod = new \ReflectionMethod($class, $this->action);
         $reflectionParameters = $reflectionMethod->getParameters();
-        
-        foreach($reflectionParameters as $reflectionParameter){
-            if(!array_key_exists($reflectionParameter->name, filter_input_array(INPUT_GET))){
+
+        foreach ($reflectionParameters as $reflectionParameter) {
+            if (!array_key_exists($reflectionParameter->name, filter_input_array(INPUT_GET))) {
                 throw new \Exception("Defined argument is not recognized as a parameter of the selected action");
             }
         }
         return true;
     }
-    
+
     private function generateControllerClass($controllerPrefix) {
         $controller = ucwords($controllerPrefix) . 'Controller';
 
