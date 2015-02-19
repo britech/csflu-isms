@@ -207,7 +207,7 @@ class UbtController extends Controller {
 
     public function update($id = null) {
         if (is_null($id)) {
-            $this->validatePostData(array('UnitBreakthrough', 'Department'));
+            $this->validatePostData(array('UnitBreakthrough', 'Department', 'StrategyMap'));
             $this->processUbtUpdate();
         }
         $unitBreakthrough = $this->loadModel($id);
@@ -244,13 +244,22 @@ class UbtController extends Controller {
         if (!$unitBreakthrough->validate()) {
             $this->setSessionData('validation', $unitBreakthrough->validationMessages);
             $this->redirect(array('ubt/update', 'id' => $unitBreakthrough->id));
-        } else {
-            $oldModel = clone $this->loadModel($unitBreakthrough->id);
-            if ($unitBreakthrough->computePropertyChanges($oldModel) > 0) {
-                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Unit Breakthrough updated'));
-            }
-            $this->redirect(array('ubt/view', 'id' => $unitBreakthrough->id));
         }
+        $this->logger->debug($unitBreakthrough);
+        $oldModel = clone $this->loadModel($unitBreakthrough->id);
+        if ($unitBreakthrough->computePropertyChanges($oldModel) > 0) {
+            $strategyMapData = $this->getFormData('StrategyMap');
+            $strategyMap = $this->loadMapModel($strategyMapData['id']);
+            try {
+                $this->ubtService->updateUnitBreakthrough($unitBreakthrough, $strategyMap);
+                $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $unitBreakthrough, $oldModel);
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Unit Breakthrough updated'));
+            } catch (ServiceException $ex) {
+                $this->setSessionData('validation', array($ex->getMessage()));
+                $this->redirect(array('ubt/update', 'id' => $unitBreakthrough->id));
+            }
+        }
+        $this->redirect(array('ubt/view', 'id' => $unitBreakthrough->id));
     }
 
     private function purifyUbtInput(UnitBreakthrough $unitBreakthrough) {
