@@ -179,7 +179,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
         try {
             $this->db->beginTransaction();
 
-            $dbst = $this->db->prepare('UPDATE ubt_main SET ubt_stmt=:ubt, period_start_date=:start, period_end_date=:end, dept_ref=:unit WHERE ubt_id=:id');
+            $dbst = $this->db->prepare('UPDATE ubt_main SET ubt_stmt=:ubt, period_date_start=:start, period_date_end=:end, dept_ref=:unit WHERE ubt_id=:id');
             $dbst->execute(array(
                 'ubt' => $unitBreakthrough->description,
                 'start' => $unitBreakthrough->startingPeriod->format('Y-m-d'),
