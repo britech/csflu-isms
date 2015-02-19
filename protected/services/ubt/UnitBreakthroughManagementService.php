@@ -46,6 +46,13 @@ interface UnitBreakthroughManagementService {
     public function updateUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap);
     
     /**
+     * Retrieves the defined LeadMeasure
+     * @param String $id
+     * @return LeadMeasure
+     */
+    public function retrieveLeadMeasure($id);
+    
+    /**
      * Inserts the LeadMeasure entity using an UnitBreakthrough entity
      * @param UnitBreakthrough $unitBreakthrough
      * @return LeadMeasure[] inserted LeadMeasure entities

@@ -91,4 +91,8 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         return $acceptedLeadMeasures;
     }
 
+    public function retrieveLeadMeasure($id) {
+        return $this->leadMeasureDaoSource->getLeadMeasure($id);
+    }
+
 }
