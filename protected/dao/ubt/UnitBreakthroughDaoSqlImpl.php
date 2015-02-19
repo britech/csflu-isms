@@ -49,6 +49,8 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
                         $department) = $data;
             }
 
+            $unitBreakthrough->startingPeriod = \DateTime::createFromFormat('Y-m-d', $startingPeriod);
+            $unitBreakthrough->endingPeriod = \DateTime::createFromFormat('Y-m-d', $endingPeriod);
             $unitBreakthrough->unit = $this->departmentDaoSource->getDepartmentById($department);
             $unitBreakthrough->objectives = $this->listObjectives($unitBreakthrough);
             $unitBreakthrough->measures = $this->listMeasureProfiles($unitBreakthrough);
