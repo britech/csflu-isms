@@ -23,9 +23,10 @@ interface UnitBreakthroughManagementService {
     /**
      * Retrieves the UnitBreakthrough entity
      * @param String $id Retrieve by its identifier
+     * @param LeadMeasure $leadMeasure Retrieves by its underlying LeadMeasure entity
      * @return UnitBreakthrough
      */
-    public function getUnitBreakthrough($id);
+    public function getUnitBreakthrough($id = null, LeadMeasure $leadMeasure = null);
 
     /**
      * Insert the UnitBreakthrough with its aligned StrategyMap entity

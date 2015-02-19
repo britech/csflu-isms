@@ -4,6 +4,7 @@ namespace org\csflu\isms\dao\ubt;
 
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
+use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\map\Objective;
@@ -35,6 +36,13 @@ interface UnitBreakthroughDao {
      * @throws DataAccessException
      */
     public function getUnitBreakthroughByIdentifier($id);
+    
+    /**
+     * @param LeadMeasure $leadMeasure
+     * @return UnitBreakthrough
+     * @throws DataAccessException
+     */
+    public function getUnitBreakthroughByLeadMeasure(LeadMeasure $leadMeasure);
 
     /**
      * @param UnitBreakthrough $unitBreakthrough

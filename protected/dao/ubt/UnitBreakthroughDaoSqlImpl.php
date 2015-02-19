@@ -6,6 +6,7 @@ use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\ubt\UnitBreakthroughDao;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
+use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\dao\commons\DepartmentDaoSqlImpl as DepartmentDao;
@@ -191,6 +192,22 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getUnitBreakthroughByLeadMeasure(LeadMeasure $leadMeasure) {
+        try {
+            $dbst = $this->db->prepare('SELECT ubt_ref FROM lm_main WHERE lm_id=:id');
+            $dbst->execute(array(
+                'id' => $leadMeasure->id
+            ));
+
+            while ($data = $dbst->fetch()) {
+                list($id) = $data;
+            }
+            return $this->getUnitBreakthroughByIdentifier($id);
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }

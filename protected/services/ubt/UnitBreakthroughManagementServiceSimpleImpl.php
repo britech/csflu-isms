@@ -24,8 +24,12 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         $this->leadMeasureDaoSource = new LeadMeasureDao();
     }
 
-    public function getUnitBreakthrough($id) {
-        return $this->daoSource->getUnitBreakthroughByIdentifier($id);
+    public function getUnitBreakthrough($id = null, LeadMeasure $leadMeasure = null) {
+        if (!is_null($id) && !empty($id)) {
+            return $this->daoSource->getUnitBreakthroughByIdentifier($id);
+        } elseif (!is_null($leadMeasure)) {
+            return $this->daoSource->getUnitBreakthroughByLeadMeasure($leadMeasure);
+        }
     }
 
     public function insertUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap) {
@@ -81,7 +85,7 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
                 }
             }
         }
-        if(count($acceptedLeadMeasures) == 0){
+        if (count($acceptedLeadMeasures) == 0) {
             throw new ServiceException("No Lead Measures inserted");
         }
         return $acceptedLeadMeasures;
