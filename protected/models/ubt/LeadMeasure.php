@@ -19,16 +19,22 @@ class LeadMeasure extends Model {
     private $description;
     private $baselineFigure;
     private $targetFigure;
-    
+
     public function validate() {
         
+    }
+
+    public function getModelTranslationAsNewEntity() {
+        return "[LeadMeasure added]\n\n"
+                . "Description:\t{$this->description}";
     }
 
     public function __set($name, $value) {
         $this->$name = $value;
     }
-    
+
     public function __get($name) {
         return $this->$name;
     }
+
 }

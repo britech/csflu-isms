@@ -46,23 +46,23 @@ class UnitBreakthrough extends Model {
         if (empty($this->startingPeriod) || empty($this->endingPeriod)) {
             array_push($this->validationMessages, '- Timeline should be defined');
         }
-        
-        if(is_null($this->unit->id)){
+
+        if (is_null($this->unit->id)) {
             array_push($this->validationMessages, '- Implementing Office should be implemented');
         }
-        
-        if($this->validationMode == parent::VALIDATION_MODE_INITIAL){
-            if(count($this->objectives) == 0){
+
+        if ($this->validationMode == parent::VALIDATION_MODE_INITIAL) {
+            if (count($this->objectives) == 0) {
                 array_push($this->validationMessages, '- Objectives to be aligned should be defined');
             }
-            
-            if(count($this->measures) == 0){
+
+            if (count($this->measures) == 0) {
                 array_push($this->validationMessages, '- Measure Profile to be aligned should be defined');
             }
 
             $leadMeasuresCount = count($this->leadMeasures);
 
-            switch($leadMeasuresCount){
+            switch ($leadMeasuresCount) {
                 case 0:
                     array_push($this->validationMessages, '- Lead Measures should be defined');
                     break;
@@ -73,12 +73,12 @@ class UnitBreakthrough extends Model {
 
                 case 2:
                     break;
-                
+
                 default:
                     array_push($this->validationMessages, '- Only two (2) lead measures are allowed');
             }
         }
-        
+
         return count($this->validationMessages) == 0;
     }
 
@@ -104,26 +104,33 @@ class UnitBreakthrough extends Model {
             }
             $this->measures = $data;
         }
-        
-        if(array_key_exists('unit', $valueArray) && !empty($valueArray['unit']['id'])){
+
+        if (array_key_exists('unit', $valueArray) && !empty($valueArray['unit']['id'])) {
             $this->unit = new Department();
-            $this->unit->bindValuesUsingArray(array('department'=>$valueArray['unit']), $this->unit);
+            $this->unit->bindValuesUsingArray(array('department' => $valueArray['unit']), $this->unit);
         }
 
-        if(array_key_exists('leadMeasures', $valueArray) && !empty($valueArray['leadMeasures']['description'])){
+        if (array_key_exists('leadMeasures', $valueArray) && !empty($valueArray['leadMeasures']['description'])) {
             $leadMeasures = explode('+', $valueArray['leadMeasures']['description']);
             $data = array();
-            foreach($leadMeasures as $description){
+            foreach ($leadMeasures as $description) {
                 $leadMeasure = new LeadMeasure();
                 $leadMeasure->description = $description;
                 array_push($data, $leadMeasure);
             }
             $this->leadMeasures = $data;
         }
-        
+
         parent::bindValuesUsingArray($valueArray, $this);
         $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
         $this->endingPeriod = \DateTime::createFromFormat('Y-m-d', $this->endingPeriod);
+    }
+
+    public function getModelTranslationAsNewEntity() {
+        return "[UnitBreakthrough added]\n\n"
+                . "Department:\t{$this->unit->name}\n"
+                . "Unit Breakthrough:\t{$this->description}\n"
+                . "Timeline:\t{$this->startingPeriod->format('F-Y')} - {$this->endingPeriod->format('F-Y')}";
     }
 
     public function __set($name, $value) {
