@@ -14,26 +14,25 @@ use org\csflu\isms\dao\ubt\UnitBreakthroughDaoSqlImpl as UnitBreakthroughDao;
  */
 class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughManagementService {
 
-	private $daoSource;
+    private $daoSource;
 
-	public function __construct(){
-		$this->daoSource = new UnitBreakthroughDao();
-	}
+    public function __construct() {
+        $this->daoSource = new UnitBreakthroughDao();
+    }
 
-	public function getUnitBreakthrough($id){
-		return $this->daoSource->getUnitBreakthroughByIdentifier($id);
-	}
+    public function getUnitBreakthrough($id) {
+        return $this->daoSource->getUnitBreakthroughByIdentifier($id);
+    }
 
+    public function insertUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap) {
+        $unitBreakthroughs = $this->daoSource->listUnitBreakthroughByStrategyMap($strategyMap);
 
-	public function insertUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap){
-		$unitBreakthroughs = $this->daoSource->listUnitBreakthroughByStrategyMap($strategyMap);
-
-		foreach($unitBreakthroughs as $data){
-			if($unitBreakthrough->unit->id == $data->unit->id && $unitBreakthrough->description == $data->description){
-				throw new ServiceException("UnitBreakthrough already defined. Please use the update facility instead");
-			}
-		}
-		return $this->daoSource->insertUnitBreakthrough($unitBreakthrough, $strategyMap);
-	}
+        foreach ($unitBreakthroughs as $data) {
+            if ($unitBreakthrough->unit->id == $data->unit->id && $unitBreakthrough->description == $data->description) {
+                throw new ServiceException("UnitBreakthrough already defined. Please use the update facility instead");
+            }
+        }
+        return $this->daoSource->insertUnitBreakthrough($unitBreakthrough, $strategyMap);
+    }
 
 }

@@ -5,14 +5,18 @@ namespace org\csflu\isms\controllers;
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\exceptions\ControllerException;
+use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\commons\Department;
+use org\csflu\isms\models\commons\RevisionHistory;
+use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
 use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl as DepartmentService;
+use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as UnitBreakthroughManagementService;
 
 /**
  * Description of UbtController
@@ -25,12 +29,14 @@ class UbtController extends Controller {
     private $mapService;
     private $scorecardService;
     private $departmentService;
+    private $ubtService;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->mapService = new StrategyMapManagementService();
         $this->scorecardService = new ScorecardManagementService();
         $this->departmentService = new DepartmentService();
+        $this->ubtService = new UnitBreakthroughManagementService();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -69,7 +75,7 @@ class UbtController extends Controller {
             'objectiveModel' => new Objective(),
             'measureProfileModel' => new MeasureProfile(),
             'departmentModel' => new Department(),
-            'mapModel' => $strategyMap, 
+            'mapModel' => $strategyMap,
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
@@ -94,10 +100,10 @@ class UbtController extends Controller {
             'unitbreakthrough' => $unitBreakthroughData,
             'objectives' => $objectiveData,
             'indicators' => $measureProfileData,
-            'unit' => $departmentData, 
+            'unit' => $departmentData,
             'leadMeasures' => $leadMeasureData
         ));
-        
+
         if (!$unitBreakthrough->validate()) {
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $unitBreakthrough->validationMessages));
         } else {
@@ -106,9 +112,10 @@ class UbtController extends Controller {
     }
 
     public function insert() {
-        $this->validatePostData(array('UnitBreakthrough', 'Objective', 'MeasureProfile', 'Department', 'StrategyMap'));
+        $this->validatePostData(array('UnitBreakthrough', 'LeadMeasure', 'Objective', 'MeasureProfile', 'Department', 'StrategyMap'));
 
         $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
+        $leadMeasureData = $this->getFormData('LeadMeasure');
         $objectiveData = $this->getFormData('Objective');
         $measureProfileData = $this->getFormData('MeasureProfile');
         $departmentData = $this->getFormData('Department');
@@ -117,6 +124,7 @@ class UbtController extends Controller {
         $unitBreakthrough = new UnitBreakthrough();
         $unitBreakthrough->bindValuesUsingArray(array(
             'unitbreakthrough' => $unitBreakthroughData,
+            'leadMeasures' => $leadMeasureData,
             'objectives' => $objectiveData,
             'indicators' => $measureProfileData,
             'unit' => $departmentData
@@ -129,7 +137,15 @@ class UbtController extends Controller {
             $this->redirect(array('ubt/create', 'map' => $strategyMap->id));
         } else {
             $purifiedUnitBreakthrough = $this->purifyUbtInput($unitBreakthrough);
-            $this->logger->debug($purifiedUnitBreakthrough);
+            try {
+                $id = $this->ubtService->insertUnitBreakthrough($purifiedUnitBreakthrough, $strategyMap);
+                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $id, $purifiedUnitBreakthrough);
+                $this->logLinkedRecords($purifiedUnitBreakthrough);
+                $this->redirect(array('ubt/view', 'id' => $id));
+            } catch (ServiceException $ex) {
+                $this->setSessionData('validation', array($ex->getMessage()));
+                $this->redirect(array('ubt/create', 'map' => $strategyMap->id));
+            }
         }
     }
 
@@ -155,6 +171,22 @@ class UbtController extends Controller {
         //purify the department entity
         $unitBreakthrough->unit = $this->departmentService->getDepartmentDetail(array('id' => $unitBreakthrough->unit->id));
         return $unitBreakthrough;
+    }
+
+    private function logLinkedRecords(UnitBreakthrough $unitBreakthrough) {
+        //log the linked objectives
+        if (count($unitBreakthrough->objectives) > 0) {
+            foreach ($unitBreakthrough->objectives as $objective) {
+                $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, "[Objective linked]\n\nObjective:\t{$objective->description}");
+            }
+        }
+
+        //log the linked measure profiles
+        if (count($unitBreakthrough->measures) > 0) {
+            foreach ($unitBreakthrough->measures as $measure) {
+                $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, "[MeasureProfile linked]\n\nMeasure Profile:\t{$measure->indicator->description}");
+            }
+        }
     }
 
     private function loadMapModel($id) {
