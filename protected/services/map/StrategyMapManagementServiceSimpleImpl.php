@@ -12,6 +12,7 @@ use org\csflu\isms\models\map\Perspective;
 use org\csflu\isms\models\map\Theme;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\initiative\Initiative;
+use org\csflu\isms\models\ubt\UnitBreakthrough;
 
 /**
  *
@@ -44,7 +45,7 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         $this->objectiveDaoSource->updateObjectivesCoveragePeriodsByStrategyMap($strategyMap);
     }
 
-    public function getStrategyMap($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null, Initiative $initiative = null) {
+    public function getStrategyMap($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null, Initiative $initiative = null, UnitBreakthrough $unitBreakthrough = null) {
         if (!is_null($id) && !empty($id)) {
             return $this->mapDaoSource->getStrategyMap($id);
         }
@@ -63,6 +64,10 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
 
         if (!is_null($initiative) && !empty($initiative)) {
             return $this->mapDaoSource->getStrategyMapByInitiative($initiative);
+        }
+        
+        if(!is_null($unitBreakthrough) && !empty($unitBreakthrough)){
+            return $this->mapDaoSource->getStrategyMapByUnitBreakthrough($unitBreakthrough);
         }
     }
 

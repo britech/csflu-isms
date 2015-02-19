@@ -8,6 +8,7 @@ use org\csflu\isms\models\map\Perspective;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\map\Theme;
 use org\csflu\isms\models\initiative\Initiative;
+use org\csflu\isms\models\ubt\UnitBreakthrough;
 
 /**
  *
@@ -41,9 +42,10 @@ interface StrategyMapManagementService {
      * @param Objective $objective Search by Objective
      * @param Theme $theme Search by Theme
      * @param Initiative $initiative Search by Initiative
+     * @param UnitBreakthrough $unitBreakthrough Search by UnitBreakthrough
      * @return StrategyMap
      */
-    public function getStrategyMap($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null, Initiative $initiative = null);
+    public function getStrategyMap($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null, Initiative $initiative = null, UnitBreakthrough $unitBreakthrough = null);
 
     /**
      * Retrieves the list of perspectives

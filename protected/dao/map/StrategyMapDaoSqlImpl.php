@@ -11,6 +11,7 @@ use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\map\Perspective;
 use org\csflu\isms\models\map\Theme;
 use org\csflu\isms\models\initiative\Initiative;
+use org\csflu\isms\models\ubt\UnitBreakthrough;
 
 /**
  *
@@ -92,7 +93,7 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
             }
             $map->startingPeriodDate = \DateTime::createFromFormat('Y-m-d', $startingDate);
             $map->endingPeriodDate = \DateTime::createFromFormat('Y-m-d', $endingDate);
-            
+
             $map->objectives = $this->objectiveDaoSource->listObjectivesByStrategyMap($map);
             return $map;
         } catch (\PDOException $ex) {
@@ -183,6 +184,20 @@ class StrategyMapDaoSqlImpl implements StrategyMapDao {
             $dbst->execute(array('id' => $initiative->id));
 
             while ($data = $dbst->fetch()) {
+                list($map) = $data;
+            }
+            return $this->getStrategyMap($map);
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getStrategyMapByUnitBreakthrough(UnitBreakthrough $unitBreakthrough) {
+        try {
+            $dbst = $this->db->prepare('SELECT map_ref FROM ubt_main WHERE ubt_id=:id');
+            $dbst->execute(array('id' => $unitBreakthrough->id));
+            
+            while($data = $dbst->fetch()){
                 list($map) = $data;
             }
             return $this->getStrategyMap($map);
