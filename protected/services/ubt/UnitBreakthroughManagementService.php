@@ -13,6 +13,13 @@ use org\csflu\isms\models\map\StrategyMap;
 interface UnitBreakthroughManagementService {
 
     /**
+     * Lists the UnitBreakthroughs enlisted under a specified StrategyMap
+     * @param StrategyMap $strategyMap
+     * @return UnitBreakthrough[]
+     */
+    public function listUnitBreakthrough(StrategyMap $strategyMap);
+    
+    /**
      * Retrieves the UnitBreakthrough entity
      * @param String $id Retrieve by its identifier
      * @return UnitBreakthrough

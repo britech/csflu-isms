@@ -56,8 +56,27 @@ class UbtController extends Controller {
                 'data' => array(
                     'header' => 'Action',
                     'links' => array(
-                        'Add Unit Breakthrough' => array('ubt/create', 'map' => $strategyMap->id))))
+                        'Add Unit Breakthrough' => array('ubt/create', 'map' => $strategyMap->id)))),
+            'map' => $strategyMap->id
         ));
+    }
+
+    public function listUnitBreakthroughsByStrategyMap() {
+        $this->validatePostData(array('map'));
+        $id = $this->getFormData('map');
+
+        $strategyMap = $this->loadMapModel($id);
+        $unitBreakthroughs = $this->ubtService->listUnitBreakthrough($strategyMap);
+
+        $data = array();
+        foreach ($unitBreakthroughs as $unitBreakthrough) {
+            array_push($data, array(
+                'description' => $unitBreakthrough->description,
+                'unit' => $unitBreakthrough->unit->name,
+                'action' => ApplicationUtils::generateLink(array('ubt/view', 'id' => $unitBreakthrough->id), 'View')
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     public function create($map) {

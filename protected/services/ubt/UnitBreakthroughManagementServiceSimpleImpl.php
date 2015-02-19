@@ -35,4 +35,8 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         return $this->daoSource->insertUnitBreakthrough($unitBreakthrough, $strategyMap);
     }
 
+    public function listUnitBreakthrough(StrategyMap $strategyMap) {
+        return $this->daoSource->listUnitBreakthroughByStrategyMap($strategyMap);
+    }
+
 }
