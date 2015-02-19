@@ -4,6 +4,7 @@ namespace org\csflu\isms\service\ubt;
 
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
+use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\StrategyMap;
 
 /**
@@ -42,4 +43,12 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function updateUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap);
+    
+    /**
+     * Inserts the LeadMeasure entity using an UnitBreakthrough entity
+     * @param UnitBreakthrough $unitBreakthrough
+     * @return LeadMeasure[] inserted LeadMeasure entities
+     * @throws ServiceException
+     */
+    public function insertLeadMeasures(UnitBreakthrough $unitBreakthrough);
 }

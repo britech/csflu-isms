@@ -5,8 +5,10 @@ namespace org\csflu\isms\service\ubt;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementService;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
+use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\dao\ubt\UnitBreakthroughDaoSqlImpl as UnitBreakthroughDao;
+use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl as LeadMeasureDao;
 
 /**
  *
@@ -15,9 +17,11 @@ use org\csflu\isms\dao\ubt\UnitBreakthroughDaoSqlImpl as UnitBreakthroughDao;
 class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughManagementService {
 
     private $daoSource;
+    private $leadMeasureDaoSource;
 
     public function __construct() {
         $this->daoSource = new UnitBreakthroughDao();
+        $this->leadMeasureDaoSource = new LeadMeasureDao();
     }
 
     public function getUnitBreakthrough($id) {
@@ -48,6 +52,39 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
             }
         }
         $this->daoSource->updateUnitBreakthrough($unitBreakthrough);
+    }
+
+    public function insertLeadMeasures(UnitBreakthrough $unitBreakthrough) {
+        $leadMeasures = $this->leadMeasureDaoSource->listLeadMeasures($unitBreakthrough);
+        $count = 0;
+        foreach ($leadMeasures as $leadMeasure) {
+            if ($leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE) {
+                $count++;
+            }
+        }
+
+        if ($count < 2) {
+            $unitBreakthrough->leadMeasures = $this->validateLeadMeasures($unitBreakthrough, $leadMeasures);
+            $this->leadMeasureDaoSource->insertLeadMeasures($unitBreakthrough);
+            return $unitBreakthrough->leadMeasures;
+        } else {
+            throw new ServiceException("Active Lead Measures already defined in the Unit Breakthrough. Please use the update or management facility.");
+        }
+    }
+
+    private function validateLeadMeasures(UnitBreakthrough $unitBreakthroughInput, $leadMeasures) {
+        $acceptedLeadMeasures = array();
+        foreach ($unitBreakthroughInput->leadMeasures as $leadMeasure) {
+            foreach ($leadMeasures as $data) {
+                if ($leadMeasure->description != $data->description) {
+                    array_push($acceptedLeadMeasures, $leadMeasure);
+                }
+            }
+        }
+        if(count($acceptedLeadMeasures) == 0){
+            throw new ServiceException("No Lead Measures inserted");
+        }
+        return $acceptedLeadMeasures;
     }
 
 }

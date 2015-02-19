@@ -299,6 +299,31 @@ class UbtController extends Controller {
         $this->renderAjaxJsonResponse($data);
     }
 
+    public function insertLeadMeasures() {
+        $this->validatePostData(array('LeadMeasure', 'UnitBreakthrough'));
+
+        $leadMeasureData = $this->getFormData('LeadMeasure');
+        $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
+
+        $unitBreakthrough = new UnitBreakthrough();
+        $unitBreakthrough->bindValuesUsingArray(array(
+            'unitbreakthrough' => $unitBreakthroughData,
+            'leadMeasures' => $leadMeasureData
+        ));
+        if (count($unitBreakthrough->leadMeasures) == 0) {
+            $this->setSessionData('validation', array('Lead Measures should be defined'));
+        } else {
+            try {
+                $unitBreakthrough->leadMeasures = $this->ubtService->insertLeadMeasures($unitBreakthrough);
+                $this->logLinkedRecords($unitBreakthrough);
+                $this->setSessionData('notif', array('message' => 'Lead Measure/s added'));
+            } catch (ServiceException $ex) {
+                $this->setSessionData('validation', array($ex->getMessage()));
+            }
+        }
+        $this->redirect(array('ubt/manageLeadMeasures', 'ubt' => $unitBreakthrough->id));
+    }
+
     private function purifyUbtInput(UnitBreakthrough $unitBreakthrough) {
         //purify objectives
         if (count($unitBreakthrough->objectives) > 0) {
@@ -335,6 +360,13 @@ class UbtController extends Controller {
         if (count($unitBreakthrough->measures) > 0) {
             foreach ($unitBreakthrough->measures as $measure) {
                 $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, "[MeasureProfile linked]\n\nMeasure Profile:\t{$measure->indicator->description}");
+            }
+        }
+
+        //log the lead measures
+        if (count($unitBreakthrough->leadMeasures) > 0) {
+            foreach($unitBreakthrough->leadMeasures as $leadMeasure){
+                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $leadMeasure);
             }
         }
     }
