@@ -36,6 +36,10 @@ class LeadMeasure extends Model {
                 . "Description:\t{$this->description}";
     }
 
+    public function isNew() {
+        return empty($this->id);
+    }
+    
     public function __set($name, $value) {
         $this->$name = $value;
     }

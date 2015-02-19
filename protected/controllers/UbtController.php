@@ -324,6 +324,28 @@ class UbtController extends Controller {
         $this->redirect(array('ubt/manageLeadMeasures', 'ubt' => $unitBreakthrough->id));
     }
 
+    public function updateLeadMeasure($id) {
+        $leadMeasure = $this->loadLeadMeasureModel($id);
+        $unitBreakthrough = $this->loadModel(null, $leadMeasure);
+        $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Lead Measures';
+        $this->render('ubt/lead-measures', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
+                'About Unit Breakthrough' => array('ubt/view', 'id' => $unitBreakthrough->id),
+                'Manage Lead Measures' => array('ubt/manageLeadMeasures', 'ubt' => $unitBreakthrough->id),
+                'Update' => 'active'),
+            'model' => $leadMeasure,
+            'ubtModel' => $unitBreakthrough,
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+    }
+
     private function purifyUbtInput(UnitBreakthrough $unitBreakthrough) {
         //purify objectives
         if (count($unitBreakthrough->objectives) > 0) {
@@ -365,14 +387,29 @@ class UbtController extends Controller {
 
         //log the lead measures
         if (count($unitBreakthrough->leadMeasures) > 0) {
-            foreach($unitBreakthrough->leadMeasures as $leadMeasure){
+            foreach ($unitBreakthrough->leadMeasures as $leadMeasure) {
                 $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $leadMeasure);
             }
         }
     }
 
-    private function loadModel($id, $remote = false) {
-        $unitBreakthrough = $this->ubtService->getUnitBreakthrough($id);
+    private function loadLeadMeasureModel($id, $remote = false) {
+        $leadMeasure = $this->ubtService->retrieveLeadMeasure($id);
+        if (is_null($leadMeasure->id)) {
+            $this->setSessionData('notif', array('message' => 'Lead Measure not found'));
+            $url = array('map/index');
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
+            } else {
+                $this->redirect($url);
+            }
+        }
+        $leadMeasure->validationMode = Model::VALIDATION_MODE_UPDATE;
+        return $leadMeasure;
+    }
+
+    private function loadModel($id = null, LeadMeasure $leadMeasure = null, $remote = false) {
+        $unitBreakthrough = $this->ubtService->getUnitBreakthrough($id, $leadMeasure);
         if (is_null($unitBreakthrough->id)) {
             $this->setSessionData('notif', array('message' => 'Unit Breakthrough not found'));
             $url = array('map/index');

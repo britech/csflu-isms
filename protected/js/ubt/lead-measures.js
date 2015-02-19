@@ -27,11 +27,13 @@ $(document).ready(function() {
         selectionMode: 'singleRow',
     });
 
-    $("[name*=description]").tagEditor({
-        delimiter: '+;',
-        maxLength: -1,
-        forceLowercase: false
-    });
+    if ($("[name*=validationMode]").val() === '1') {
+        $("[name*=description]").tagEditor({
+            delimiter: '+;',
+            maxLength: -1,
+            forceLowercase: false
+        });
+    }
 
     $("#validation-container").hide();
 
