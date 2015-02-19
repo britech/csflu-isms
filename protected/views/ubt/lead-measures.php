@@ -42,10 +42,10 @@ $form = new Form(array(
         </div>
         <?php echo $form->renderHiddenField($model, 'id'); ?>
         <?php echo $form->renderHiddenField($model, 'validationMode'); ?>
-        <?php echo $form->renderHiddenField($ubtModel, 'id'); ?>
+        <?php echo $form->renderHiddenField($ubtModel, 'id', array('id' => 'ubt')); ?>
         <?php echo $form->endComponent(); ?>
     </div>
     <div class="all-50">
-
+        <div id="leadmeasure-list"></div>
     </div>
 </div>

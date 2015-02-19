@@ -284,6 +284,21 @@ class UbtController extends Controller {
         $this->unsetSessionData('notif');
     }
 
+    public function listLeadMeasures() {
+        $this->validatePostData(array('ubt'));
+        $id = $this->getFormData('ubt');
+
+        $unitBreakthrough = $this->loadModel($id);
+        $data = array();
+        foreach ($unitBreakthrough->leadMeasures as $leadMeasure) {
+            array_push($data, array(
+                'description' => $leadMeasure->description,
+                'actions' => ApplicationUtils::generateLink(array('ubt/updateLeadMeasure', 'id' => $leadMeasure->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$leadMeasure->id}"))
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
+    }
+
     private function purifyUbtInput(UnitBreakthrough $unitBreakthrough) {
         //purify objectives
         if (count($unitBreakthrough->objectives) > 0) {
