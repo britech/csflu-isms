@@ -4,6 +4,7 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\core\Model;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
@@ -198,6 +199,27 @@ class UbtController extends Controller {
         $this->unsetSessionData('notif');
     }
 
+    public function update($id = null) {
+        $unitBreakthrough = $this->loadModel($id);
+        $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
+        
+        $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
+        $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
+        $this->render('ubt/form', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
+                'Update UBT' => 'active'),
+            'model' => $unitBreakthrough,
+            'departmentModel' => $unitBreakthrough->unit,
+            'mapModel' => $strategyMap,
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+    }
+
     private function purifyUbtInput(UnitBreakthrough $unitBreakthrough) {
         //purify objectives
         if (count($unitBreakthrough->objectives) > 0) {
@@ -249,6 +271,7 @@ class UbtController extends Controller {
                 $this->redirect($url);
             }
         }
+        $unitBreakthrough->validationMode = Model::VALIDATION_MODE_UPDATE;
         return $unitBreakthrough;
     }
 

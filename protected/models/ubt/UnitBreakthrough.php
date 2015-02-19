@@ -47,7 +47,7 @@ class UnitBreakthrough extends Model {
             array_push($this->validationMessages, '- Timeline should be defined');
         }
 
-        if (is_null($this->unit->id)) {
+        if (is_null($this->unit)) {
             array_push($this->validationMessages, '- Implementing Office should be implemented');
         }
 
@@ -124,6 +124,10 @@ class UnitBreakthrough extends Model {
         parent::bindValuesUsingArray($valueArray, $this);
         $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
         $this->endingPeriod = \DateTime::createFromFormat('Y-m-d', $this->endingPeriod);
+    }
+
+    public function isNew() {
+        return empty($this->id);
     }
 
     public function getModelTranslationAsNewEntity() {
