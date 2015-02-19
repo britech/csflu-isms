@@ -4,6 +4,7 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
@@ -149,6 +150,35 @@ class UbtController extends Controller {
         }
     }
 
+    public function view($id) {
+        $unitBreakthrough = $this->loadModel($id);
+        $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - About Unit Breakthrough';
+        $this->layout = "column-2";
+        $this->render('ubt/view', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
+                'About Unit Breakthrough' => 'active'),
+            'sidebar' => array(
+                'data' => array(
+                    'header' => 'Actions',
+                    'links' => array(
+                        'Update Entry Data' => array('ubt/update', 'id' => $unitBreakthrough->id),
+                        'Manage Lead Measures' => array('ubt/manageLeadMeasures', 'ubt' => $unitBreakthrough->id),
+                        'Manage Strategy Alignments' => array('alignment/manageUnitBreakthrough', 'id' => $unitBreakthrough->id),
+                    )
+                )
+            ),
+            'notif' => $this->getSessionData('notif'),
+            'data' => $unitBreakthrough
+        ));
+        $this->unsetSessionData('notif');
+    }
+
     private function purifyUbtInput(UnitBreakthrough $unitBreakthrough) {
         //purify objectives
         if (count($unitBreakthrough->objectives) > 0) {
@@ -189,10 +219,24 @@ class UbtController extends Controller {
         }
     }
 
-    private function loadMapModel($id) {
-        $strategyMap = $this->mapService->getStrategyMap($id);
+    private function loadModel($id, $remote = false) {
+        $unitBreakthrough = $this->ubtService->getUnitBreakthrough($id);
+        if (is_null($unitBreakthrough->id)) {
+            $this->setSessionData('notif', array('message' => 'Unit Breakthrough not found'));
+            $url = array('map/index');
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
+            } else {
+                $this->redirect($url);
+            }
+        }
+        return $unitBreakthrough;
+    }
+
+    private function loadMapModel($id = null, UnitBreakthrough $unitBreakthrough = null) {
+        $strategyMap = $this->mapService->getStrategyMap($id, null, null, null, null, $unitBreakthrough);
         if (is_null($strategyMap->id)) {
-            $this->setSessionData('notif', array('message' => 'Map not found'));
+            $this->setSessionData('notif', array('message' => 'Strategy Map not found'));
             $this->redirect(array('map/index'));
         }
         $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
