@@ -21,6 +21,7 @@ use org\csflu\isms\models\ubt\UnitBreakthrough;
  */
 class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementService {
 
+    private $logger;
     private $mapDaoSource;
     private $perspectiveDaoSource;
     private $objectiveDaoSource;
@@ -29,6 +30,7 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
         $this->mapDaoSource = new StrategyMapDao();
         $this->perspectiveDaoSource = new PerspectiveDao();
         $this->objectiveDaoSource = new ObjectiveDao();
+        $this->logger = \Logger::getLogger(__CLASS__);
     }
 
     public function listStrategyMaps() {
@@ -48,25 +50,15 @@ class StrategyMapManagementServiceSimpleImpl implements StrategyMapManagementSer
     public function getStrategyMap($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null, Initiative $initiative = null, UnitBreakthrough $unitBreakthrough = null) {
         if (!is_null($id) && !empty($id)) {
             return $this->mapDaoSource->getStrategyMap($id);
-        }
-
-        if (!is_null($perspective) && !empty($perspective)) {
+        } elseif (!is_null($perspective) && !empty($perspective)) {
             return $this->mapDaoSource->getStrategyMapByPerspective($perspective);
-        }
-
-        if (!is_null($objective) && !empty($objective)) {
+        } elseif (!is_null($objective) && !empty($objective)) {
             return $this->mapDaoSource->getStrategyMapByObjective($objective);
-        }
-
-        if (!is_null($theme) && !empty($theme)) {
+        } elseif (!is_null($theme) && !empty($theme)) {
             return $this->mapDaoSource->getStrategyMapByTheme($theme);
-        }
-
-        if (!is_null($initiative) && !empty($initiative)) {
+        } elseif (!is_null($initiative) && !empty($initiative)) {
             return $this->mapDaoSource->getStrategyMapByInitiative($initiative);
-        }
-        
-        if(!is_null($unitBreakthrough) && !empty($unitBreakthrough)){
+        } elseif (!is_null($unitBreakthrough) && !empty($unitBreakthrough)) {
             return $this->mapDaoSource->getStrategyMapByUnitBreakthrough($unitBreakthrough);
         }
     }
