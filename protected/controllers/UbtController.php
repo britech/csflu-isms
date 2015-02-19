@@ -262,6 +262,28 @@ class UbtController extends Controller {
         $this->redirect(array('ubt/view', 'id' => $unitBreakthrough->id));
     }
 
+    public function manageLeadMeasures($ubt) {
+        $unitBreakthrough = $this->loadModel($ubt);
+        $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Lead Measures';
+        $this->render('ubt/lead-measures', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
+                'About Unit Breakthrough' => array('ubt/view', 'id' => $unitBreakthrough->id),
+                'Manage Lead Measures' => 'active'),
+            'model' => new LeadMeasure,
+            'ubtModel' => $unitBreakthrough,
+            'notif' => $this->getSessionData('notif'),
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+        $this->unsetSessionData('notif');
+    }
+
     private function purifyUbtInput(UnitBreakthrough $unitBreakthrough) {
         //purify objectives
         if (count($unitBreakthrough->objectives) > 0) {
