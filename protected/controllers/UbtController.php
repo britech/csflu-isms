@@ -103,27 +103,33 @@ class UbtController extends Controller {
     }
 
     public function validateUbtInput() {
+        $unitBreakthrough = new UnitBreakthrough();
+
         try {
-            $this->validatePostData(array('UnitBreakthrough', 'LeadMeasure', 'Objective', 'MeasureProfile', 'Department'));
+            $this->validatePostData(array('UnitBreakthrough', 'Department'));
+            $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
+            $departmentData = $this->getFormData('Department');
+            $unitBreakthrough->bindValuesUsingArray(array(
+                'unitbreakthrough' => $unitBreakthroughData,
+                'unit' => $departmentData
+            ));
+
+            if ($unitBreakthrough->validationMode == Model::VALIDATION_MODE_INITIAL) {
+                $leadMeasureData = $this->getFormData('LeadMeasure');
+                $objectiveData = $this->getFormData('Objective');
+                $measureProfileData = $this->getFormData('MeasureProfile');
+
+                $unitBreakthrough->bindValuesUsingArray(array(
+                    'objectives' => $objectiveData,
+                    'indicators' => $measureProfileData,
+                    'leadMeasures' => $leadMeasureData,
+                    'unitbreakthrough' => $unitBreakthroughData
+                ));
+            }
         } catch (ControllerException $ex) {
             $this->logger->warn($ex->getMessage(), $ex);
             $this->renderAjaxJsonResponse(array('respCode' => '70'));
         }
-
-        $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
-        $leadMeasureData = $this->getFormData('LeadMeasure');
-        $objectiveData = $this->getFormData('Objective');
-        $measureProfileData = $this->getFormData('MeasureProfile');
-        $departmentData = $this->getFormData('Department');
-
-        $unitBreakthrough = new UnitBreakthrough();
-        $unitBreakthrough->bindValuesUsingArray(array(
-            'unitbreakthrough' => $unitBreakthroughData,
-            'objectives' => $objectiveData,
-            'indicators' => $measureProfileData,
-            'unit' => $departmentData,
-            'leadMeasures' => $leadMeasureData
-        ));
 
         if (!$unitBreakthrough->validate()) {
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $unitBreakthrough->validationMessages));
@@ -200,9 +206,13 @@ class UbtController extends Controller {
     }
 
     public function update($id = null) {
+        if (is_null($id)) {
+            $this->validatePostData(array('UnitBreakthrough', 'Department'));
+            $this->processUbtUpdate();
+        }
         $unitBreakthrough = $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
-        
+
         $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
         $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
         $this->render('ubt/form', array(
@@ -211,6 +221,7 @@ class UbtController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
+                'About Unit Breakthrough' => array('ubt/view', 'id' => $unitBreakthrough->id),
                 'Update UBT' => 'active'),
             'model' => $unitBreakthrough,
             'departmentModel' => $unitBreakthrough->unit,
@@ -218,6 +229,28 @@ class UbtController extends Controller {
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
+    }
+
+    private function processUbtUpdate() {
+        $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
+        $departmentData = $this->getFormData('Department');
+
+        $unitBreakthrough = new UnitBreakthrough();
+        $unitBreakthrough->bindValuesUsingArray(array(
+            'unitbreakthrough' => $unitBreakthroughData,
+            'unit' => $departmentData
+        ));
+        $unitBreakthrough->validationMode = Model::VALIDATION_MODE_UPDATE;
+        if (!$unitBreakthrough->validate()) {
+            $this->setSessionData('validation', $unitBreakthrough->validationMessages);
+            $this->redirect(array('ubt/update', 'id' => $unitBreakthrough->id));
+        } else {
+            $oldModel = clone $this->loadModel($unitBreakthrough->id);
+            if ($unitBreakthrough->computePropertyChanges($oldModel) > 0) {
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Unit Breakthrough updated'));
+            }
+            $this->redirect(array('ubt/view', 'id' => $unitBreakthrough->id));
+        }
     }
 
     private function purifyUbtInput(UnitBreakthrough $unitBreakthrough) {
