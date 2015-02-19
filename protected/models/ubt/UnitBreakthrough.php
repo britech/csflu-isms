@@ -137,12 +137,81 @@ class UnitBreakthrough extends Model {
                 . "Timeline:\t{$this->startingPeriod->format('F-Y')} - {$this->endingPeriod->format('F-Y')}";
     }
 
+    public function computePropertyChanges(UnitBreakthrough $oldModel) {
+        $counter = 0;
+
+        if ($oldModel->description != $this->description) {
+            $counter++;
+        }
+
+        if ($oldModel->startingPeriod->format('Y-m-d') != $this->startingPeriod->format('Y-m-d')) {
+            $counter++;
+        }
+
+        if ($oldModel->endingPeriod->format('Y-m-d') != $this->endingPeriod->format('Y-m-d')) {
+            $counter++;
+        }
+
+        if ($oldModel->unit->id != $this->unit->id) {
+            $counter++;
+        }
+
+        return $counter;
+    }
+
+    public function getModelTranslationAsUpdatedEntity(UnitBreakthrough $oldModel) {
+        $translation = "[UnitBreakthrough updated]\n\n";
+        if ($oldModel->description != $this->description) {
+            $translation.="Unit Breakthrough:\t{$this->description}\n";
+        }
+
+        if ($oldModel->startingPeriod->format('Y-m-d') != $this->startingPeriod->format('Y-m-d')) {
+            $translation.="Starting Period:\t{$this->startingPeriod->format('F-Y')}\n";
+        }
+
+        if ($oldModel->endingPeriod->format('Y-m-d') != $this->endingPeriod->format('Y-m-d')) {
+            $translation.="Ending Period:\t{$this->endingPeriod->format('F-Y')}\n";
+        }
+
+        if ($oldModel->unit->id != $this->unit->id) {
+            $translation.="Unit:\t{$this->unit->name}";
+        }
+        return $translation;
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
 
     public function __get($name) {
         return $this->$name;
+    }
+
+    public function __clone() {
+        $unitBreakthrough = new UnitBreakthrough();
+        $unitBreakthrough->id = $this->id;
+        $unitBreakthrough->startingPeriod = $this->startingPeriod;
+        $unitBreakthrough->endingPeriod = $this->endingPeriod;
+
+        $unitBreakthrough->unit = new Department();
+        $unitBreakthrough->unit->id = $this->unit->id;
+        $unitBreakthrough->unit->name = $this->unit->name;
+        $unitBreakthrough->unit->code = $this->unit->code;
+
+        $unitBreakthrough->objectives = array();
+        foreach ($this->objectives as $objective) {
+            array_push($unitBreakthrough->objectives, $objective);
+        }
+
+        $unitBreakthrough->measures = array();
+        foreach ($this->measures as $measure) {
+            array_push($unitBreakthrough->measures, $measure);
+        }
+
+        $unitBreakthrough->leadMeasures = array();
+        foreach ($this->leadMeasures as $leadMeasure) {
+            array_push($unitBreakthrough->leadMeasures, $leadMeasure);
+        }
     }
 
 }
