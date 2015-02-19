@@ -113,6 +113,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
                     'objective' => $objective->id
                 ));
             }
+            $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
