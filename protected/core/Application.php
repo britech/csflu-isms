@@ -59,7 +59,7 @@ class Application {
         $reflectionParameters = $reflectionMethod->getParameters();
 
         foreach ($reflectionParameters as $reflectionParameter) {
-            if (!$reflectionParameter->allowsNull() && !array_key_exists($reflectionParameter->name, filter_input_array(INPUT_GET))) {
+            if (!$reflectionParameter->isOptional() && !array_key_exists($reflectionParameter->name, filter_input_array(INPUT_GET))) {
                 throw new \Exception("Defined argument is not recognized as a parameter of the selected action");
             }
         }
