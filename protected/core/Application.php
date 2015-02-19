@@ -63,7 +63,6 @@ class Application {
                 throw new \Exception("Defined argument is not recognized as a parameter of the selected action");
             }
         }
-        return true;
     }
 
     private function generateControllerClass($controllerPrefix) {
