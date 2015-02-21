@@ -293,6 +293,7 @@ class UbtController extends Controller {
         foreach ($unitBreakthrough->leadMeasures as $leadMeasure) {
             array_push($data, array(
                 'description' => $leadMeasure->description,
+                'status' => LeadMeasure::translateEnvironmentStatus($leadMeasure->leadMeasureEnvironmentStatus),
                 'actions' => ApplicationUtils::generateLink(array('ubt/updateLeadMeasure', 'id' => $leadMeasure->id), 'Update') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$leadMeasure->id}"))
             ));
         }

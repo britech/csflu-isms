@@ -4,7 +4,7 @@ $(document).ready(function() {
             datatype: 'json',
             datafields: [
                 {name: 'description'},
-                {name: 'actions'}
+                {name: 'status'}
             ],
             url: '?r=ubt/listLeadMeasures',
             type: 'POST',
@@ -16,7 +16,7 @@ $(document).ready(function() {
         theme: 'office',
         columns: [
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Unit Breakthrough</span>', dataField: 'description', width: '80%'},
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Actions</span>', dataField: 'actions', width: '20%', cellsAlign: 'center'}
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Status</span>', dataField: 'status', width: '20%', cellsAlign: 'center'}
         ],
         width: '100%',
         pageable: true,
