@@ -12,9 +12,11 @@ use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl as InitiativeManagementService;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
+use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as UnitBreakthroughManagementService;
 
 /**
  * Description of AlignmentController
@@ -27,12 +29,14 @@ class AlignmentController extends Controller {
     private $initiativeService;
     private $mapService;
     private $scorecardService;
+    private $ubtService;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->initiativeService = new InitiativeManagementService();
         $this->mapService = new StrategyMapManagementService();
         $this->scorecardService = new ScorecardManagementService();
+        $this->ubtService = new UnitBreakthroughManagementService();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -144,12 +148,12 @@ class AlignmentController extends Controller {
         } catch (ServiceException $ex) {
             $this->setSessionData('validation', array($ex->getMessage()));
         }
-        
+
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('alignment/manageInitiative', 'id' => $initiativeId))));
     }
-    
-    public function unlinkLeadMeasure(){
-         try {
+
+    public function unlinkLeadMeasure() {
+        try {
             $this->validatePostData(array('initiative', 'measure'));
         } catch (ControllerException $ex) {
             $this->logger->error($ex->getMessage(), $ex);
@@ -158,10 +162,10 @@ class AlignmentController extends Controller {
         }
         $initiativeId = $this->getFormData('initiative');
         $measureId = $this->getFormData('measure');
-        
+
         $initiative = $this->loadInitiativeModel($initiativeId, true);
         $measureProfile = $this->loadMeasureProfileModel($measureId, true);
-        
+
         try {
             $this->initiativeService->unlinkAlignments($initiative, null, $measureProfile);
             $this->logCustomRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[LeadMeasure unlinked]\n\nIndicator:\t{$measureProfile->indicator->description}");
@@ -169,12 +173,67 @@ class AlignmentController extends Controller {
         } catch (ServiceException $ex) {
             $this->setSessionData('validation', array($ex->getMessage()));
         }
-        
+
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('alignment/manageInitiative', 'id' => $initiativeId))));
     }
 
-    private function loadMapModel(Initiative $initiative) {
-        $map = $this->mapService->getStrategyMap(null, null, null, null, $initiative);
+    public function manageUnitBreakthrough($id) {
+        $unitBreakthrough = $this->loadUnitBreakthroughModel($id);
+        $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
+
+        $this->title = ApplicationConstants::APP_NAME . " - Manage Strategy Alignments";
+        $this->render('ubt/alignment', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
+                'About Unit Breakthrough' => array('ubt/view', 'id' => $unitBreakthrough->id),
+                'Manage Strategy Alignments' => 'active'
+            ),
+            'model' => $unitBreakthrough,
+            'measureModel' => new MeasureProfile(),
+            'objectiveModel' => new Objective(),
+            'mapModel' => $strategyMap,
+            'notif' => $this->getSessionData('notif'),
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('notif');
+        $this->unsetSessionData('validation');
+    }
+
+    public function listUbtObjectiveAlignment() {
+        $this->validatePostData(array('ubt'));
+        $id = $this->getFormData('ubt');
+
+        $unitBreakthrough = $this->loadUnitBreakthroughModel($id);
+        $data = array();
+        foreach ($unitBreakthrough->objectives as $objective) {
+            array_push($data, array(
+                'objective' => $objective->description,
+                'action' => ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$objective->id}"))
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
+    }
+
+    public function listUbtIndicatorAlignment() {
+        $this->validatePostData(array('ubt'));
+        $id = $this->getFormData('ubt');
+
+        $unitBreakthrough = $this->loadUnitBreakthroughModel($id);
+        $data = array();
+        foreach ($unitBreakthrough->measures as $measure) {
+            array_push($data, array(
+                'indicator' => $measure->indicator->description,
+                'action' => ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$measure->id}"))
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
+    }
+
+    private function loadMapModel(Initiative $initiative = null, UnitBreakthrough $unitBreakthrough = null) {
+        $map = $this->mapService->getStrategyMap(null, null, null, null, $initiative, $unitBreakthrough);
         if (is_null($map->id)) {
             $this->setSessionData('notif', array('message' => 'Strategy Map not found'));
             $this->redirect(array('map/index'));
@@ -209,10 +268,10 @@ class AlignmentController extends Controller {
         }
         return $objective;
     }
-    
-    public function loadMeasureProfileModel($id, $remote = false){
+
+    private function loadMeasureProfileModel($id, $remote = false) {
         $measureProfile = $this->scorecardService->getMeasureProfile($id);
-        if(is_null($measureProfile->id)){
+        if (is_null($measureProfile->id)) {
             $this->setSessionData('notif', array('message' => 'Linked Lead Measure not found'));
             if ($remote) {
                 $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
@@ -222,6 +281,21 @@ class AlignmentController extends Controller {
             }
         }
         return $measureProfile;
+    }
+
+    private function loadUnitBreakthroughModel($id, $remote = false) {
+        $unitBreakthrough = $this->ubtService->getUnitBreakthrough($id);
+        if (is_null($unitBreakthrough->id)) {
+            $url = array('map/index');
+            $this->setSessionData('notif', array('message' => 'Linked Lead Measure not found'));
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
+                return;
+            } else {
+                $this->redirect($url);
+            }
+        }
+        return $unitBreakthrough;
     }
 
 }
