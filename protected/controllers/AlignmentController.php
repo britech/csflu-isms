@@ -294,6 +294,31 @@ class AlignmentController extends Controller {
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('alignment/manageUnitBreakthrough', 'id' => $unitBreakthrough->id))));
     }
 
+    public function unlinkUbtMeasureProfileAlignment() {
+        try {
+            $this->validatePostData(array('measureProfile', 'ubt'));
+        } catch (ControllerException $ex) {
+            $this->logger->warn($ex->getMessage(), $ex);
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+        }
+
+        $measureProfileId = $this->getFormData('measureProfile');
+        $ubtId = $this->getFormData('ubt');
+
+        $measureProfile = $this->loadMeasureProfileModel($measureProfileId, true);
+        $unitBreakthrough = $this->loadUnitBreakthroughModel($ubtId, true);
+
+        try {
+            $this->ubtService->deleteAlignments($unitBreakthrough, null, $measureProfile);
+            $this->logCustomRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, "[Measure Profile unlinked]\n\nMeasure Profile:\t{$measureProfile->indicator->description}");
+            $this->setSessionData('notif', array('class' => 'error', 'message' => 'Measure Profile unlinked in the Unit Breakthrough'));
+        } catch (ServiceException $ex) {
+            $this->logger->warn($ex->getMessage(), $ex);
+            $this->setSessionData('validation', array($ex->getMessage()));
+        }
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('alignment/manageUnitBreakthrough', 'id' => $unitBreakthrough->id))));
+    }
+
     private function loadMapModel(Initiative $initiative = null, UnitBreakthrough $unitBreakthrough = null) {
         $map = $this->mapService->getStrategyMap(null, null, null, null, $initiative, $unitBreakthrough);
         if (is_null($map->id)) {

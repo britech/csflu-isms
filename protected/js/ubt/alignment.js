@@ -195,15 +195,15 @@ $(document).ready(function() {
         $("#measures-list").jqxDataTable('updateBoundData');
     });
     
-//    $("[id^=accept-measure]").click(function() {
-//        var id = $(this).attr('id').split('-')[2];
-//        var initiative = $("#initiative").val();
-//        $.post("?r=alignment/unlinkLeadMeasure",
-//                {measure: id, 
-//                 initiative: initiative},
-//        function(data) {
-//            var response = $.parseJSON(data);
-//            window.location = response.url;
-//        });
-//    });
+    $("[id^=accept-measure]").click(function() {
+        var id = $(this).attr('id').split('-')[2];
+        var ubt = $("#ubt").val();
+        $.post("?r=alignment/unlinkUbtMeasureProfileAlignment",
+                {measureProfile: id, 
+                 ubt: ubt},
+        function(data) {
+            var response = $.parseJSON(data);
+            window.location = response.url;
+        });
+    });
 });
