@@ -38,6 +38,16 @@ class UnitBreakthrough extends Model {
     private $leadMeasures;
     private $unitBreakthroughEnvironmentStatus;
 
+    public function getAttributeNames() {
+        return array(
+            'description' => 'Unit Breakthrough',
+            'unit' => 'Department',
+            'objectives' => 'Objectives',
+            'measures' => 'Indicators',
+            'leadMeasures' => 'Lead Measure'
+        );
+    }
+
     public function validate() {
         if (empty($this->description)) {
             array_push($this->validationMessages, '- Unit Breakthrough must be defined');
