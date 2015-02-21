@@ -9,6 +9,8 @@ use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\commons\Department;
+use org\csflu\isms\models\map\Objective;
+use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\dao\commons\DepartmentDaoSqlImpl as DepartmentDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
@@ -208,6 +210,40 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             }
             return $this->getUnitBreakthroughByIdentifier($id);
         } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function unlinkMeasureProfile(UnitBreakthrough $unitBreakthrough, MeasureProfile $measureProfile) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('DELETE FROM ubt_indicator_mapping WHERE ubt_ref=:ubt AND mp_ref=:mp');
+            $dbst->execute(array(
+                'ubt' => $unitBreakthrough->id,
+                'mp' => $measureProfile->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function unlinkObjective(UnitBreakthrough $unitBreakthrough, Objective $objective) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('DELETE FROM ubt_objective_mapping WHERE ubt_ref=:ubt AND obj_ref=:objective');
+            $dbst->execute(array(
+                'ubt' => $unitBreakthrough->id,
+                'objective' => $objective->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }

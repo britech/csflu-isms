@@ -6,6 +6,8 @@ use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\StrategyMap;
+use org\csflu\isms\models\map\Objective;
+use org\csflu\isms\models\indicator\MeasureProfile;
 
 /**
  *
@@ -67,4 +69,13 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function addAlignments(UnitBreakthrough $unitBreakthrough);
+    
+    /**
+     * Deletes the selected objective/measure profile in a given UnitBreakthrough entity
+     * @param UnitBreakthrough $unitBreakthrough
+     * @param Objective $objective
+     * @param MeasureProfile $measureProfile
+     * @throws ServiceException
+     */
+    public function deleteAlignments(UnitBreakthrough $unitBreakthrough, Objective $objective = null, MeasureProfile $measureProfile = null);
 }

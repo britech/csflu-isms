@@ -70,6 +70,13 @@ interface UnitBreakthroughDao {
      * @throws DataAccessException
      */
     public function linkObjectives(UnitBreakthrough $unitBreakthrough);
+    
+    /**
+     * @param UnitBreakthrough $unitBreakthrough
+     * @param Objective $objective
+     * @throws DataAccessException
+     */
+    public function unlinkObjective(UnitBreakthrough $unitBreakthrough, Objective $objective);
 
     /**
      * @param UnitBreakthrough $unitBreakthrough
@@ -83,4 +90,11 @@ interface UnitBreakthroughDao {
      * @throws DataAccessException
      */
     public function linkMeasureProfiles(UnitBreakthrough $unitBreakthrough);
+    
+    /**
+     * @param UnitBreakthrough $unitBreakthrough
+     * @param MeasureProfile $measureProfile
+     * @throws DataAccessException
+     */
+    public function unlinkMeasureProfile(UnitBreakthrough $unitBreakthrough, MeasureProfile $measureProfile);
 }

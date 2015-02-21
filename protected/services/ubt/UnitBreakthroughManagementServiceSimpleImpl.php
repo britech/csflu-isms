@@ -7,6 +7,8 @@ use org\csflu\isms\service\ubt\UnitBreakthroughManagementService;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\StrategyMap;
+use org\csflu\isms\models\map\Objective;
+use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\dao\ubt\UnitBreakthroughDaoSqlImpl as UnitBreakthroughDao;
 use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl as LeadMeasureDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
@@ -156,6 +158,20 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
             }
         }
         return $measureProfilesToLink;
+    }
+
+    public function deleteAlignments(UnitBreakthrough $unitBreakthrough, Objective $objective = null, MeasureProfile $measureProfile = null) {
+        if(is_null($objective) && is_null($measureProfile)){
+            throw new ServiceException("An Objective or Measure should be selected to execute this service");
+        }
+        
+        if(!is_null($objective)){
+            $this->daoSource->unlinkObjective($unitBreakthrough, $objective);
+        }
+        
+        if(!is_null($measureProfile)){
+            $this->daoSource->unlinkMeasureProfile($unitBreakthrough, $measureProfile);
+        }
     }
 
 }
