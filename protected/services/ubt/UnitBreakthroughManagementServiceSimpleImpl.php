@@ -9,6 +9,8 @@ use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\dao\ubt\UnitBreakthroughDaoSqlImpl as UnitBreakthroughDao;
 use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl as LeadMeasureDao;
+use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
+use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
 
 /**
  *
@@ -18,10 +20,14 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
 
     private $daoSource;
     private $leadMeasureDaoSource;
+    private $objectiveDaoSource;
+    private $measureProfileDaoSource;
 
     public function __construct() {
         $this->daoSource = new UnitBreakthroughDao();
         $this->leadMeasureDaoSource = new LeadMeasureDao();
+        $this->objectiveDaoSource = new ObjectiveDao();
+        $this->measureProfileDaoSource = new MeasureProfileDao();
     }
 
     public function getUnitBreakthrough($id = null, LeadMeasure $leadMeasure = null) {
@@ -93,6 +99,63 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
 
     public function retrieveLeadMeasure($id) {
         return $this->leadMeasureDaoSource->getLeadMeasure($id);
+    }
+
+    public function addAlignments(UnitBreakthrough $unitBreakthrough) {
+        $unitBreakthrough->objectives = $this->filterObjectives($unitBreakthrough);
+        $unitBreakthrough->measures = $this->filterMeasureProfiles($unitBreakthrough);
+
+        if (count($unitBreakthrough->objectives) > 0) {
+            $this->daoSource->linkObjectives($unitBreakthrough);
+        }
+
+        if (count($unitBreakthrough->measures) > 0) {
+            $this->daoSource->linkMeasureProfiles($unitBreakthrough);
+        }
+        
+        if(count($unitBreakthrough->objectives) == 0 && count($unitBreakthrough->measures) == 0){
+            throw new ServiceException("No alignments added");
+        }
+        
+        return $unitBreakthrough;
+    }
+
+    private function filterObjectives(UnitBreakthrough $unitBreakthrough) {
+        $linkedObjectives = $this->daoSource->listObjectives($unitBreakthrough);
+        $objectivesToLink = array();
+        foreach ($unitBreakthrough->objectives as $objective) {
+            $found = false;
+            foreach ($linkedObjectives as $data) {
+                if ($data->id == $objective->id) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                array_push($objectivesToLink, $this->objectiveDaoSource->getObjective($objective->id));
+            }
+        }
+        return $objectivesToLink;
+    }
+
+    private function filterMeasureProfiles(UnitBreakthrough $unitBreakthrough) {
+        $linkedMeasureProfiles = $this->daoSource->listMeasureProfiles($unitBreakthrough);
+        $measureProfilesToLink = array();
+        foreach ($unitBreakthrough->measures as $measure) {
+            $found = false;
+            foreach ($linkedMeasureProfiles as $data) {
+                if ($data->id == $measure->id) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                array_push($measureProfilesToLink, $this->measureProfileDaoSource->getMeasureProfile($measure->id));
+            }
+        }
+        return $measureProfilesToLink;
     }
 
 }

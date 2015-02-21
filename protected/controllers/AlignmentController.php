@@ -232,6 +232,43 @@ class AlignmentController extends Controller {
         $this->renderAjaxJsonResponse($data);
     }
 
+    public function insertUbtAlignment() {
+        $this->validatePostData(array('Objective', 'MeasureProfile', 'UnitBreakthrough'));
+
+        $objectiveData = $this->getFormData('Objective');
+        $measureProfileData = $this->getFormData('MeasureProfile');
+        $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
+
+        $unitBreakthrough = new UnitBreakthrough();
+        $unitBreakthrough->bindValuesUsingArray(array(
+            'objectives' => $objectiveData,
+            'measures' => $measureProfileData,
+            'unitbreakthrough' => $unitBreakthroughData
+        ));
+
+        if (count($unitBreakthrough->objectives) == 0 && count($unitBreakthrough->measures) == 0) {
+            $this->setSessionData('validation', array('An Objective or Measure Profile should be selected'));
+        }
+
+        try {
+            $updatedUnitBreakthrough = $this->ubtService->addAlignments($unitBreakthrough);
+
+            foreach ($updatedUnitBreakthrough->objectives as $objective) {
+                $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $updatedUnitBreakthrough->id, "[Objective linked]\n\nObjective:\t{$objective->description}");
+            }
+
+            foreach ($updatedUnitBreakthrough->measures as $measureProfile) {
+                $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $updatedUnitBreakthrough->id, "[Measure Profile linked]\n\nMeasure Profile:\t{$measureProfile->indicator->description}");
+            }
+            $this->setSessionData('notif', array('class' => 'info', 'message' => 'Strategy Alignments added'));
+        } catch (ServiceException $ex) {
+            $this->logger->debug($ex->getMessage(), $ex);
+            $this->setSessionData('validation', array($ex->getMessage()));
+        }
+
+        $this->redirect(array('alignment/manageUnitBreakthrough', 'id' => $unitBreakthrough->id));
+    }
+
     private function loadMapModel(Initiative $initiative = null, UnitBreakthrough $unitBreakthrough = null) {
         $map = $this->mapService->getStrategyMap(null, null, null, null, $initiative, $unitBreakthrough);
         if (is_null($map->id)) {

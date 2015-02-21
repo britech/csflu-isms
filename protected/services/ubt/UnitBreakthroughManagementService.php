@@ -59,4 +59,12 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function insertLeadMeasures(UnitBreakthrough $unitBreakthrough);
+    
+    /**
+     * Links the selected objectives/measures profiles in a given UnitBreakthrough entity
+     * @param UnitBreakthrough $unitBreakthrough
+     * @return UnitBreakthrough
+     * @throws ServiceException
+     */
+    public function addAlignments(UnitBreakthrough $unitBreakthrough);
 }
