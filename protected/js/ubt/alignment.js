@@ -78,7 +78,7 @@ $(document).ready(function() {
             return false;
         }
     });
-
+    
     $("#objectives-list").jqxDataTable({
         source: new $.jqx.dataAdapter({
             datatype: 'json',
@@ -106,18 +106,18 @@ $(document).ready(function() {
         sortable: true,
         selectionMode: 'singleRow'
     }).on("rowClick", function() {
-//        $("[id^=remove]").click(function() {
-//            var text = $(this).parent().siblings("td").html();
-//            $("#text-objective").html("Do you want unlink this objective Continuing will remove the Objective, <strong>" + text + "</strong>, from the Initiative");
-//            $("#delete-objective").jqxWindow('open');
-//            $("#accept-objective").prop('id', "accept-objective-" + $(this).attr('id').split('-')[1]);
-//        });
+        $("[id^=remove-objective]").click(function() {
+            var text = $(this).parent().siblings("td").html();
+            $("#text-objective").html("Do you want unlink this objective Continuing will remove the Objective, <strong>" + text + "</strong>, from the Unit Breakthrough");
+            $("#delete-objective").jqxWindow('open');
+            $("#accept-objective").prop('id', "accept-objective-" + $(this).attr('id').split('-')[2]);
+        });
     });
 
     $('#delete-objective').jqxWindow({
         title: '<strong>Confirm Objective Unlinking</strong>',
         width: 300,
-        height: 150,
+        height: 200,
         resizable: false,
         draggable: false,
         isModal: true,
@@ -131,17 +131,17 @@ $(document).ready(function() {
         $("#objectives-list").jqxDataTable('updateBoundData');
     });
     
-//    $("[id^=accept-objective]").click(function() {
-//        var id = $(this).attr('id').split('-')[2];
-//        var initiative = $("#initiative").val();
-//        $.post("?r=alignment/unlinkObjective",
-//                {objective: id, 
-//                 initiative: initiative},
-//        function(data) {
-//            var response = $.parseJSON(data);
-//            window.location = response.url;
-//        });
-//    });
+    $("[id^=accept-objective]").click(function() {
+        var id = $(this).attr('id').split('-')[2];
+        var ubt = $("#ubt").val();
+        $.post("?r=alignment/unlinkUbtObjectiveAlignment",
+                {objective: id, 
+                 ubt: ubt},
+        function(data) {
+            var response = $.parseJSON(data);
+            window.location = response.url;
+        });
+    });
 
     $("#measures-list").jqxDataTable({
         source: new $.jqx.dataAdapter({
@@ -170,18 +170,18 @@ $(document).ready(function() {
         sortable: true,
         selectionMode: 'singleRow'
     }).on("rowClick", function() {
-        $("[id^=remove]").click(function() {
+        $("[id^=remove-measure]").click(function() {
             var text = $(this).parent().siblings("td").html();
-            $("#text-measure").html("Do you want to unlink this Lead Measure? Continuing will remove the Lead Measure, <strong>" + text + "</strong>, from the Initiative");
+            $("#text-measure").html("Do you want to unlink this Lead Measure? Continuing will remove the Lead Measure, <strong>" + text + "</strong>, from the Unit Breakthrough");
             $("#delete-measure").jqxWindow('open');
-            $("#accept-measure").prop('id', "accept-measure-" + $(this).attr('id').split('-')[1]);
+            $("#accept-measure").prop('id', "accept-measure-" + $(this).attr('id').split('-')[2]);
         });
     });
 
     $('#delete-measure').jqxWindow({
         title: '<strong>Confirm Lead Measure Unlinking</strong>',
         width: 300,
-        height: 150,
+        height: 200,
         resizable: false,
         draggable: false,
         isModal: true,

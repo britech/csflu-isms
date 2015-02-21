@@ -211,7 +211,7 @@ class AlignmentController extends Controller {
         foreach ($unitBreakthrough->objectives as $objective) {
             array_push($data, array(
                 'objective' => $objective->description,
-                'action' => ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$objective->id}"))
+                'action' => ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-objective-{$objective->id}"))
             ));
         }
         $this->renderAjaxJsonResponse($data);
@@ -226,7 +226,7 @@ class AlignmentController extends Controller {
         foreach ($unitBreakthrough->measures as $measure) {
             array_push($data, array(
                 'indicator' => $measure->indicator->description,
-                'action' => ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$measure->id}"))
+                'action' => ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-measure-{$measure->id}"))
             ));
         }
         $this->renderAjaxJsonResponse($data);
@@ -267,6 +267,31 @@ class AlignmentController extends Controller {
         }
 
         $this->redirect(array('alignment/manageUnitBreakthrough', 'id' => $unitBreakthrough->id));
+    }
+
+    public function unlinkUbtObjectiveAlignment() {
+        try {
+            $this->validatePostData(array('objective', 'ubt'));
+        } catch (ControllerException $ex) {
+            $this->logger->warn($ex->getMessage(), $ex);
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+        }
+
+        $objectiveId = $this->getFormData('objective');
+        $ubtId = $this->getFormData('ubt');
+
+        $objective = $this->loadObjectiveModel($objectiveId, true);
+        $unitBreakthrough = $this->loadUnitBreakthroughModel($ubtId, true);
+
+        try {
+            $this->ubtService->deleteAlignments($unitBreakthrough, $objective);
+            $this->logCustomRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_UBT, $objective->id, "[Objective unlinked]\n\nObjective:\t{$objective->description}");
+            $this->setSessionData('notif', array('class' => 'error', 'message' => 'Objective unlinked in the Unit Breakthrough.'));
+        } catch (ServiceException $ex) {
+            $this->logger->warn($ex->getMessage(), $ex);
+            $this->setSessionData('validation', array($ex->getMessage()));
+        }
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('alignment/manageUnitBreakthrough', 'id' => $unitBreakthrough->id))));
     }
 
     private function loadMapModel(Initiative $initiative = null, UnitBreakthrough $unitBreakthrough = null) {
