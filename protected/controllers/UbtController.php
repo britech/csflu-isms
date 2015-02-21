@@ -121,7 +121,7 @@ class UbtController extends Controller {
 
                 $unitBreakthrough->bindValuesUsingArray(array(
                     'objectives' => $objectiveData,
-                    'indicators' => $measureProfileData,
+                    'measures' => $measureProfileData,
                     'leadMeasures' => $leadMeasureData,
                     'unitbreakthrough' => $unitBreakthroughData
                 ));
@@ -153,7 +153,7 @@ class UbtController extends Controller {
             'unitbreakthrough' => $unitBreakthroughData,
             'leadMeasures' => $leadMeasureData,
             'objectives' => $objectiveData,
-            'indicators' => $measureProfileData,
+            'measures' => $measureProfileData,
             'unit' => $departmentData
         ));
 

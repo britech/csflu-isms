@@ -104,13 +104,13 @@ class UnitBreakthrough extends Model {
             $this->objectives = $data;
         }
 
-        if (array_key_exists('indicators', $valueArray) && !empty($valueArray['indicators']['id'])) {
-            $indicators = explode("/", $valueArray['indicators']['id']);
+        if (array_key_exists('measures', $valueArray) && !empty($valueArray['measures']['id'])) {
+            $measures = explode("/", $valueArray['measures']['id']);
             $data = array();
-            foreach ($indicators as $id) {
-                $indicator = new MeasureProfile();
-                $indicator->id = $id;
-                array_push($data, $indicator);
+            foreach ($measures as $id) {
+                $measureProfile = new MeasureProfile();
+                $measureProfile->id = $id;
+                array_push($data, $measureProfile);
             }
             $this->measures = $data;
         }
