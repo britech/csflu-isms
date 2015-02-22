@@ -8,6 +8,7 @@ use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\commons\Department;
 
 /**
  *
@@ -16,11 +17,12 @@ use org\csflu\isms\models\indicator\MeasureProfile;
 interface UnitBreakthroughManagementService {
 
     /**
-     * Lists the UnitBreakthroughs enlisted under a specified StrategyMap
+     * Lists the UnitBreakthroughs enlisted under a specified StrategyMap or Department entity
      * @param StrategyMap $strategyMap
+     * @param Department $department
      * @return UnitBreakthrough[]
      */
-    public function listUnitBreakthrough(StrategyMap $strategyMap);
+    public function listUnitBreakthrough(StrategyMap $strategyMap = null, Department $department = null);
     
     /**
      * Retrieves the UnitBreakthrough entity

@@ -9,6 +9,7 @@ use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\dao\ubt\UnitBreakthroughDaoSqlImpl as UnitBreakthroughDao;
 use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl as LeadMeasureDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
@@ -51,8 +52,12 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         return $this->daoSource->insertUnitBreakthrough($unitBreakthrough, $strategyMap);
     }
 
-    public function listUnitBreakthrough(StrategyMap $strategyMap) {
-        return $this->daoSource->listUnitBreakthroughByStrategyMap($strategyMap);
+    public function listUnitBreakthrough(StrategyMap $strategyMap = null, Department $department = null) {
+        if (!is_null($strategyMap)) {
+            return $this->daoSource->listUnitBreakthroughByStrategyMap($strategyMap);
+        } elseif (!is_null($department)) {
+            return $this->daoSource->listUnitBreakthroughByDepartment($department);
+        }
     }
 
     public function updateUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap) {
@@ -114,11 +119,11 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         if (count($unitBreakthrough->measures) > 0) {
             $this->daoSource->linkMeasureProfiles($unitBreakthrough);
         }
-        
-        if(count($unitBreakthrough->objectives) == 0 && count($unitBreakthrough->measures) == 0){
+
+        if (count($unitBreakthrough->objectives) == 0 && count($unitBreakthrough->measures) == 0) {
             throw new ServiceException("No alignments added");
         }
-        
+
         return $unitBreakthrough;
     }
 
@@ -161,15 +166,15 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
     }
 
     public function deleteAlignments(UnitBreakthrough $unitBreakthrough, Objective $objective = null, MeasureProfile $measureProfile = null) {
-        if(is_null($objective) && is_null($measureProfile)){
+        if (is_null($objective) && is_null($measureProfile)) {
             throw new ServiceException("An Objective or Measure should be selected to execute this service");
         }
-        
-        if(!is_null($objective)){
+
+        if (!is_null($objective)) {
             $this->daoSource->unlinkObjective($unitBreakthrough, $objective);
         }
-        
-        if(!is_null($measureProfile)){
+
+        if (!is_null($measureProfile)) {
             $this->daoSource->unlinkMeasureProfile($unitBreakthrough, $measureProfile);
         }
     }
