@@ -159,7 +159,19 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
     }
 
     public function listUnitBreakthroughByDepartment(Department $department) {
-        
+        try {
+            $dbst = $this->db->prepare('SELECT ubt_id FROM ubt_main WHERE dept_ref=:department');
+            $dbst->execute(array('department' => $department->id));
+            
+            $unitBreakthroughs = array();
+            while($data = $dbst->fetch()){
+                list($id) = $data;
+                array_push($unitBreakthroughs, $this->getUnitBreakthroughByIdentifier($id));
+            }
+            return $unitBreakthroughs;
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
     }
 
     public function listUnitBreakthroughByStrategyMap(StrategyMap $strategyMap) {
