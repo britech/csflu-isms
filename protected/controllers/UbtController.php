@@ -19,6 +19,7 @@ use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as Strateg
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
 use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl as DepartmentService;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as UnitBreakthroughManagementService;
+use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl as UserManagementService;
 
 /**
  * Description of UbtController
@@ -32,6 +33,7 @@ class UbtController extends Controller {
     private $scorecardService;
     private $departmentService;
     private $ubtService;
+    private $userService;
 
     public function __construct() {
         $this->checkAuthorization();
@@ -39,6 +41,7 @@ class UbtController extends Controller {
         $this->scorecardService = new ScorecardManagementService();
         $this->departmentService = new DepartmentService();
         $this->ubtService = new UnitBreakthroughManagementService();
+        $this->userService = new UserManagementService();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -62,6 +65,20 @@ class UbtController extends Controller {
         ));
     }
 
+    public function manage() {
+        $id = $this->getSessionData('user');
+        $userAccount = $this->userService->getAccountById($id);
+
+        $this->title = ApplicationConstants::APP_NAME . 'Manage Unit Breakthroughs';
+        $this->render('ubt/manage', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Manage Unit Breakthroughs' => 'active'
+            ),
+            'unit' => $userAccount->employee->department->id
+        ));
+    }
+
     public function listUnitBreakthroughsByStrategyMap() {
         $this->validatePostData(array('map'));
         $id = $this->getFormData('map');
@@ -78,6 +95,46 @@ class UbtController extends Controller {
             ));
         }
         $this->renderAjaxJsonResponse($data);
+    }
+
+    public function listUnitBreakthroughsByDepartment() {
+        $this->validatePostData(array('department'));
+        $id = $this->getFormData('department');
+
+        $department = $this->departmentService->getDepartmentDetail(array('id' => $id));
+        $unitBreakthroughs = $this->ubtService->listUnitBreakthrough(null, $department);
+
+        $data = array();
+        foreach ($unitBreakthroughs as $unitBreakthrough) {
+            array_push($data, array(
+                'description' => $unitBreakthrough->description,
+                'status' => UnitBreakthrough::translateUbtStatusCode($unitBreakthrough->unitBreakthroughEnvironmentStatus),
+                'action' => $this->resolveActionLinks($unitBreakthrough)
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
+    }
+
+    private function resolveActionLinks(UnitBreakthrough $unitBreakthrough) {
+        $links = array(ApplicationUtils::generateLink(array('ubt/viewMovements', 'id' => $unitBreakthrough->id), 'UBT Movements'));
+
+        switch ($unitBreakthrough->unitBreakthroughEnvironmentStatus) {
+            case UnitBreakthrough::STATUS_ACTIVE:
+                $links = array_merge($links, array(
+                    ApplicationUtils::generateLink(array('ubt/manageWigs', 'ubt' => $unitBreakthrough->id), 'Manage WIG Meetings'),
+                    ApplicationUtils::generateLink('#', 'Flag as Complete', array('id' => "complete-{$unitBreakthrough->id}")),
+                    ApplicationUtils::generateLink('#', 'Flag as Inactive', array('id' => "inactivate-{$unitBreakthrough->id}"))
+                ));
+                break;
+
+            case UnitBreakthrough::STATUS_INACTIVE:
+                $links = array_merge($links, array(
+                    ApplicationUtils::generateLink('#', 'Activate UBT', array('id' => "activate-{$unitBreakthrough->id}"))
+                ));
+                break;
+        }
+
+        return implode('&nbsp;|&nbsp;', $links);
     }
 
     public function create($map) {
