@@ -59,6 +59,10 @@ require_once 'models/initiative/Activity.php';
 
 require_once 'models/ubt/UnitBreakthrough.php';
 require_once 'models/ubt/LeadMeasure.php';
+require_once 'models/ubt/WigMeeting.php';
+require_once 'models/ubt/UnitBreakthroughMovement.php';
+require_once 'models/ubt/Commitment.php';
+require_once 'models/ubt/CommitmentMovement.php';
 
 #dao-interfaces
 require_once 'dao/commons/DepartmentDao.php';

@@ -7,6 +7,7 @@ use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\ubt\LeadMeasure;
+use org\csflu\isms\models\ubt\WigMeeting;
 
 /**
  * Description of UnitBreakthrough
@@ -21,6 +22,7 @@ use org\csflu\isms\models\ubt\LeadMeasure;
  * @property Objective[] $objectives
  * @property MeasureProfile[] $measures
  * @property LeadMeasure[] $leadMeasures
+ * @property WigMeeting[] $wigMeetings
  * @property String $unitBreakthroughEnvironmentStatus
  * @author britech
  */
@@ -36,6 +38,7 @@ class UnitBreakthrough extends Model {
     private $objectives;
     private $measures;
     private $leadMeasures;
+    private $wigMeetings;
     private $unitBreakthroughEnvironmentStatus;
 
     public function getAttributeNames() {
