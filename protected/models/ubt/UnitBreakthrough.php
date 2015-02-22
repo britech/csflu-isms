@@ -28,6 +28,10 @@ use org\csflu\isms\models\ubt\WigMeeting;
  */
 class UnitBreakthrough extends Model {
 
+    const STATUS_ACTIVE = "A";
+    const STATUS_INACTIVE = "I";
+    const STATUS_COMPLETED = "C";
+
     private $id;
     private $description;
     private $unit;
@@ -39,7 +43,22 @@ class UnitBreakthrough extends Model {
     private $measures;
     private $leadMeasures;
     private $wigMeetings;
-    private $unitBreakthroughEnvironmentStatus;
+    private $unitBreakthroughEnvironmentStatus = self::STATUS_ACTIVE;
+
+    public static function listUbtStatusCodes() {
+        return array(
+            self::STATUS_ACTIVE => 'Active',
+            self::STATUS_INACTIVE => 'Inactive',
+            self::STATUS_COMPLETED => 'Completed'
+        );
+    }
+
+    public static function translateUbtStatusCode($statusCode) {
+        if (array_key_exists($statusCode, self::listUbtStatusCodes())) {
+            return self::listUbtStatusCodes()[$statusCode];
+        }
+        return null;
+    }
 
     public function getAttributeNames() {
         return array(
