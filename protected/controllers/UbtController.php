@@ -121,7 +121,7 @@ class UbtController extends Controller {
         switch ($unitBreakthrough->unitBreakthroughEnvironmentStatus) {
             case UnitBreakthrough::STATUS_ACTIVE:
                 $links = array_merge($links, array(
-                    ApplicationUtils::generateLink(array('ubt/manageWigs', 'ubt' => $unitBreakthrough->id), 'Manage WIG Meetings'),
+                    ApplicationUtils::generateLink(array('wig/index', 'ubt' => $unitBreakthrough->id), 'Manage WIG Meetings'),
                     ApplicationUtils::generateLink('#', 'Flag as Complete', array('id' => "complete-{$unitBreakthrough->id}")),
                     ApplicationUtils::generateLink('#', 'Flag as Inactive', array('id' => "inactivate-{$unitBreakthrough->id}"))
                 ));
