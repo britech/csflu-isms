@@ -5,6 +5,7 @@ namespace org\csflu\isms\models\ubt;
 use org\csflu\isms\core\Model;
 use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\models\ubt\UnitBreakthroughMovement;
+
 /**
  * Description of WigMeeting
  *
@@ -27,6 +28,21 @@ class WigMeeting extends Model {
     private $commitments;
     private $movementUpdate;
     private $wigMeetingEnvironmentStatus = self::STATUS_OPEN;
+
+    public static function listWigMeetingEnvironmentStatus() {
+        return array(
+            self::STATUS_OPEN => 'Open',
+            self::STATUS_CLOSED => 'Closed'
+        );
+    }
+
+    public function translateWigMeetingEnvironmentStatus() {
+        if (!array_key_exists($this->wigMeetingEnvironmentStatus, self::listWigMeetingEnvironmentStatus())) {
+            return "Undefined";
+        } else {
+            return self::listWigMeetingEnvironmentStatus()[$this->wigMeetingEnvironmentStatus];
+        }
+    }
 
     public function validate() {
         
