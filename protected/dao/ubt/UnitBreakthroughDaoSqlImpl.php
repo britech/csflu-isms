@@ -15,7 +15,7 @@ use org\csflu\isms\dao\commons\DepartmentDaoSqlImpl as DepartmentDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
 use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl;
-
+use org\csflu\isms\dao\ubt\WigMeetingDaoSqlImpl;
 /**
  * Description of UnitBreakthroughDaoSqlImpl
  *
@@ -28,6 +28,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
     private $departmentDaoSource;
     private $objectiveDaoSource;
     private $measureProfileDaoSource;
+    private $wigMeetingDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
@@ -35,6 +36,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
         $this->objectiveDaoSource = new ObjectiveDao();
         $this->measureProfileDaoSource = new MeasureProfileDao();
         $this->leadMeasureDaoSource = new LeadMeasureDaoSqlImpl();
+        $this->wigMeetingDaoSource = new WigMeetingDaoSqlImpl();
     }
 
     public function getUnitBreakthroughByIdentifier($id) {
@@ -58,7 +60,8 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             $unitBreakthrough->objectives = $this->listObjectives($unitBreakthrough);
             $unitBreakthrough->measures = $this->listMeasureProfiles($unitBreakthrough);
             $unitBreakthrough->leadMeasures = $this->leadMeasureDaoSource->listLeadMeasures($unitBreakthrough);
-
+            $unitBreakthrough->wigMeetings = $this->wigMeetingDaoSource->listWigMeetings($unitBreakthrough);
+            
             return $unitBreakthrough;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
