@@ -47,14 +47,14 @@ $(document).ready(function() {
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">#</span>', dataField: 'number', width: '10%', cellsAlign: 'center'},
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Timeline</span>', dataField: 'timeline', width: '40%', cellsAlign: 'center'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Week</span>', dataField: 'number', width: '10%', cellsAlign: 'center'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Timeline</span>', dataField: 'timeline', width: '50%', cellsAlign: 'center'},
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Status</span>', dataField: 'status', width: '20%', cellsAlign: 'center'},
-            {text: '', dataField: 'action', width: '30%', cellsAlign: 'center'}
+            {text: '', dataField: 'action', width: '20%', cellsAlign: 'center'}
         ],
         width: '100%',
         pageable: true,
-        pageSize: 25,
+        pageSize: 30,
         filterable: true,
         filterMode: 'simple',
         sortable: true,

@@ -52,7 +52,7 @@ class WigController extends Controller {
         $id = $this->getFormData('ubt');
         $unitBreakthrough = $this->loadUbtModel($id);
         $data = array();
-        $pointer = 1;
+        $pointer = 0;
         foreach ($unitBreakthrough->wigMeetings as $wigMeeting) {
             array_push($data, array(
                 'number' => $pointer,
@@ -91,14 +91,9 @@ class WigController extends Controller {
     }
 
     private function resolveActionLinks(WigSession $wigMeeting) {
-        $link = array();
-
-        if ($wigMeeting->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN) {
-            if (count($wigMeeting->commitments) && is_null($wigMeeting->movementUpdate)) {
-                array_push($link, ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$wigMeeting->id}")));
-            }
-        } else {
-            
+        $link = array(ApplicationUtils::generateLink(array('wig/view', 'id' => $wigMeeting->id), 'View'));
+        if ($wigMeeting->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN && count($wigMeeting->commitments) == 0 && is_null($wigMeeting->movementUpdate)) {
+            array_push($link, ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$wigMeeting->id}")));
         }
         return implode('&nbsp;|&nbsp;', $link);
     }
