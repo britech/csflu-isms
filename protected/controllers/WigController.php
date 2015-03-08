@@ -4,6 +4,7 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\Model;
+use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\ubt\WigSession;
@@ -32,7 +33,7 @@ class WigController extends Controller {
 
         $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
         $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
-
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage WIG Sessions';
         $this->render('wig/manage', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
@@ -93,22 +94,48 @@ class WigController extends Controller {
     public function view($id) {
         $wigSession = $this->loadModel($id);
         $unitBreakthrough = $this->loadUbtModel(null, $wigSession);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - WIG Session Info';
+        $this->layout = 'column-2';
         $this->render('wig/view', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Manage Unit Breakthroughs' => array('ubt/manage'),
                 'Manage WIG Sessions' => array('wig/index', 'ubt' => $unitBreakthrough->id),
                 'WIG Session' => 'active'
-            )
+            ),
+            'sidebar' => array(
+                'data' => array(
+                    'header' => 'Actions',
+                    'links' => $this->resolveSidebarLinks($wigSession)))
         ));
     }
 
-    private function resolveActionLinks(WigSession $wigMeeting) {
-        $link = array(ApplicationUtils::generateLink(array('wig/view', 'id' => $wigMeeting->id), 'View'));
-        if ($wigMeeting->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN && count($wigMeeting->commitments) == 0 && is_null($wigMeeting->movementUpdate)) {
-            array_push($link, ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$wigMeeting->id}")));
+    private function resolveSidebarLinks(WigSession $wigSession) {
+        $links = array();
+        if ($wigSession->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN) {
+            $links = array_merge(array(
+                'Update Timeline' => array('wig/updateTimeline', 'id' => $wigSession->id),
+                'Declare Commitments' => array('wig/declareCommits', 'wig' => $wigSession->id)), $links);
+            if (count($wigSession->commitments) == 0 and is_null($wigSession->movementUpdate)) {
+                $links = array_merge(array('Delete WIG Session' => '#'), $links);
+            } else {
+                $links = array_merge(array('Close WIG Session' => array('wig/close', 'wig' => $wigSession->id)), $links);
+            }
+        } else {
+            $links = array_merge(array(
+                'View Commitments' => array('wig/commitments', 'wig' => $wigSession->id),
+                'View Scoreboard Update' => array('ubt/scoreboard', 'wig' => $wigSession->id)), $links);
         }
-        return implode('&nbsp;|&nbsp;', $link);
+        return $links;
+    }
+
+    private function resolveActionLinks(WigSession $wigMeeting) {
+        $links = array(ApplicationUtils::generateLink(array('wig/view', 'id' => $wigMeeting->id), 'View'));
+        if ($wigMeeting->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN && count($wigMeeting->commitments) == 0 && is_null($wigMeeting->movementUpdate)) {
+            array_push($links, ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$wigMeeting->id}")));
+        }
+        return implode('&nbsp;|&nbsp;', $links);
     }
 
     private function loadModel($id, $remote = false) {
