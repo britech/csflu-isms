@@ -33,7 +33,7 @@ class WigController extends Controller {
         $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
         $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
 
-        $this->render('ubt/manage-wig', array(
+        $this->render('wig/manage', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Manage Unit Breakthroughs' => array('ubt/manage'),
@@ -88,6 +88,10 @@ class WigController extends Controller {
             $this->setSessionData('validation', array($ex->getMessage()));
             $this->redirect(array('wig/index', 'ubt' => $unitBreakthrough->id));
         }
+    }
+
+    public function view($id) {
+        
     }
 
     private function resolveActionLinks(WigSession $wigMeeting) {

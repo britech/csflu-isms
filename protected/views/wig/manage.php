@@ -10,7 +10,7 @@ $form = new Form(array(
     'hasFieldset' => true
         ));
 ?>
-<script type="text/javascript" src="protected/js/ubt/manage-wig.js"></script>
+<script type="text/javascript" src="protected/js/wig/manage.js"></script>
 <div class="column-group quarter-gutters">
     <div class="all-50">
         <?php echo $form->startComponent(); ?>
