@@ -2,10 +2,10 @@
 
 namespace org\csflu\isms\dao\ubt;
 
-use org\csflu\isms\dao\ubt\WigMeetingDao;
+use org\csflu\isms\dao\ubt\WigSessionDao;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\core\ConnectionManager;
-use org\csflu\isms\models\ubt\WigMeeting;
+use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 
 /**
@@ -13,7 +13,7 @@ use org\csflu\isms\models\ubt\UnitBreakthrough;
  *
  * @author britech
  */
-class WigMeetingDaoSqlImpl implements WigMeetingDao {
+class WigSessionDaoSqlmpl implements WigSessionDao {
 
     private $db;
 
@@ -21,7 +21,7 @@ class WigMeetingDaoSqlImpl implements WigMeetingDao {
         $this->db = ConnectionManager::getConnectionInstance();
     }
 
-    public function insertWigMeeting(WigMeeting $wigMeeting, UnitBreakthrough $unitBreakthrough) {
+    public function insertWigMeeting(WigSession $wigMeeting, UnitBreakthrough $unitBreakthrough) {
         try {
             $this->db->beginTransaction();
             $dbst = $this->db->prepare('INSERT INTO ubt_wig(ubt_ref, period_start_date, period_end_date, status) VALUES(:ubt, :start, :end, :status)');
@@ -62,7 +62,7 @@ class WigMeetingDaoSqlImpl implements WigMeetingDao {
             $dbst = $this->db->prepare('SELECT wig_id, period_start_date, period_end_date, status FROM ubt_wig WHERE wig_id=:id');
             $dbst->execute(array('id' => $id));
 
-            $wigMeeting = new WigMeeting();
+            $wigMeeting = new WigSession();
             while ($data = $dbst->fetch()) {
                 list($wigMeeting->id, $startDate, $endDate, $wigMeeting->wigMeetingEnvironmentStatus) = $data;
             }

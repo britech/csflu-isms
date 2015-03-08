@@ -17,7 +17,7 @@ use org\csflu\isms\models\ubt\UnitBreakthroughMovement;
  * @property String $wigMeetingEnvironmentStatus
  * @author britech
  */
-class WigMeeting extends Model {
+class WigSession extends Model {
 
     const STATUS_OPEN = "O";
     const STATUS_CLOSED = "C";

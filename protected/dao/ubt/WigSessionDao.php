@@ -2,7 +2,7 @@
 
 namespace org\csflu\isms\dao\ubt;
 
-use org\csflu\isms\models\ubt\WigMeeting;
+use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\exceptions\DataAccessException;
 
@@ -10,27 +10,27 @@ use org\csflu\isms\exceptions\DataAccessException;
  *
  * @author britech
  */
-interface WigMeetingDao {
+interface WigSessionDao {
 
     /**
      * @param UnitBreakthrough $unitBreakthrough
-     * @return WigMeeting[]
+     * @return WigSession[]
      * @throws DataAccessException
      */
     public function listWigMeetings(UnitBreakthrough $unitBreakthrough);
     
     /**
      * @param String $id
-     * @return WigMeeting
+     * @return WigSession
      * @throws DataAccessException
      */
     public function getWigMeetingData($id);
     
     /**
-     * @param WigMeeting $wigMeeting
+     * @param WigSession $wigMeeting
      * @param UnitBreakthrough $unitBreakthrough
      * @return String
      * @throws DataAccessException
      */
-    public function insertWigMeeting(WigMeeting $wigMeeting, UnitBreakthrough $unitBreakthrough);
+    public function insertWigMeeting(WigSession $wigMeeting, UnitBreakthrough $unitBreakthrough);
 }

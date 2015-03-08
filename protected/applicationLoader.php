@@ -59,7 +59,7 @@ require_once 'models/initiative/Activity.php';
 
 require_once 'models/ubt/UnitBreakthrough.php';
 require_once 'models/ubt/LeadMeasure.php';
-require_once 'models/ubt/WigMeeting.php';
+require_once 'models/ubt/WigSession.php';
 require_once 'models/ubt/UnitBreakthroughMovement.php';
 require_once 'models/ubt/Commitment.php';
 require_once 'models/ubt/CommitmentMovement.php';
@@ -83,7 +83,7 @@ require_once 'dao/initiative/ComponentDao.php';
 require_once 'dao/initiative/ActivityDao.php';
 require_once 'dao/ubt/UnitBreakthroughDao.php';
 require_once 'dao/ubt/LeadMeasureDao.php';
-require_once 'dao/ubt/WigMeetingDao.php';
+require_once 'dao/ubt/WigSessionDao.php';
 
 #dao-implementations
 require_once 'dao/commons/DepartmentDaoSqlImpl.php';
@@ -104,7 +104,7 @@ require_once 'dao/initiative/ComponentDaoSqlImpl.php';
 require_once 'dao/initiative/ActivityDaoSqlImpl.php';
 require_once 'dao/ubt/UnitBreakthroughDaoSqlImpl.php';
 require_once 'dao/ubt/LeadMeasureDaoSqlImpl.php';
-require_once 'dao/ubt/WigMeetingDaoSqlImpl.php';
+require_once 'dao/ubt/WigSessionDaoSqlmpl.php';
 
 #service-interfaces
 require_once 'services/commons/DepartmentService.php';

@@ -5,6 +5,7 @@ namespace org\csflu\isms\service\ubt;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\ubt\LeadMeasure;
+use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
@@ -80,4 +81,10 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function deleteAlignments(UnitBreakthrough $unitBreakthrough, Objective $objective = null, MeasureProfile $measureProfile = null);
+    
+    /**
+     * Inserts the WIG Session on a given UnitBreakthrough entity
+     * @param WigSession $wigMeeting
+     */
+    public function insertWigSession(WigSession $wigMeeting, UnitBreakthrough $unitBreakthrough);
 }
