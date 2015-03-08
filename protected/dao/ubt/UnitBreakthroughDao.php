@@ -5,6 +5,7 @@ namespace org\csflu\isms\dao\ubt;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\ubt\LeadMeasure;
+use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\map\Objective;
@@ -36,7 +37,7 @@ interface UnitBreakthroughDao {
      * @throws DataAccessException
      */
     public function getUnitBreakthroughByIdentifier($id);
-    
+
     /**
      * @param LeadMeasure $leadMeasure
      * @return UnitBreakthrough
@@ -45,13 +46,20 @@ interface UnitBreakthroughDao {
     public function getUnitBreakthroughByLeadMeasure(LeadMeasure $leadMeasure);
 
     /**
+     * @param WigSession $wigSession
+     * @return UnitBreakthrough
+     * @throws DataAccessException
+     */
+    public function getUnitBreakthroughByWigSession(WigSession $wigSession);
+
+    /**
      * @param UnitBreakthrough $unitBreakthrough
      * @param StrategyMap $strategyMap
      * @return String
      * @throws DataAccessException
      */
     public function insertUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap);
-    
+
     /**
      * @param UnitBreakthrough $unitBreakthrough
      * @throws DataAccessException
@@ -64,13 +72,13 @@ interface UnitBreakthroughDao {
      * @throws DataAccessException
      */
     public function listObjectives(UnitBreakthrough $unitBreakthrough);
-    
+
     /**
      * @param UnitBreakthrough $unitBreakthrough
      * @throws DataAccessException
      */
     public function linkObjectives(UnitBreakthrough $unitBreakthrough);
-    
+
     /**
      * @param UnitBreakthrough $unitBreakthrough
      * @param Objective $objective
@@ -84,13 +92,13 @@ interface UnitBreakthroughDao {
      * @throws DataAccessException
      */
     public function listMeasureProfiles(UnitBreakthrough $unitBreakthrough);
-    
+
     /**
      * @param UnitBreakthrough $unitBreakthrough
      * @throws DataAccessException
      */
     public function linkMeasureProfiles(UnitBreakthrough $unitBreakthrough);
-    
+
     /**
      * @param UnitBreakthrough $unitBreakthrough
      * @param MeasureProfile $measureProfile

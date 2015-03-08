@@ -7,6 +7,7 @@ use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\ubt\UnitBreakthroughDao;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\ubt\LeadMeasure;
+use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\map\Objective;
@@ -16,6 +17,7 @@ use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
 use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl;
 use org\csflu\isms\dao\ubt\WigSessionDaoSqlmpl;
+
 /**
  * Description of UnitBreakthroughDaoSqlImpl
  *
@@ -61,7 +63,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             $unitBreakthrough->measures = $this->listMeasureProfiles($unitBreakthrough);
             $unitBreakthrough->leadMeasures = $this->leadMeasureDaoSource->listLeadMeasures($unitBreakthrough);
             $unitBreakthrough->wigMeetings = $this->wigMeetingDaoSource->listWigSessions($unitBreakthrough);
-            
+
             return $unitBreakthrough;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
@@ -165,9 +167,9 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
         try {
             $dbst = $this->db->prepare('SELECT ubt_id FROM ubt_main WHERE dept_ref=:department');
             $dbst->execute(array('department' => $department->id));
-            
+
             $unitBreakthroughs = array();
-            while($data = $dbst->fetch()){
+            while ($data = $dbst->fetch()) {
                 list($id) = $data;
                 array_push($unitBreakthroughs, $this->getUnitBreakthroughByIdentifier($id));
             }
@@ -259,6 +261,20 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getUnitBreakthroughByWigSession(WigSession $wigSession) {
+        try {
+            $dbst = $this->db->prepare('SELECT ubt_ref FROM ubt_wig WHERE wig_id=:id');
+            $dbst->execute(array('id' => $wigSession->id));
+            
+            while($data = $dbst->fetch()){
+                list($id) = $data;
+            }
+            return $this->getUnitBreakthroughByIdentifier($id);
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }

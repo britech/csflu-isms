@@ -28,10 +28,11 @@ interface UnitBreakthroughManagementService {
     /**
      * Retrieves the UnitBreakthrough entity
      * @param String $id Retrieve by its identifier
-     * @param LeadMeasure $leadMeasure Retrieves by its underlying LeadMeasure entity
+     * @param LeadMeasure $leadMeasure Retrieve by its underlying LeadMeasure entity
+     * @param WigSession $wigSession Retrieve by its underlying WigSession entity
      * @return UnitBreakthrough
      */
-    public function getUnitBreakthrough($id = null, LeadMeasure $leadMeasure = null);
+    public function getUnitBreakthrough($id = null, LeadMeasure $leadMeasure = null, WigSession $wigSession = null);
 
     /**
      * Insert the UnitBreakthrough with its aligned StrategyMap entity
@@ -81,6 +82,13 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function deleteAlignments(UnitBreakthrough $unitBreakthrough, Objective $objective = null, MeasureProfile $measureProfile = null);
+    
+    /**
+     * Retrieves the WIG Session
+     * @param String $id Retrieve by its identifier
+     * @return WigSession
+     */
+    public function getWigSessionData($id);
     
     /**
      * Inserts the WIG Session on a given UnitBreakthrough entity

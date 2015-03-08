@@ -91,7 +91,16 @@ class WigController extends Controller {
     }
 
     public function view($id) {
-        
+        $wigSession = $this->loadModel($id);
+        $unitBreakthrough = $this->loadUbtModel(null, $wigSession);
+        $this->render('wig/view', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Manage Unit Breakthroughs' => array('ubt/manage'),
+                'Manage WIG Sessions' => array('wig/index', 'ubt' => $unitBreakthrough->id),
+                'WIG Session' => 'active'
+            )
+        ));
     }
 
     private function resolveActionLinks(WigSession $wigMeeting) {
@@ -102,8 +111,22 @@ class WigController extends Controller {
         return implode('&nbsp;|&nbsp;', $link);
     }
 
-    private function loadUbtModel($id, $remote = false) {
-        $unitBreakthrough = $this->ubtService->getUnitBreakthrough($id);
+    private function loadModel($id, $remote = false) {
+        $wigSession = $this->ubtService->getWigSessionData($id);
+        if (is_null($wigSession->id)) {
+            $this->setSessionData('notif', array('message' => 'WIG Session not found'));
+            $url = array('ubt/manage');
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
+            } else {
+                $this->redirect($url);
+            }
+        }
+        return $wigSession;
+    }
+
+    private function loadUbtModel($id = null, WigSession $wigSession = null, $remote = false) {
+        $unitBreakthrough = $this->ubtService->getUnitBreakthrough($id, null, $wigSession);
         if (is_null($unitBreakthrough->id)) {
             $this->setSessionData('notif', array('message' => 'Unit Breakthrough not found'));
             $url = array('map/index');

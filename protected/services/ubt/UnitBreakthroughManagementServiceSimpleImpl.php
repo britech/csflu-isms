@@ -37,11 +37,13 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         $this->measureProfileDaoSource = new MeasureProfileDao();
     }
 
-    public function getUnitBreakthrough($id = null, LeadMeasure $leadMeasure = null) {
+    public function getUnitBreakthrough($id = null, LeadMeasure $leadMeasure = null, WigSession $wigSession = null) {
         if (!is_null($id) && !empty($id)) {
             return $this->daoSource->getUnitBreakthroughByIdentifier($id);
         } elseif (!is_null($leadMeasure)) {
             return $this->daoSource->getUnitBreakthroughByLeadMeasure($leadMeasure);
+        } elseif(!is_null($wigSession)){
+            return $this->daoSource->getUnitBreakthroughByWigSession($wigSession);
         }
     }
 
@@ -197,6 +199,10 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
             }
         }
         return $this->wigSessionDaoSource->insertWigSession($wigSession, $unitBreakthrough);
+    }
+
+    public function getWigSessionData($id) {
+        return $this->wigSessionDaoSource->getWigSessionData($id);
     }
 
 }
