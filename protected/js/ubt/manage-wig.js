@@ -41,16 +41,16 @@ $(document).ready(function() {
             url: '?r=wig/listMeetings',
             type: 'POST',
             data: {
-                ubt : $("#ubt").val()
+                ubt: $("#ubt").val()
             }
         }),
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">#</span>', dataField: 'number', width: '10%', cellsAlign:'center'},
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Timeline</span>', dataField: 'timeline', width: '40%', cellsAlign:'center'},
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Status</span>', dataField: 'status', width: '20%', cellsAlign:'center'},
-            {text: '', dataField: 'action', width: '30%', cellsAlign:'center'}
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">#</span>', dataField: 'number', width: '10%', cellsAlign: 'center'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Timeline</span>', dataField: 'timeline', width: '40%', cellsAlign: 'center'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Status</span>', dataField: 'status', width: '20%', cellsAlign: 'center'},
+            {text: '', dataField: 'action', width: '30%', cellsAlign: 'center'}
         ],
         width: '100%',
         pageable: true,
@@ -59,5 +59,17 @@ $(document).ready(function() {
         filterMode: 'simple',
         sortable: true,
         selectionMode: 'singleRow'
+    });
+
+    $("#validation-container").hide();
+    $(".ink-form").submit(function() {
+        var startDate = $("#wig-start").val();
+        var endDate = $("#wig-end").val();
+
+        if (startDate === '' && endDate === '') {
+            $("#validation-container").show();
+            return false;
+        }
+        return true;
     });
 });
