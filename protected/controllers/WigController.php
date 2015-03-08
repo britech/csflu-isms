@@ -4,8 +4,11 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\Model;
+use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\util\ApplicationUtils;
-use org\csflu\isms\models\ubt\WigMeeting;
+use org\csflu\isms\models\ubt\WigSession;
+use org\csflu\isms\models\commons\RevisionHistory;
+use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as UnitBreakthroughManagementService;
 
 /**
@@ -36,9 +39,11 @@ class WigController extends Controller {
                 'Manage Unit Breakthroughs' => array('ubt/manage'),
                 'Manage WIG Sessions' => 'active'
             ),
-            'model' => new WigMeeting(),
-            'ubtModel' => $unitBreakthrough
+            'model' => new WigSession(),
+            'ubtModel' => $unitBreakthrough,
+            'validation' => $this->getSessionData('validation')
         ));
+        $this->unsetSessionData('validation');
     }
 
     public function listMeetings() {
@@ -57,14 +62,38 @@ class WigController extends Controller {
             ));
             $pointer++;
         }
-
         $this->renderAjaxJsonResponse($data);
     }
 
-    private function resolveActionLinks(WigMeeting $wigMeeting) {
+    public function insert() {
+        $this->validatePostData(array('WigSession', 'UnitBreakthrough'));
+
+        $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
+        $wigMeetingData = $this->getFormData('WigSession');
+
+        $unitBreakthrough = $this->loadUbtModel($unitBreakthroughData['id']);
+        $wigSession = new WigSession();
+        $wigSession->bindValuesUsingArray(array('wigsession' => $wigMeetingData), $wigSession);
+
+        if (!$wigSession->validate()) {
+            $this->setSessionData('validation', $wigSession->validationMessages);
+            $this->redirect(array('wig/index', 'ubt' => $unitBreakthrough->id));
+        }
+
+        try {
+            $id = $this->ubtService->insertWigSession($wigSession, $unitBreakthrough);
+            $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession);
+            $this->redirect(array('wig/view', 'id' => $id));
+        } catch (ServiceException $ex) {
+            $this->setSessionData('validation', array($ex->getMessage()));
+            $this->redirect(array('wig/index', 'ubt' => $unitBreakthrough->id));
+        }
+    }
+
+    private function resolveActionLinks(WigSession $wigMeeting) {
         $link = array();
 
-        if ($wigMeeting->wigMeetingEnvironmentStatus == WigMeeting::STATUS_OPEN) {
+        if ($wigMeeting->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN) {
             if (count($wigMeeting->commitments) && is_null($wigMeeting->movementUpdate)) {
                 array_push($link, ApplicationUtils::generateLink('#', 'Delete', array('id' => "remove-{$wigMeeting->id}")));
             }

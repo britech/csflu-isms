@@ -84,7 +84,10 @@ interface UnitBreakthroughManagementService {
     
     /**
      * Inserts the WIG Session on a given UnitBreakthrough entity
-     * @param WigSession $wigMeeting
+     * @param WigSession $wigSession
+     * @param UnitBreakthrough $unitBreakthrough
+     * @return String Auto-generated ID
+     * @throws ServiceException
      */
-    public function insertWigSession(WigSession $wigMeeting, UnitBreakthrough $unitBreakthrough);
+    public function insertWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough);
 }

@@ -6,12 +6,14 @@ use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementService;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\ubt\LeadMeasure;
+use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\dao\ubt\UnitBreakthroughDaoSqlImpl as UnitBreakthroughDao;
 use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl as LeadMeasureDao;
+use org\csflu\isms\dao\ubt\WigSessionDaoSqlmpl as WigSessionDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
 
@@ -23,12 +25,14 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
 
     private $daoSource;
     private $leadMeasureDaoSource;
+    private $wigSessionDaoSource;
     private $objectiveDaoSource;
     private $measureProfileDaoSource;
 
     public function __construct() {
         $this->daoSource = new UnitBreakthroughDao();
         $this->leadMeasureDaoSource = new LeadMeasureDao();
+        $this->wigSessionDaoSource = new WigSessionDao();
         $this->objectiveDaoSource = new ObjectiveDao();
         $this->measureProfileDaoSource = new MeasureProfileDao();
     }
@@ -177,6 +181,22 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         if (!is_null($measureProfile)) {
             $this->daoSource->unlinkMeasureProfile($unitBreakthrough, $measureProfile);
         }
+    }
+
+    public function insertWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough) {
+        $wigSessions = $this->wigSessionDaoSource->listWigSessions($unitBreakthrough);
+        $startDate = $wigSession->startingPeriod->format('Y-m-d');
+        $endDate = $wigSession->endingPeriod->format('Y-m-d');
+        foreach ($wigSessions as $data) {
+            if ($data->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN) {
+                throw new ServiceException("A WIG Session is in progress. Please close the ongoing WIG Session to continue");
+            }
+            
+            if($startDate == $data->startingPeriod->format('Y-m-d') and $endDate == $data->endingPeriod->format('Y-m-d')){
+                throw new ServiceException("A WIG Session with the given timeline is already defined. Please try again.");
+            }
+        }
+        return $this->wigSessionDaoSource->insertWigSession($wigSession, $unitBreakthrough);
     }
 
 }

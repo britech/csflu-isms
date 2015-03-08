@@ -17,20 +17,20 @@ interface WigSessionDao {
      * @return WigSession[]
      * @throws DataAccessException
      */
-    public function listWigMeetings(UnitBreakthrough $unitBreakthrough);
+    public function listWigSessions(UnitBreakthrough $unitBreakthrough);
     
     /**
      * @param String $id
      * @return WigSession
      * @throws DataAccessException
      */
-    public function getWigMeetingData($id);
+    public function getWigSessionData($id);
     
     /**
-     * @param WigSession $wigMeeting
+     * @param WigSession $wigSession
      * @param UnitBreakthrough $unitBreakthrough
      * @return String
      * @throws DataAccessException
      */
-    public function insertWigMeeting(WigSession $wigMeeting, UnitBreakthrough $unitBreakthrough);
+    public function insertWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough);
 }

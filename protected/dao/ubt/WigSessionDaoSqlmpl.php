@@ -21,15 +21,15 @@ class WigSessionDaoSqlmpl implements WigSessionDao {
         $this->db = ConnectionManager::getConnectionInstance();
     }
 
-    public function insertWigMeeting(WigSession $wigMeeting, UnitBreakthrough $unitBreakthrough) {
+    public function insertWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough) {
         try {
             $this->db->beginTransaction();
             $dbst = $this->db->prepare('INSERT INTO ubt_wig(ubt_ref, period_start_date, period_end_date, status) VALUES(:ubt, :start, :end, :status)');
             $dbst->execute(array(
                 'ubt' => $unitBreakthrough->id,
-                'start' => $wigMeeting->startingPeriod->format('Y-m-d'),
-                'end' => $wigMeeting->endingPeriod->format('Y-m-d'),
-                'status' => $wigMeeting->wigMeetingEnvironmentStatus
+                'start' => $wigSession->startingPeriod->format('Y-m-d'),
+                'end' => $wigSession->endingPeriod->format('Y-m-d'),
+                'status' => $wigSession->wigMeetingEnvironmentStatus
             ));
 
             $id = $this->db->lastInsertId();
@@ -41,7 +41,7 @@ class WigSessionDaoSqlmpl implements WigSessionDao {
         }
     }
 
-    public function listWigMeetings(UnitBreakthrough $unitBreakthrough) {
+    public function listWigSessions(UnitBreakthrough $unitBreakthrough) {
         try {
             $dbst = $this->db->prepare('SELECT wig_id FROM ubt_wig WHERE ubt_ref=:ubt ORDER BY period_start_date');
             $dbst->execute(array('ubt' => $unitBreakthrough->id));
@@ -49,7 +49,7 @@ class WigSessionDaoSqlmpl implements WigSessionDao {
             $wigMeetings = array();
             while ($data = $dbst->fetch()) {
                 list($id) = $data;
-                array_push($wigMeetings, $this->getWigMeetingData($id));
+                array_push($wigMeetings, $this->getWigSessionData($id));
             }
             return $wigMeetings;
         } catch (\PDOException $ex) {
@@ -57,7 +57,7 @@ class WigSessionDaoSqlmpl implements WigSessionDao {
         }
     }
 
-    public function getWigMeetingData($id) {
+    public function getWigSessionData($id) {
         try {
             $dbst = $this->db->prepare('SELECT wig_id, period_start_date, period_end_date, status FROM ubt_wig WHERE wig_id=:id');
             $dbst->execute(array('id' => $id));

@@ -60,7 +60,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             $unitBreakthrough->objectives = $this->listObjectives($unitBreakthrough);
             $unitBreakthrough->measures = $this->listMeasureProfiles($unitBreakthrough);
             $unitBreakthrough->leadMeasures = $this->leadMeasureDaoSource->listLeadMeasures($unitBreakthrough);
-            $unitBreakthrough->wigMeetings = $this->wigMeetingDaoSource->listWigMeetings($unitBreakthrough);
+            $unitBreakthrough->wigMeetings = $this->wigMeetingDaoSource->listWigSessions($unitBreakthrough);
             
             return $unitBreakthrough;
         } catch (\PDOException $ex) {

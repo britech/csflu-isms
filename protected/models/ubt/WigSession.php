@@ -36,6 +36,13 @@ class WigSession extends Model {
         );
     }
 
+    public function bindValuesUsingArray(array $valueArray) {
+        parent::bindValuesUsingArray($valueArray, $this);
+
+        $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
+        $this->endingPeriod = \DateTime::createFromFormat('Y-m-d', $this->endingPeriod);
+    }
+
     public function translateWigMeetingEnvironmentStatus() {
         if (!array_key_exists($this->wigMeetingEnvironmentStatus, self::listWigMeetingEnvironmentStatus())) {
             return "Undefined";
@@ -45,7 +52,14 @@ class WigSession extends Model {
     }
 
     public function validate() {
-        
+        if (!($this->startingPeriod instanceof \DateTime or $this->endingPeriod instanceof \DateTime)) {
+            array_push($this->validationMessages, 'Timeline should be defined');
+        }
+        return count($this->validationMessages) == 0;
+    }
+
+    public function getModelTranslationAsNewEntity() {
+        return "[WIG Session enlisted]\n\nTimeline:\t{$this->startingPeriod->format('M. j, Y')} - {$this->endingPeriod->format('M. j, Y')}";
     }
 
     public function __set($name, $value) {
