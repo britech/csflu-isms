@@ -44,7 +44,7 @@ class Controller {
 
     public function renderPartial($view, $params = []) {
         $fileLocation = $this->generateFileName($view);
-
+        extract($params);
         if (file_exists($fileLocation)) {
             include_once $fileLocation;
         } else {
