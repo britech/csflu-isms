@@ -96,7 +96,6 @@ class WigController extends Controller {
         $unitBreakthrough = $this->loadUbtModel(null, $wigSession);
 
         $this->title = ApplicationConstants::APP_NAME . ' - WIG Session Info';
-        $this->layout = 'column-2';
         $this->render('wig/view', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
@@ -104,30 +103,8 @@ class WigController extends Controller {
                 'Manage WIG Sessions' => array('wig/index', 'ubt' => $unitBreakthrough->id),
                 'WIG Session' => 'active'
             ),
-            'sidebar' => array(
-                'data' => array(
-                    'header' => 'Actions',
-                    'links' => $this->resolveSidebarLinks($wigSession)))
+            'data' => $wigSession
         ));
-    }
-
-    private function resolveSidebarLinks(WigSession $wigSession) {
-        $links = array();
-        if ($wigSession->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN) {
-            $links = array_merge(array(
-                'Update Timeline' => array('wig/updateTimeline', 'id' => $wigSession->id),
-                'Declare Commitments' => array('wig/declareCommits', 'wig' => $wigSession->id)), $links);
-            if (count($wigSession->commitments) == 0 and is_null($wigSession->movementUpdate)) {
-                $links = array_merge(array('Delete WIG Session' => '#'), $links);
-            } else {
-                $links = array_merge(array('Close WIG Session' => array('wig/close', 'wig' => $wigSession->id)), $links);
-            }
-        } else {
-            $links = array_merge(array(
-                'View Commitments' => array('wig/commitments', 'wig' => $wigSession->id),
-                'View Scoreboard Update' => array('ubt/scoreboard', 'wig' => $wigSession->id)), $links);
-        }
-        return $links;
     }
 
     private function resolveActionLinks(WigSession $wigMeeting) {
