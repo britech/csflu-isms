@@ -27,6 +27,7 @@ $form = new Form(array(
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
         }
         ?>
+        <?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
         <div class="control-group">
             <?php echo $form->renderLabel($ubtModel, 'description'); ?>
             <div class="control">
@@ -49,6 +50,16 @@ $form = new Form(array(
     </div>
     <div class="all-50">
         <div id="wig-list"></div>
+    </div>
+</div>
+
+<div id="delete-wig">
+    <div id="deleteWig" style="overflow: hidden">
+        <p id="text"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept">Yes</button>
+            <button class="ink-button green flat" id="deny">No</button>
+        </div>
     </div>
 </div>
 

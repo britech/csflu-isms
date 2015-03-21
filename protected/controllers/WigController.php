@@ -42,9 +42,11 @@ class WigController extends Controller {
             ),
             'model' => new WigSession(),
             'ubtModel' => $unitBreakthrough,
-            'validation' => $this->getSessionData('validation')
+            'validation' => $this->getSessionData('validation'),
+            'notif' => $this->getSessionData('notif')
         ));
         $this->unsetSessionData('validation');
+        $this->unsetSessionData('notif');
     }
 
     public function listMeetings() {
@@ -134,6 +136,16 @@ class WigController extends Controller {
             }
         }
         $this->redirect(array('wig/view', 'id' => $wigSession->id));
+    }
+
+    public function delete() {
+        $this->validatePostData(array('id'));
+
+        $id = $this->getFormData('id');
+        $wigSession = $this->loadModel($id, true);
+        $unitBreakthrough = $this->loadUbtModel(null, $wigSession, true);
+        $this->setSessionData('notif', array('class' => 'error', 'message' => 'WIG Session deleted'));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('wig/index', 'ubt' => $unitBreakthrough->id))));
     }
 
     private function resolveActionLinks(WigSession $wigMeeting) {

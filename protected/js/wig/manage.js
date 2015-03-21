@@ -55,10 +55,48 @@ $(document).ready(function() {
         width: '100%',
         pageable: true,
         pageSize: 30,
-        filterable: true,
-        filterMode: 'simple',
+        filterable: false,
         sortable: true,
         selectionMode: 'singleRow'
+    }).on("rowClick", function() {
+        $("[id^=remove]").click(function() {
+            var text = $(this).parent().siblings("td + td").html();
+            $("#text").html("Do you want to delete the WIG Session with the timeline, <strong>" + text + "</strong>?");
+            $("#delete-wig").jqxWindow('open');
+            $("#accept").prop('id', "accept-" + $(this).attr('id').split('-')[1]);
+        });
+    });
+    
+    $('#delete-wig').jqxWindow({
+        title: '<strong>Confirm WIG Session Deletion</strong>',
+        width: 300,
+        height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+    });
+    
+    $("#deny").click(function() {
+        $("#wig-list").jqxDataTable('updateBoundData');
+    });
+    
+    $("[id^=accept]").click(function() {
+        var id = $(this).attr('id').split('-')[1];
+        $.post("?r=wig/delete",
+                {id: id},
+        function(data) {
+            try {
+                var response = $.parseJSON(data);
+                window.location = response.url;
+            } catch (e) {
+                $("#delete-wig").jqxWindow('close');
+                $("#wig-list").jqxDataTable('updateBoundData');
+            }
+        });
     });
 
     $("#validation-container").hide();
