@@ -87,6 +87,10 @@ class WigSession extends Model {
         }
         return $translation;
     }
+    
+    public function getModelTranslationAsDeletedEntity() {
+        return "[WigSession deleted]\n\nStarting Period:\t{$this->startingPeriod->format('Y-m-d')}\nEnding Period:\t{$this->endingPeriod->format('Y-m-d')}";
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;
