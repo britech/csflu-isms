@@ -41,3 +41,12 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
     </div>
 </div>
 
+<div id="delete-wig">
+    <div id="deleteWig" style="overflow: hidden">
+        <p id="text">Do you want to delete this WIG Session&nbsp;?</p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept">Yes</button>
+            <button class="ink-button green flat" id="deny">No</button>
+        </div>
+    </div>
+</div>
