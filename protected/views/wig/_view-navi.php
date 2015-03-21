@@ -11,7 +11,7 @@ use org\csflu\isms\models\ubt\WigSession;
             <li class="heading"><?php echo ApplicationUtils::generateLink('#', 'Actions', array('style' => 'padding-left:0px;')) ?></li>
                 
             <?php if ($data->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN): ?>
-                <li><?php echo ApplicationUtils::generateLink(array('wig/update', 'id' => $data->id), 'Update Timeline'); ?></li>
+                <li><?php echo ApplicationUtils::generateLink('#', 'Update Timeline', array('id'=>"update-{$data->id}")); ?></li>
                 <li><?php echo ApplicationUtils::generateLink(array('wig/declareCommits', 'wig' => $data->id), 'Declare Commitments'); ?></li>
 
                 <?php if (count($data->commitments) == 0 and is_null($data->movementUpdate)): ?>
