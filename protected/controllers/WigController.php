@@ -144,6 +144,9 @@ class WigController extends Controller {
         $id = $this->getFormData('id');
         $wigSession = $this->loadModel($id, true);
         $unitBreakthrough = $this->loadUbtModel(null, $wigSession, true);
+        
+        $this->ubtService->deleteWigSession($id);
+        $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession);
         $this->setSessionData('notif', array('class' => 'error', 'message' => 'WIG Session deleted'));
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('wig/index', 'ubt' => $unitBreakthrough->id))));
     }
