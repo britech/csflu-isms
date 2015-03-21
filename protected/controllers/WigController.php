@@ -120,10 +120,18 @@ class WigController extends Controller {
         $wigSessionData = $this->getFormData('WigSession');
         $wigSession = new WigSession();
         $wigSession->bindValuesUsingArray(array('wigsession' => $wigSessionData));
+        $unitBreakthrough = $this->loadUbtModel(null, $wigSession);
 
         $oldWigSession = $this->loadModel($wigSession->id);
         if ($wigSession->computePropertyChanges($oldWigSession) > 0) {
-            $this->setSessionData('notif', array('class' => 'info', 'message' => 'Timeline updated'));
+            try {
+                $this->ubtService->updateWigSession($wigSession);
+                $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession, $oldWigSession);
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Timeline updated'));
+            } catch (ServiceException $ex) {
+                $this->logger->warn($ex->getMessage(), $ex);
+                $this->setSessionData('notif', array('message' => $ex->getMessage()));
+            }
         }
         $this->redirect(array('wig/view', 'id' => $wigSession->id));
     }
