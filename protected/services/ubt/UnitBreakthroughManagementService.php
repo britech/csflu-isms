@@ -99,5 +99,10 @@ interface UnitBreakthroughManagementService {
      */
     public function insertWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough);
 
-    public function updateWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough);
+    /**
+     * Updates the WigSession entity
+     * @param WigSession $wigSession
+     * @throws ServiceException
+     */
+    public function updateWigSession(WigSession $wigSession);
 }

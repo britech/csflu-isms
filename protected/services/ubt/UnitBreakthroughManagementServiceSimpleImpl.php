@@ -205,7 +205,8 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         return $this->wigSessionDaoSource->getWigSessionData($id);
     }
 
-    public function updateWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough) {
+    public function updateWigSession(WigSession $wigSession) {
+        $unitBreakthrough = $this->daoSource->getUnitBreakthroughByWigSession($wigSession);
         $wigSessions = $this->wigSessionDaoSource->listWigSessions($unitBreakthrough);
         $startDate = $wigSession->startingPeriod->format('Y-m-d');
         $endDate = $wigSession->endingPeriod->format('Y-m-d');
