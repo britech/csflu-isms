@@ -218,4 +218,8 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         $this->wigSessionDaoSource->updateWigSession($wigSession);
     }
 
+    public function deleteWigSession($id) {
+        $this->wigSessionDaoSource->deleteWigSession($id);
+    }
+
 }

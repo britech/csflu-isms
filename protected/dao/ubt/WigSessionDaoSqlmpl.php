@@ -91,4 +91,18 @@ class WigSessionDaoSqlmpl implements WigSessionDao {
         }
     }
 
+    public function deleteWigSession($id) {
+        try {
+            $this->db->beginTransaction();
+            $dbst = $this->db->prepare('DELETE FROM ubt_wig WHERE wig_id=:id');
+            $dbst->execute(array(
+                'id' => $id
+            ));
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

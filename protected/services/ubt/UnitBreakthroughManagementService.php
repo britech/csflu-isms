@@ -105,4 +105,10 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function updateWigSession(WigSession $wigSession);
+    
+    /**
+     * Deletes the WigSession entity
+     * @param String $id
+     */
+    public function deleteWigSession($id);
 }
