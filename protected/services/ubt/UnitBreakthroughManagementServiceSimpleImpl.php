@@ -42,7 +42,7 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
             return $this->daoSource->getUnitBreakthroughByIdentifier($id);
         } elseif (!is_null($leadMeasure)) {
             return $this->daoSource->getUnitBreakthroughByLeadMeasure($leadMeasure);
-        } elseif(!is_null($wigSession)){
+        } elseif (!is_null($wigSession)) {
             return $this->daoSource->getUnitBreakthroughByWigSession($wigSession);
         }
     }
@@ -193,8 +193,8 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
             if ($data->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN) {
                 throw new ServiceException("A WIG Session is in progress. Please close the ongoing WIG Session to continue");
             }
-            
-            if($startDate == $data->startingPeriod->format('Y-m-d') and $endDate == $data->endingPeriod->format('Y-m-d')){
+
+            if ($startDate == $data->startingPeriod->format('Y-m-d') and $endDate == $data->endingPeriod->format('Y-m-d')) {
                 throw new ServiceException("A WIG Session with the given timeline is already defined. Please try again.");
             }
         }
@@ -203,6 +203,18 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
 
     public function getWigSessionData($id) {
         return $this->wigSessionDaoSource->getWigSessionData($id);
+    }
+
+    public function updateWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough) {
+        $wigSessions = $this->wigSessionDaoSource->listWigSessions($unitBreakthrough);
+        $startDate = $wigSession->startingPeriod->format('Y-m-d');
+        $endDate = $wigSession->endingPeriod->format('Y-m-d');
+        foreach ($wigSessions as $data) {
+            if ($data->id != $wigSession->id && ($startDate == $data->startingPeriod->format('Y-m-d') && $endDate == $data->endingPeriod->format('Y-m-d'))) {
+                throw new ServiceException("A WIG Session with the given timeline is already defined. Please try again.");
+            }
+        }
+        $this->wigSessionDaoSource->updateWigSession($wigSession);
     }
 
 }

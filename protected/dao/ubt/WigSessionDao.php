@@ -33,4 +33,6 @@ interface WigSessionDao {
      * @throws DataAccessException
      */
     public function insertWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough);
+    
+    public function updateWigSession(WigSession $wigSession);
 }

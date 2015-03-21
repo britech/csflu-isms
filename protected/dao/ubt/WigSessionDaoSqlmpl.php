@@ -74,4 +74,21 @@ class WigSessionDaoSqlmpl implements WigSessionDao {
         }
     }
 
+    public function updateWigSession(WigSession $wigSession) {
+        try {
+            $this->db->beginTransaction();
+            $dbst = $this->db->prepare('UPDATE ubt_wig SET period_start_date=:start, period_end_date=:end, status=:status WHERE wig_id=:id');
+            $dbst->execute(array(
+                'start' => $wigSession->startingPeriod->format('Y-m-d'),
+                'end' => $wigSession->endingPeriod->format('Y-m-d'),
+                'status' => $wigSession->wigMeetingEnvironmentStatus,
+                'id' => $wigSession->id
+            ));
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

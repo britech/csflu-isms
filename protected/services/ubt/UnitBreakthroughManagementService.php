@@ -24,7 +24,7 @@ interface UnitBreakthroughManagementService {
      * @return UnitBreakthrough[]
      */
     public function listUnitBreakthrough(StrategyMap $strategyMap = null, Department $department = null);
-    
+
     /**
      * Retrieves the UnitBreakthrough entity
      * @param String $id Retrieve by its identifier
@@ -42,7 +42,7 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function insertUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap);
-    
+
     /**
      * Updates the UnitBreakthrough entity
      * @param UnitBreakthrough $unitBreakthrough
@@ -50,14 +50,14 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function updateUnitBreakthrough(UnitBreakthrough $unitBreakthrough, StrategyMap $strategyMap);
-    
+
     /**
      * Retrieves the defined LeadMeasure
      * @param String $id
      * @return LeadMeasure
      */
     public function retrieveLeadMeasure($id);
-    
+
     /**
      * Inserts the LeadMeasure entity using an UnitBreakthrough entity
      * @param UnitBreakthrough $unitBreakthrough
@@ -65,7 +65,7 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function insertLeadMeasures(UnitBreakthrough $unitBreakthrough);
-    
+
     /**
      * Links the selected objectives/measures profiles in a given UnitBreakthrough entity
      * @param UnitBreakthrough $unitBreakthrough
@@ -73,7 +73,7 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function addAlignments(UnitBreakthrough $unitBreakthrough);
-    
+
     /**
      * Deletes the selected objective/measure profile in a given UnitBreakthrough entity
      * @param UnitBreakthrough $unitBreakthrough
@@ -82,14 +82,14 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function deleteAlignments(UnitBreakthrough $unitBreakthrough, Objective $objective = null, MeasureProfile $measureProfile = null);
-    
+
     /**
      * Retrieves the WIG Session
      * @param String $id Retrieve by its identifier
      * @return WigSession
      */
     public function getWigSessionData($id);
-    
+
     /**
      * Inserts the WIG Session on a given UnitBreakthrough entity
      * @param WigSession $wigSession
@@ -98,4 +98,6 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function insertWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough);
+
+    public function updateWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough);
 }
