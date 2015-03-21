@@ -95,6 +95,10 @@ class WigController extends Controller {
         $wigSession = $this->loadModel($id);
         $unitBreakthrough = $this->loadUbtModel(null, $wigSession);
 
+        $wigSession->startingPeriod = $wigSession->startingPeriod->format('Y-m-d');
+        $wigSession->endingPeriod = $wigSession->endingPeriod->format('Y-m-d');
+        $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
+        $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
         $this->title = ApplicationConstants::APP_NAME . ' - WIG Session Info';
         $this->render('wig/view', array(
             'breadcrumb' => array(
@@ -103,8 +107,25 @@ class WigController extends Controller {
                 'Manage WIG Sessions' => array('wig/index', 'ubt' => $unitBreakthrough->id),
                 'WIG Session' => 'active'
             ),
-            'data' => $wigSession
+            'data' => $wigSession,
+            'ubt' => $unitBreakthrough,
+            'notif' => $this->getSessionData('notif')
         ));
+        $this->unsetSessionData('notif');
+    }
+
+    public function update() {
+        $this->validatePostData(array('WigSession'));
+
+        $wigSessionData = $this->getFormData('WigSession');
+        $wigSession = new WigSession();
+        $wigSession->bindValuesUsingArray(array('wigsession' => $wigSessionData));
+
+        $oldWigSession = $this->loadModel($wigSession->id);
+        if ($wigSession->computePropertyChanges($oldWigSession) > 0) {
+            $this->setSessionData('notif', array('class' => 'info', 'message' => 'Timeline updated'));
+        }
+        $this->redirect(array('wig/view', 'id' => $wigSession->id));
     }
 
     private function resolveActionLinks(WigSession $wigMeeting) {

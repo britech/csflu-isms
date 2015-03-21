@@ -61,7 +61,21 @@ class WigSession extends Model {
     public function getModelTranslationAsNewEntity() {
         return "[WIG Session enlisted]\n\nTimeline:\t{$this->startingPeriod->format('M. j, Y')} - {$this->endingPeriod->format('M. j, Y')}";
     }
-
+    
+    public function computePropertyChanges(WigSession $wigSession) {
+        $counter = 0;
+        
+        if($this->startingPeriod->format('Y-m-d') != $wigSession->startingPeriod->format('Y-m-d')){
+            $counter++;
+        }
+        
+        if($this->endingPeriod->format('Y-m-d') != $wigSession->endingPeriod->format('Y-m-d')){
+            $counter++;
+        }
+        
+        return $counter;
+    }
+    
     public function __set($name, $value) {
         $this->$name = $value;
     }
