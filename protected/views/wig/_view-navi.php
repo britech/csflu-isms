@@ -9,7 +9,8 @@ use org\csflu\isms\models\ubt\WigSession;
     <div class="ink-navigation">
         <ul class="menu vertical">
             <li class="heading"><?php echo ApplicationUtils::generateLink('#', 'Actions', array('style' => 'padding-left:0px;')) ?></li>
-                <?php if ($data->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN): ?>
+                
+            <?php if ($data->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN): ?>
                 <li><?php echo ApplicationUtils::generateLink(array('wig/update', 'id' => $data->id), 'Update Timeline'); ?></li>
                 <li><?php echo ApplicationUtils::generateLink(array('wig/declareCommits', 'wig' => $data->id), 'Declare Commitments'); ?></li>
 
@@ -18,11 +19,12 @@ use org\csflu\isms\models\ubt\WigSession;
                 <?php else: ?>
                     <li><?php echo ApplicationUtils::generateLink(array('wig/close', 'id' => $data->id), 'Close WIG Session'); ?></li>
                 <?php endif; ?>
-                    
+
             <?php else: ?>
                 <li><?php echo ApplicationUtils::generateLink(array('wig/commitments', 'wig' => $data->id), 'View Commitments'); ?></li>
                 <li><?php echo ApplicationUtils::generateLink(array('ubt/scoreboard', 'wig' => $data->id), 'View Scoreboard Update'); ?></li>
             <?php endif; ?>
+                
         </ul>
     </div>
 </div>
