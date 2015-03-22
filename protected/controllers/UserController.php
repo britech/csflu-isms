@@ -159,7 +159,7 @@ class UserController extends Controller {
 
             $accountsArray = array();
             foreach ($accounts as $account) {
-                array_push($accountsArray, array('role' => $account->securityRole->name,
+                array_push($accountsArray, array('role' => $account->securityRole->description,
                     'department' => $account->employee->department->name,
                     'position' => $account->employee->position->name,
                     'link' => ApplicationUtils::generateLink(array('user/updateLink', 'id' => $account->id), 'Update Link')

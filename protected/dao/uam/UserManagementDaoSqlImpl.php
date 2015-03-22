@@ -11,8 +11,21 @@ use org\csflu\isms\models\commons\Position;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\uam\SecurityRole;
 use org\csflu\isms\models\uam\LoginAccount;
+use org\csflu\isms\dao\commons\PositionDaoSqlImpl as PositionDao;
+use org\csflu\isms\dao\commons\DepartmentDaoSqlImpl as DepartmentDao;
+use org\csflu\isms\dao\uam\SecurityRoleDaoSqlImpl;
 
 class UserManagementDaoSqlImpl implements UserManagementDao {
+
+    private $positionDao;
+    private $departmentDao;
+    private $securityRoleDao;
+
+    public function __construct() {
+        $this->positionDao = new PositionDao();
+        $this->departmentDao = new DepartmentDao();
+        $this->securityRoleDao = new SecurityRoleDaoSqlImpl();
+    }
 
     public function authenticate($login) {
         try {
@@ -37,30 +50,14 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
         try {
             $db = ConnectionManager::getConnectionInstance();
 
-            $dbst = $db->prepare('SELECT umain_id, type_desc, dept_name, type_name, dept_name, pos_desc'
-                    . ' FROM user_main '
-                    . ' JOIN departments ON dept_ref=dept_id'
-                    . ' JOIN user_types ON type_ref=utype_id'
-                    . ' JOIN positions ON pos_ref=pos_id'
-                    . ' WHERE emp_ref=:ref');
+            $dbst = $db->prepare('SELECT umain_id FROM user_main WHERE emp_ref=:ref');
             $dbst->execute(array('ref' => $id));
 
             $accounts = array();
 
             while ($data = $dbst->fetch()) {
-                $account = new UserAccount();
-
-                $account->securityRole = new SecurityRole();
-                $account->employee = new Employee();
-                $account->employee->department = new Department();
-                $account->employee->position = new Position();
-
-                list($account->id,
-                        $account->securityRole->name,
-                        $account->employee->department->name,
-                        $account->securityRole->name,
-                        $account->employee->department->name,
-                        $account->employee->position->name) = $data;
+                list($id) = $data;
+                $account = $this->getUserAccount($id);
 
                 array_push($accounts, $account);
             }
@@ -247,33 +244,17 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
     public function getUserAccount($id) {
         try {
             $db = ConnectionManager::getConnectionInstance();
-            $dbst = $db->prepare('SELECT umain_id, emp_ref, type_ref, dept_ref, pos_ref, emp_lname, emp_fname, emp_stat, type_desc, dept_name, username'
-                    . ' FROM user_main'
-                    . ' JOIN employees ON emp_ref = emp_id'
-                    . ' JOIN user_types ON type_ref = utype_id'
-                    . ' JOIN departments ON dept_ref = dept_id'
-                    . ' WHERE umain_id=:id');
+            $dbst = $db->prepare('SELECT umain_id, emp_ref, type_ref, dept_ref, pos_ref FROM user_main WHERE umain_id=:id');
             $dbst->execute(array('id' => $id));
 
             $account = new UserAccount();
-            $account->employee = new Employee();
-            $account->employee->department = new Department();
-            $account->employee->position = new Position();
-            $account->employee->loginAccount = new LoginAccount();
-            $account->securityRole = new SecurityRole();
 
             while ($data = $dbst->fetch()) {
-                list($account->id,
-                        $account->employee->id,
-                        $account->securityRole->id,
-                        $account->employee->department->id,
-                        $account->employee->position->id,
-                        $account->employee->lastName,
-                        $account->employee->givenName,
-                        $account->employee->loginAccount->status,
-                        $account->securityRole->description,
-                        $account->employee->department->name,
-                        $account->employee->loginAccount->username) = $data;
+                list($account->id, $employee, $securityRole, $department, $position) = $data;
+                $account->employee = $this->getEmployeeData($employee);
+                $account->securityRole = $this->securityRoleDao->getSecurityRoleData($securityRole);
+                $account->employee->department = $this->departmentDao->getDepartmentById($department);
+                $account->employee->position = $this->positionDao->getPositionData($position);
             }
 
             return $account;
@@ -347,10 +328,10 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
             $db->beginTransaction();
             $dbst = $db->prepare('UPDATE user_main SET type_ref=:type, pos_ref=:position WHERE umain_id=:id');
             $dbst->execute(array(
-                'type'=>$userAccount->securityRole->id,
-                'position'=>$userAccount->employee->position->id,
-                'id'=>$userAccount->id));
-            
+                'type' => $userAccount->securityRole->id,
+                'position' => $userAccount->employee->position->id,
+                'id' => $userAccount->id));
+
             $db->commit();
         } catch (\PDOException $ex) {
             $db->rollBack();
