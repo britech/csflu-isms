@@ -35,6 +35,15 @@ class Commitment extends Model {
         
     }
 
+    public function getAttributeNames() {
+        return array(
+            'user' => 'Employee',
+            'commitment' => 'Commitment',
+            'commitmentTargetFigure' => 'Numerical Target',
+            'commitmentEnvironmentStatus' => 'Status'
+        );
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
