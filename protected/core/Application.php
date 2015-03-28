@@ -2,11 +2,14 @@
 
 namespace org\csflu\isms\core;
 
-use org\csflu\isms\core\Controller as Controller;
-use org\csflu\isms\core\ApplicationConstants as ApplicationConstants;
+use org\csflu\isms\core\Controller;
+use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\exceptions\ApplicationException;
 
 class Application {
 
+    const ROUTE_IDENTIFIER = "r";
+    
     private $controller = 'site';
     private $action = 'index';
     private $logger;
@@ -25,8 +28,8 @@ class Application {
 
     public function runApplication() {
         $this->logger->info("[" . filter_input(INPUT_SERVER, 'REQUEST_METHOD') . "] " . "[Client: " . filter_input(INPUT_SERVER, 'REMOTE_ADDR') . "]" . " Route Expression: " . filter_input(INPUT_GET, 'r'));
-        $request = filter_input(INPUT_GET, 'r');
         try {
+            $request = $this->retrieveRouteExpression();
             $this->resolveAndDispatchRequest($request);
         } catch (\Exception $e) {
             $this->logger->error("[" . filter_input(INPUT_SERVER, 'REQUEST_METHOD') . "] " . "[Client: " . filter_input(INPUT_SERVER, 'REMOTE_ADDR') . "]", $e);
@@ -84,12 +87,21 @@ class Application {
 
         if (is_array($inputs)) {
             foreach ($inputs as $data => $value) {
-                if ($data != 'r') {
+                if ($data != self::ROUTE_IDENTIFIER) {
                     array_push($inputData, $value);
                 }
             }
         }
         return $inputData;
+    }
+    
+    private function retrieveRouteExpression(){
+        $getParameters = filter_input_array(INPUT_GET);
+        if(array_key_exists(self::ROUTE_IDENTIFIER, $getParameters)){
+            return filter_input(INPUT_GET, self::ROUTE_IDENTIFIER);
+        } else {
+            throw new ApplicationException("Internal Failure");
+        }
     }
 
 }
