@@ -65,7 +65,21 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function insertLeadMeasures(UnitBreakthrough $unitBreakthrough);
+    
+    /**
+     * Updates the LeadMeasure entity
+     * @param LeadMeasure $leadMeasure
+     * @throws ServiceException
+     */
+    public function updateLeadMeasure(LeadMeasure $leadMeasure);
 
+    /**
+     * Updates the environment status of the LeadMeasure entity
+     * @param LeadMeasure $leadMeasure
+     * @throws ServiceException
+     */
+    public function updateLeadMeasureStatus(LeadMeasure $leadMeasure);
+    
     /**
      * Links the selected objectives/measures profiles in a given UnitBreakthrough entity
      * @param UnitBreakthrough $unitBreakthrough

@@ -18,7 +18,6 @@ class LeadMeasure extends Model {
 
     const STATUS_ACTIVE = "A";
     const STATUS_INACTIVE = "I";
-    const STATUS_STOPPED = "S";
     const STATUS_COMPLETE = "C";
 
     private $id;
@@ -31,7 +30,6 @@ class LeadMeasure extends Model {
         return array(
             self::STATUS_ACTIVE => 'Active',
             self::STATUS_INACTIVE => 'Inactive',
-            self::STATUS_STOPPED => 'Stopped/Dropped',
             self::STATUS_COMPLETE => 'Completed'
         );
     }
@@ -44,12 +42,39 @@ class LeadMeasure extends Model {
     }
 
     public function validate() {
-        
+        if(strlen($this->description) == 0){
+            array_push($this->validationMessages, '-&nbsp;Lead Measure should be defined');
+        }
+        return count($this->validationMessages) == 0;
     }
 
     public function getModelTranslationAsNewEntity() {
         return "[LeadMeasure added]\n\n"
                 . "Description:\t{$this->description}";
+    }
+
+    public function computePropertyChanges(LeadMeasure $oldModel) {
+        $counter = 0;
+        if ($oldModel->description != $this->description) {
+            $counter++;
+        }
+
+        if ($oldModel->leadMeasureEnvironmentStatus != $this->leadMeasureEnvironmentStatus) {
+            $counter++;
+        }
+        return $counter;
+    }
+
+    public function getModelTranslationAsUpdatedEntity(LeadMeasure $oldModel) {
+        $translation = "[LeadMeasure updated]\n\n";
+        if ($oldModel->description != $this->description) {
+            $translation.="Description:\t{$this->description}\n";
+        }
+
+        if ($oldModel->leadMeasureEnvironmentStatus != $this->leadMeasureEnvironmentStatus) {
+            $translation.="Status:\t{$this->translateEnvironmentStatus($this->leadMeasureEnvironmentStatus)}";
+        }
+        return $translation;
     }
 
     public function isNew() {

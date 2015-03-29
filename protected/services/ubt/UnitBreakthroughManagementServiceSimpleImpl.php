@@ -28,6 +28,7 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
     private $wigSessionDaoSource;
     private $objectiveDaoSource;
     private $measureProfileDaoSource;
+    private $logger;
 
     public function __construct() {
         $this->daoSource = new UnitBreakthroughDao();
@@ -35,6 +36,7 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         $this->wigSessionDaoSource = new WigSessionDao();
         $this->objectiveDaoSource = new ObjectiveDao();
         $this->measureProfileDaoSource = new MeasureProfileDao();
+        $this->logger = \Logger::getLogger(__CLASS__);
     }
 
     public function getUnitBreakthrough($id = null, LeadMeasure $leadMeasure = null, WigSession $wigSession = null) {
@@ -220,6 +222,40 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
 
     public function deleteWigSession($id) {
         $this->wigSessionDaoSource->deleteWigSession($id);
+    }
+
+    public function updateLeadMeasure(LeadMeasure $leadMeasure) {
+        $unitBreakthrough = $this->daoSource->getUnitBreakthroughByLeadMeasure($leadMeasure);
+        foreach($unitBreakthrough->leadMeasures as $data){
+            if($data->id != $leadMeasure->id && $data->description == $leadMeasure->description){
+                throw new ServiceException("Update failed");
+            }
+        }
+        $this->leadMeasureDaoSource->updateLeadMeasure($leadMeasure);
+    }
+
+    public function updateLeadMeasureStatus(LeadMeasure $leadMeasure) {
+        $unitBreakthrough = $this->daoSource->getUnitBreakthroughByLeadMeasure($leadMeasure);
+        $activeLeadMeasures = array();
+        
+        foreach($unitBreakthrough->leadMeasures as $data){
+            if($data->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE){
+                array_push($activeLeadMeasures, $data->id);
+            }
+        }
+        
+        if(count($activeLeadMeasures) == 2 && !in_array($leadMeasure->id, $activeLeadMeasures) && $leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE){
+            throw new ServiceException("Maximum of LeadMeasures under the 'Active' flag is reached");
+        } elseif(count($activeLeadMeasures) == 1 && in_array($leadMeasure->id, $activeLeadMeasures) && $leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_INACTIVE){
+            throw new ServiceException("At least one LeadMeasure should be active");
+        }
+        
+        if($leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_COMPLETE){
+            $this->logger->warn("Status Update is not allowed using this method");
+            return;
+        }
+        
+        $this->leadMeasureDaoSource->updateLeadMeasure($leadMeasure);
     }
 
 }

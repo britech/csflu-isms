@@ -30,4 +30,10 @@ interface LeadMeasureDao {
      * @throws DataAccessException
      */
     public function insertLeadMeasures(UnitBreakthrough $unitBreakthrough);
+    
+    /**
+     * @param LeadMeasure $leadMeasure
+     * @throws DataAccessException
+     */
+    public function updateLeadMeasure(LeadMeasure $leadMeasure);
 }

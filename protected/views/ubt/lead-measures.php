@@ -23,6 +23,7 @@ $form = new Form(array(
         <div class="ink-alert basic info">
             <strong>Important Note:</strong>&nbsp;Fields with * are required.
         </div>
+        <?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
         <?php
         if (isset($params['validation']) && !empty($params['validation'])) {
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
@@ -43,16 +44,27 @@ $form = new Form(array(
                 } else {
                     echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat', 'style' => 'margin-top:10px; margin-left:0px;'));
                 }
-                
                 ?>
             </div>
         </div>
+        <?php echo $form->renderHiddenField($model, 'leadMeasureEnvironmentStatus'); ?>
         <?php echo $form->renderHiddenField($model, 'id'); ?>
         <?php echo $form->renderHiddenField($model, 'validationMode'); ?>
         <?php echo $form->renderHiddenField($ubtModel, 'id', array('id' => 'ubt')); ?>
-<?php echo $form->endComponent(); ?>
+        <?php echo $form->endComponent(); ?>
     </div>
     <div class="all-50">
         <div id="leadmeasure-list"></div>
+    </div>
+</div>
+
+
+<div id="lm-status">
+    <div id="lmStatusContent" style="overflow: hidden">
+        <p id="text-status"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept">Yes</button>
+            <button class="ink-button green flat" id="deny">No</button>
+        </div>
     </div>
 </div>
