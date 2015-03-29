@@ -101,7 +101,7 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         $acceptedLeadMeasures = array();
         foreach ($unitBreakthroughInput->leadMeasures as $leadMeasure) {
             foreach ($leadMeasures as $data) {
-                if ($leadMeasure->description != $data->description) {
+                if ($leadMeasure->description != $data->description && $data->leadMeasureEnvironmentStatus != LeadMeasure::STATUS_ACTIVE) {
                     array_push($acceptedLeadMeasures, $leadMeasure);
                 }
             }
