@@ -90,6 +90,7 @@ class UbtController extends Controller {
         foreach ($unitBreakthroughs as $unitBreakthrough) {
             array_push($data, array(
                 'description' => $unitBreakthrough->description,
+                'status' => UnitBreakthrough::translateUbtStatusCode($unitBreakthrough->unitBreakthroughEnvironmentStatus),
                 'unit' => $unitBreakthrough->unit->name,
                 'action' => ApplicationUtils::generateLink(array('ubt/view', 'id' => $unitBreakthrough->id), 'View')
             ));

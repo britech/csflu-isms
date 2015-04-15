@@ -21,9 +21,10 @@ interface UnitBreakthroughManagementService {
      * Lists the UnitBreakthroughs enlisted under a specified StrategyMap or Department entity
      * @param StrategyMap $strategyMap
      * @param Department $department
+     * @param boolean $filterActive Optional Field
      * @return UnitBreakthrough[]
      */
-    public function listUnitBreakthrough(StrategyMap $strategyMap = null, Department $department = null);
+    public function listUnitBreakthrough(StrategyMap $strategyMap = null, Department $department = null, $filterActive = false);
 
     /**
      * Retrieves the UnitBreakthrough entity

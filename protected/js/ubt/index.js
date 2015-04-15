@@ -5,6 +5,7 @@ $(document).ready(function() {
             datafields: [
                 {name: 'description'},
                 {name: 'unit'},
+                {name: 'status'},
                 {name: 'action'}
             ],
             url: '?r=ubt/listUnitBreakthroughsByStrategyMap',
@@ -16,7 +17,8 @@ $(document).ready(function() {
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Unit Breakthrough</span>', dataField: 'description', width: '90%'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Unit Breakthrough</span>', dataField: 'description', width: '75%'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Status</span>', dataField: 'status', width: '15%', cellsAlign: 'center'},
             {text: '', dataField: 'action', width: '10%', cellsAlign: 'center'}
         ],
         width: '100%',
