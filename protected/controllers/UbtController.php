@@ -75,8 +75,10 @@ class UbtController extends Controller {
                 'Home' => array('site/index'),
                 'Manage Unit Breakthroughs' => 'active'
             ),
-            'unit' => $userAccount->employee->department->id
+            'unit' => $userAccount->employee->department->id,
+            'notif' => $this->getSessionData('notif')
         ));
+        $this->unsetSessionData('notif');
     }
 
     public function listUnitBreakthroughsByStrategyMap() {
@@ -385,7 +387,7 @@ class UbtController extends Controller {
             try {
                 $unitBreakthrough->leadMeasures = $this->ubtService->insertLeadMeasures($unitBreakthrough);
                 $this->logLinkedRecords($unitBreakthrough);
-                $this->setSessionData('notif', array('class'=>'success' ,'message' => 'Lead Measure/s added'));
+                $this->setSessionData('notif', array('class' => 'success', 'message' => 'Lead Measure/s added'));
             } catch (ServiceException $ex) {
                 $this->setSessionData('validation', array($ex->getMessage()));
             }
