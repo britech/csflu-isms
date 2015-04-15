@@ -34,7 +34,15 @@ class Commitment extends Model {
     public function validate() {
         
     }
-
+    
+    public function bindValuesUsingArray(array $valueArray) {
+        if(array_key_exists('user', $valueArray)){
+            $this->user = new UserAccount();
+            $this->user->id = $valueArray['user']['id'];
+        }
+        parent::bindValuesUsingArray($valueArray, $this);
+    }
+    
     public function getAttributeNames() {
         return array(
             'user' => 'Employee',
