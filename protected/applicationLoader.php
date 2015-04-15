@@ -119,6 +119,7 @@ require_once 'services/indicator/ScorecardManagementService.php';
 require_once 'services/map/StrategyMapManagementService.php';
 require_once 'services/initiative/InitiativeManagementService.php';
 require_once 'services/ubt/UnitBreakthroughManagementService.php';
+require_once 'services/ubt/CommitmentManagementService.php';
 
 #service-implementations
 require_once 'services/commons/DepartmentServiceSimpleImpl.php';
@@ -131,6 +132,7 @@ require_once 'services/indicator/ScorecardManagementServiceSimpleImpl.php';
 require_once 'services/map/StrategyMapManagementServiceSimpleImpl.php';
 require_once 'services/initiative/InitiativeManagementServiceSimpleImpl.php';
 require_once 'services/ubt/UnitBreakthroughManagementServiceSimpleImpl.php';
+require_once 'services/ubt/CommitmentManagementServiceSimpleImpl.php';
 
 session_start();
 ob_start();
