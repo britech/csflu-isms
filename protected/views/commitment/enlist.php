@@ -32,6 +32,12 @@ $form = new ModelFormGenerator(array(
         }
         ?>
         <div class="control-group">
+            <label>WIG Session Timeline</label>
+            <div class="control">
+                <input type="text" readonly="readonly" value="<?php echo "{$wigSession->startingPeriod->format('M d, Y')} to {$wigSession->endingPeriod->format('M d, Y')}"?>"/>
+            </div>
+        </div>
+        <div class="control-group">
             <?php echo $form->renderLabel($model, 'commitment', array('required' => true)); ?>
             <div class="control">
                 <?php echo $form->renderTextArea($model, 'commitment', array('id' => 'commitment')); ?>
