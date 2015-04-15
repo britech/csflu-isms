@@ -41,6 +41,12 @@ class CommitmentManagementServiceSimpleImpl implements CommitmentManagementServi
             }
         }
         $this->logger->debug("Number of commitments to be enlisted: " . count($commitmentsToEnlist));
+        
+        if(count($commitmentsToEnlist) == 0){
+            throw new ServiceException("No commitments enlisted");
+        }
+        
+        $this->commitDaoSource->insertCommitments($wigSession);
     }
 
 }
