@@ -8,7 +8,7 @@ $form = new ModelFormGenerator(array(
     'action' => array('commitment/insert'),
     'class' => 'ink-form',
     'hasFieldset' => true
-));
+        ));
 ?>
 <link href="assets/flick/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
 <link href="assets/tag-editor/jquery.tag-editor.css" rel="stylesheet" type="text/css"/>
@@ -32,9 +32,15 @@ $form = new ModelFormGenerator(array(
         }
         ?>
         <div class="control-group">
-            <label>WIG Session Timeline</label>
+            <label>Commitment Timeline</label>
             <div class="control">
-                <input type="text" readonly="readonly" value="<?php echo "{$wigSession->startingPeriod->format('M d, Y')} to {$wigSession->endingPeriod->format('M d, Y')}"?>"/>
+                <input type="text" readonly="readonly" value="<?php echo "{$wigSession->startingPeriod->format('M d, Y')} to {$wigSession->endingPeriod->format('M d, Y')}" ?>"/>
+            </div>
+        </div>
+        <div class="control-group">
+            <label>Name</label>
+            <div class="control">
+                <input type="text" readonly="readonly" value="<?php echo "{$user->employee->givenName} {$user->employee->lastName}" ?>"/>
             </div>
         </div>
         <div class="control-group">
