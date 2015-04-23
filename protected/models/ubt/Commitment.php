@@ -13,7 +13,7 @@ use org\csflu\isms\models\ubt\CommitmentMovement;
  * @property UserAccount $user
  * @property String $commitment
  * @property String $commitmentTargetFigure
- * @property CommitmentMovement[] $commitmentMovement
+ * @property CommitmentMovement[] $commitmentMovements
  * @property String $commitmentEnvironmentStatus
  * @author britech
  */
