@@ -61,4 +61,8 @@ class CommitmentManagementServiceSimpleImpl implements CommitmentManagementServi
         return $commitmentsToDisplay;
     }
 
+    public function getCommitmentData($id) {
+        return $this->commitDaoSource->getCommitmentData($id);
+    }
+
 }

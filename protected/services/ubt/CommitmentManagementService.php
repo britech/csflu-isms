@@ -14,6 +14,13 @@ use org\csflu\isms\exceptions\ServiceException;
 interface CommitmentManagementService {
     
     /**
+     * Retrieves the Commitment entity
+     * @param String $id
+     * @return Commitment[]
+     */
+    public function getCommitmentData($id);
+    
+    /**
      * Inserts the commitments through a WigSession entity
      * @param WigSession $wigSession
      * @return Commitment[]
