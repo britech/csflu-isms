@@ -28,7 +28,7 @@ class Controller {
      * @throws \Exception
      */
 
-    protected function render($view, $params = []) {
+    protected final function render($view, $params = []) {
         $fileLocation = $this->generateFileName($view);
 
         extract($params);
@@ -42,7 +42,7 @@ class Controller {
         require_once "protected/views/layouts/{$this->layout}.php";
     }
 
-    public function renderPartial($view, $params = []) {
+    public final function renderPartial($view, $params = []) {
         $fileLocation = $this->generateFileName($view);
         extract($params);
         if (file_exists($fileLocation)) {
@@ -52,11 +52,11 @@ class Controller {
         }
     }
 
-    protected function renderAjaxJsonResponse(array $response) {
+    protected final function renderAjaxJsonResponse(array $response) {
         echo json_encode($response);
     }
 
-    protected function redirect($url) {
+    public final function redirect($url) {
         if (is_array($url)) {
             header("location: " . ApplicationUtils::resolveUrl($url));
         } else {
@@ -69,23 +69,23 @@ class Controller {
         return 'protected/views/' . $view . '.php';
     }
 
-    public function viewErrorPage($exception) {
+    public final function viewErrorPage($exception) {
         $this->layout = "simple";
         $this->render('commons/error', array('exception' => $exception));
     }
 
-    public function viewWarningPage($header, $message) {
+    public final function viewWarningPage($header, $message) {
         $this->renderPartial('commons/warning', array('header' => $header, 'message' => $message));
     }
-
-    protected function checkAuthorization() {
+    
+    protected final function checkAuthorization() {
         if (empty($this->getSessionData('employee')) || empty($this->getSessionData('user'))) {
             $_SESSION['login.notif'] = "Please enter your user credentials to continue.";
             $this->redirect(array('site/login'));
         }
     }
 
-    protected function logRevision($revisionType, $module, $referenceId, Model $model, Model $oldModel = null) {
+    protected final function logRevision($revisionType, $module, $referenceId, Model $model, Model $oldModel = null) {
         $this->loggingService = new RevisionHistoryLoggingService();
         $revision = new RevisionHistory();
         $revision->employee = new Employee();
@@ -107,7 +107,7 @@ class Controller {
         }
     }
 
-    protected function logCustomRevision($revisionType, $module, $referenceId, $notes) {
+    protected final function logCustomRevision($revisionType, $module, $referenceId, $notes) {
         $this->loggingService = new RevisionHistoryLoggingService();
         
         $revision = new RevisionHistory();
@@ -121,7 +121,7 @@ class Controller {
         $this->loggingService->logCustomAction($revision);
     }
 
-    protected function remoteValidateModel(Model $model) {
+    protected final function remoteValidateModel(Model $model) {
         if (!$model->validate()) {
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $model->validationMessages));
         } else {
@@ -129,7 +129,7 @@ class Controller {
         }
     }
 
-    protected function validatePostData(array $keyNames) {
+    protected final function validatePostData(array $keyNames) {
         $counter = 0;
         $data = filter_input_array(INPUT_POST);
         if (is_null($data) || empty($data)) {
@@ -147,28 +147,27 @@ class Controller {
         }
     }
 
-    protected function getFormData($indexName) {
+    public final function getFormData($indexName) {
         return filter_input_array(INPUT_POST)[$indexName];
     }
 
-    protected function getArgumentData($argumentName) {
+    public final function getArgumentData($argumentName) {
         return htmlentities(filter_input(INPUT_GET, $argumentName));
     }
 
-    protected function getServerData($argumentName) {
+    public final function getServerData($argumentName) {
         return filter_input(INPUT_SERVER, $argumentName);
     }
 
-    protected function getSessionData($key) {
+    public final function getSessionData($key) {
         return (isset($_SESSION[$key]) && !empty($_SESSION[$key])) ? $_SESSION[$key] : "";
     }
 
-    protected function setSessionData($key, $value) {
+    protected final function setSessionData($key, $value) {
         $_SESSION[$key] = $value;
     }
 
-    protected function unsetSessionData($key) {
+    protected final function unsetSessionData($key) {
         unset($_SESSION[$key]);
     }
-
 }
