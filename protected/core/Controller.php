@@ -163,7 +163,7 @@ class Controller {
         return (isset($_SESSION[$key]) && !empty($_SESSION[$key])) ? $_SESSION[$key] : "";
     }
 
-    protected final function setSessionData($key, $value) {
+    public final function setSessionData($key, $value) {
         $_SESSION[$key] = $value;
     }
 
