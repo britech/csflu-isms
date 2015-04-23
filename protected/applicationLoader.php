@@ -15,6 +15,9 @@ require_once 'utils/FormGenerator.php';
 require_once 'utils/ModelFormGenerator.php';
 require_once 'utils/ApplicationUtils.php';
 
+#module support components
+require_once 'controllers/support/CommitmentModuleSupport.php';
+
 #logging extension
 require_once 'ext/log4php/Logger.php';
 \Logger::configure("protected/logs/logback.xml");
