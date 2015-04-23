@@ -6,6 +6,7 @@ use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\dao\ubt\CommitmentCrudDaoSqlImpl;
 use org\csflu\isms\service\ubt\CommitmentManagementService;
 use org\csflu\isms\models\ubt\WigSession;
+use org\csflu\isms\models\uam\UserAccount;
 
 /**
  * Description of CommitmentManagementServiceSimpleImpl
@@ -41,12 +42,23 @@ class CommitmentManagementServiceSimpleImpl implements CommitmentManagementServi
             }
         }
         $this->logger->debug("Number of commitments to be enlisted: " . count($commitmentsToEnlist));
-        
-        if(count($commitmentsToEnlist) == 0){
+
+        if (count($commitmentsToEnlist) == 0) {
             throw new ServiceException("No commitments enlisted");
         }
-        
+
         $this->commitDaoSource->insertCommitments($wigSession);
+    }
+
+    public function listCommitments(UserAccount $userAccount, WigSession $wigSession) {
+        $commitments = $this->commitDaoSource->listCommitments($wigSession);
+        $commitmentsToDisplay = array();
+        foreach ($commitments as $commitment) {
+            if ($userAccount->id == $commitment->user->id) {
+                $commitmentsToDisplay = array_merge($commitmentsToDisplay, array($commitment));
+             }
+        }
+        return $commitmentsToDisplay;
     }
 
 }
