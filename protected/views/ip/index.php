@@ -4,6 +4,8 @@ namespace org\csflu\isms\views;
 
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\ubt\Commitment;
+
+$this->renderPartial('commons/_notification', array('notif' => $params['notif']));
 ?>
 <table class="ink-table bordered">
     <thead>

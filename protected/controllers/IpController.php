@@ -23,7 +23,7 @@ class IpController extends Controller {
     public function index() {
         $this->title = ApplicationConstants::APP_NAME . ' - Performance Scorecard';
         $this->layout = "column-2";
-        
+
         $account = $this->commitmentModuleSupport->loadAccountModel();
         $this->render('ip/index', array(
             'breadcrumb' => array(
@@ -34,8 +34,10 @@ class IpController extends Controller {
                 'file' => 'ip/_profile'
             ),
             'account' => $account,
-            'commitments' => $this->commitmentModuleSupport->listCommitments($account)
+            'commitments' => $this->commitmentModuleSupport->listCommitments($account),
+            'notif' => $this->getSessionData('notif')
         ));
+        $this->unsetSessionData('notif');
     }
-    
+
 }
