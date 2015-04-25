@@ -52,7 +52,7 @@ class Controller {
         }
     }
 
-    protected final function renderAjaxJsonResponse(array $response) {
+    public final function renderAjaxJsonResponse(array $response) {
         echo json_encode($response);
     }
 
