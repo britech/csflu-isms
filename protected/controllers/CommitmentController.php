@@ -124,6 +124,12 @@ class CommitmentController extends Controller {
             'commitment' => $commitmentData
         ));
 
+        if (!$commitmentToUpdate->validate()) {
+            $this->setSessionData('validation', array($commitmentToUpdate->validationMessages));
+            $this->redirect(array('commitment/manage', 'id' => $commitmentToUpdate->id));
+            return;
+        }
+
         $this->commitmentModuleSupport->checkCommitmentAndUserIdentity($commitmentToUpdate);
 
         $oldCommitment = $this->commitmentService->getCommitmentData($commitmentToUpdate->id);
