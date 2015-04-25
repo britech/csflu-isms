@@ -32,7 +32,10 @@ class Commitment extends Model {
     private $commitmentEnvironmentStatus = self::STATUS_PENDING;
 
     public function validate() {
-        
+        if(strlen($this->commitment) == 0){
+            array_push($this->validationMessages, '* Commitment should be defined');
+        }
+        return count($this->validationMessages) == 0;
     }
 
     public function bindValuesUsingArray(array $valueArray) {
