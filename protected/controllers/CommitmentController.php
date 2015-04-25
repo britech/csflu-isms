@@ -95,18 +95,20 @@ class CommitmentController extends Controller {
 
     public function manage($id) {
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Commitment';
-        $this->layout = "column-2";
+        $commitment = $this->loadModel($id);
+
+        $this->layout = ($commitment->commitmentEnvironmentStatus == Commitment::STATUS_PENDING || $commitment->commitmentEnvironmentStatus == Commitment::STATUS_ONGOING) ? "column-2" : "column-1";
         $this->render('commitment/manage', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Performance Scorecard' => array('ip/index'),
                 'Manage Commitment' => 'active'
             ),
-            'data' => $this->loadModel($id),
+            'data' => $commitment,
             'sidebar' => array(
                 'file' => 'commitment/_navigation'
             ),
-            'model' => $this->loadModel($id),
+            'model' => $commitment,
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
