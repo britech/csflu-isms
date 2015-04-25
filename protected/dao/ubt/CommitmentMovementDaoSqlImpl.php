@@ -3,7 +3,7 @@
 namespace org\csflu\isms\dao\ubt;
 
 use org\csflu\isms\core\ConnectionManager;
-use org\csflu\isms\dao\ubt\CommitmentUpdatesDao;
+use org\csflu\isms\dao\ubt\CommitmentMovementDao;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\models\ubt\CommitmentMovement;
