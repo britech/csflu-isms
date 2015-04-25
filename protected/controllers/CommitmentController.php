@@ -7,6 +7,7 @@ use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\ubt\Commitment;
+use org\csflu\isms\models\ubt\CommitmentMovement;
 use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\controllers\support\CommitmentModuleSupport;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
@@ -109,6 +110,7 @@ class CommitmentController extends Controller {
                 'file' => 'commitment/_navigation'
             ),
             'model' => $commitment,
+            'movementModel' => new CommitmentMovement(),
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
