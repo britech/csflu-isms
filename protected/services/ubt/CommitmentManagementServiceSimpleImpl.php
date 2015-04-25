@@ -80,4 +80,8 @@ class CommitmentManagementServiceSimpleImpl implements CommitmentManagementServi
         $this->commitDaoSource->updateCommitmentData($commitment);
     }
 
+    public function deleteCommitment($id) {
+        $this->commitDaoSource->deleteCommitment($id);
+    }
+
 }

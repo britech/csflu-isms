@@ -103,4 +103,18 @@ class CommitmentCrudDaoSqlImpl implements CommitmentCrudDao {
         }
     }
 
+    public function deleteCommitment($id) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('DELETE FROM commitments_main WHERE commit_id=:id');
+            $dbst->execute(array('id' => $id));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

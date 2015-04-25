@@ -36,6 +36,12 @@ interface CommitmentManagementService {
     public function updateCommitment(Commitment $commitment);
     
     /**
+     * Deletes the Commitment entity
+     * @param String $id
+     */
+    public function deleteCommitment($id);
+    
+    /**
      * Lists the commitments on a given UserAccount and WigSession entities
      * @param UserAccount $userAccount
      * @param WigSession $wigSession

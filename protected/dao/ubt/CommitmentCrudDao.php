@@ -37,4 +37,10 @@ interface CommitmentCrudDao {
      * @throws DataAccessException
      */
     public function updateCommitmentData(Commitment $commitment);
+    
+    /**
+     * @param String $id
+     * @throws DataAccessException
+     */
+    public function deleteCommitment($id);
 }
