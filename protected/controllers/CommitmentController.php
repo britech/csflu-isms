@@ -124,7 +124,7 @@ class CommitmentController extends Controller {
         if ($commitmentToUpdate->computePropertyChanges($oldCommitment) > 0) {
             try {
                 $this->commitmentService->updateCommitment($commitmentToUpdate);
-                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Commitment successfully updated'));
+                $this->setSessionData('notif', array('class' => 'info', 'message' => $this->resolveUpdateMessage($commitmentToUpdate)));
             } catch (ServiceException $ex) {
                 $this->logger->warn($ex->getMessage(), $ex);
                 $this->setSessionData('validation', array($ex->getMessage()));
@@ -137,6 +137,15 @@ class CommitmentController extends Controller {
         } else {
             $this->redirect($url);
         }
+    }
+
+    private function resolveUpdateMessage(Commitment $commitment) {
+        if(in_array($commitment->updatedFields, 'commitmentEnvironmentStatus')){
+            $message = "{$commitment->commitment} is now set to {$commitment->translateStatusCode($commitment->commitmentEnvironmentStatus)}";
+        } else {
+            $message = "Commitment successfully updated";
+        }
+        return $message;
     }
 
     /**
