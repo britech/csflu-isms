@@ -6,6 +6,7 @@ use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\ubt\CommitmentCrudDao;
 use org\csflu\isms\dao\uam\UserManagementDaoSqlImpl;
+use org\csflu\isms\dao\ubt\CommitmentMovementDaoSqlImpl;
 use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\ubt\Commitment;
 
@@ -18,12 +19,14 @@ class CommitmentCrudDaoSqlImpl implements CommitmentCrudDao {
 
     private $db;
     private $userDao;
+    private $commitMovementDao;
     private $logger;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->userDao = new UserManagementDaoSqlImpl();
+        $this->commitMovementDao = new CommitmentMovementDaoSqlImpl();
     }
 
     public function insertCommitments(WigSession $wigSession) {
@@ -79,6 +82,7 @@ class CommitmentCrudDaoSqlImpl implements CommitmentCrudDao {
                         $commitment->commitmentEnvironmentStatus) = $data;
             }
             $commitment->user = $this->userDao->getUserAccount($user);
+            $commitment->commitmentMovements = $this->commitMovementDao->listMovements($commitment);
             return $commitment;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
