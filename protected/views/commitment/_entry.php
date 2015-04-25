@@ -34,5 +34,6 @@ if (isset($params['validation']) && !empty($params['validation'])) {
 </div>
 <?php echo $form->renderHiddenField($model, 'id'); ?>
 <?php echo $form->renderHiddenField($model, 'commitmentEnvironmentStatus'); ?>
+<?php echo $form->renderHiddenField($model->user, 'id'); ?>
 <?php
 echo $form->endComponent();
