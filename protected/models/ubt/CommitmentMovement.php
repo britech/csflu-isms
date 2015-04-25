@@ -40,7 +40,7 @@ class CommitmentMovement extends Model {
     }
 
     public function __get($name) {
-        return $name;
+        return $this->$name;
     }
 
 }
