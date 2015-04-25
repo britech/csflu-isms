@@ -112,7 +112,37 @@ class CommitmentController extends Controller {
         $this->unsetSessionData('validation');
     }
 
-    public function updateEntry() {
+    public function updateEntry($remote = 0) {
+        $remoteIndicator = $remote == 0 ? false : true;
+        $commitmentToUpdate = $this->validateCommitmentEntity($remoteIndicator);
+
+        $this->commitmentModuleSupport->checkCommitmentAndUserIdentity($commitmentToUpdate, $remoteIndicator);
+
+        $oldCommitment = $this->commitmentService->getCommitmentData($commitmentToUpdate->id);
+
+        $url = array('ip/index');
+        if ($commitmentToUpdate->computePropertyChanges($oldCommitment) > 0) {
+            try {
+                $this->commitmentService->updateCommitment($commitmentToUpdate);
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Commitment successfully updated'));
+            } catch (ServiceException $ex) {
+                $this->logger->warn($ex->getMessage(), $ex);
+                $this->setSessionData('validation', array($ex->getMessage()));
+                $url = array('commitment/manage', 'id' => $commitmentToUpdate->id);
+            }
+        }
+
+        if ($remote) {
+            $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
+        } else {
+            $this->redirect($url);
+        }
+    }
+
+    /**
+     * @return Commitment
+     */
+    private function validateCommitmentEntity($remote = false) {
         $this->validatePostData(array('Commitment', 'UserAccount'));
 
         $userAccountData = $this->getFormData('UserAccount');
@@ -126,26 +156,15 @@ class CommitmentController extends Controller {
 
         if (!$commitmentToUpdate->validate()) {
             $this->setSessionData('validation', array($commitmentToUpdate->validationMessages));
-            $this->redirect(array('commitment/manage', 'id' => $commitmentToUpdate->id));
+            $url = array('commitment/manage', 'id' => $commitmentToUpdate->id);
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
+            } else {
+                $this->redirect($url);
+            }
             return;
         }
-
-        $this->commitmentModuleSupport->checkCommitmentAndUserIdentity($commitmentToUpdate);
-
-        $oldCommitment = $this->commitmentService->getCommitmentData($commitmentToUpdate->id);
-
-        if ($commitmentToUpdate->computePropertyChanges($oldCommitment) > 0) {
-            try {
-                $this->commitmentService->updateCommitment($commitmentToUpdate);
-                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Commitment successfully updated'));
-            } catch (ServiceException $ex) {
-                $this->logger->warn($ex->getMessage(), $ex);
-                $this->setSessionData('validation', array($ex->getMessage()));
-                $this->redirect(array('commitment/manage', 'id' => $commitmentToUpdate->id));
-                return;
-            }
-        }
-        $this->redirect(array('ip/index'));
+        return $commitmentToUpdate;
     }
 
     private function loadModel($id, $remote = false) {
