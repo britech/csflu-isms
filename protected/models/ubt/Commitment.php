@@ -34,15 +34,15 @@ class Commitment extends Model {
     public function validate() {
         
     }
-    
+
     public function bindValuesUsingArray(array $valueArray) {
-        if(array_key_exists('user', $valueArray)){
+        if (array_key_exists('user', $valueArray)) {
             $this->user = new UserAccount();
             $this->user->id = $valueArray['user']['id'];
         }
         parent::bindValuesUsingArray($valueArray, $this);
     }
-    
+
     public function getAttributeNames() {
         return array(
             'user' => 'Employee',
@@ -50,6 +50,10 @@ class Commitment extends Model {
             'commitmentTargetFigure' => 'Numerical Target',
             'commitmentEnvironmentStatus' => 'Status'
         );
+    }
+
+    public function computePropertyChanges(Commitment $oldModel) {
+        return strcasecmp($this->commitment, $oldModel->commitment) == 0 ? 1 : 0;
     }
 
     public function __set($name, $value) {
