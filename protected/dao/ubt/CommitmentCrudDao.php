@@ -31,4 +31,10 @@ interface CommitmentCrudDao {
      * @throws DataAccessException
      */
     public function insertCommitments(WigSession $wigSession);
+    
+    /**
+     * @param Commitment $commitment
+     * @throws DataAccessException
+     */
+    public function updateCommitmentData(Commitment $commitment);
 }

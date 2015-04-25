@@ -38,9 +38,7 @@ class CommitmentCrudDaoSqlImpl implements CommitmentCrudDao {
                     'description' => $commitment->commitment,
                     'status' => $commitment->commitmentEnvironmentStatus
                 ));
-                $this->logger->debug("Executing SQL Statement [INSERT INTO commitment_main(user_ref, wig_ref, commit_description, status) VALUES({$commitment->user->id}, {$wigSession->id}, {$commitment->commitment}, {$commitment->commitmentEnvironmentStatus})]");
             }
-
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
@@ -54,7 +52,6 @@ class CommitmentCrudDaoSqlImpl implements CommitmentCrudDao {
             $dbst->execute(array(
                 'ref' => $wigSession->id
             ));
-            $this->logger->debug("Executing SQL Statement [SELECT commit_id FROM commitments_main WHERE wig_ref={$wigSession->id}]");
 
             $commitments = array();
             while ($data = $dbst->fetch()) {
@@ -74,8 +71,6 @@ class CommitmentCrudDaoSqlImpl implements CommitmentCrudDao {
                 'id' => $id
             ));
 
-            $this->logger->debug("Executing SQL Statement [SELECT commit_id, user_ref, commit_description, status FROM commitments_main WHERE commit_id={$id}]");
-
             $commitment = new Commitment();
             while ($data = $dbst->fetch()) {
                 list($commitment->id,
@@ -86,6 +81,23 @@ class CommitmentCrudDaoSqlImpl implements CommitmentCrudDao {
             $commitment->user = $this->userDao->getUserAccount($user);
             return $commitment;
         } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function updateCommitmentData(Commitment $commitment) {
+        try {
+            $this->db->beginTransaction();
+
+            $dbst = $this->db->prepare('UPDATE commitments_main SET commit_description=:description, status=:status WHERE commit_id=:id');
+            $dbst->execute(array(
+                'description' => $commitment->commitment,
+                'status' => $commitment->commitmentEnvironmentStatus
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }
