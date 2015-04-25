@@ -10,7 +10,7 @@ switch ($data->commitmentEnvironmentStatus) {
         break;
 
     case Commitment::STATUS_ONGOING:
-        $page = "";
+        $page = "commitment/_movement";
         break;
 
     default:
