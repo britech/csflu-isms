@@ -118,7 +118,7 @@ class CommitmentController extends Controller {
 
         $this->commitmentModuleSupport->checkCommitmentAndUserIdentity($commitmentToUpdate, $remoteIndicator);
 
-        $oldCommitment = $this->commitmentService->getCommitmentData($commitmentToUpdate->id);
+        $oldCommitment = $this->loadModel($commitmentToUpdate->id, $remoteIndicator);
 
         $url = array('ip/index');
         if ($commitmentToUpdate->computePropertyChanges($oldCommitment) > 0) {
