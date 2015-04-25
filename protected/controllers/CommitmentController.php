@@ -106,8 +106,40 @@ class CommitmentController extends Controller {
             'sidebar' => array(
                 'file' => 'commitment/_navigation'
             ),
-            'model' => $this->loadModel($id)
+            'model' => $this->loadModel($id),
+            'validation' => $this->getSessionData('validation')
         ));
+        $this->unsetSessionData('validation');
+    }
+
+    public function updateEntry() {
+        $this->validatePostData(array('Commitment', 'UserAccount'));
+
+        $userAccountData = $this->getFormData('UserAccount');
+        $commitmentData = $this->getFormData('Commitment');
+
+        $commitmentToUpdate = new Commitment();
+        $commitmentToUpdate->bindValuesUsingArray(array(
+            'user' => $userAccountData,
+            'commitment' => $commitmentData
+        ));
+
+        $this->commitmentModuleSupport->checkCommitmentAndUserIdentity($commitmentToUpdate);
+
+        $oldCommitment = $this->commitmentService->getCommitmentData($commitmentToUpdate->id);
+
+        if ($commitmentToUpdate->computePropertyChanges($oldCommitment) > 0) {
+            try {
+                $this->commitmentService->updateCommitment($commitmentToUpdate);
+                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Commitment successfully updated'));
+            } catch (ServiceException $ex) {
+                $this->logger->warn($ex->getMessage(), $ex);
+                $this->setSessionData('validation', array($ex->getMessage()));
+                $this->redirect(array('commitment/manage', 'id' => $commitmentToUpdate->id));
+                return;
+            }
+        }
+        $this->redirect(array('ip/index'));
     }
 
     private function loadModel($id, $remote = false) {
