@@ -29,6 +29,13 @@ interface CommitmentManagementService {
     public function insertCommitments(WigSession $wigSession);
     
     /**
+     * Updates the Commitment entity
+     * @param Commitment $commitment
+     * @throws ServiceException
+     */
+    public function updateCommitment(Commitment $commitment);
+    
+    /**
      * Lists the commitments on a given UserAccount and WigSession entities
      * @param UserAccount $userAccount
      * @param WigSession $wigSession

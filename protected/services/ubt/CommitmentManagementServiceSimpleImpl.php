@@ -4,9 +4,11 @@ namespace org\csflu\isms\service\ubt;
 
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\dao\ubt\CommitmentCrudDaoSqlImpl;
+use org\csflu\isms\dao\ubt\WigSessionDaoSqlmpl;
 use org\csflu\isms\service\ubt\CommitmentManagementService;
 use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\uam\UserAccount;
+use org\csflu\isms\models\ubt\Commitment;
 
 /**
  * Description of CommitmentManagementServiceSimpleImpl
@@ -16,11 +18,13 @@ use org\csflu\isms\models\uam\UserAccount;
 class CommitmentManagementServiceSimpleImpl implements CommitmentManagementService {
 
     private $commitDaoSource;
+    private $wigSessionDaoSource;
     private $logger;
 
     public function __construct() {
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->commitDaoSource = new CommitmentCrudDaoSqlImpl();
+        $this->wigSessionDaoSource = new WigSessionDaoSqlmpl();
     }
 
     public function insertCommitments(WigSession $wigSession) {
@@ -63,6 +67,17 @@ class CommitmentManagementServiceSimpleImpl implements CommitmentManagementServi
 
     public function getCommitmentData($id) {
         return $this->commitDaoSource->getCommitmentData($id);
+    }
+
+    public function updateCommitment(Commitment $commitment) {
+        $wigSession = $this->wigSessionDaoSource->getWigSessionDataByCommitment($commitment);
+        $commitments = $this->commitDaoSource->listCommitments($wigSession);
+        foreach($commitments as $data){
+            if(strcasecmp($commitment->commitment, $data->commitment) && $commitment->user->id == $data->user->id && $commitment->id == $data->id){
+                throw new ServiceException("Commitment update not allowed");
+            }
+        }
+        $this->commitDaoSource->updateCommitmentData($commitment);
     }
 
 }
