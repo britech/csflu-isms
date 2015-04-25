@@ -34,6 +34,15 @@ if (isset($params['validation']) && !empty($params['validation'])) {
 </div>
 <?php echo $form->renderHiddenField($model, 'id'); ?>
 <?php echo $form->renderHiddenField($model, 'commitmentEnvironmentStatus'); ?>
-<?php echo $form->renderHiddenField($model->user, 'id'); ?>
-<?php
-echo $form->endComponent();
+<?php echo $form->renderHiddenField($model->user, 'id', array('id' => 'user')); ?>
+<?php echo $form->endComponent(); ?>
+
+<div id="dialog-pending">
+    <div id="dialogPendingContent" style="overflow: hidden">
+        <p id="text-pending"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept-pending">Yes</button>
+            <button class="ink-button green flat" id="deny">No</button>
+        </div>
+    </div>
+</div>
