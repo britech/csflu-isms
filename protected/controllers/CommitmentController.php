@@ -139,8 +139,18 @@ class CommitmentController extends Controller {
         }
     }
 
+    public function deleteEntry() {
+        $this->validatePostData(array('id'));
+
+        $id = $this->getFormData('id');
+        $commitment = $this->loadModel($id);
+        $this->commitmentService->deleteCommitment($id);
+        $this->setSessionData('notif', array('class' => 'error', 'message' => "{$commitment->commitment} deleted from your declared commitments"));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('ip/index'))));
+    }
+
     private function resolveUpdateMessage(Commitment $commitment) {
-        if(in_array('commitmentEnvironmentStatus', $commitment->updatedFields)){
+        if (in_array('commitmentEnvironmentStatus', $commitment->updatedFields)) {
             $message = "{$commitment->commitment} is now set to {$commitment->translateStatusCode($commitment->commitmentEnvironmentStatus)}";
         } else {
             $message = "Commitment successfully updated";

@@ -46,3 +46,13 @@ if (isset($params['validation']) && !empty($params['validation'])) {
         </div>
     </div>
 </div>
+
+<div id="dialog-delete">
+    <div id="dialogDeleteContent" style="overflow: hidden">
+        <p id="text-delete"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept-delete">Yes</button>
+            <button class="ink-button green flat" id="deny">No</button>
+        </div>
+    </div>
+</div>

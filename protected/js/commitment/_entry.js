@@ -8,8 +8,29 @@ $(document).ready(function() {
         $("#accept-pending").prop('id', "accept-pending-" + id);
     });
 
+    $("[id^=remove]").click(function() {
+        var commitment = $("#commitment").val();
+        var id = $(this).attr('id').split("-")[1];
+        $("#text-delete").html("Do you want to delete <strong>" + commitment + "</strong> from your declared commitments?");
+        $("#dialog-delete").jqxWindow('open');
+        $("#accept-delete").prop('id', "accept-delete-" + id);
+    });
+
     $('#dialog-pending').jqxWindow({
         title: '<strong>Confirm Commitment Status Update</strong>',
+        width: 300,
+        height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none',
+        cancelButton: $("#deny")
+    });
+
+    $('#dialog-delete').jqxWindow({
+        title: '<strong>Confirm Commitment Deletion</strong>',
         width: 300,
         height: 150,
         resizable: false,
@@ -41,7 +62,25 @@ $(document).ready(function() {
             try {
                 var response = $.parseJSON(data);
                 url = response.url;
-            } catch (e){
+            } catch (e) {
+                url = "?r=ip/index";
+            }
+            window.location = url;
+        });
+    });
+
+    $("[id^=accept-delete]").click(function() {
+        var id = $(this).attr('id').split("-")[2];
+        $.post("?r=commitment/deleteEntry",
+                {
+                    id: id
+                },
+        function(data) {
+            var url = "";
+            try {
+                var response = $.parseJSON(data);
+                url = response.url;
+            } catch (e) {
                 url = "?r=ip/index";
             }
             window.location = url;
