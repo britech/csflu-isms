@@ -30,6 +30,29 @@ class Commitment extends Model {
     private $commitmentTargetFigure;
     private $commitmentMovements;
     private $commitmentEnvironmentStatus = self::STATUS_PENDING;
+    
+    public static function translateStatusCode($code){
+        $description = "";
+        
+        switch ($code){
+            case self::STATUS_PENDING:
+                $description = "Pending";
+                break;
+            case self::STATUS_ONGOING:
+                $description = "On-going";
+                break;
+            case self::STATUS_FINISHED:
+                $description = "Finished";
+                break;
+            case self::STATUS_UNFINISHED:
+                $description = "Incomplete";
+                break;
+            default:
+                $description = "Undefined";
+        }
+        
+        return $description;
+    }
 
     public function validate() {
         if(strlen($this->commitment) == 0){
@@ -60,10 +83,12 @@ class Commitment extends Model {
         
         if(strcasecmp($this->commitment, $oldModel->commitment) != 0){
             $counter+=1;
+            array_push($this->updatedFields, 'commitment');
         }
         
         if($this->commitmentEnvironmentStatus != $oldModel->commitmentEnvironmentStatus){
             $counter+=1;
+            array_push($this->updatedFields, 'commitmentEnvironmentStatus');
         }
         
         return $counter;
