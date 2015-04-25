@@ -7,6 +7,7 @@ use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
+use org\csflu\isms\models\ubt\Commitment;
 
 /**
  * Description of WigMeetingDaoSqlImpl
@@ -101,6 +102,22 @@ class WigSessionDaoSqlmpl implements WigSessionDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function getWigSessionDataByCommitment(Commitment $commitment) {
+        try {
+            $dbst = $this->db->prepare('SELECT wig_ref FROM commitments_main WHERE commit_id=:id');
+            $dbst->execute(array(
+                'id'=>$commitment->id
+            ));
+            
+            while($data = $dbst->fetch()){
+                list($id) = $data;
+            }
+            return $this->getWigSessionData($id);
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }
