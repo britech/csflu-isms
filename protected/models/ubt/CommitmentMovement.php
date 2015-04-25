@@ -19,20 +19,28 @@ class CommitmentMovement extends Model {
     private $dateCaptured;
 
     public function validate() {
-        if(strlen($this->progressFigure) == 0){
+        if (strlen($this->movementFigure) == 0) {
             array_push($this->validationMessages, '- Movement Figure should be defined');
         }
-        
-        if(strlen($this->notes) == 0){
+
+        if (strlen($this->notes) == 0) {
             array_push($this->validationMessages, '- Notes should be defined');
         }
+    }
+
+    public function getAttributeNames() {
+        return array(
+            'movementFigure' => 'Movement Figure',
+            'notes' => 'Notes'
+        );
     }
 
     public function __set($name, $value) {
         $this->$name = $value;
     }
-    
+
     public function __get($name) {
         return $name;
     }
+
 }
