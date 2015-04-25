@@ -7,7 +7,6 @@ use org\csflu\isms\core\Model;
 /**
  * Description of CommitmentMovement
  *
- * @property String $id
  * @property String $progressFigure
  * @property String $notes
  * @property \DateTime $dateCaptured
@@ -15,7 +14,6 @@ use org\csflu\isms\core\Model;
  */
 class CommitmentMovement extends Model {
 
-    private $id;
     private $progressFigure;
     private $notes;
     private $dateCaptured;
