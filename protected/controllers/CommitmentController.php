@@ -140,7 +140,7 @@ class CommitmentController extends Controller {
     }
 
     private function resolveUpdateMessage(Commitment $commitment) {
-        if(in_array($commitment->updatedFields, 'commitmentEnvironmentStatus')){
+        if(in_array('commitmentEnvironmentStatus', $commitment->updatedFields)){
             $message = "{$commitment->commitment} is now set to {$commitment->translateStatusCode($commitment->commitmentEnvironmentStatus)}";
         } else {
             $message = "Commitment successfully updated";
