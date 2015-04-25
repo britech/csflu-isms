@@ -88,6 +88,7 @@ require_once 'dao/ubt/UnitBreakthroughDao.php';
 require_once 'dao/ubt/LeadMeasureDao.php';
 require_once 'dao/ubt/WigSessionDao.php';
 require_once 'dao/ubt/CommitmentCrudDao.php';
+require_once 'dao/ubt/CommitmentMovementDao.php';
 
 #dao-implementations
 require_once 'dao/commons/DepartmentDaoSqlImpl.php';
@@ -110,6 +111,7 @@ require_once 'dao/ubt/UnitBreakthroughDaoSqlImpl.php';
 require_once 'dao/ubt/LeadMeasureDaoSqlImpl.php';
 require_once 'dao/ubt/WigSessionDaoSqlmpl.php';
 require_once 'dao/ubt/CommitmentCrudDaoSqlImpl.php';
+require_once 'dao/ubt/CommitmentMovementDaoSqlImpl.php';
 
 #service-interfaces
 require_once 'services/commons/DepartmentService.php';
