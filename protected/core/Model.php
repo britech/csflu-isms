@@ -4,18 +4,16 @@ namespace org\csflu\isms\core;
 
 use org\csflu\isms\exceptions\ModelException;
 
-/**
- * @property Integer $validationMode
- * @property array $validationMessages
- */
 abstract class Model {
 
     const VALIDATION_MODE_INITIAL = 1;
     const VALIDATION_MODE_UPDATE = 2;
     
-    protected $validationMode = self::VALIDATION_MODE_INITIAL;
-    protected $validationMessages = array();
-    protected $arrayDelimiter = "/";
+    public $validationMode = self::VALIDATION_MODE_INITIAL;
+    public $validationMessages = array();
+    public $arrayDelimiter = "/";
+    public $updatedFields = array();
+    
     /**
      * 
      * @return boolean
@@ -52,13 +50,4 @@ abstract class Model {
     public function getModelTranslationAsDeletedEntity(){}
     
     public function computePropertyChanges(Model $oldModel){}
-    
-
-    public function __set($name, $value) {
-        $this->$name = $value;
-    }
-    
-    public function __get($name) {
-        return $this->$name;
-    }
 }
