@@ -92,7 +92,8 @@ class CommitmentCrudDaoSqlImpl implements CommitmentCrudDao {
             $dbst = $this->db->prepare('UPDATE commitments_main SET commit_description=:description, status=:status WHERE commit_id=:id');
             $dbst->execute(array(
                 'description' => $commitment->commitment,
-                'status' => $commitment->commitmentEnvironmentStatus
+                'status' => $commitment->commitmentEnvironmentStatus,
+                'id' => $commitment->id
             ));
 
             $this->db->commit();
