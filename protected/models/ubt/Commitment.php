@@ -53,7 +53,7 @@ class Commitment extends Model {
     }
 
     public function computePropertyChanges(Commitment $oldModel) {
-        return strcasecmp($this->commitment, $oldModel->commitment) == 0 ? 1 : 0;
+        return strcasecmp($this->commitment, $oldModel->commitment) != 0 ? 1 : 0;
     }
 
     public function __set($name, $value) {
