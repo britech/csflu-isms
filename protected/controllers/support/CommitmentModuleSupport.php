@@ -107,5 +107,17 @@ class CommitmentModuleSupport {
         $wigSession = $this->loadOpenWigSession($userAccount->employee->department);
         return $this->commitmentService->listCommitments($userAccount, $wigSession);
     }
+    
+    /**
+     * Ensures the commitment selected is under the same owner
+     * @param Commitment $commitment
+     */
+    public function checkCommitmentAndUserIdentity(Commitment $commitment){
+        $userAccount = $this->loadAccountModel();
+        if($commitment->user->id != $userAccount->id){
+            $this->logger->warn("Commitment Data is not under the selected UserAccount. Redirecting to home page");
+            $this->controller->redirect(array('ip/index'));
+        }
+    }
 
 }
