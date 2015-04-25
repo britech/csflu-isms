@@ -13,7 +13,7 @@ use org\csflu\isms\models\ubt\CommitmentMovement;
  *
  * @author britech
  */
-class CommitmentMovementDaoSqlImpl implements CommitmentUpdatesDao {
+class CommitmentMovementDaoSqlImpl implements CommitmentMovementDao {
 
     private $db;
     private $logger;
@@ -25,7 +25,7 @@ class CommitmentMovementDaoSqlImpl implements CommitmentUpdatesDao {
 
     public function listMovements(Commitment $commitment) {
         try {
-            $dbst = $this->db->prepare('SELECT figure, notes, date_entered FROM commitments_movements WHERE commit_ref=:ref');
+            $dbst = $this->db->prepare('SELECT figure, notes, date_entered FROM commitments_movement WHERE commit_ref=:ref');
             $dbst->execute(array('ref' => $commitment->id));
 
             $movements = array();
