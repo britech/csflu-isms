@@ -73,7 +73,7 @@ class CommitmentManagementServiceSimpleImpl implements CommitmentManagementServi
         $wigSession = $this->wigSessionDaoSource->getWigSessionDataByCommitment($commitment);
         $commitments = $this->commitDaoSource->listCommitments($wigSession);
         foreach($commitments as $data){
-            if(strcasecmp($commitment->commitment, $data->commitment) && $commitment->user->id == $data->user->id && $commitment->id == $data->id){
+            if(strcasecmp($commitment->commitment, $data->commitment) == 0 && $commitment->user->id == $data->user->id && $commitment->id == $data->id){
                 throw new ServiceException("Commitment update not allowed");
             }
         }
