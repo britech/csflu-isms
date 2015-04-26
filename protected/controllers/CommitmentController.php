@@ -170,7 +170,8 @@ class CommitmentController extends Controller {
         $this->remoteValidateModel($commitmentMovement);
     }
 
-    public function insertMovement() {
+    public function insertMovement($isFinished = 0) {
+        $finishIndicator = $isFinished == 1 ? true : false;
         $this->validatePostData(array('Commitment', 'CommitmentMovement'));
 
         $commitmentData = $this->getFormData('Commitment');
@@ -180,17 +181,49 @@ class CommitmentController extends Controller {
         $commitmentMovement->bindValuesUsingArray(array('commitmentmovement' => $commitmentMovementData), $commitmentMovement);
 
         $commitment = $this->loadModel($commitmentData['id']);
+        $commitment->bindValuesUsingArray(array('commitment' => $commitmentData));
+        $this->logger->debug($commitment);
 
         if (!$commitmentMovement->validate()) {
             $this->setSessionData('validation', $commitmentMovement->validationMessages);
-            $this->redirect(array('commitment/manage', 'id' => $commitment->id));
+            if ($finishIndicator) {
+                $url = array('commitment/finish', 'id' => $commitment->id);
+            } else {
+                $url = array('commitment/manage', 'id' => $commitment->id);
+            }
+            $this->redirect($url);
             return;
         }
 
         $commitment->commitmentMovements = array($commitmentMovement);
         $this->commitmentService->addMovementUpdates($commitment);
-        $this->setSessionData('notif', array('class' => 'success', 'message' => "Movemement successfully added to Commitment {$commitment->commitment}"));
+        if ($finishIndicator) {
+            $class = "info";
+            $message = "{$commitment->commitment} is now set to {$commitment->translateStatusCode($commitment->commitmentEnvironmentStatus)}";
+        } else {
+            $class = "success";
+            $message = "Movemement successfully added to Commitment {$commitment->commitment}";
+        }
+        $this->setSessionData('notif', array('class' => $class, 'message' => $message));
         $this->redirect(array('ip/index'));
+    }
+
+    public function finish($id) {
+        $commitment = $this->loadModel($id);
+        $commitment->commitmentEnvironmentStatus = Commitment::STATUS_FINISHED;
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Commitment Data';
+        $this->render('commitment/finish', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Performance Scorecard' => array('ip/index'),
+                'Manage Commitment' => array('commitment/manage', 'id' => $commitment->id),
+                'Set Commitment to Finished' => 'active'
+            ),
+            'model' => $commitment,
+            'movementModel' => new CommitmentMovement(),
+            'finishIndicator' => 1
+        ));
     }
 
     private function resolveUpdateMessage(Commitment $commitment) {

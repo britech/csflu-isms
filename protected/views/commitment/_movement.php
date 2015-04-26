@@ -4,11 +4,17 @@ namespace org\csflu\isms\views;
 
 use org\csflu\isms\util\ModelFormGenerator;
 
+if (isset($finishIndicator)) {
+    $url = array('commitment/insertMovement', 'isFinished' => $finishIndicator);
+} else {
+    $url = array('commitment/insertMovement');
+}
+
 $form = new ModelFormGenerator(array(
-    'action' => array('commitment/insertMovement'),
+    'action' => $url,
     'class' => 'ink-form',
     'hasFieldset' => true
-        ));
+));
 ?>
 <link href="assets/flick/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
 <link href="assets/tag-editor/jquery.tag-editor.css" rel="stylesheet" type="text/css"/>
@@ -48,4 +54,5 @@ if (isset($params['validation']) && !empty($params['validation'])) {
 <?php echo $form->renderHiddenField($model->user, 'id', array('id' => 'user')); ?>
 <?php echo $form->renderHiddenField($model, 'commitmentEnvironmentStatus'); ?>
 <?php echo $form->renderHiddenField($model, 'id', array('id' => 'commitment')); ?>
-<?php echo $form->endComponent();
+<?php
+echo $form->endComponent();
