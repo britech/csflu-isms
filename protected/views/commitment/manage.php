@@ -14,7 +14,7 @@ switch ($data->commitmentEnvironmentStatus) {
         break;
 
     default:
-        $page = "";
+        $page = "commitment/_log";
 }
 
 $this->renderPartial($page, $params);

@@ -222,8 +222,40 @@ class CommitmentController extends Controller {
             ),
             'model' => $commitment,
             'movementModel' => new CommitmentMovement(),
-            'finishIndicator' => 1
+            'finishIndicator' => 1,
+            'validation' => $this->getSessionData('validation')
         ));
+        $this->unsetSessionData('validation');
+    }
+
+    public function movementLog($commitment) {
+        $data = $this->loadModel($commitment);
+        $this->title = ApplicationConstants::APP_NAME . ' - Movements Log';
+        $this->render('commitment/log', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Performance Scorecard' => array('ip/index'),
+                'Manage Commitment' => array('commitment/manage', 'id' => $data->id),
+                'Movements Log' => 'active'
+            ),
+            'data' => $data
+        ));
+    }
+
+    public function listCommitments() {
+        $this->validatePostData(array('commitment'));
+
+        $id = $this->getFormData('commitment');
+        $commitment = $this->loadModel($id);
+        $data = array();
+        foreach ($commitment->commitmentMovements as $movement) {
+            array_push($data, array(
+                'figure' => $movement->movementFigure,
+                'notes' => nl2br(implode("\n", explode("+", $movement->notes))),
+                'date_entered' => $movement->dateCaptured->format('M d, Y h:i:s A')
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     private function resolveUpdateMessage(Commitment $commitment) {
