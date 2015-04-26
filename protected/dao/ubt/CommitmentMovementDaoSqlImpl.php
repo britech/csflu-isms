@@ -25,14 +25,14 @@ class CommitmentMovementDaoSqlImpl implements CommitmentMovementDao {
 
     public function listMovements(Commitment $commitment) {
         try {
-            $dbst = $this->db->prepare('SELECT figure, notes, date_entered FROM commitments_movement WHERE commit_ref=:ref');
+            $dbst = $this->db->prepare('SELECT figure, notes, date_entered FROM commitments_movement WHERE commit_ref=:ref ORDER BY date_entered DESC');
             $dbst->execute(array('ref' => $commitment->id));
 
             $movements = array();
             while ($data = $dbst->fetch()) {
                 $movement = new CommitmentMovement();
                 list($movement->movementFigure, $movement->notes, $date) = $data;
-                $movement->dateCaptured = \DateTime::createFromFormat('Y-m-d', $date);
+                $movement->dateCaptured = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
                 $movements = array_merge($movements, array($movement));
             }
             return $movements;
