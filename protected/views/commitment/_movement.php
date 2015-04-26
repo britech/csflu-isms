@@ -43,5 +43,6 @@ if (isset($params['validation']) && !empty($params['validation'])) {
         <?php echo $form->renderSubmitButton('Add', array('class' => 'ink-button green flat', 'style' => 'margin-top:1em; margin-left:0px;')) ?>
     </div>
 </div>
+<?php echo $form->renderHiddenField($model, 'commitmentEnvironmentStatus'); ?>
 <?php echo $form->renderHiddenField($model, 'id', array('id' => 'commitment')); ?>
 <?php echo $form->endComponent();
