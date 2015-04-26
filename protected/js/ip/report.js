@@ -16,8 +16,37 @@ $(document).ready(function() {
 
         var startingDate = dates.from;
         var endingDate = dates.to;
-        
+
         $("[name*=startingPeriod]").val(startingDate.getFullYear() + "-" + (startingDate.getMonth() + 1) + "-" + startingDate.getDate());
         $("[name*=endingPeriod]").val(endingDate.getFullYear() + "-" + (endingDate.getMonth() + 1) + "-" + endingDate.getDate());
+    });
+
+    $(".ink-form").submit(function() {
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=ip/validateReportInput",
+            data: {
+                "IpReportInput": {
+                    'startingPeriod': $("[name*=startingPeriod]").val(),
+                    'endingPeriod': $("[name*=endingPeriod]").val()
+                },
+                "UserAccount": {
+                    'id': $("#user").val()
+                }
+            },
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result;
     });
 });

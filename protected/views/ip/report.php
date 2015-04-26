@@ -7,7 +7,7 @@ use org\csflu\isms\util\ModelFormGenerator;
 $form = new ModelFormGenerator(array(
     'action' => array('ip/generateReport'),
     'class' => 'ink-form'
-));
+        ));
 ?>
 <script type="text/javascript" src="protected/js/ip/report.js"></script>
 <div class="column-group quarter-gutters">
@@ -35,7 +35,7 @@ $form = new ModelFormGenerator(array(
                 <?php echo $form->renderSubmitButton('Generate Report', array('class' => 'ink-button blue flat', 'style' => 'margin-top:1em; margin-left:0px; ')) ?>
             </div>
         </div>
-        <?php echo $form->renderHiddenField($model->user, 'id'); ?>
+        <?php echo $form->renderHiddenField($model->user, 'id', array('id' => 'user')); ?>
         <?php echo $form->renderHiddenField($model, 'startingPeriod'); ?>
         <?php echo $form->renderHiddenField($model, 'endingPeriod'); ?>
         <?php echo $form->endComponent(); ?>

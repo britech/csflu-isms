@@ -60,4 +60,24 @@ class IpController extends Controller {
         ));
     }
 
+    public function validateReportInput() {
+        try {
+            $this->validatePostData(array('IpReportInput', 'UserAccount'));
+        } catch (ControllerException $ex) {
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+            $this->logger->error($ex->getMessage(), $ex);
+        }
+
+        $reportInputData = $this->getFormData('IpReportInput');
+        $userAccountData = $this->getFormData('UserAccount');
+
+        $reportInput = new IpReportInput();
+        $reportInput->bindValuesUsingArray(array(
+            'ipreportinput' => $reportInputData,
+            'user' => $userAccountData
+        ));
+        
+        $this->remoteValidateModel($reportInput);
+    }
+
 }
