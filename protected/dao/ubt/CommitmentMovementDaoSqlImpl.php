@@ -33,6 +33,7 @@ class CommitmentMovementDaoSqlImpl implements CommitmentMovementDao {
                 $movement = new CommitmentMovement();
                 list($movement->movementFigure, $movement->notes, $date) = $data;
                 $movement->dateCaptured = \DateTime::createFromFormat('Y-m-d', $date);
+                $movements = array_merge($movements, array($movement));
             }
             return $movements;
         } catch (\PDOException $ex) {
