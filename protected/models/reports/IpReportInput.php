@@ -20,18 +20,18 @@ class IpReportInput extends Model {
     private $user;
 
     public function validate() {
-        if(!$this->startingPeriod instanceof \DateTime){
+        if (!$this->startingPeriod instanceof \DateTime) {
             array_push($this->validationMessages, '- Starting Date is not defined');
         }
-        
-        if(!$this->endingPeriod instanceof \DateTime){
+
+        if (!$this->endingPeriod instanceof \DateTime) {
             array_push($this->validationMessages, '- Ending Date is not defined');
         }
-        
-        if(!$this->user instanceof UserAccount){
+
+        if (!$this->user instanceof UserAccount) {
             array_push($this->validationMessages, '- User is not defined');
         }
-        
+
         return count($this->validationMessages) == 0;
     }
 
@@ -44,6 +44,14 @@ class IpReportInput extends Model {
 
         $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
         $this->endingPeriod = \DateTime::createFromFormat('Y-m-d', $this->endingPeriod);
+    }
+
+    public function getAttributeNames() {
+        return array(
+            'startingPeriod' => 'Starting Date',
+            'endingPeriod' => 'Ending Date',
+            'user' => 'Owner'
+        );
     }
 
     public function __set($name, $value) {
