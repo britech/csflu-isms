@@ -26,6 +26,8 @@ class CommitmentMovement extends Model {
         if (strlen($this->notes) == 0) {
             array_push($this->validationMessages, '- Notes should be defined');
         }
+        
+        return count($this->validationMessages) == 0;
     }
 
     public function getAttributeNames() {
