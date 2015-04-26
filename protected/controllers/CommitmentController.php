@@ -6,6 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ServiceException;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\models\ubt\CommitmentMovement;
 use org\csflu\isms\models\ubt\WigSession;
@@ -151,6 +152,22 @@ class CommitmentController extends Controller {
         $this->commitmentService->deleteCommitment($id);
         $this->setSessionData('notif', array('class' => 'error', 'message' => "{$commitment->commitment} deleted from your declared commitments"));
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('ip/index'))));
+    }
+
+    public function validateCommitmentMovement() {
+        try {
+            $this->validatePostData(array('CommitmentMovement'));
+        } catch (ControllerException $ex) {
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+            $this->logger->error($ex->getMessage(), $ex);
+        }
+
+        $commitmentMovementData = $this->getFormData('CommitmentMovement');
+
+        $commitmentMovement = new CommitmentMovement();
+        $commitmentMovement->bindValuesUsingArray(array('commitmentmovement' => $commitmentMovementData), $commitmentMovement);
+        
+        $this->remoteValidateModel($commitmentMovement);
     }
 
     private function resolveUpdateMessage(Commitment $commitment) {

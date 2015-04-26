@@ -10,15 +10,17 @@ $form = new ModelFormGenerator(array(
     'hasFieldset' => true
         ));
 ?>
+<link href="assets/flick/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
+<link href="assets/tag-editor/jquery.tag-editor.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="assets/jquery/jquery-ui-1.10.4.custom.js"></script>
+<script type="text/javascript" src="assets/tag-editor/jquery.tag-editor.js"></script>
+<script type="text/javascript" src="protected/js/commitment/_movement.js"></script>
 <?php echo $form->startComponent(); ?>
 <?php echo $form->constructHeader('Add Movement Data'); ?>
 <div class="ink-alert basic info">
     <strong>Important Note:</strong>&nbsp;Fields with * are required.
 </div>
-<div class="ink-alert block" id="validation-container">
-    <h4>Validation error. Please check your entries</h4>
-    <p id="validation-message"></p>
-</div>
+<div id="validation-container"></div>
 <?php
 if (isset($params['validation']) && !empty($params['validation'])) {
     $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
