@@ -48,4 +48,10 @@ interface CommitmentManagementService {
      * @return Commitment[]
      */
     public function listCommitments(UserAccount $userAccount, WigSession $wigSession);
+    
+    /**
+     * Adds CommitmentMovement entities in a specified Commitment entity
+     * @param Commitment $commitment
+     */
+    public function addMovementUpdates(Commitment $commitment);
 }

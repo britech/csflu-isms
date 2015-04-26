@@ -40,4 +40,30 @@ class CommitmentMovementDaoSqlImpl implements CommitmentMovementDao {
         }
     }
 
+    public function addMovementUpdates(Commitment $commitment) {
+        try {
+            $this->db->beginTransaction();
+
+            foreach ($commitment->commitmentMovements as $commitmentMovement) {
+                $dbst = $this->db->prepare('INSERT INTO commitments_movement(commit_ref, figure, notes) VALUES(:commit, :figure, :notes)');
+                $dbst->execute(array(
+                    'commit' => $commitment->id,
+                    'figure' => $commitmentMovement->movementFigure,
+                    'notes' => $commitmentMovement->notes
+                ));
+            }
+
+            $dbst = $this->db->prepare('UPDATE commitments_main SET status=:status WHERE commit_id=:id');
+            $dbst->execute(array(
+                'status' => $commitment->commitmentEnvironmentStatus,
+                'id' => $commitment->id
+            ));
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
 }

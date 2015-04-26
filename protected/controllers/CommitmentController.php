@@ -166,8 +166,31 @@ class CommitmentController extends Controller {
 
         $commitmentMovement = new CommitmentMovement();
         $commitmentMovement->bindValuesUsingArray(array('commitmentmovement' => $commitmentMovementData), $commitmentMovement);
-        
+
         $this->remoteValidateModel($commitmentMovement);
+    }
+
+    public function insertMovement() {
+        $this->validatePostData(array('Commitment', 'CommitmentMovement'));
+
+        $commitmentData = $this->getFormData('Commitment');
+        $commitmentMovementData = $this->getFormData('CommitmentMovement');
+
+        $commitmentMovement = new CommitmentMovement();
+        $commitmentMovement->bindValuesUsingArray(array('commitmentmovement' => $commitmentMovementData), $commitmentMovement);
+
+        $commitment = $this->loadModel($commitmentData['id']);
+
+        if (!$commitmentMovement->validate()) {
+            $this->setSessionData('validation', $commitmentMovement->validationMessages);
+            $this->redirect(array('commitment/manage', 'id' => $commitment->id));
+            return;
+        }
+
+        $commitment->commitmentMovements = array($commitmentMovement);
+        $this->commitmentService->addMovementUpdates($commitment);
+        $this->setSessionData('notif', array('class' => 'success', 'message' => "Movemement successfully added to Commitment {$commitment->commitment}"));
+        $this->redirect(array('ip/index'));
     }
 
     private function resolveUpdateMessage(Commitment $commitment) {

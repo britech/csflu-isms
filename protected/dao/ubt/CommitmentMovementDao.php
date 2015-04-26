@@ -18,4 +18,10 @@ interface CommitmentMovementDao {
      * @throws DataAccessException
      */
     public function listMovements(Commitment $commitment);
+    
+    /**
+     * @param Commitment $commitment
+     * @throws DataAccessException
+     */
+    public function addMovementUpdates(Commitment $commitment);
 }

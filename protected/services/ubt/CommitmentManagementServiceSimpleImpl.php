@@ -5,6 +5,7 @@ namespace org\csflu\isms\service\ubt;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\dao\ubt\CommitmentCrudDaoSqlImpl;
 use org\csflu\isms\dao\ubt\WigSessionDaoSqlmpl;
+use org\csflu\isms\dao\ubt\CommitmentMovementDaoSqlImpl;
 use org\csflu\isms\service\ubt\CommitmentManagementService;
 use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\uam\UserAccount;
@@ -19,12 +20,14 @@ class CommitmentManagementServiceSimpleImpl implements CommitmentManagementServi
 
     private $commitDaoSource;
     private $wigSessionDaoSource;
+    private $movementDaoSource;
     private $logger;
 
     public function __construct() {
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->commitDaoSource = new CommitmentCrudDaoSqlImpl();
         $this->wigSessionDaoSource = new WigSessionDaoSqlmpl();
+        $this->movementDaoSource = new CommitmentMovementDaoSqlImpl();
     }
 
     public function insertCommitments(WigSession $wigSession) {
@@ -82,6 +85,10 @@ class CommitmentManagementServiceSimpleImpl implements CommitmentManagementServi
 
     public function deleteCommitment($id) {
         $this->commitDaoSource->deleteCommitment($id);
+    }
+
+    public function addMovementUpdates(Commitment $commitment) {
+        $this->movementDaoSource->addMovementUpdates($commitment);
     }
 
 }
