@@ -67,6 +67,8 @@ require_once 'models/ubt/UnitBreakthroughMovement.php';
 require_once 'models/ubt/Commitment.php';
 require_once 'models/ubt/CommitmentMovement.php';
 
+require_once 'models/reports/IpReportInput.php';
+
 #dao-interfaces
 require_once 'dao/commons/DepartmentDao.php';
 require_once 'dao/commons/PositionDao.php';
