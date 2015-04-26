@@ -91,6 +91,7 @@ require_once 'dao/ubt/LeadMeasureDao.php';
 require_once 'dao/ubt/WigSessionDao.php';
 require_once 'dao/ubt/CommitmentCrudDao.php';
 require_once 'dao/ubt/CommitmentMovementDao.php';
+require_once 'dao/reports/IpReportDao.php';
 
 #dao-implementations
 require_once 'dao/commons/DepartmentDaoSqlImpl.php';
@@ -114,6 +115,7 @@ require_once 'dao/ubt/LeadMeasureDaoSqlImpl.php';
 require_once 'dao/ubt/WigSessionDaoSqlmpl.php';
 require_once 'dao/ubt/CommitmentCrudDaoSqlImpl.php';
 require_once 'dao/ubt/CommitmentMovementDaoSqlImpl.php';
+require_once 'dao/reports/IpReportDaoSqlImpl.php';
 
 #service-interfaces
 require_once 'services/commons/DepartmentService.php';
@@ -127,6 +129,7 @@ require_once 'services/map/StrategyMapManagementService.php';
 require_once 'services/initiative/InitiativeManagementService.php';
 require_once 'services/ubt/UnitBreakthroughManagementService.php';
 require_once 'services/ubt/CommitmentManagementService.php';
+require_once 'services/reports/IpReportService.php';
 
 #service-implementations
 require_once 'services/commons/DepartmentServiceSimpleImpl.php';
@@ -140,6 +143,7 @@ require_once 'services/map/StrategyMapManagementServiceSimpleImpl.php';
 require_once 'services/initiative/InitiativeManagementServiceSimpleImpl.php';
 require_once 'services/ubt/UnitBreakthroughManagementServiceSimpleImpl.php';
 require_once 'services/ubt/CommitmentManagementServiceSimpleImpl.php';
+require_once 'services/reports/IpReportServiceImpl.php';
 
 session_start();
 ob_start();
