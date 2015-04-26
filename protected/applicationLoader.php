@@ -22,6 +22,13 @@ require_once 'controllers/support/CommitmentModuleSupport.php';
 require_once 'ext/log4php/Logger.php';
 \Logger::configure("protected/logs/logback.xml");
 
+#report generation extension
+#Due to enormous size, It is recommended that the extension
+#be located outside of the application.
+#Upon deployment, please update the location
+#of the mpdf60 directory
+require_once '/home/britech/mpdf60/mpdf.php';
+
 #custom exceptions
 require_once 'exception/DataAccessException.php';
 require_once 'exception/ServiceException.php';
