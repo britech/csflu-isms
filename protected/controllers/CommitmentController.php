@@ -99,7 +99,7 @@ class CommitmentController extends Controller {
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Commitment';
         $commitment = $this->loadModel($id);
 
-        $this->layout = ($commitment->commitmentEnvironmentStatus == Commitment::STATUS_PENDING || $commitment->commitmentEnvironmentStatus == Commitment::STATUS_ONGOING) ? "column-2" : "column-1";
+        $this->layout = "column-2";
         $this->render('commitment/manage', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
