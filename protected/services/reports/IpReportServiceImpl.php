@@ -8,6 +8,8 @@ use org\csflu\isms\models\reports\IpReportInput;
 use org\csflu\isms\dao\reports\IpReportDaoSqlImpl;
 use org\csflu\isms\dao\ubt\WigSessionDaoSqlmpl;
 use org\csflu\isms\models\reports\IpReportOutput;
+use org\csflu\isms\models\ubt\Commitment;
+use org\csflu\isms\models\uam\UserAccount;
 
 /**
  * Description of IpReportServiceImpl
@@ -47,10 +49,27 @@ class IpReportServiceImpl implements IpReportService {
 
         $outputs = array();
         foreach ($wigSessions as $wigSession) {
-            $output = new IpReportOutput($wigSession->commitments, $wigSession);
+            $output = new IpReportOutput($this->loadCommitments($wigSession->commitments, $input->user), $wigSession);
             array_push($outputs, $output);
         }
         return $outputs;
+    }
+
+    /**
+     * Filters the Commitment based on the user
+     * @param Commitment[] $commitments
+     * @return Commitment[]
+     */
+    private function loadCommitments(array $commitments, UserAccount $userAccount) {
+        $output = array();
+        
+        foreach($commitments as $commitment){
+            if($commitment->user->id == $userAccount->id){
+               $output = array_merge($output, array($commitment));
+            }
+        }
+        
+        return $commitments;
     }
 
 }
