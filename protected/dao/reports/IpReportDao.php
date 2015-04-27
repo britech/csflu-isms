@@ -11,11 +11,11 @@ use org\csflu\isms\models\ubt\Commitment;
  * @author britech
  */
 interface IpReportDao {
-
+    
     /**
      * @param IpReportInput $input
      * @return Commitment[]
      * @throws DataAccessException
      */
-    public function retrieveData(IpReportInput $input);
+    public function listCommitments(IpReportInput $input);
 }

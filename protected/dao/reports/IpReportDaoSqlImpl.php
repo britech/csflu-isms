@@ -16,6 +16,7 @@ use org\csflu\isms\models\ubt\Commitment;
 class IpReportDaoSqlImpl implements IpReportDao {
 
     private $db;
+    private $wigDao;
     private $logger;
 
     public function __construct() {
@@ -23,11 +24,12 @@ class IpReportDaoSqlImpl implements IpReportDao {
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
-    public function retrieveData(IpReportInput $input) {
+    public function listCommitments(IpReportInput $input) {
         try {
-            $dbst = $this->db->prepare('SELECT commit_id, t1.status FROM commitments_main t1 JOIN ubt_wig t2 ON wig_ref=wig_id WHERE user_ref=:user AND period_start_date>=:start AND period_end_date<=:end');
+            $dbst = $this->db->prepare('SELECT commit_id, t1.status FROM commitments_main t1 JOIN ubt_wig t2 ON wig_ref=wig_id WHERE user_ref=:user AND ubt_ref=:ubt AND (period_start_date>=:start AND period_end_date<=:end)');
             $dbst->execute(array(
                 'user' => $input->user->id,
+                'ubt' => $input->unitBreakthrough->id,
                 'start' => $input->startingPeriod->format('Y-m-d'),
                 'end' => $input->endingPeriod->format('Y-m-d')
             ));
@@ -43,5 +45,4 @@ class IpReportDaoSqlImpl implements IpReportDao {
             throw new DataAccessException($ex->getMessage());
         }
     }
-
 }
