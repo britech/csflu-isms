@@ -5,6 +5,7 @@ $(document).ready(function() {
             datafields: [
                 {name: 'description'},
                 {name: 'status'},
+                {name: 'map'},
                 {name: 'action'}
             ],
             url: '?r=ubt/listUnitBreakthroughsByDepartment',
@@ -25,6 +26,11 @@ $(document).ready(function() {
         pageSize: 25,
         filterable: true,
         sortable: true,
-        selectionMode: 'singleRow'
+        selectionMode: 'singleRow',
+        groups: ['map'],
+        groupsRenderer: function(value, rowData, level) {
+            return "<strong>" + value + "</strong>";
+
+        }
     });
 });
