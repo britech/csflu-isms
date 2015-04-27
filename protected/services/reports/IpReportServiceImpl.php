@@ -49,18 +49,13 @@ class IpReportServiceImpl implements IpReportService {
 
         $outputs = array();
         foreach ($wigSessions as $wigSession) {
-            $output = new IpReportOutput($this->loadCommitments($wigSession->commitments, $input->user), $wigSession);
+            $output = new IpReportOutput($this->filterCommitments($wigSession->commitments, $input->user), $wigSession);
             array_push($outputs, $output);
         }
         return $outputs;
     }
 
-    /**
-     * Filters the Commitment based on the user
-     * @param Commitment[] $commitments
-     * @return Commitment[]
-     */
-    private function loadCommitments(array $commitments, UserAccount $userAccount) {
+    public function filterCommitments(array $commitments, UserAccount $userAccount) {
         $output = array();
         
         foreach($commitments as $commitment){
