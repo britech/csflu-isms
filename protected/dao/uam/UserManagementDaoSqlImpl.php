@@ -20,11 +20,15 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
     private $positionDao;
     private $departmentDao;
     private $securityRoleDao;
+    private $db;
+    private $hrDb;
 
     public function __construct() {
         $this->positionDao = new PositionDao();
         $this->departmentDao = new DepartmentDao();
         $this->securityRoleDao = new SecurityRoleDaoSqlImpl();
+        $this->db = ConnectionManager::getConnectionInstance();
+        $this->hrDb = ConnectionManager::getHrConnectionInstance();
     }
 
     public function authenticate($login) {
@@ -335,6 +339,42 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
             $db->commit();
         } catch (\PDOException $ex) {
             $db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function listAccountsByDepartmentReference(Department $department) {
+        try {
+            $dbst = $this->db->prepare('SELECT umain_id FROM user_main WHERE dept_ref=:department');
+            $dbst->execute(array(
+                'department' => $department->id
+            ));
+            
+            $accounts = array();
+            while($data = $dbst->fetch()){
+                list($id) = $data;
+                $accounts = array_merge($accounts, array($this->getUserAccount($id)));
+            }
+            return $accounts;
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function listAccountsByEmployeeReference(Employee $employee) {
+        try {
+            $dbst = $this->db->prepare('SELECT umain_id FROM user_main WHERE emp_ref=:employee');
+            $dbst->execute(array(
+                'employee' => $employee->id
+            ));
+            
+            $accounts = array();
+            while($data = $dbst->fetch()){
+                list($id) = $data;
+                $accounts = array_merge($accounts, array($this->getUserAccount($id)));
+            }
+            return $accounts;
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }

@@ -18,7 +18,7 @@ use org\csflu\isms\models\uam\Employee;
 class UserController extends Controller {
 
     private $userService;
-    
+
     public function __construct() {
         $this->checkAuthorization();
         $this->layout = 'column-2';
@@ -27,13 +27,15 @@ class UserController extends Controller {
 
     public function index() {
         $this->title = ApplicationConstants::APP_NAME . ' - User Management';
-        $this->render('user/index', array('breadcrumb' => array('Home' => array('site/index'), 'Account Maintenance' => 'active'),
-            'sidebar' => array('data' => $this->getSidebarData()),
-            'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""));
-
-        if (isset($_SESSION['notif'])) {
-            unset($_SESSION['notif']);
-        }
+        $this->render('user/index', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Account Maintenance' => 'active'),
+            'sidebar' => array(
+                'data' => $this->getSidebarData()),
+            'notif' => $this->getSessionData('notif')
+        ));
+        $this->unsetSessionData('notif');
     }
 
     public function createAccount() {
@@ -41,16 +43,19 @@ class UserController extends Controller {
 
         $this->render('user/create', array(
             'breadcrumb' => array(
-                'Home' => array('site/index'), 
-                'Account Maintenance' => array('user/index'), 
+                'Home' => array('site/index'),
+                'Account Maintenance' => array('user/index'),
                 'Initial Registration' => 'active'),
             'sidebar' => array('data' => $this->getSidebarData())));
     }
 
     private function getSidebarData() {
-        return array('header' => 'User Management',
-            'links' => array('Account Maintenance' => array('user/index'),
-                'Security Role' => array('role/index')));
+        return array(
+            'header' => 'User Management',
+            'links' => array(
+                'Account Maintenance' => array('user/index'),
+                'Security Role' => array('role/index')
+        ));
     }
 
     public function listEmployees() {
@@ -70,30 +75,27 @@ class UserController extends Controller {
     }
 
     public function validateEmployee() {
-        $id = filter_input(INPUT_POST, 'id');
+        $this->validatePostData(array('id'));
+        $id = $this->getFormData('id');
 
-        if (isset($id) && !empty($id)) {
-            $result = $this->userService->validateEmployee($id);
-            $enlistedEmployee = $this->userService->getEmployeeData($id);
+        $result = $this->userService->validateEmployee($id);
+        $enlistedEmployee = $this->userService->getEmployeeData($id);
 
-            if (!is_null($result->id)) {
-                if ($enlistedEmployee->id === $result->id) {
-                    $respCode = '11';
-                    $this->renderAjaxJsonResponse(array('respCode' => $respCode, 'respMessage' => 'Employee is already listed in the system. Please enter another employee ID to continue.'));
-                } else {
-                    $respCode = '00';
-                    $this->renderAjaxJsonResponse(array('respCode' => $respCode, 'id' => $result->id,
-                        'givenName' => $result->givenName,
-                        'lastName' => $result->lastName,
-                        'middleName' => $result->middleName,
-                        'deptCode' => $result->department->code));
-                }
+        if (!is_null($result->id)) {
+            if ($enlistedEmployee->id === $result->id) {
+                $respCode = '11';
+                $this->renderAjaxJsonResponse(array('respCode' => $respCode, 'respMessage' => 'Employee is already listed in the system. Please enter another employee ID to continue.'));
             } else {
-                $respCode = '10';
-                $this->renderAjaxJsonResponse(array('respCode' => $respCode, 'respMessage' => 'Employee not found. Please enter another employee ID to continue.'));
+                $respCode = '00';
+                $this->renderAjaxJsonResponse(array('respCode' => $respCode, 'id' => $result->id,
+                    'givenName' => $result->givenName,
+                    'lastName' => $result->lastName,
+                    'middleName' => $result->middleName,
+                    'deptCode' => $result->department->code));
             }
         } else {
-            throw new ControllerException('Data is needed to process request');
+            $respCode = '10';
+            $this->renderAjaxJsonResponse(array('respCode' => $respCode, 'respMessage' => 'Employee not found. Please enter another employee ID to continue.'));
         }
     }
 
@@ -118,44 +120,41 @@ class UserController extends Controller {
         $this->redirect(array('user/manageAccount', 'id' => $account->employee->id));
     }
 
-    public function manageAccount() {
-        $this->title = ApplicationConstants::APP_NAME . ' - Manage Account';
-        $id = filter_input(INPUT_GET, 'id');
-
-        if (isset($id) && !empty($id)) {
-            $employee = $this->userService->getEmployeeData($id);
-            if ($employee->id == $_SESSION['employee']) {
-                $_SESSION['notif'] = "You are not allowed to manage your own account";
-                $this->redirect(array('user/index'));
-            } else {
-                if (is_null($employee->id)) {
-                    $_SESSION['notif'] = array('class'=>'', 'message'=>"Account not found");
-                    $this->redirect(array('user/index'));
-                }
-                $status = $this->userService->getLoginAccountStatus($id);
-                $this->render('user/manage', array('breadcrumb' => array('Home' => array('site/index'),
-                        'Account Maintenance' => array('user/index'),
-                        'Manage Account' => 'active'),
-                    'sidebar' => array('file' => 'user/_profile'),
-                    'employee' => $id,
-                    'name' => $employee->givenName . ' ' . $employee->lastName,
-                    'username' => $employee->loginAccount->username,
-                    'status' => $status,
-                    'notif' => isset($_SESSION['notif']) ? $_SESSION['notif'] : ""));
-                if (isset($_SESSION['notif'])) {
-                    unset($_SESSION['notif']);
-                }
-            }
+    public function manageAccount($id) {
+        $employee = $this->userService->getEmployeeData($id);
+        if ($employee->id == $this->getSessionData('employee')) {
+            $this->setSessionData('notif', array('message' => "You are not allowed to manage your own account"));
+            $this->redirect(array('user/index'));
         } else {
-            throw new ControllerException('Another parameter is needed to process this request');
+            if (is_null($employee->id)) {
+                $this->setSessionData('notif', array('message' => "Account not found"));
+                $this->redirect(array('user/index'));
+            }
+            $status = $this->userService->getLoginAccountStatus($id);
+            $this->title = ApplicationConstants::APP_NAME . ' - Manage Account';
+            $this->render('user/manage', array(
+                'breadcrumb' => array(
+                    'Home' => array('site/index'),
+                    'Account Maintenance' => array('user/index'),
+                    'Manage Account' => 'active'),
+                'sidebar' => array('file' => 'user/_profile'),
+                'employee' => $id,
+                'name' => $employee->givenName . ' ' . $employee->lastName,
+                'username' => $employee->loginAccount->username,
+                'status' => $status,
+                'notif' => $this->getSessionData('notif')
+            ));
+            $this->unsetSessionData('notif');
         }
     }
 
     public function renderAccountGrid() {
         $id = filter_input(INPUT_POST, 'id');
+        $employee = new Employee();
+        $employee->id = $id;
 
         if (isset($id) && !empty($id)) {
-            $accounts = $this->userService->listAccounts($id);
+            $accounts = $this->userService->listAccounts($employee);
 
             $accountsArray = array();
             foreach ($accounts as $account) {
@@ -163,8 +162,8 @@ class UserController extends Controller {
                     'department' => $account->employee->department->name,
                     'position' => $account->employee->position->name,
                     'link' => ApplicationUtils::generateLink(array('user/updateLink', 'id' => $account->id), 'Update Link')
-                             .'&nbsp;|&nbsp;'.
-                             ApplicationUtils::generateLink(array('user/confirmDeleteLinkedRole', 'id'=>$account->id), 'Unlink Role')));
+                    . '&nbsp;|&nbsp;' .
+                    ApplicationUtils::generateLink(array('user/confirmDeleteLinkedRole', 'id' => $account->id), 'Unlink Role')));
             }
             $this->renderAjaxJsonResponse($accountsArray);
         } else {
@@ -210,7 +209,7 @@ class UserController extends Controller {
         $id = filter_input(INPUT_GET, 'id');
         if (isset($id) && !empty($id)) {
             $this->userService->resetPassword($id);
-            $_SESSION['notif'] = array('class'=>'info', 'message'=>"Password reset successfull. Default password is the account username");
+            $_SESSION['notif'] = array('class' => 'info', 'message' => "Password reset successfull. Default password is the account username");
             $this->redirect(array('user/manageAccount', 'id' => $id));
         } else {
             throw new ControllerException('Another parameter is needed to process this request');
@@ -263,7 +262,7 @@ class UserController extends Controller {
         if ($condition) {
             $this->userService->updateLoginAccountStatus($id, $status);
             $statusName = $status == 1 ? "Active" : "Inactive";
-            $_SESSION['notif'] = array('class'=>'info', 'message'=>"Account is now {$statusName}");
+            $_SESSION['notif'] = array('class' => 'info', 'message' => "Account is now {$statusName}");
             $this->redirect(array('user/manageAccount', 'id' => $id));
         } else {
             throw new ControllerException('Another parameter is needed to process this request');
@@ -309,7 +308,7 @@ class UserController extends Controller {
         if (isset($id) && !empty($id)) {
             $account = $this->userService->getAccountById($id);
             $this->userService->unlinkSecurityRole($id);
-            $_SESSION['notif'] = array('class'=>'error', 'message'=>"<b>{$account->securityRole->description}</b> designated at <b>{$account->employee->department->name}</b> was unlinked to this account.");
+            $_SESSION['notif'] = array('class' => 'error', 'message' => "<b>{$account->securityRole->description}</b> designated at <b>{$account->employee->department->name}</b> was unlinked to this account.");
             $this->redirect(array('user/manageAccount', 'id' => $account->employee->id));
         } else {
             throw new ControllerException('Another parameter is needed to process this request');
@@ -390,39 +389,39 @@ class UserController extends Controller {
             throw new ControllerException('Another parameter is needed to process this request');
         }
     }
-    
-    public function linkRole(){
+
+    public function linkRole() {
         $employeeData = filter_input_array(INPUT_POST)['Employee'];
         $departmentData = filter_input_array(INPUT_POST)['Department'];
         $positionData = filter_input_array(INPUT_POST)['Position'];
         $securityRoleData = filter_input_array(INPUT_POST)['SecurityRole'];
-        
+
         $condition = isset($employeeData) && isset($departmentData) && isset($positionData) && isset($securityRoleData);
-        if($condition){
+        if ($condition) {
             $account = new UserAccount();
-            $account->bindValuesUsingArray(array('employee'=>$employeeData,
-                'department'=>$departmentData,
-                'position'=>$positionData,
-                'securityrole'=>$securityRoleData,
-                'useraccount'=>array()));
+            $account->bindValuesUsingArray(array('employee' => $employeeData,
+                'department' => $departmentData,
+                'position' => $positionData,
+                'securityrole' => $securityRoleData,
+                'useraccount' => array()));
             $this->userService->linkSecurityRole($account);
-            $_SESSION['notif'] = array('class'=>'info', 'message'=>"Security role successfully linked to this account");
-            $this->redirect(array('user/manageAccount', 'id'=>$employeeData['id']));
-        } else{
+            $_SESSION['notif'] = array('class' => 'info', 'message' => "Security role successfully linked to this account");
+            $this->redirect(array('user/manageAccount', 'id' => $employeeData['id']));
+        } else {
             throw new ControllerException('Form data is needed to process this request');
         }
     }
-    
+
     public function updateLink() {
         $id = filter_input(INPUT_GET, 'id');
-        
-        if(!isset($id) || empty($id)){
+
+        if (!isset($id) || empty($id)) {
             throw new ControllerException('Another parameter is needed to process this request');
         }
-        
+
         $account = $this->userService->getAccountById($id);
-        if(is_null($account->id)) {
-            $_SESSION['notif'] = array('class'=>'', 'message'=>'Linked security role not found');
+        if (is_null($account->id)) {
+            $_SESSION['notif'] = array('class' => '', 'message' => 'Linked security role not found');
             $this->redirect(array('user/index'));
         } else {
             $this->title = ApplicationConstants::APP_NAME . ' - Update Security Role';
@@ -442,32 +441,32 @@ class UserController extends Controller {
             ));
         }
     }
-    
-    public function linkUpdate(){
+
+    public function linkUpdate() {
         $securityRoleData = filter_input_array(INPUT_POST)['SecurityRole'];
         $positionData = filter_input_array(INPUT_POST)['Position'];
         $employeeData = filter_input_array(INPUT_POST)['Employee'];
         $accountData = filter_input_array(INPUT_POST)['UserAccount'];
-        
-        
+
+
         $condition = !isset($securityRoleData) || !isset($positionData) || !isset($employeeData) || !isset($accountData);
-        
-        if($condition) {
+
+        if ($condition) {
             throw new ControllerException('Form data is expected to process this request');
         }
-        
+
         $account = new UserAccount();
         $account->bindValuesUsingArray(array(
-            'securityrole'=>$securityRoleData,
-            'position'=>$positionData,
-            'employee'=>$employeeData,
-            'useraccount'=>$accountData
+            'securityrole' => $securityRoleData,
+            'position' => $positionData,
+            'employee' => $employeeData,
+            'useraccount' => $accountData
         ));
-        
+
         $this->userService->updateAccount($account);
-        
-        $_SESSION['notif'] = array('class'=>'info', 'message'=>"Link update successfull");
-        $this->redirect(array('user/manageAccount', 'id'=>$account->employee->id));
+
+        $_SESSION['notif'] = array('class' => 'info', 'message' => "Link update successfull");
+        $this->redirect(array('user/manageAccount', 'id' => $account->employee->id));
     }
 
 }

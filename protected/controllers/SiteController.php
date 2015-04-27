@@ -5,6 +5,7 @@ namespace org\csflu\isms\controllers;
 use org\csflu\isms\core\Controller as Controller;
 use org\csflu\isms\core\ApplicationConstants as ApplicationConstants;
 use org\csflu\isms\models\uam\Login as Login;
+use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl as UserManagementService;
 
 class SiteController extends Controller {
@@ -75,17 +76,19 @@ class SiteController extends Controller {
     }
 
     public function loadAccounts() {
-        $sessionEmployeeId = $_SESSION['employee'];
-        $requestEmployeeId = filter_input(INPUT_GET, 'employee');
+        $sessionEmployeeId = $this->getSessionData('employee');
+        $requestEmployeeId = $this->getArgumentData('employee');
         if (!empty($sessionEmployeeId) && !empty($sessionEmployeeId)) {
             if ($sessionEmployeeId != $requestEmployeeId) {
-                unset($_SESSION['employee']);
-                unset($_SESSION['user']);
-                $_SESSION['login.notif'] = "Please enter your account credentials to continue";
+                $this->unsetSessionData('employee');
+                $this->unsetSessionData('user');
+                $this->setSessionData('login.noti', "Please enter your account credentials to continue");
                 $this->redirect(array('site/login'));
             } else {
                 $this->title = ApplicationConstants::APP_NAME . ' - Account Selection';
-                $accounts = $this->userService->listAccounts($sessionEmployeeId);
+                $employee = new Employee();
+                $employee->id = $sessionEmployeeId;
+                $accounts = $this->userService->listAccounts($employee);
                 $this->resolveEntry($accounts);
             }
         } else {

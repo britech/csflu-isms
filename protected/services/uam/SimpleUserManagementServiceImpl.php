@@ -2,6 +2,8 @@
 
 namespace org\csflu\isms\service\uam;
 
+use org\csflu\isms\models\uam\Employee;
+use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\dao\uam\UserManagementDaoSqlImpl as UserManagementDao;
 use org\csflu\isms\dao\uam\SecurityRoleDaoSqlImpl as SecurityRoleDao;
 use org\csflu\isms\service\uam\UserManagementService;
@@ -21,10 +23,14 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
         return $this->userDaoSource->authenticate($login);
     }
 
-    public function listAccounts($id) {
-        $accounts = $this->userDaoSource->listAccounts($id);
+    public function listAccounts(Employee $employee = null, Department $department = null) {
+        if (!is_null($employee)) {
+            $accounts = $this->userDaoSource->listAccountsByEmployeeReference($employee);
+        } elseif (!is_null($department)) {
+            $accounts = $this->userDaoSource->listAccountsByDepartmentReference($department);
+        }
         
-        if(count($accounts) == 0){
+        if (count($accounts) == 0) {
             throw new ServiceException('Account Setup is invalid');
         }
         return $accounts;
@@ -40,8 +46,8 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
 
     public function listSecurityRoles() {
         $roles = $this->securityRoleDaoSource->listSecurityRoles();
-        
-        if(count($roles) == 0){
+
+        if (count($roles) == 0) {
             throw new ServiceException('Security Roles not defined');
         }
         return $roles;
@@ -57,8 +63,8 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
 
     public function getLoginAccountStatus($id) {
         $status = $this->userDaoSource->getLoginAccountStatus($id);
-        
-        if(is_null($status)){
+
+        if (is_null($status)) {
             throw new ServiceException('Account setup is invalid');
         }
         return $status;
@@ -75,17 +81,17 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
     public function getAccountById($id) {
         return $this->userDaoSource->getUserAccount($id);
     }
-    
-    public function unlinkSecurityRole($id){
+
+    public function unlinkSecurityRole($id) {
         $account = $this->userDaoSource->getUserAccount($id);
         $employee = $this->userDaoSource->getEmployeeData($account->employee->id);
         $accounts = $this->userDaoSource->listAccounts($account->employee->id);
-        
-        if($account->employee->department->id == $employee->department->id){
+
+        if ($account->employee->department->id == $employee->department->id) {
             throw new ServiceException('Default linked security role cannot be deleted');
         }
-        
-        if(count($accounts) == 1){
+
+        if (count($accounts) == 1) {
             throw new ServiceException('At least one security role must be assigned to an account');
         }
         $this->userDaoSource->unlinkSecurityRole($id);
@@ -106,7 +112,7 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
     public function getSecurityRoleData($id) {
         return $this->securityRoleDaoSource->getSecurityRoleData($id);
     }
-    
+
     public function updateSecurityRole($securityRole) {
         $this->securityRoleDaoSource->updateRoleDescription($securityRole);
         $this->securityRoleDaoSource->manageLinkedActions($securityRole);
