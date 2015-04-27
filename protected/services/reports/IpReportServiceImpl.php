@@ -55,7 +55,7 @@ class IpReportServiceImpl implements IpReportService {
         return $outputs;
     }
 
-    public function filterCommitments(array $commitments, UserAccount $userAccount) {
+    private function filterCommitments(array $commitments, UserAccount $userAccount) {
         $output = array();
         
         foreach($commitments as $commitment){
