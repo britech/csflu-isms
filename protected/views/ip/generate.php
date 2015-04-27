@@ -2,41 +2,37 @@
 
 namespace org\csflu\isms\views;
 
-use org\csflu\isms\models\ubt\Commitment;
-
 ob_end_clean();
 error_reporting(0);
 
-$pending = 0;
-$ongoing = 0;
-$finished = 0;
-$unfinished = 0;
-$total = count($data);
-foreach ($data as $commitment) {
-    switch ($commitment->commitmentEnvironmentStatus) {
-        case Commitment::STATUS_PENDING:
-            $pending++;
-            break;
-        case Commitment::STATUS_ONGOING:
-            $ongoing++;
-            break;
-        case Commitment::STATUS_FINISHED:
-            $finished++;
-            break;
-        case Commitment::STATUS_UNFINISHED:
-            $unfinished++;
-            break;
-    }
+$pending = $data->countPendingCommitments();
+$ongoing = $data->countOngoingCommitments();
+$finished = $data->countFinishedCommitments();
+$unfinished = $data->countUnfinishedCommitments();
+$total = $data->countAll();
+
+$pendingPercentage = $data->calculateDistributionPercentage($pending);
+$ongoingPercentage = $data->calculateDistributionPercentage($ongoing);
+$finishedPercentage = $data->calculateDistributionPercentage($finished);
+$unfinishedPercentage = $data->calculateDistributionPercentage($unfinished);
+
+$breakdownHtml = "";
+foreach ($detail as $output) {
+$wigSession = $output->getWigSessionEntity();
+$breakdownHtml.= <<<ROW
+<tr>
+    <td style="border: 1px solid #000000; text-align: center">
+        {$wigSession->startingPeriod->format('M. j, Y')} - {$wigSession->endingPeriod->format('M. j, Y')}
+    </td>
+    <td style="border: 1px solid #000000; text-align: center">{$wigSession->listWigMeetingEnvironmentStatus()[$wigSession->wigMeetingEnvironmentStatus]}</td>
+    <td style="border: 1px solid #000000; text-align: center">{$output->countPendingCommitments()}</td>
+    <td style="border: 1px solid #000000; text-align: center">{$output->countOngoingCommitments()}</td>
+    <td style="border: 1px solid #000000; text-align: center">{$output->countFinishedCommitments()}</td>
+    <td style="border: 1px solid #000000; text-align: center">{$output->countUnfinishedCommitments()}</td>
+    <td style="border: 1px solid #000000; text-align: center">{$output->countAll()}</td>
+</tr>
+ROW;
 }
-
-$pendingPercentage = number_format((($pending / $total) * 100), 2);
-$ongoingPercentage = number_format((($ongoing / $total) * 100), 2);
-$finishedPercentage = number_format((($finished / $total) * 100), 2);
-$unfinishedPercentage = number_format((($unfinished / $total) * 100), 2);
-
-$pdf = new \mPDF('c', 'A4');
-$pdf->mirrorMargins = .5;
-$pdf->AddPage();
 
 $html = <<<TABLE
 <div class="column-group quarter-gutters" style="color: black;">
@@ -48,58 +44,85 @@ $html = <<<TABLE
     </div>
 </div>
 
-<table class="ink-table bordered" style="font-size: 13px; font-family: sans-serif; margin-top: 10px; color: black;">
+<table class="ink-table bordered" style="font-family: sans-serif; margin-top: 10px; color: black;">
     <thead>
         <tr>
-            <th style="text-align: left; width: 20%; border: 1px solid #000000;">Name</th>
-            <td style="border: 1px solid #000000;" colspan="2">{$user->employee->givenName} {$user->employee->lastName}</td>
+            <th style="border: 1px solid #000000; background-color: black; color: white;" colspan="7">Scorecard Report</th>
         </tr>
         <tr>
-            <th style="text-align: left; width: 20%; border: 1px solid #000000;">Unit</th>
-            <td style="border: 1px solid #000000;" colspan="2">{$user->employee->department->name}</td>
+            <th style="text-align: left; width: 20%; border: 1px solid #000000; width: 30%" colspan="1">Name</th>
+            <td style="border: 1px solid #000000;" colspan="6">{$user->employee->givenName} {$user->employee->lastName}</td>
         </tr>
         <tr>
-            <th style="text-align: left; width: 20%; border: 1px solid #000000;">Date of Coverage</th>
-            <td style="border: 1px solid #000000;" colspan="2">{$input->startingPeriod->format('F d, Y')} to {$input->endingPeriod->format('F d, Y')}</td>
+            <th style="text-align: left; width: 20%; border: 1px solid #000000;" colspan="1">Unit</th>
+            <td style="border: 1px solid #000000;" colspan="6">{$user->employee->department->name}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; width: 20%; border: 1px solid #000000;" colspan="1">Date of Coverage</th>
+            <td style="border: 1px solid #000000;" colspan="6">{$input->startingPeriod->format('F d, Y')} to {$input->endingPeriod->format('F d, Y')}</td>
+        </tr>
+        <tr>
+            <th style="text-align: left; width: 20%; border: 1px solid #000000;" colspan="1">Selected UBT</th>
+            <td style="border: 1px solid #000000;" colspan="6">{$user->employee->department->code} - {$input->unitBreakthrough->id}</td>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <th style="border: 1px solid #000000; background-color: black; color: white;" colspan="3">Scorecard Report</th>
+            <th style="border: 1px solid #000000; background-color: black; color: white;" colspan="7">Summary</th>
         </tr>
         <tr>
-            <th style="width: 33%; border: 1px solid #000000;">Status</th>
-            <th style="width: 33%; border: 1px solid #000000;">Count</th>
-            <th style="width: 33%; border: 1px solid #000000;">Distribution %</th>
+            <th style="width: 33%; border: 1px solid #000000;" colspan="1">Status</th>
+            <th style="width: 33%; border: 1px solid #000000;" colspan="3">Count</th>
+            <th style="width: 33%; border: 1px solid #000000;" colspan="3">Distribution %</th>
         </tr>
         <tr>
-            <th style="text-align: left; border: 1px solid #000000;">PENDING</td>
-            <td style="border: 1px solid #000000;">{$pending}</td>
-            <td style="border: 1px solid #000000;">{$pendingPercentage}</td>
+            <th style="text-align: left; border: 1px solid #000000;" colspan="1">PENDING</td>
+            <td style="border: 1px solid #000000; text-align: center;" colspan="3">{$pending}</td>
+            <td style="border: 1px solid #000000; text-align: center;" colspan="3">{$pendingPercentage}</td>
         </tr>
         <tr>
-            <th style="text-align: left; border: 1px solid #000000;">ONGOING</td>
-            <td style="border: 1px solid #000000;">{$ongoing}</td>
-            <td style="border: 1px solid #000000;">{$ongoingPercentage}</td>
+            <th style="text-align: left; border: 1px solid #000000;" colspan="1">ONGOING</td>
+            <td style="border: 1px solid #000000; text-align: center;" colspan="3">{$ongoing}</td>
+            <td style="border: 1px solid #000000; text-align: center;" colspan="3">{$ongoingPercentage}</td>
         </tr>
         <tr>
-            <th style="text-align: left; border: 1px solid #000000;">FINISHED</td>
-            <td style="border: 1px solid #000000;">{$finished}</td>
-            <td style="border: 1px solid #000000;">{$finishedPercentage}</td>
+            <th style="text-align: left; border: 1px solid #000000;" colspan="1">FINISHED</td>
+            <td style="border: 1px solid #000000; text-align: center;" colspan="3">{$finished}</td>
+            <td style="border: 1px solid #000000; text-align: center;" colspan="3">{$finishedPercentage}</td>
         </tr>
         <tr>
-            <th style="text-align: left; border: 1px solid #000000;">UNFINISHED</td>
-            <td style="border: 1px solid #000000;">{$unfinished}</td>
-            <td style="border: 1px solid #000000;">{$unfinishedPercentage}</td>
+            <th style="text-align: left; border: 1px solid #000000;" colspan="1">UNFINISHED</td>
+            <td style="border: 1px solid #000000; text-align: center;" colspan="3">{$unfinished}</td>
+            <td style="border: 1px solid #000000; text-align: center;" colspan="3">{$unfinishedPercentage}</td>
         </tr>
         <tr>
-            <th style="text-align: right; border: 1px solid #000000;" colspan="2">TOTAL COMMITMENTS</td>
-            <th style="text-align: left; border: 1px solid #000000;">{$total}</td>
+            <th style="text-align: right; border: 1px solid #000000;" colspan="1">TOTAL COMMITMENTS</td>
+            <th style="text-align: left; border: 1px solid #000000;" colspan="6">{$total}</td>
         </tr>
+            
+        <tr>
+            <th style="border: 1px solid #000000; background-color: black; color: white;" colspan="7">Breakdown</th>
+        </tr>
+        <tr>
+            <th style="border: 1px solid #000000; width: 30%;" rowspan="2">WIG Timeline</th>
+            <th style="border: 1px solid #000000; width: 20%;" rowspan="2">Status</th>
+            <th style="border: 1px solid #000000; width: 30%;" colspan="4">Commitment Status</th>
+            <th style="border: 1px solid #000000; width: 20%;" rowspan="2">Total</th>
+        </tr>
+        <tr>
+            <th style="border: 1px solid #000000; width: 25%;">Pending</th>
+            <th style="border: 1px solid #000000; width: 25%;">Ongoing</th>
+            <th style="border: 1px solid #000000; width: 25%;">Finished</th>
+            <th style="border: 1px solid #000000; width: 25%;">Unfinished</th>
+        </tr>
+        {$breakdownHtml}
     </tbody>
 </table>
 TABLE;
 
+$pdf = new \mPDF('c', 'A4');
+$pdf->mirrorMargins = .5;
+$pdf->AddPage('L');
 $css = file_get_contents('assets/ink/css/ink.css');
 $pdf->writeHTML($css, 1);
 $pdf->writeHTML($html);

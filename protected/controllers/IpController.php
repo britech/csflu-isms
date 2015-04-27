@@ -7,8 +7,9 @@ use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\controllers\support\CommitmentModuleSupport;
 use org\csflu\isms\service\reports\IpReportServiceImpl;
+use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
 use org\csflu\isms\models\reports\IpReportInput;
-use org\csflu\isms\models\ubt\Commitment;
+use org\csflu\isms\models\ubt\UnitBreakthrough;
 
 /**
  * Description of IpController
@@ -19,6 +20,7 @@ class IpController extends Controller {
 
     private $commitmentModuleSupport;
     private $reportService;
+    private $ubtService;
     private $logger;
 
     public function __construct() {
@@ -26,6 +28,7 @@ class IpController extends Controller {
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->commitmentModuleSupport = CommitmentModuleSupport::getInstance($this);
         $this->reportService = new IpReportServiceImpl();
+        $this->ubtService = new UnitBreakthroughManagementServiceSimpleImpl();
     }
 
     public function index() {
@@ -60,6 +63,7 @@ class IpController extends Controller {
                 'Generate Scorecard' => 'active'
             ),
             'model' => $model,
+            'ubtModel' => new UnitBreakthrough(),
             'employee' => "{$model->user->employee->lastName}, {$model->user->employee->givenName}",
             'validation' => $this->getSessionData('validation')
         ));
@@ -68,7 +72,7 @@ class IpController extends Controller {
 
     public function validateReportInput() {
         try {
-            $this->validatePostData(array('IpReportInput', 'UserAccount'));
+            $this->validatePostData(array('IpReportInput', 'UnitBreakthrough', 'UserAccount'));
         } catch (ControllerException $ex) {
             $this->renderAjaxJsonResponse(array('respCode' => '70'));
             $this->logger->error($ex->getMessage(), $ex);
@@ -76,27 +80,33 @@ class IpController extends Controller {
 
         $reportInputData = $this->getFormData('IpReportInput');
         $userAccountData = $this->getFormData('UserAccount');
+        $ubtData = $this->getFormData('UnitBreakthrough');
 
         $reportInput = new IpReportInput();
         $reportInput->bindValuesUsingArray(array(
             'ipreportinput' => $reportInputData,
-            'user' => $userAccountData
+            'user' => $userAccountData,
+            'unitbreakthrough' => $ubtData
         ));
 
         $this->remoteValidateModel($reportInput);
     }
 
     public function generateReport() {
-        $this->validatePostData(array('IpReportInput', 'UserAccount'));
+        $this->validatePostData(array('IpReportInput', 'UnitBreakthrough', 'UserAccount'));
 
         $reportInputData = $this->getFormData('IpReportInput');
         $userAccountData = $this->getFormData('UserAccount');
+        $ubtData = $this->getFormData('UserAccount');
 
         $reportInput = new IpReportInput();
         $reportInput->bindValuesUsingArray(array(
             'ipreportinput' => $reportInputData,
-            'user' => $userAccountData
+            'user' => $userAccountData,
+            'unitbreakthrough' => $ubtData
         ));
+
+        $reportInput->unitBreakthrough = $this->ubtService->getUnitBreakthrough($reportInput->unitBreakthrough->id);
 
         if (!$reportInput->validate()) {
             $this->setSessionData('validation', $reportInput->validationMessages);
@@ -105,12 +115,14 @@ class IpController extends Controller {
         }
 
         try {
-            $commitments = $this->reportService->retrieveData($reportInput);
-            
+            $data = $this->reportService->retrieveData($reportInput);
+            $detailData = $this->reportService->retrieveBreakdownData($reportInput);
+
             $this->render('ip/generate', array(
                 'user' => $this->commitmentModuleSupport->loadAccountModel(),
                 'input' => $reportInput,
-                'data' => $commitments
+                'data' => $data,
+                'detail' => $detailData
             ));
         } catch (ServiceException $ex) {
             $this->logger->error($ex->getMessage(), $ex);
