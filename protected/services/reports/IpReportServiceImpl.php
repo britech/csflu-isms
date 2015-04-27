@@ -64,12 +64,12 @@ class IpReportServiceImpl implements IpReportService {
         $output = array();
         
         foreach($commitments as $commitment){
-            if($commitment->user->id == $userAccount->id){
+            if($userAccount->id == $commitment->user->id){
                $output = array_merge($output, array($commitment));
             }
         }
         
-        return $commitments;
+        return $output;
     }
 
 }

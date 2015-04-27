@@ -97,7 +97,7 @@ class IpController extends Controller {
 
         $reportInputData = $this->getFormData('IpReportInput');
         $userAccountData = $this->getFormData('UserAccount');
-        $ubtData = $this->getFormData('UserAccount');
+        $ubtData = $this->getFormData('UnitBreakthrough');
 
         $reportInput = new IpReportInput();
         $reportInput->bindValuesUsingArray(array(
