@@ -34,8 +34,8 @@ class IpReportInput extends Model {
         if (!$this->user instanceof UserAccount) {
             array_push($this->validationMessages, '- User is not defined');
         }
-        
-        if(!$this->unitBreakthrough instanceof UnitBreakthrough){
+
+        if (!$this->unitBreakthrough instanceof UnitBreakthrough) {
             array_push($this->validationMessages, '- UBT is not defined');
         }
 
@@ -43,12 +43,12 @@ class IpReportInput extends Model {
     }
 
     public function bindValuesUsingArray(array $valueArray) {
-        if (array_key_exists('user', $valueArray)) {
+        if (array_key_exists('user', $valueArray) && !empty($valueArray['user']['id'])) {
             $this->user = new UserAccount();
             $this->user->id = $valueArray['user']['id'];
         }
 
-        if (array_key_exists('unitbreakthrough', $valueArray)) {
+        if (array_key_exists('unitbreakthrough', $valueArray) && !empty($valueArray['unitbreakthrough']['id'])) {
             $this->unitBreakthrough = new UnitBreakthrough();
             $this->unitBreakthrough->id = $valueArray['unitbreakthrough']['id'];
         }
@@ -63,7 +63,8 @@ class IpReportInput extends Model {
         return array(
             'startingPeriod' => 'Starting Date',
             'endingPeriod' => 'Ending Date',
-            'user' => 'Owner'
+            'user' => 'Owner',
+            'unitBreakthrough' => 'Selected UBT'
         );
     }
 
