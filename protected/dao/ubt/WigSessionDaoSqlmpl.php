@@ -3,6 +3,7 @@
 namespace org\csflu\isms\dao\ubt;
 
 use org\csflu\isms\dao\ubt\WigSessionDao;
+use org\csflu\isms\dao\ubt\CommitmentCrudDaoSqlImpl;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\models\ubt\WigSession;
@@ -17,9 +18,11 @@ use org\csflu\isms\models\ubt\Commitment;
 class WigSessionDaoSqlmpl implements WigSessionDao {
 
     private $db;
+    private $commitCrudDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
+        $this->commitCrudDaoSource = new CommitmentCrudDaoSqlImpl();
     }
 
     public function insertWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough) {
@@ -69,6 +72,7 @@ class WigSessionDaoSqlmpl implements WigSessionDao {
             }
             $wigMeeting->startingPeriod = \DateTime::createFromFormat('Y-m-d', $startDate);
             $wigMeeting->endingPeriod = \DateTime::createFromFormat('Y-m-d', $endDate);
+            $wigMeeting->commitments = $this->commitCrudDaoSource->listCommitments($wigMeeting);
             return $wigMeeting;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
