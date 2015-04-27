@@ -106,7 +106,7 @@ class SiteController extends Controller {
             $itemValues = array();
             foreach ($accounts as $account) {
                 array_push($itemIds, $account->id);
-                array_push($itemValues, $account->securityRole->name . '&nbsp;-&nbsp;' . $account->employee->department->name);
+                array_push($itemValues, $account->securityRole->description . '&nbsp;-&nbsp;' . $account->employee->department->name);
             }
             $this->render('site/accounts', array('accounts' => array_combine($itemIds, $itemValues)));
         }
