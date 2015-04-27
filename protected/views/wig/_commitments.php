@@ -1,3 +1,8 @@
+<?php
+namespace org\csflu\isms\views;
+
+use org\csflu\isms\util\ApplicationUtils;
+?>
 <table class="ink-table bordered">
     <thead>
         <tr>
@@ -21,7 +26,7 @@
                 $output = $tableData[$account->id];
                 ?>
                 <tr>
-                    <td><?php echo "{$account->employee->givenName} {$account->employee->lastName}" ?></td>
+                    <td><?php echo ApplicationUtils::generateLink(array('wig/listCommitments', 'wig'=>$data->id, 'emp'=>$account->id), "{$account->employee->givenName} {$account->employee->lastName}") ?></td>
                     <td style="text-align: center;"><?php echo $output->countPendingCommitments(); ?></td>
                     <td style="text-align: center;"><?php echo $output->countOngoingCommitments(); ?></td>
                     <td style="text-align: center;"><?php echo $output->countFinishedCommitments(); ?></td>
