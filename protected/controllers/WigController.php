@@ -10,6 +10,7 @@ use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
+use org\csflu\isms\controllers\support\WigSessionControllerSupport;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as UnitBreakthroughManagementService;
 
 /**
@@ -20,12 +21,14 @@ use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as Un
 class WigController extends Controller {
 
     private $ubtService;
+    private $controllerSupport;
     private $logger;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->ubtService = new UnitBreakthroughManagementService();
+        $this->controllerSupport = WigSessionControllerSupport::getInstance($this);
     }
 
     public function index($ubt) {
@@ -115,6 +118,8 @@ class WigController extends Controller {
                 'file' => 'wig/_view-navi'
             ),
             'data' => $wigSession,
+            'tableData' => $this->controllerSupport->collateCommitments($wigSession),
+            'accounts' => $this->controllerSupport->listEmployees(),
             'ubt' => $unitBreakthrough,
             'notif' => $this->getSessionData('notif')
         ));

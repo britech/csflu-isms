@@ -17,6 +17,7 @@ require_once 'utils/ApplicationUtils.php';
 
 #module support components
 require_once 'controllers/support/CommitmentModuleSupport.php';
+require_once 'controllers/support/WigSessionControllerSupport.php';
 
 #logging extension
 require_once 'ext/log4php/Logger.php';
