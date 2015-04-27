@@ -9,6 +9,7 @@ use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\models\commons\Department;
 
 /**
@@ -101,9 +102,10 @@ interface UnitBreakthroughManagementService {
     /**
      * Retrieves the WIG Session
      * @param String $id Retrieve by its identifier
+     * @param Commitment $commitment Retrieve through a Commitment entity
      * @return WigSession
      */
-    public function getWigSessionData($id);
+    public function getWigSessionData($id = null, Commitment $commitment = null);
 
     /**
      * Inserts the WIG Session on a given UnitBreakthrough entity

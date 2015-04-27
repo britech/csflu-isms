@@ -11,6 +11,7 @@ use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\commons\Department;
+use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\dao\ubt\UnitBreakthroughDaoSqlImpl as UnitBreakthroughDao;
 use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl as LeadMeasureDao;
 use org\csflu\isms\dao\ubt\WigSessionDaoSqlmpl as WigSessionDao;
@@ -56,8 +57,8 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
             if ($unitBreakthrough->unit->id == $data->unit->id && $unitBreakthrough->description == $data->description) {
                 throw new ServiceException("UnitBreakthrough already defined. Please use the update facility instead");
             }
-            
-            if($unitBreakthrough->unit->id == $data->unit->id && $data->unitBreakthroughEnvironmentStatus == UnitBreakthrough::STATUS_ACTIVE){
+
+            if ($unitBreakthrough->unit->id == $data->unit->id && $data->unitBreakthroughEnvironmentStatus == UnitBreakthrough::STATUS_ACTIVE) {
                 throw new ServiceException("An active UnitBreakthrough is already defined.");
             }
         }
@@ -76,8 +77,8 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
             return $unitBreakthroughs;
         } else {
             $data = array();
-            foreach($unitBreakthroughs as $unitBreakthrough){
-                if($unitBreakthrough->unitBreakthroughEnvironmentStatus == UnitBreakthrough::STATUS_ACTIVE){
+            foreach ($unitBreakthroughs as $unitBreakthrough) {
+                if ($unitBreakthrough->unitBreakthroughEnvironmentStatus == UnitBreakthrough::STATUS_ACTIVE) {
                     array_push($data, $unitBreakthrough);
                 }
             }
@@ -220,8 +221,12 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         return $this->wigSessionDaoSource->insertWigSession($wigSession, $unitBreakthrough);
     }
 
-    public function getWigSessionData($id) {
-        return $this->wigSessionDaoSource->getWigSessionData($id);
+    public function getWigSessionData($id = null, Commitment $commitment = null) {
+        if(!is_null($id)){
+            return $this->wigSessionDaoSource->getWigSessionData($id);
+        } elseif(!is_null($commitment)){
+            return $this->wigSessionDaoSource->getWigSessionDataByCommitment($commitment);
+        }
     }
 
     public function updateWigSession(WigSession $wigSession) {
