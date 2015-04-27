@@ -101,6 +101,8 @@ class WigController extends Controller {
         $wigSession->endingPeriod = $wigSession->endingPeriod->format('Y-m-d');
         $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
         $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
+
+        $this->layout = "column-2";
         $this->title = ApplicationConstants::APP_NAME . ' - WIG Session Info';
         $this->render('wig/view', array(
             'breadcrumb' => array(
@@ -108,6 +110,9 @@ class WigController extends Controller {
                 'Manage Unit Breakthroughs' => array('ubt/manage'),
                 'Manage WIG Sessions' => array('wig/index', 'ubt' => $unitBreakthrough->id),
                 'WIG Session' => 'active'
+            ),
+            'sidebar' => array(
+                'file' => 'wig/_view-navi'
             ),
             'data' => $wigSession,
             'ubt' => $unitBreakthrough,
@@ -144,7 +149,7 @@ class WigController extends Controller {
         $id = $this->getFormData('id');
         $wigSession = $this->loadModel($id, true);
         $unitBreakthrough = $this->loadUbtModel(null, $wigSession, true);
-        
+
         $this->ubtService->deleteWigSession($id);
         $this->logRevision(RevisionHistory::TYPE_DELETE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession);
         $this->setSessionData('notif', array('class' => 'error', 'message' => 'WIG Session deleted'));
