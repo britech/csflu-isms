@@ -75,6 +75,7 @@ require_once 'models/ubt/Commitment.php';
 require_once 'models/ubt/CommitmentMovement.php';
 
 require_once 'models/reports/IpReportInput.php';
+require_once 'models/reports/IpReportOutput.php';
 
 #dao-interfaces
 require_once 'dao/commons/DepartmentDao.php';
