@@ -7,6 +7,7 @@ use org\csflu\isms\service\reports\IpReportService;
 use org\csflu\isms\models\reports\IpReportInput;
 use org\csflu\isms\dao\reports\IpReportDaoSqlImpl;
 use org\csflu\isms\dao\ubt\WigSessionDaoSqlmpl;
+use org\csflu\isms\models\reports\IpReportOutput;
 
 /**
  * Description of IpReportServiceImpl
@@ -17,8 +18,10 @@ class IpReportServiceImpl implements IpReportService {
 
     private $reportDaoSource;
     private $wigDaoSource;
+    private $logger;
 
     public function __construct() {
+        $this->logger = \Logger::getLogger(__CLASS__);
         $this->reportDaoSource = new IpReportDaoSqlImpl();
         $this->wigDaoSource = new WigSessionDaoSqlmpl();
     }
@@ -29,16 +32,25 @@ class IpReportServiceImpl implements IpReportService {
         if (count($commitments) == 0) {
             throw new ServiceException("No data retrieved from parameters");
         }
-        return $commitments;
+
+        $output = new IpReportOutput($commitments);
+
+        return $output;
     }
 
     public function retrieveBreakdownData(IpReportInput $input) {
         $wigSessions = $this->wigDaoSource->listWigSessions($input->unitBreakthrough);
-        
-        if(count($wigSessions) == 0){
+
+        if (count($wigSessions) == 0) {
             throw new ServiceException("No data retrieved from parameters");
         }
-        return $wigSessions;
+
+        $outputs = array();
+        foreach ($wigSessions as $wigSession) {
+            $output = new IpReportOutput($wigSession->commitments, $wigSession);
+            array_push($outputs, $output);
+        }
+        return $outputs;
     }
 
 }
