@@ -31,11 +31,19 @@ $form = new ModelFormGenerator(array(
         <div class="control-group">
             <label>Timeline&nbsp;*</label>
             <div class="control">
-                <div id="timeline-input"></div>
+                <div id="timeline-input"></div>                
+            </div>
+        </div>
+        <div class="control-group">
+            <?php echo $form->renderLabel($model, 'unitBreakthrough', array('required' => true)) ?>
+            <div class="control">
+                <div id="ubt-input"></div>
                 <?php echo $form->renderSubmitButton('Generate Report', array('class' => 'ink-button blue flat', 'style' => 'margin-top:1em; margin-left:0px; ')) ?>
             </div>
         </div>
         <?php echo $form->renderHiddenField($model->user, 'id', array('id' => 'user')); ?>
+        <?php echo $form->renderHiddenField($model->user->employee->department, 'id', array('id' => 'department')); ?>
+        <?php echo $form->renderHiddenField($ubtModel, 'id', array('id' => 'ubt')); ?>
         <?php echo $form->renderHiddenField($model, 'startingPeriod'); ?>
         <?php echo $form->renderHiddenField($model, 'endingPeriod'); ?>
         <?php echo $form->endComponent(); ?>

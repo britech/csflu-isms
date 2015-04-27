@@ -20,6 +20,33 @@ $(document).ready(function() {
         $("[name*=startingPeriod]").val(startingDate.getFullYear() + "-" + (startingDate.getMonth() + 1) + "-" + startingDate.getDate());
         $("[name*=endingPeriod]").val(endingDate.getFullYear() + "-" + (endingDate.getMonth() + 1) + "-" + endingDate.getDate());
     });
+    
+    $("#ubt-input").jqxComboBox({
+        source: new $.jqx.dataAdapter({
+            datatype: 'json',
+            datafields: [
+                {name: 'id'},
+                {name: 'description'}
+            ],
+            url: '?r=ubt/listUnitBreakthroughsByDepartment',
+            type: 'POST',
+            data: {
+                department: $("#department").val()
+            }
+        }),
+        valueMember: 'id',
+        displayMember: 'description',
+        width: '100%',
+        searchMode: 'containsignorecase',
+        autoComplete: true,
+        theme: 'office',
+        height: '35px',
+        animationType: 'none'
+    }).on("select", function(event) {
+        if (event.args) {
+            $("#ubt").val(event.args.item.value);
+        }
+    });
 
     $(".ink-form").submit(function() {
         var result = false;
@@ -31,6 +58,9 @@ $(document).ready(function() {
                 "IpReportInput": {
                     'startingPeriod': $("[name*=startingPeriod]").val(),
                     'endingPeriod': $("[name*=endingPeriod]").val()
+                },
+                "UnitBreakthrough": {
+                    'id': $("#ubt").val()
                 },
                 "UserAccount": {
                     'id': $("#user").val()
