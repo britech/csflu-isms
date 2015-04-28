@@ -12,6 +12,7 @@ use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\commons\UnitOfMeasure;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
@@ -155,7 +156,7 @@ class UbtController extends Controller {
                 'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
                 'Create UBT' => 'active'),
             'model' => new UnitBreakthrough(),
-            'leadMeasureModel' => new LeadMeasure(),
+            'uomModel' => new UnitOfMeasure(),
             'objectiveModel' => new Objective(),
             'measureProfileModel' => new MeasureProfile(),
             'departmentModel' => new Department(),
@@ -169,26 +170,20 @@ class UbtController extends Controller {
         $unitBreakthrough = new UnitBreakthrough();
 
         try {
-            $this->validatePostData(array('UnitBreakthrough', 'Department'));
+            $this->validatePostData(array('UnitBreakthrough', 'Department', 'UnitOfMeasure', 'Objective', 'MeasureProfile'));
+
             $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
             $departmentData = $this->getFormData('Department');
+            $uomData = $this->getFormData('UnitOfMeasure');
+            $objectiveData = $this->getFormData('Objective');
+            $measureProfileData = $this->getFormData('MeasureProfile');
             $unitBreakthrough->bindValuesUsingArray(array(
-                'unitbreakthrough' => $unitBreakthroughData,
-                'unit' => $departmentData
+                'unit' => $departmentData,
+                'uom' => $uomData,
+                'objectives' => $objectiveData,
+                'measures' => $measureProfileData,
+                'unitbreakthrough' => $unitBreakthroughData
             ));
-
-            if ($unitBreakthrough->validationMode == Model::VALIDATION_MODE_INITIAL) {
-                $leadMeasureData = $this->getFormData('LeadMeasure');
-                $objectiveData = $this->getFormData('Objective');
-                $measureProfileData = $this->getFormData('MeasureProfile');
-
-                $unitBreakthrough->bindValuesUsingArray(array(
-                    'objectives' => $objectiveData,
-                    'measures' => $measureProfileData,
-                    'leadMeasures' => $leadMeasureData,
-                    'unitbreakthrough' => $unitBreakthroughData
-                ));
-            }
         } catch (ControllerException $ex) {
             $this->logger->warn($ex->getMessage(), $ex);
             $this->renderAjaxJsonResponse(array('respCode' => '70'));
