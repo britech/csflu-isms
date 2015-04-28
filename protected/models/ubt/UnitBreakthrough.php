@@ -80,7 +80,19 @@ class UnitBreakthrough extends Model {
         }
 
         if (is_null($this->unit)) {
-            array_push($this->validationMessages, '- Implementing Office should be implemented');
+            array_push($this->validationMessages, '- Implementing Office should be defined');
+        }
+        
+        if((strlen($this->baselineFigure) > 1 && strlen($this->targetFigure) < 1) || (strlen($this->targetFigure) > 1 && strlen($this->baselineFigure) < 1)){
+            array_push($this->validationMessages, '- Baseline and Target figures should be defined');
+        }
+        
+        if(strlen($this->baselineFigure) > 1 && !is_numeric($this->baselineFigure)){
+            array_push($this->validationMessages, '- Baseline Figure should be in numerical representation');
+        }
+        
+        if(strlen($this->targetFigure) > 1 && !is_numeric($this->targetFigure)){
+            array_push($this->validationMessages, '- Target Figure should be in numerical representation');
         }
 
         if ($this->validationMode == parent::VALIDATION_MODE_INITIAL) {
