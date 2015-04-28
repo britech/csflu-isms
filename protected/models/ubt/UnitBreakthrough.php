@@ -8,6 +8,7 @@ use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\ubt\WigSession;
+use org\csflu\isms\models\commons\UnitOfMeasure;
 
 /**
  * Description of UnitBreakthrough
@@ -17,6 +18,7 @@ use org\csflu\isms\models\ubt\WigSession;
  * @property Department $unit
  * @property String $baselineFigure
  * @property String $targetFigure
+ * @property UnitOfMeasure $uom
  * @property \DateTime $startingPeriod
  * @property \DateTime $endingPeriod
  * @property Objective[] $objectives
@@ -37,6 +39,7 @@ class UnitBreakthrough extends Model {
     private $unit;
     private $baselineFigure;
     private $targetFigure;
+    private $uom;
     private $startingPeriod;
     private $endingPeriod;
     private $objectives;
@@ -66,7 +69,10 @@ class UnitBreakthrough extends Model {
             'unit' => 'Department',
             'objectives' => 'Objectives',
             'measures' => 'Indicators',
-            'leadMeasures' => 'Lead Measure'
+            'leadMeasures' => 'Lead Measures',
+            'baselineFigure' => 'Baseline Figure',
+            'targetFigure' => 'Target Figure',
+            'uom' => 'Unit Of Measure'
         );
     }
 
@@ -75,23 +81,31 @@ class UnitBreakthrough extends Model {
             array_push($this->validationMessages, '- Unit Breakthrough must be defined');
         }
 
-        if (empty($this->startingPeriod) || empty($this->endingPeriod)) {
+        if (!$this->startingPeriod instanceof \DateTime || !$this->endingPeriod instanceof \DateTime) {
             array_push($this->validationMessages, '- Timeline should be defined');
         }
 
-        if (is_null($this->unit)) {
+        if (!$this->unit instanceof Department) {
             array_push($this->validationMessages, '- Implementing Office should be defined');
         }
-        
-        if((strlen($this->baselineFigure) > 1 && strlen($this->targetFigure) < 1) || (strlen($this->targetFigure) > 1 && strlen($this->baselineFigure) < 1)){
-            array_push($this->validationMessages, '- Baseline and Target figures should be defined');
+
+        if (!$this->uom instanceof UnitOfMeasure) {
+            array_push($this->validationMessages, '- Unit of Measure should be defined');
         }
-        
-        if(strlen($this->baselineFigure) > 1 && !is_numeric($this->baselineFigure)){
+
+        if (strlen($this->baselineFigure) < 1) {
+            array_push($this->validationMessages, '- Baseline Figure should be defined');
+        }
+
+        if (strlen($this->targetFigure) < 1) {
+            array_push($this->validationMessages, '- Target Figure should be defined');
+        }
+
+        if (strlen($this->baselineFigure) > 1 && !is_numeric($this->baselineFigure)) {
             array_push($this->validationMessages, '- Baseline Figure should be in numerical representation');
         }
-        
-        if(strlen($this->targetFigure) > 1 && !is_numeric($this->targetFigure)){
+
+        if (strlen($this->targetFigure) > 1 && !is_numeric($this->targetFigure)) {
             array_push($this->validationMessages, '- Target Figure should be in numerical representation');
         }
 
@@ -102,24 +116,6 @@ class UnitBreakthrough extends Model {
 
             if (count($this->measures) == 0) {
                 array_push($this->validationMessages, '- Measure Profile to be aligned should be defined');
-            }
-
-            $leadMeasuresCount = count($this->leadMeasures);
-
-            switch ($leadMeasuresCount) {
-                case 0:
-                    array_push($this->validationMessages, '- Lead Measures should be defined');
-                    break;
-
-                case 1:
-                    array_push($this->validationMessages, '- Two (2) lead measures should be defined');
-                    break;
-
-                case 2:
-                    break;
-
-                default:
-                    array_push($this->validationMessages, '- Only two (2) lead measures are allowed');
             }
         }
 
@@ -154,15 +150,9 @@ class UnitBreakthrough extends Model {
             $this->unit->bindValuesUsingArray(array('department' => $valueArray['unit']), $this->unit);
         }
 
-        if (array_key_exists('leadMeasures', $valueArray) && !empty($valueArray['leadMeasures']['description'])) {
-            $leadMeasures = explode('+', $valueArray['leadMeasures']['description']);
-            $data = array();
-            foreach ($leadMeasures as $description) {
-                $leadMeasure = new LeadMeasure();
-                $leadMeasure->description = $description;
-                array_push($data, $leadMeasure);
-            }
-            $this->leadMeasures = $data;
+        if (array_key_exists('uom', $valueArray) && !empty($valueArray['uom']['id'])) {
+            $this->uom = new UnitOfMeasure();
+            $this->uom->bindValuesUsingArray(array('unitofmeasure' => $valueArray['uom']), $this->uom);
         }
 
         parent::bindValuesUsingArray($valueArray, $this);
@@ -178,7 +168,9 @@ class UnitBreakthrough extends Model {
         return "[UnitBreakthrough added]\n\n"
                 . "Department:\t{$this->unit->name}\n"
                 . "Unit Breakthrough:\t{$this->description}\n"
-                . "Timeline:\t{$this->startingPeriod->format('F-Y')} - {$this->endingPeriod->format('F-Y')}";
+                . "Timeline:\t{$this->startingPeriod->format('F-Y')} - {$this->endingPeriod->format('F-Y')}\n"
+                . "Baseline: {$this->baselineFigure} {$this->uom->description}\n"
+                . "Target: {$this->targetFigure} {$this->uom->description}";
     }
 
     public function computePropertyChanges(UnitBreakthrough $oldModel) {
@@ -200,6 +192,18 @@ class UnitBreakthrough extends Model {
             $counter++;
         }
 
+        if ($oldModel->baselineFigure != $this->baselineFigure) {
+            $counter++;
+        }
+
+        if ($oldModel->targetFigure != $this->targetFigure) {
+            $counter++;
+        }
+
+        if ($oldModel->uom->id != $this->uom->id) {
+            $counter++;
+        }
+
         return $counter;
     }
 
@@ -218,8 +222,21 @@ class UnitBreakthrough extends Model {
         }
 
         if ($oldModel->unit->id != $this->unit->id) {
-            $translation.="Unit:\t{$this->unit->name}";
+            $translation.="Unit:\t{$this->unit->name}\n";
         }
+
+        if ($oldModel->baselineFigure != $this->baselineFigure) {
+            $translation.="Baseline:\t{$this->baselineFigure} {$this->uom->description}\n";
+        }
+
+        if ($oldModel->targetFigure != $this->targetFigure) {
+            $translation.="Target:\t{$this->targetFigure} {$this->uom->description}\n";
+        }
+
+        if ($oldModel->uom->id != $this->uom->id) {
+            $translation.="Unit of Measure:\t{$this->uom->description}\n";
+        }
+
         return $translation;
     }
 
