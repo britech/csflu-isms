@@ -17,6 +17,7 @@ use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
 use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl;
 use org\csflu\isms\dao\ubt\WigSessionDaoSqlmpl;
+use org\csflu\isms\dao\commons\UnitOfMeasureDaoSqlImpl;
 
 /**
  * Description of UnitBreakthroughDaoSqlImpl
@@ -31,6 +32,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
     private $objectiveDaoSource;
     private $measureProfileDaoSource;
     private $wigMeetingDaoSource;
+    private $uomDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
@@ -39,11 +41,12 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
         $this->measureProfileDaoSource = new MeasureProfileDao();
         $this->leadMeasureDaoSource = new LeadMeasureDaoSqlImpl();
         $this->wigMeetingDaoSource = new WigSessionDaoSqlmpl();
+        $this->uomDaoSource = new UnitOfMeasureDaoSqlImpl();
     }
 
     public function getUnitBreakthroughByIdentifier($id) {
         try {
-            $dbst = $this->db->prepare('SELECT ubt_id, ubt_stmt, period_date_start, period_date_end, ubt_stat, dept_ref FROM ubt_main WHERE ubt_id=:id');
+            $dbst = $this->db->prepare('SELECT ubt_id, ubt_stmt, period_date_start, period_date_end, ubt_stat, dept_ref, uom_ref, baseline_figure, target_figure FROM ubt_main WHERE ubt_id=:id');
             $dbst->execute(array('id' => $id));
 
             $unitBreakthrough = new UnitBreakthrough();
@@ -53,7 +56,10 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
                         $startingPeriod,
                         $endingPeriod,
                         $unitBreakthrough->unitBreakthroughEnvironmentStatus,
-                        $department) = $data;
+                        $department,
+                        $uom,
+                        $unitBreakthrough->baselineFigure,
+                        $unitBreakthrough->targetFigure) = $data;
             }
 
             $unitBreakthrough->startingPeriod = \DateTime::createFromFormat('Y-m-d', $startingPeriod);
@@ -63,7 +69,8 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             $unitBreakthrough->measures = $this->listMeasureProfiles($unitBreakthrough);
             $unitBreakthrough->leadMeasures = $this->leadMeasureDaoSource->listLeadMeasures($unitBreakthrough);
             $unitBreakthrough->wigMeetings = $this->wigMeetingDaoSource->listWigSessions($unitBreakthrough);
-
+            $unitBreakthrough->uom = $this->uomDaoSource->getUomInfo($uom);
+            
             return $unitBreakthrough;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
