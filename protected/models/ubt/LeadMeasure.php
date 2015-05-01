@@ -61,7 +61,7 @@ class LeadMeasure extends Model {
     public static function translateDesignationType($designationCode = null) {
         $designation = is_null($designationCode) ? $this->designation : $designationCode;
         if (array_key_exists($designationCode, self::listDesignationTypes())) {
-            return self::listDesignationTypes()[$designationCode];
+            return self::listDesignationTypes()[$designation];
         }
         return null;
     }
