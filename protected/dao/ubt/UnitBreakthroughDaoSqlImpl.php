@@ -85,7 +85,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
                 'end' => $unitBreakthrough->endingPeriod->format('Y-m-d'),
                 'baseline' => $unitBreakthrough->baselineFigure,
                 'target' => $unitBreakthrough->targetFigure,
-                'uom' => $unitBreakthrough->uom,
+                'uom' => $unitBreakthrough->uom->id,
                 'status' => $unitBreakthrough->unitBreakthroughEnvironmentStatus
             ));
 
