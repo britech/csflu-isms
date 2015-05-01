@@ -70,7 +70,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
             $unitBreakthrough->leadMeasures = $this->leadMeasureDaoSource->listLeadMeasures($unitBreakthrough);
             $unitBreakthrough->wigMeetings = $this->wigMeetingDaoSource->listWigSessions($unitBreakthrough);
             $unitBreakthrough->uom = $this->uomDaoSource->getUomInfo($uom);
-            
+
             return $unitBreakthrough;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
@@ -211,12 +211,15 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
         try {
             $this->db->beginTransaction();
 
-            $dbst = $this->db->prepare('UPDATE ubt_main SET ubt_stmt=:ubt, period_date_start=:start, period_date_end=:end, dept_ref=:unit WHERE ubt_id=:id');
+            $dbst = $this->db->prepare('UPDATE ubt_main SET ubt_stmt=:ubt, period_date_start=:start, period_date_end=:end, dept_ref=:unit, baseline_figure=:baseline, target_figure=:target, uom_ref=:uom WHERE ubt_id=:id');
             $dbst->execute(array(
                 'ubt' => $unitBreakthrough->description,
                 'start' => $unitBreakthrough->startingPeriod->format('Y-m-d'),
                 'end' => $unitBreakthrough->endingPeriod->format('Y-m-d'),
                 'unit' => $unitBreakthrough->unit->id,
+                'baseline' => $unitBreakthrough->baselineFigure,
+                'target' => $unitBreakthrough->targetFigure,
+                'uom' => $unitBreakthrough->uom->id,
                 'id' => $unitBreakthrough->id
             ));
 
