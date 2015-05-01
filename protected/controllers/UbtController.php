@@ -239,8 +239,8 @@ class UbtController extends Controller {
     }
 
     public function view($id) {
-        $unitBreakthrough = $this->loadModel($id);
-        $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
+        $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel($id);
+        $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, null, null, null, $unitBreakthrough);
 
         $this->title = ApplicationConstants::APP_NAME . ' - About Unit Breakthrough';
         $this->layout = "column-2";
