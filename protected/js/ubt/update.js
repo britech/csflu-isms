@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
     var startDate = $("#map-start").val().split('-');
     var endDate = $("#map-end").val().split('-');
 
@@ -52,99 +53,7 @@ $(document).ready(function() {
 
         $("#ubt-start").val(startingDate.getFullYear() + "-" + (startingDate.getMonth() + 1) + "-1");
         $("#ubt-end").val(endingDate.getFullYear() + "-" + (endingDate.getMonth() + 1) + "-" + lastDayOfEndingDate);
-    });
-
-    $("#objectives-input").jqxComboBox({
-        source: new $.jqx.dataAdapter({
-            datatype: 'json',
-            datafields: [
-                {name: 'id'},
-                {name: 'objective'}
-            ],
-            url: '?r=objective/listObjectives',
-            type: 'POST',
-            data: {
-                map: $("#map").val()
-            }
-        }),
-        valueMember: 'id',
-        displayMember: 'objective',
-        width: '100%',
-        searchMode: 'containsignorecase',
-        autoComplete: true,
-        theme: 'office',
-        height: '35px',
-        animationType: 'none',
-        enableBrowserBoundsDetection: true,
-        multiSelect: true
-    }).on('change', function() {
-        var input = [];
-        var items = $("#objectives-input").jqxComboBox('getSelectedItems');
-        var i = 0;
-        $.each(items, function() {
-            input[i] = this.value;
-            i++;
-        });
-        $("#objectives").val(input.join("/"));
-    });
-
-    $("#measures-input").jqxComboBox({
-        source: new $.jqx.dataAdapter({
-            datatype: 'json',
-            datafields: [
-                {name: 'id'},
-                {name: 'indicator'}
-            ],
-            url: '?r=scorecard/listLeadMeasures',
-            type: 'POST',
-            data: {
-                map: $("#map").val(),
-                readonly: 0
-            }
-        }),
-        valueMember: 'id',
-        displayMember: 'indicator',
-        width: '100%',
-        searchMode: 'containsignorecase',
-        autoComplete: true,
-        theme: 'office',
-        height: '35px',
-        animationType: 'none',
-        enableBrowserBoundsDetection: true,
-        multiSelect: true
-    }).on('change', function() {
-        var input = [];
-        var items = $("#measures-input").jqxComboBox('getSelectedItems');
-        var i = 0;
-        $.each(items, function() {
-            input[i] = this.value;
-            i++;
-        });
-        $("#measures").val(input.join("/"));
-    });
-
-    $("#uom-input").jqxComboBox({
-        source: new $.jqx.dataAdapter({
-            datatype: 'json',
-            datafields: [
-                {name: 'id'},
-                {name: 'name'}
-            ],
-            url: '?r=uom/listUnitofMeasures'
-        }),
-        displayMember: 'name',
-        valueMember: 'id',
-        width: '100%',
-        searchMode: 'containsignorecase',
-        autoComplete: true,
-        theme: 'office',
-        height: '35px',
-        animationType: 'none'
-    }).on('select', function(event) {
-        if (event.args) {
-            $("#uom").val(event.args.item.value);
-        }
-    });
+    }).jqxDateTimeInput('setRange', $("#ubt-start").val(), $("#ubt-end").val());
 
     $("#department-input").jqxComboBox({
         source: new $.jqx.dataAdapter({
@@ -176,7 +85,7 @@ $(document).ready(function() {
         }
     });
 
-    $("#baseline-input").jqxNumberInput({ 
+    $("#baseline-input").jqxNumberInput({
         theme: 'office',
         height: '35px',
         textAlign: 'left',
@@ -185,9 +94,9 @@ $(document).ready(function() {
     }).on("valuechanged", function(event) {
         console.log($("#baseline-input").val());
         $("#baseline").val($("#baseline-input").val());
-    });
-    
-    $("#target-input").jqxNumberInput({ 
+    }).val($("#baseline").val());
+
+    $("#target-input").jqxNumberInput({
         theme: 'office',
         height: '35px',
         textAlign: 'left',
@@ -196,8 +105,36 @@ $(document).ready(function() {
     }).on("valuechanged", function(event) {
         console.log($("#target-input").val());
         $("#target").val($("#target-input").val());
-    });
+    }).val($("#target").val());
 
+    $("#uom-input").jqxComboBox({
+        source: new $.jqx.dataAdapter({
+            datatype: 'json',
+            datafields: [
+                {name: 'id'},
+                {name: 'name'}
+            ],
+            url: '?r=uom/listUnitofMeasures'
+        }),
+        displayMember: 'name',
+        valueMember: 'id',
+        width: '100%',
+        searchMode: 'containsignorecase',
+        autoComplete: true,
+        theme: 'office',
+        height: '35px',
+        animationType: 'none'
+    }).on('select', function(event) {
+        if (event.args) {
+            $("#uom").val(event.args.item.value);
+        }
+    }).on('bindingComplete', function() {
+        if ($("#uom").val() !== '') {
+            console.log($("#uom").val());
+            $("#uom-input").val($("#uom").val());
+        }
+    });
+    
     $(".ink-form").submit(function() {
         var result = false;
 
@@ -214,10 +151,10 @@ $(document).ready(function() {
                     'validationMode': $("[name*=validationMode]").val()
                 },
                 "Objective": {
-                    "id": $("#objectives").val()
+                    "id": ""
                 },
                 "MeasureProfile": {
-                    "id": $("#measures").val()
+                    "id": ""
                 },
                 "Department": {
                     "id": $("#department").val()
