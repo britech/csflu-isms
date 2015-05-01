@@ -14,7 +14,7 @@ $form = new Form(array(
 <div class="column-group quarter-gutters">
     <div class="all-60 push-center">
         <?php echo $form->startComponent(); ?>
-        <?php echo $form->constructHeader($model->isNew() ? 'Create Unit Breakthrough' : 'Update Unit Breakthrough'); ?>
+        <?php echo $form->constructHeader('Create Unit Breakthrough'); ?>
         <div class="ink-alert basic info">
             <strong>Important Note:</strong>&nbsp;Fields with * are required.
         </div>
@@ -40,7 +40,6 @@ $form = new Form(array(
             <label>Timeline&nbsp;*</label>
             <div class="control">
                 <div id="timeline-input"></div>
-
             </div>
         </div>
         <div class="column-group quarter-gutters">
