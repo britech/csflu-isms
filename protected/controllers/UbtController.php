@@ -16,6 +16,7 @@ use org\csflu\isms\models\commons\UnitOfMeasure;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
+use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
 use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl as DepartmentService;
@@ -35,6 +36,7 @@ class UbtController extends Controller {
     private $departmentService;
     private $ubtService;
     private $userService;
+    private $modelLoaderUtil;
 
     public function __construct() {
         $this->checkAuthorization();
@@ -43,11 +45,12 @@ class UbtController extends Controller {
         $this->departmentService = new DepartmentService();
         $this->ubtService = new UnitBreakthroughManagementService();
         $this->userService = new UserManagementService();
+        $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
     public function index($map) {
-        $strategyMap = $this->loadMapModel($map);
+        $strategyMap = $this->modelLoaderUtil->loadMapModel($map);
 
         $this->title = ApplicationConstants::APP_NAME . ' - Manage UBTs';
         $this->layout = "column-2";
@@ -67,8 +70,7 @@ class UbtController extends Controller {
     }
 
     public function manage() {
-        $id = $this->getSessionData('user');
-        $userAccount = $this->userService->getAccountById($id);
+        $userAccount = $this->modelLoaderUtil->loadAccountModel();
 
         $this->title = ApplicationConstants::APP_NAME . 'Manage Unit Breakthroughs';
         $this->render('ubt/manage', array(
@@ -86,7 +88,7 @@ class UbtController extends Controller {
         $this->validatePostData(array('map'));
         $id = $this->getFormData('map');
 
-        $strategyMap = $this->loadMapModel($id);
+        $strategyMap = $this->modelLoaderUtil->loadMapModel($id);
         $unitBreakthroughs = $this->ubtService->listUnitBreakthrough($strategyMap);
 
         $data = array();
@@ -105,7 +107,7 @@ class UbtController extends Controller {
         $this->validatePostData(array('department'));
         $id = $this->getFormData('department');
 
-        $department = $this->departmentService->getDepartmentDetail(array('id' => $id));
+        $department = $this->modelLoaderUtil->loadDepartmentModel($id);
         $unitBreakthroughs = $this->ubtService->listUnitBreakthrough(null, $department);
 
         $data = array();
@@ -145,7 +147,9 @@ class UbtController extends Controller {
     }
 
     public function create($map) {
-        $strategyMap = $this->loadMapModel($map);
+        $strategyMap = $this->modelLoaderUtil->loadMapModel($map);
+        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
+        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
 
         $this->title = ApplicationConstants::APP_NAME . ' - Create a UBT';
         $this->render('ubt/form', array(
@@ -197,25 +201,25 @@ class UbtController extends Controller {
     }
 
     public function insert() {
-        $this->validatePostData(array('UnitBreakthrough', 'LeadMeasure', 'Objective', 'MeasureProfile', 'Department', 'StrategyMap'));
+        $this->validatePostData(array('UnitBreakthrough', 'Objective', 'MeasureProfile', 'Department', 'UnitOfMeasure', 'StrategyMap'));
 
         $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
-        $leadMeasureData = $this->getFormData('LeadMeasure');
         $objectiveData = $this->getFormData('Objective');
         $measureProfileData = $this->getFormData('MeasureProfile');
         $departmentData = $this->getFormData('Department');
+        $uomData = $this->getFormData('UnitOfMeasure');
         $strategyMapData = $this->getFormData('StrategyMap');
 
         $unitBreakthrough = new UnitBreakthrough();
         $unitBreakthrough->bindValuesUsingArray(array(
             'unitbreakthrough' => $unitBreakthroughData,
-            'leadMeasures' => $leadMeasureData,
             'objectives' => $objectiveData,
             'measures' => $measureProfileData,
-            'unit' => $departmentData
+            'unit' => $departmentData,
+            'uom' => $uomData
         ));
 
-        $strategyMap = $this->loadMapModel($strategyMapData['id']);
+        $strategyMap = $this->modelLoaderUtil->loadMapModel($strategyMapData['id']);
 
         if (!$unitBreakthrough->validate()) {
             $this->setSessionData('validation', $unitBreakthrough->validationMessages);
@@ -481,7 +485,7 @@ class UbtController extends Controller {
         if (count($unitBreakthrough->objectives) > 0) {
             $objectives = array();
             foreach ($unitBreakthrough->objectives as $objective) {
-                array_push($objectives, $this->mapService->getObjective($objective->id));
+                array_push($objectives, $this->modelLoaderUtil->loadObjectiveModel($objective->id));
             }
             $unitBreakthrough->objectives = $objectives;
         }
@@ -490,13 +494,16 @@ class UbtController extends Controller {
         if (count($unitBreakthrough->measures) > 0) {
             $indicators = array();
             foreach ($unitBreakthrough->measures as $measure) {
-                array_push($indicators, $this->scorecardService->getMeasureProfile($measure->id));
+                array_push($indicators, $this->modelLoaderUtil->loadMeasureProfileModel($measure->id));
             }
             $unitBreakthrough->measures = $indicators;
         }
 
         //purify the department entity
-        $unitBreakthrough->unit = $this->departmentService->getDepartmentDetail(array('id' => $unitBreakthrough->unit->id));
+        $unitBreakthrough->unit = $this->modelLoaderUtil->loadDepartmentModel($unitBreakthrough->unit->id);
+
+        //purify the uom
+        $unitBreakthrough->uom = $this->modelLoaderUtil->loadUomModel($unitBreakthrough->uom->id, array('url' => array('map/index')));
         return $unitBreakthrough;
     }
 
@@ -512,13 +519,6 @@ class UbtController extends Controller {
         if (count($unitBreakthrough->measures) > 0) {
             foreach ($unitBreakthrough->measures as $measure) {
                 $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, "[MeasureProfile linked]\n\nMeasure Profile:\t{$measure->indicator->description}");
-            }
-        }
-
-        //log the lead measures
-        if (count($unitBreakthrough->leadMeasures) > 0) {
-            foreach ($unitBreakthrough->leadMeasures as $leadMeasure) {
-                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $leadMeasure);
             }
         }
     }

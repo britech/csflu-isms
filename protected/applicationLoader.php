@@ -16,6 +16,7 @@ require_once 'utils/ModelFormGenerator.php';
 require_once 'utils/ApplicationUtils.php';
 
 #module support components
+require_once 'controllers/support/ModelLoaderUtil.php';
 require_once 'controllers/support/CommitmentModuleSupport.php';
 require_once 'controllers/support/WigSessionControllerSupport.php';
 
