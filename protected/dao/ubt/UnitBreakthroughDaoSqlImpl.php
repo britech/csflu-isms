@@ -74,22 +74,27 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
         try {
             $this->db->beginTransaction();
 
-            $dbst = $this->db->prepare('INSERT INTO ubt_main(map_ref, dept_ref, ubt_stmt, period_date_start, period_date_end) VALUES(:map, :department, :ubt, :start, :end)');
+            $dbst = $this->db->prepare('INSERT INTO ubt_main(map_ref, dept_ref, ubt_stmt, period_date_start, '
+                    . 'period_date_end, baseline_figure, target_figure, uom_ref, ubt_stat) '
+                    . 'VALUES(:map, :department, :ubt, :start, :end, :baseline, :target, :uom, :status)');
             $dbst->execute(array(
                 'map' => $strategyMap->id,
                 'department' => $unitBreakthrough->unit->id,
                 'ubt' => $unitBreakthrough->description,
                 'start' => $unitBreakthrough->startingPeriod->format('Y-m-d'),
-                'end' => $unitBreakthrough->endingPeriod->format('Y-m-d')
+                'end' => $unitBreakthrough->endingPeriod->format('Y-m-d'),
+                'baseline' => $unitBreakthrough->baselineFigure,
+                'target' => $unitBreakthrough->targetFigure,
+                'uom' => $unitBreakthrough->uom,
+                'status' => $unitBreakthrough->unitBreakthroughEnvironmentStatus
             ));
+
             $id = $this->db->lastInsertId();
             $unitBreakthrough->id = $id;
 
             $this->db->commit();
-
             $this->linkObjectives($unitBreakthrough);
             $this->linkMeasureProfiles($unitBreakthrough);
-            $this->leadMeasureDaoSource->insertLeadMeasures($unitBreakthrough);
             return $id;
         } catch (\PDOException $ex) {
             $this->db->rollBack();
@@ -269,8 +274,8 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
         try {
             $dbst = $this->db->prepare('SELECT ubt_ref FROM ubt_wig WHERE wig_id=:id');
             $dbst->execute(array('id' => $wigSession->id));
-            
-            while($data = $dbst->fetch()){
+
+            while ($data = $dbst->fetch()) {
                 list($id) = $data;
             }
             return $this->getUnitBreakthroughByIdentifier($id);
