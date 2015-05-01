@@ -91,7 +91,11 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
 
         foreach ($unitBreakthroughs as $data) {
             if ($data->id != $unitBreakthrough->id && $unitBreakthrough->unit->id == $data->unit->id && $unitBreakthrough->description == $data->description) {
-                throw new ServiceException("UnitBreakthrough already defined. Please use the update facility instead");
+                throw new ServiceException("UnitBreakthrough update failed");
+            } 
+            
+            if ($data->id != $unitBreakthrough->id && $unitBreakthrough->unit->id == $data->unit->id && $data->unitBreakthroughEnvironmentStatus == UnitBreakthrough::STATUS_ACTIVE) {
+                throw new ServiceException("An active UnitBreakthrough is already defined.");
             }
         }
         $this->daoSource->updateUnitBreakthrough($unitBreakthrough);
