@@ -98,12 +98,12 @@ class LeadMeasure extends Model {
         return count($this->validationMessages) == 0;
     }
 
-    public function bindValuesUsingArray(array $valueArray, Model $model) {
+    public function bindValuesUsingArray(array $valueArray) {
         if (array_key_exists('uom', $valueArray) && !empty($valueArray['uom']['id'])) {
             $this->uom = new UnitOfMeasure();
             $this->uom->bindValuesUsingArray(array('unitofmeasure' => $valueArray['uom']), $this->uom);
         }
-        parent::bindValuesUsingArray($valueArray, $model);
+        parent::bindValuesUsingArray($valueArray, $this);
         $this->designation = intval($this->designation);
     }
 
