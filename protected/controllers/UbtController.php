@@ -165,6 +165,7 @@ class UbtController extends Controller {
             'measureProfileModel' => new MeasureProfile(),
             'departmentModel' => new Department(),
             'mapModel' => $strategyMap,
+            'statusList' => UnitBreakthrough::listUbtStatusCodes(),
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
@@ -252,7 +253,7 @@ class UbtController extends Controller {
                     'header' => 'Actions',
                     'links' => array(
                         'Update Entry Data' => array('ubt/update', 'id' => $unitBreakthrough->id),
-                        'Manage Lead Measures' => array('ubt/manageLeadMeasures', 'ubt' => $unitBreakthrough->id),
+                        'Manage Lead Measures' => array('leadMeasure/index', 'ubt' => $unitBreakthrough->id),
                         'Manage Strategy Alignments' => array('alignment/manageUnitBreakthrough', 'id' => $unitBreakthrough->id),
                     )
                 )
@@ -288,6 +289,7 @@ class UbtController extends Controller {
             'model' => $unitBreakthrough,
             'departmentModel' => $unitBreakthrough->unit,
             'mapModel' => $strategyMap,
+            'statusList' => UnitBreakthrough::listUbtStatusCodes(),
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
@@ -325,28 +327,6 @@ class UbtController extends Controller {
             }
         }
         $this->redirect(array('ubt/view', 'id' => $unitBreakthrough->id));
-    }
-
-    public function manageLeadMeasures($ubt) {
-        $unitBreakthrough = $this->loadModel($ubt);
-        $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
-
-        $this->title = ApplicationConstants::APP_NAME . ' - Manage Lead Measures';
-        $this->render('ubt/lead-measures', array(
-            'breadcrumb' => array(
-                'Home' => array('site/index'),
-                'Strategy Map Directory' => array('map/index'),
-                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
-                'Unit Breakthrough' => array('ubt/view', 'id' => $unitBreakthrough->id),
-                'Manage Lead Measures' => 'active'),
-            'model' => new LeadMeasure,
-            'ubtModel' => $unitBreakthrough,
-            'notif' => $this->getSessionData('notif'),
-            'validation' => $this->getSessionData('validation')
-        ));
-        $this->unsetSessionData('validation');
-        $this->unsetSessionData('notif');
     }
 
     public function listLeadMeasures() {
