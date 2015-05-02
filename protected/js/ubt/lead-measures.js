@@ -51,7 +51,7 @@ $(document).ready(function() {
         symbol: ''
     }).on("valuechanged", function(event) {
         console.log($("#baseline-input").val());
-        $("#baseline").val($("#baseline-input").val());
+        $("[name*=baselineFigure]").val($("#baseline-input").val());
     });
 
     $("#target-input").jqxNumberInput({
@@ -62,15 +62,15 @@ $(document).ready(function() {
         symbol: ''
     }).on("valuechanged", function(event) {
         console.log($("#target-input").val());
-        $("#target").val($("#target-input").val());
+        $("[name*=targetFigure]").val($("#target-input").val());
     });
 
     if ($("#baseline").val() !== '') {
-        $("#baseline-input").val($("#baseline").val());
+        $("#baseline-input").val($("[name*=baselineFigure]").val());
     }
 
     if ($("#target").val() !== '') {
-        $("#target-input").val($("#target").val());
+        $("#target-input").val($("[name*=targetFigure]").val());
     }
 
     $("#uom-input").jqxComboBox({
