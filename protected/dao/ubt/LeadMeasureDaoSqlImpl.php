@@ -26,9 +26,17 @@ class LeadMeasureDaoSqlImpl implements LeadMeasureDao {
             $this->db->beginTransaction();
 
             foreach ($unitBreakthrough->leadMeasures as $leadMeasure) {
-                $dbst = $this->db->prepare('INSERT INTO lm_main(lm_desc, ubt_ref) VALUES(:description, :ubt)');
+                $dbst = $this->db->prepare('INSERT INTO lm_main(lm_desc, lm_baseline, lm_target, uom_ref, period_start_date, period_end_date, lm_designation, lm_status, ubt_ref) '
+                        . 'VALUES(:description, :baseline, :target, :uom, :start, :end, :designation, :status, :ubt)');
                 $dbst->execute(array(
                     'description' => $leadMeasure->description,
+                    'baseline' => $leadMeasure->baselineFigure,
+                    'target' => $leadMeasure->targetFigure,
+                    'uom' => $leadMeasure->uom->id,
+                    'start' => $leadMeasure->startingPeriod->format('Y-m-d'),
+                    'end' => $leadMeasure->endingPeriod->format('Y-m-d'),
+                    'designation' => $leadMeasure->designation,
+                    'status' => $leadMeasure->leadMeasureEnvironmentStatus,
                     'ubt' => $unitBreakthrough->id
                 ));
             }
