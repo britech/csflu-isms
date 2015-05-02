@@ -28,7 +28,7 @@ class LeadMeasure extends Model {
 
     private $id;
     private $description;
-    private $designation;
+    private $designation = self::DESIGNATION_1;
     private $baselineFigure;
     private $targetFigure;
     private $uom;
@@ -50,20 +50,29 @@ class LeadMeasure extends Model {
         );
     }
 
-    public static function translateEnvironmentStatus($environmentStatusCode = null) {
-        $statusCode = is_null($environmentStatusCode) ? $this->leadMeasureEnvironmentStatus : $environmentStatusCode;
-        if (array_key_exists($statusCode, self::listEnvironmentStatus())) {
+    public static function translateEnvironmentStatus($environmentStatusCode) {
+        if (array_key_exists($environmentStatusCode, self::listEnvironmentStatus())) {
             return self::listEnvironmentStatus()[$environmentStatusCode];
         }
         return null;
     }
 
-    public static function translateDesignationType($designationCode = null) {
-        $designation = is_null($designationCode) ? $this->designation : $designationCode;
+    public static function translateDesignationType($designationCode) {
         if (array_key_exists($designationCode, self::listDesignationTypes())) {
-            return self::listDesignationTypes()[$designation];
+            return self::listDesignationTypes()[$designationCode];
         }
         return null;
+    }
+
+    public function getAttributeNames() {
+        return array(
+            'description' => 'Lead Measure',
+            'designation' => 'Designation',
+            'baselineFigure' => 'Baseline',
+            'targetFigure' => 'Target',
+            'uom' => 'Unit of Measure',
+            'leadMeasureEnvironmentStatus' => 'Status'
+        );
     }
 
     public function validate() {
@@ -94,7 +103,11 @@ class LeadMeasure extends Model {
         if (strlen($this->targetFigure) > 1 && !is_numeric($this->targetFigure)) {
             array_push($this->validationMessages, '- Target Figure should be in numerical representation');
         }
-        
+
+        if ($this->leadMeasureEnvironmentStatus == self::STATUS_ACTIVE && $this->designation == self::DESIGNATION_0) {
+            array_push($this->validationMessages, 'Lead Measure should be not active if the designation is disabled');
+        }
+
         return count($this->validationMessages) == 0;
     }
 
