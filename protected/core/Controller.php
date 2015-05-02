@@ -131,6 +131,7 @@ class Controller {
     }
 
     protected final function validatePostData(array $keyNames, $remote = false) {
+        $this->logger = \Logger::getLogger(__CLASS__);
         $counter = 0;
         $data = filter_input_array(INPUT_POST);
         if (is_null($data) || empty($data)) {
