@@ -355,31 +355,6 @@ class UbtController extends Controller {
         return implode('&nbsp;|&nbsp;', $links);
     }
 
-    public function insertLeadMeasures() {
-        $this->validatePostData(array('LeadMeasure', 'UnitBreakthrough'));
-
-        $leadMeasureData = $this->getFormData('LeadMeasure');
-        $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
-
-        $unitBreakthrough = new UnitBreakthrough();
-        $unitBreakthrough->bindValuesUsingArray(array(
-            'unitbreakthrough' => $unitBreakthroughData,
-            'leadMeasures' => $leadMeasureData
-        ));
-        if (count($unitBreakthrough->leadMeasures) == 0) {
-            $this->setSessionData('validation', array('Lead Measures should be defined'));
-        } else {
-            try {
-                $unitBreakthrough->leadMeasures = $this->ubtService->insertLeadMeasures($unitBreakthrough);
-                $this->logLinkedRecords($unitBreakthrough);
-                $this->setSessionData('notif', array('class' => 'success', 'message' => 'Lead Measure/s added'));
-            } catch (ServiceException $ex) {
-                $this->setSessionData('validation', array($ex->getMessage()));
-            }
-        }
-        $this->redirect(array('ubt/manageLeadMeasures', 'ubt' => $unitBreakthrough->id));
-    }
-
     public function updateLeadMeasure($id = null) {
         if (is_null($id)) {
             $this->validatePostData(array('LeadMeasure'));

@@ -3,10 +3,14 @@
 namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
+use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\commons\UnitOfMeasure;
+use org\csflu\isms\models\uam\ModuleAction;
+use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
+use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
 
 /**
  * Description of LeadMeasure
@@ -16,11 +20,13 @@ use org\csflu\isms\controllers\support\ModelLoaderUtil;
 class LeadMeasureController extends Controller {
 
     private $modelLoaderUtil;
+    private $ubtService;
     private $logger;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
+        $this->ubtService = new UnitBreakthroughManagementServiceSimpleImpl();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -80,6 +86,27 @@ class LeadMeasureController extends Controller {
             'leadmeasure' => $leadMeasureData,
             'uom' => $uomData
         ));
+        $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel($unitBreakthroughData['id']);
+
+        if (!$leadMeasure->validate()) {
+            $this->setSessionData('validation', $leadMeasure->validationMessages);
+            $this->redirect(array('leadMeasure/index', 'ubt' => $unitBreakthrough->id));
+            return;
+        }
+
+        $unitBreakthrough->leadMeasures = array($leadMeasure);
+
+        try {
+            $leadMeasures = $this->ubtService->insertLeadMeasures($unitBreakthrough);
+            foreach ($leadMeasures as $data) {
+                $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $data);
+            }
+            $this->setSessionData('notif', array('class' => 'success', 'message' => 'LeadMeasure successfully added'));
+        } catch (ServiceException $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+            $this->setSessionData('validation', array($ex->getMessage()));
+        }
+        $this->redirect(array('leadMeasure/index', 'ubt' => $unitBreakthrough->id));
     }
 
 }
