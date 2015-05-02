@@ -92,8 +92,8 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         foreach ($unitBreakthroughs as $data) {
             if ($data->id != $unitBreakthrough->id && $unitBreakthrough->unit->id == $data->unit->id && $unitBreakthrough->description == $data->description) {
                 throw new ServiceException("UnitBreakthrough update failed");
-            } 
-            
+            }
+
             if ($data->id != $unitBreakthrough->id && $unitBreakthrough->unit->id == $data->unit->id && $data->unitBreakthroughEnvironmentStatus == UnitBreakthrough::STATUS_ACTIVE) {
                 throw new ServiceException("An active UnitBreakthrough is already defined.");
             }
@@ -120,10 +120,13 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
     }
 
     private function validateLeadMeasures(UnitBreakthrough $unitBreakthroughInput, $leadMeasures) {
+        if (count($leadMeasures) == 0) {
+            return $unitBreakthroughInput->leadMeasures;
+        }
         $acceptedLeadMeasures = array();
         foreach ($unitBreakthroughInput->leadMeasures as $leadMeasure) {
             foreach ($leadMeasures as $data) {
-                if ($leadMeasure->description != $data->description && $data->leadMeasureEnvironmentStatus != LeadMeasure::STATUS_ACTIVE) {
+                if ($leadMeasure->description != $data->description && $leadMeasure->designation != $data->designation) {
                     array_push($acceptedLeadMeasures, $leadMeasure);
                 }
             }
@@ -226,9 +229,9 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
     }
 
     public function getWigSessionData($id = null, Commitment $commitment = null) {
-        if(!is_null($id)){
+        if (!is_null($id)) {
             return $this->wigSessionDaoSource->getWigSessionData($id);
-        } elseif(!is_null($commitment)){
+        } elseif (!is_null($commitment)) {
             return $this->wigSessionDaoSource->getWigSessionDataByCommitment($commitment);
         }
     }
