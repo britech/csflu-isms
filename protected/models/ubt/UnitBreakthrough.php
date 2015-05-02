@@ -72,7 +72,8 @@ class UnitBreakthrough extends Model {
             'leadMeasures' => 'Lead Measures',
             'baselineFigure' => 'Baseline Figure',
             'targetFigure' => 'Target Figure',
-            'uom' => 'Unit Of Measure'
+            'uom' => 'Unit Of Measure',
+            'unitBreakthroughEnvironmentStatus' => 'Status'
         );
     }
 
@@ -168,6 +169,7 @@ class UnitBreakthrough extends Model {
         return "[UnitBreakthrough added]\n\n"
                 . "Department:\t{$this->unit->name}\n"
                 . "Unit Breakthrough:\t{$this->description}\n"
+                . "Status:\t{$this->translateUbtStatusCode($this->unitBreakthroughEnvironmentStatus)}\n"
                 . "Timeline:\t{$this->startingPeriod->format('F-Y')} - {$this->endingPeriod->format('F-Y')}\n"
                 . "Baseline: {$this->baselineFigure} {$this->uom->description}\n"
                 . "Target: {$this->targetFigure} {$this->uom->description}";
@@ -204,6 +206,10 @@ class UnitBreakthrough extends Model {
             $counter++;
         }
 
+        if ($oldModel->unitBreakthroughEnvironmentStatus != $this->unitBreakthroughEnvironmentStatus) {
+            $counter++;
+        }
+
         return $counter;
     }
 
@@ -235,6 +241,10 @@ class UnitBreakthrough extends Model {
 
         if ($oldModel->uom->id != $this->uom->id) {
             $translation.="Unit of Measure:\t{$this->uom->description}\n";
+        }
+
+        if ($oldModel->unitBreakthroughEnvironmentStatus != $this->unitBreakthroughEnvironmentStatus) {
+            $translation.="Status:\t{$this->translateUbtStatusCode($this->unitBreakthroughEnvironmentStatus)}";
         }
 
         return $translation;

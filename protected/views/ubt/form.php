@@ -42,6 +42,12 @@ $form = new Form(array(
                 <div id="timeline-input"></div>
             </div>
         </div>
+        <div class="control-group">
+            <label><?php echo $form->renderLabel($model, 'unitBreakthroughEnvironmentStatus', array('required' => true)); ?></label>
+            <div class="control">
+                <?php echo $form->renderDropDownList($model, 'unitBreakthroughEnvironmentStatus', $statusList); ?>
+            </div>
+        </div>
         <div class="column-group quarter-gutters">
             <div class="all-50">
                 <div class="control-group">

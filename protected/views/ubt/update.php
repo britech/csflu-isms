@@ -37,6 +37,12 @@ $form = new ModelFormGenerator(array(
             </div>
         </div>
         <div class="control-group">
+            <label><?php echo $form->renderLabel($model, 'unitBreakthroughEnvironmentStatus', array('required' => true)); ?></label>
+            <div class="control">
+                <?php echo $form->renderDropDownList($model, 'unitBreakthroughEnvironmentStatus', $statusList); ?>
+            </div>
+        </div>
+        <div class="control-group">
             <label>Timeline&nbsp;*</label>
             <div class="control">
                 <div id="timeline-input"></div>

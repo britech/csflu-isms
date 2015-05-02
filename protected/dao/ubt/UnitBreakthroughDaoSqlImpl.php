@@ -211,7 +211,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
         try {
             $this->db->beginTransaction();
 
-            $dbst = $this->db->prepare('UPDATE ubt_main SET ubt_stmt=:ubt, period_date_start=:start, period_date_end=:end, dept_ref=:unit, baseline_figure=:baseline, target_figure=:target, uom_ref=:uom WHERE ubt_id=:id');
+            $dbst = $this->db->prepare('UPDATE ubt_main SET ubt_stmt=:ubt, period_date_start=:start, period_date_end=:end, dept_ref=:unit, baseline_figure=:baseline, target_figure=:target, uom_ref=:uom, ubt_stat=:status WHERE ubt_id=:id');
             $dbst->execute(array(
                 'ubt' => $unitBreakthrough->description,
                 'start' => $unitBreakthrough->startingPeriod->format('Y-m-d'),
@@ -220,6 +220,7 @@ class UnitBreakthroughDaoSqlImpl implements UnitBreakthroughDao {
                 'baseline' => $unitBreakthrough->baselineFigure,
                 'target' => $unitBreakthrough->targetFigure,
                 'uom' => $unitBreakthrough->uom->id,
+                'status' => $unitBreakthrough->unitBreakthroughEnvironmentStatus,
                 'id' => $unitBreakthrough->id
             ));
 
