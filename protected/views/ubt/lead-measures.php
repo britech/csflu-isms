@@ -5,15 +5,11 @@ namespace org\csflu\isms\views;
 use org\csflu\isms\util\ModelFormGenerator as Form;
 
 $form = new Form(array(
-    'action' => array($model->isNew() ? 'ubt/insertLeadMeasures' : 'ubt/updateLeadMeasure'),
+    'action' => array($model->isNew() ? 'leadMeasure/insert' : 'leadMeasure/update'),
     'class' => 'ink-form',
     'hasFieldset' => true
         ));
 ?>
-<link href="assets/flick/jquery-ui-1.10.4.custom.min.css" rel="stylesheet" type="text/css"/>
-<link href="assets/tag-editor/jquery.tag-editor.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="assets/jquery/jquery-ui-1.10.4.custom.js"></script>
-<script type="text/javascript" src="assets/tag-editor/jquery.tag-editor.js"></script>
 <script type="text/javascript" src="protected/js/ubt/lead-measures.js"></script>
 <div class="column-group quarter-gutters">
     <div class="all-50">
@@ -29,27 +25,78 @@ $form = new Form(array(
             $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
         }
         ?>
-        <div class="ink-alert block" id="validation-container">
-            <h4>Validation error/s. Please check your entries.</h4>
-            <p id="validation-content"></p>
+        <div id="validation-container"></div>
+
+        <div class="control-group">
+            <?php echo $form->renderLabel($model, 'description', array('required' => true)); ?>
+            <div class="control">
+                <?php echo $form->renderTextArea($model, 'description'); ?>
+            </div>
         </div>
 
         <div class="control-group">
-            <label>Lead Measure&nbsp;*</label>
+            <label>Timeline&nbsp;*</label>
             <div class="control">
-                <?php echo $form->renderTextArea($model, 'description'); ?>
-                <?php
-                if ($model->isNew()) {
-                    echo $form->renderSubmitButton('Enlist', array('class' => 'ink-button green flat', 'style' => 'margin-top:10px; margin-left:0px;'));
-                } else {
-                    echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat', 'style' => 'margin-top:10px; margin-left:0px;'));
-                }
-                ?>
+                <div id="timeline-input"></div>
             </div>
         </div>
-        <?php echo $form->renderHiddenField($model, 'leadMeasureEnvironmentStatus'); ?>
+
+        <div class="column-group quarter-gutters">
+            <div class="all-50">
+                <div class="control-group">
+                    <?php echo $form->renderLabel($model, 'designation', array('required' => true)); ?>
+                    <div class="control">
+                        <?php echo $form->renderDropDownList($model, 'designation', $designationList); ?>
+                    </div>
+                </div>
+            </div>
+            <div class="all-50">
+                <div class="control-group">
+                    <?php echo $form->renderLabel($model, 'leadMeasureEnvironmentStatus', array('required' => true)); ?>
+                    <div class="control">
+                        <?php echo $form->renderDropDownList($model, 'leadMeasureEnvironmentStatus', $statusList); ?>
+                    </div>
+                </div>
+            </div>
+            <div class="all-50">
+                <div class="control-group">
+                    <?php echo $form->renderLabel($model, 'baselineFigure', array('required' => true)); ?>
+                    <div class="control">
+                        <div id="baseline-input"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="all-50">
+                <div class="control-group">
+                    <?php echo $form->renderLabel($model, 'targetFigure', array('required' => true)); ?>
+                    <div class="control">
+                        <div id="target-input"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group column-group quarter-gutters">
+            <?php echo $form->renderLabel($model, 'uom', array('required' => true, 'class' => 'all-30 content-right')); ?>
+            <div class="control all-70">
+                <div id="uom-input"></div>
+            </div>
+        </div>
+        <?php
+        if ($model->isNew()) {
+            echo $form->renderSubmitButton('Enlist', array('class' => 'ink-button green flat', 'style' => 'margin-top:10px; margin-left:0px;'));
+        } else {
+            echo $form->renderSubmitButton('Update', array('class' => 'ink-button blue flat', 'style' => 'margin-top:10px; margin-left:0px;'));
+        }
+        ?>
         <?php echo $form->renderHiddenField($model, 'id'); ?>
-        <?php echo $form->renderHiddenField($model, 'validationMode'); ?>
+        <?php echo $form->renderHiddenField($model, 'baselineFigure'); ?>
+        <?php echo $form->renderHiddenField($model, 'targetFigure') ?>
+        <?php echo $form->renderHiddenField($model, 'startingPeriod', array('id' => 'lm-start')); ?>
+        <?php echo $form->renderHiddenField($model, 'endingPeriod', array('id' => 'lm-end')); ?>
+        <?php echo $form->renderHiddenField($uomModel, 'id', array('id' => 'uom')) ?>
+        <?php echo $form->renderHiddenField($ubtModel, 'startingPeriod', array('id' => 'ubt-start')); ?>
+        <?php echo $form->renderHiddenField($ubtModel, 'endingPeriod', array('id' => 'ubt-end')) ?>
         <?php echo $form->renderHiddenField($ubtModel, 'id', array('id' => 'ubt')); ?>
         <?php echo $form->endComponent(); ?>
     </div>
