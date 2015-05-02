@@ -90,7 +90,7 @@ class LeadMeasure extends Model {
             array_push($this->validationMessages, '- Unit of Measure should be defined');
         }
 
-        if (!array_key_exists(self::listDesignationTypes(), $this->designation)) {
+        if (!array_key_exists($this->designation, self::listDesignationTypes())) {
             array_push($this->validationMessages, '- Designation invalid');
         }
 
