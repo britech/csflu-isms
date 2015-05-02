@@ -94,10 +94,6 @@ class LeadMeasure extends Model {
             array_push($this->validationMessages, '- Designation invalid');
         }
 
-        if (strlen($this->baselineFigure) < 1) {
-            array_push($this->validationMessages, '- Baseline Figure should be defined');
-        }
-
         if (strlen($this->targetFigure) < 1) {
             array_push($this->validationMessages, '- Target Figure should be defined');
         }
