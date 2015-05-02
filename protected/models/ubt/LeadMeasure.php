@@ -14,6 +14,8 @@ use org\csflu\isms\models\commons\UnitOfMeasure;
  * @property String $baselineFigure
  * @property String $targetFigure
  * @property UnitOfMeasure $uom
+ * @property \DateTime $startingPeriod
+ * @property \DateTime $endingPeriod
  * @property String $leadMeasureEnvironmentStatus
  * @author britech
  */
@@ -33,6 +35,8 @@ class LeadMeasure extends Model {
     private $targetFigure;
     private $uom;
     private $leadMeasureEnvironmentStatus = self::STATUS_ACTIVE;
+    private $startingPeriod;
+    private $endingPeriod;
 
     public static function listEnvironmentStatus() {
         return array(
@@ -50,16 +54,18 @@ class LeadMeasure extends Model {
         );
     }
 
-    public static function translateEnvironmentStatus($environmentStatusCode) {
-        if (array_key_exists($environmentStatusCode, self::listEnvironmentStatus())) {
-            return self::listEnvironmentStatus()[$environmentStatusCode];
+    public function translateEnvironmentStatus($environmentStatusCode = null) {
+        $statusCode = is_null($environmentStatusCode) ? $this->leadMeasureEnvironmentStatus : $environmentStatusCode;
+        if (array_key_exists($statusCode, self::listEnvironmentStatus())) {
+            return self::listEnvironmentStatus()[$statusCode];
         }
         return null;
     }
 
-    public static function translateDesignationType($designationCode) {
-        if (array_key_exists($designationCode, self::listDesignationTypes())) {
-            return self::listDesignationTypes()[$designationCode];
+    public function translateDesignationType($designationCode = null) {
+        $designation = is_null($designationCode) ? $this->designation : $designationCode;
+        if (array_key_exists($designation, self::listDesignationTypes())) {
+            return self::listDesignationTypes()[$designation];
         }
         return null;
     }
@@ -105,7 +111,11 @@ class LeadMeasure extends Model {
         }
 
         if ($this->leadMeasureEnvironmentStatus == self::STATUS_ACTIVE && $this->designation == self::DESIGNATION_0) {
-            array_push($this->validationMessages, 'Lead Measure should be not active if the designation is disabled');
+            array_push($this->validationMessages, '- Lead Measure should be not active if the designation is disabled');
+        }
+
+        if (!($this->startingPeriod instanceof \DateTime || $this->endingPeriod instanceof \DateTime)) {
+            array_push($this->validationMessages, '- Timeline should be defined');
         }
 
         return count($this->validationMessages) == 0;
@@ -117,13 +127,18 @@ class LeadMeasure extends Model {
             $this->uom->bindValuesUsingArray(array('unitofmeasure' => $valueArray['uom']), $this->uom);
         }
         parent::bindValuesUsingArray($valueArray, $this);
+
         $this->designation = intval($this->designation);
+        $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
+        $this->endingPeriod = \DateTime::createFromFormat('Y-m-d', $this->endingPeriod);
     }
 
     public function getModelTranslationAsNewEntity() {
         return "[LeadMeasure added]\n\n"
                 . "Description:\t{$this->description}\n"
-                . "Designation:\t{$this->designation}\n"
+                . "Designation:\t{$this->translateDesignationType()}\n"
+                . "Timeline:\t{$this->startingPeriod->format('M. d, Y')} to {$this->endingPeriod->format('M. d, Y')}\n"
+                . "Status:\t{$this->translateEnvironmentStatus()}\n"
                 . "Baseline\t{$this->baselineFigure} {$this->uom->description}\n"
                 . "Target:\t{$this->targetFigure} {$this->uom->description}";
     }
@@ -154,6 +169,14 @@ class LeadMeasure extends Model {
             $counter++;
         }
 
+        if ($oldModel->startingPeriod->format('Y-m-d') != $this->startingPeriod->format('Y-m-d')) {
+            $counter++;
+        }
+
+        if ($oldModel->endingPeriod->format('Y-m-d') != $this->endingPeriod->format('Y-m-d')) {
+            $counter++;
+        }
+
         return $counter;
     }
 
@@ -164,13 +187,11 @@ class LeadMeasure extends Model {
         }
 
         if ($oldModel->leadMeasureEnvironmentStatus != $this->leadMeasureEnvironmentStatus) {
-            $status = self::translateEnvironmentStatus();
-            $translation.="Status:\t{$status}\n";
+            $translation.="Status:\t{$this->translateEnvironmentStatus()}\n";
         }
 
         if ($oldModel->designation != $this->designation) {
-            $designation = self::translateDesignationType();
-            $translation.="Designation:\t{$designation}\n";
+            $translation.="Designation:\t{$this->translateDesignationType()}\n";
         }
 
         if ($oldModel->baselineFigure != $this->baselineFigure) {
@@ -183,6 +204,14 @@ class LeadMeasure extends Model {
 
         if ($oldModel->uom->id != $this->uom->id) {
             $translation.="Unit of Measure:\t{$this->uom->description}\n";
+        }
+
+        if ($oldModel->startingPeriod->format('Y-m-d') != $this->startingPeriod->format('Y-m-d')) {
+            $translation.="Starting Period:\t{$this->startingPeriod->format('Y-m-d')}\n";
+        }
+
+        if ($oldModel->endingPeriod->format('Y-m-d') != $this->endingPeriod->format('Y-m-d')) {
+            $translation.="Ending Period:\t{$this->endingPeriod->format('Y-m-d')}\n";
         }
 
         return $translation;
