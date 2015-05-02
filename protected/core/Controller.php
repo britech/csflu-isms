@@ -21,6 +21,7 @@ class Controller {
     public $title;
     public $layout = "column-1";
     private $loggingService;
+    private $logger;
 
     /*
      * @param mixed $view
@@ -77,7 +78,7 @@ class Controller {
     public final function viewWarningPage($header, $message) {
         $this->renderPartial('commons/warning', array('header' => $header, 'message' => $message));
     }
-    
+
     protected final function checkAuthorization() {
         if (empty($this->getSessionData('employee')) || empty($this->getSessionData('user'))) {
             $_SESSION['login.notif'] = "Please enter your user credentials to continue.";
@@ -129,11 +130,16 @@ class Controller {
         }
     }
 
-    protected final function validatePostData(array $keyNames) {
+    protected final function validatePostData(array $keyNames, $remote = false) {
         $counter = 0;
         $data = filter_input_array(INPUT_POST);
         if (is_null($data) || empty($data)) {
-            throw new ControllerException("Parameter/s are needed to process this request");
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('respCode' => '70'));
+                $this->logger->error("Parameter/s are needed to process this request");
+            } else {
+                throw new ControllerException("Parameter/s are needed to process this request");
+            }
         }
 
         foreach ($keyNames as $key) {
@@ -143,7 +149,12 @@ class Controller {
         }
 
         if ($counter > 0) {
-            throw new ControllerException("Parameter/s are needed to process this request");
+            if ($remote) {
+                $this->renderAjaxJsonResponse(array('respCode' => '70'));
+                $this->logger->error("Parameter/s are needed to process this request");
+            } else {
+                throw new ControllerException("Parameter/s are needed to process this request");
+            }
         }
     }
 
@@ -170,4 +181,5 @@ class Controller {
     protected final function unsetSessionData($key) {
         unset($_SESSION[$key]);
     }
+
 }
