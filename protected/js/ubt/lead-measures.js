@@ -7,7 +7,7 @@ $(document).ready(function() {
                 {name: 'status'},
                 {name: 'actions'}
             ],
-            url: '?r=ubt/listLeadMeasures',
+            url: '?r=leadMeasure/listEntry',
             type: 'POST',
             data: {
                 ubt: $("#ubt").val()

@@ -5,6 +5,7 @@ namespace org\csflu\isms\controllers;
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\commons\UnitOfMeasure;
 use org\csflu\isms\models\uam\ModuleAction;
@@ -107,6 +108,32 @@ class LeadMeasureController extends Controller {
             $this->setSessionData('validation', array($ex->getMessage()));
         }
         $this->redirect(array('leadMeasure/index', 'ubt' => $unitBreakthrough->id));
+    }
+
+    public function listEntry() {
+        $this->validatePostData(array('ubt'));
+        $id = $this->getFormData('ubt');
+
+        $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel($id);
+        $data = array();
+        foreach ($unitBreakthrough->leadMeasures as $leadMeasure) {
+            array_push($data, array(
+                'description' => $leadMeasure->description,
+                'status' => $leadMeasure->translateEnvironmentStatus(),
+                'actions' => $this->resolveLeadMeasureActionLinks($leadMeasure)
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
+    }
+
+    private function resolveLeadMeasureActionLinks(LeadMeasure $leadMeasure) {
+        $links = array(ApplicationUtils::generateLink(array('leadMeasure/update', 'id' => $leadMeasure->id), 'Update'));
+        if ($leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE) {
+            $links = array_merge($links, array(ApplicationUtils::generateLink('#', 'Disable', array('id' => "disable-{$leadMeasure->id}"))));
+        } elseif ($leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_INACTIVE) {
+            $links = array_merge($links, array(ApplicationUtils::generateLink('#', 'Enable', array('id' => "enable-{$leadMeasure->id}"))));
+        }
+        return implode('&nbsp;|&nbsp;', $links);
     }
 
 }

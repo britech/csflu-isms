@@ -329,32 +329,6 @@ class UbtController extends Controller {
         $this->redirect(array('ubt/view', 'id' => $unitBreakthrough->id));
     }
 
-    public function listLeadMeasures() {
-        $this->validatePostData(array('ubt'));
-        $id = $this->getFormData('ubt');
-
-        $unitBreakthrough = $this->loadModel($id);
-        $data = array();
-        foreach ($unitBreakthrough->leadMeasures as $leadMeasure) {
-            array_push($data, array(
-                'description' => $leadMeasure->description,
-                'status' => LeadMeasure::translateEnvironmentStatus($leadMeasure->leadMeasureEnvironmentStatus),
-                'actions' => $this->resolveLeadMeasureActionLinks($leadMeasure)
-            ));
-        }
-        $this->renderAjaxJsonResponse($data);
-    }
-
-    private function resolveLeadMeasureActionLinks(LeadMeasure $leadMeasure) {
-        $links = array(ApplicationUtils::generateLink(array('ubt/updateLeadMeasure', 'id' => $leadMeasure->id), 'Update'));
-        if ($leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE) {
-            $links = array_merge($links, array(ApplicationUtils::generateLink('#', 'Disable', array('id' => "disable-{$leadMeasure->id}"))));
-        } elseif ($leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_INACTIVE) {
-            $links = array_merge($links, array(ApplicationUtils::generateLink('#', 'Enable', array('id' => "enable-{$leadMeasure->id}"))));
-        }
-        return implode('&nbsp;|&nbsp;', $links);
-    }
-
     public function updateLeadMeasure($id = null) {
         if (is_null($id)) {
             $this->validatePostData(array('LeadMeasure'));
