@@ -97,10 +97,15 @@ class LeadMeasureDaoSqlImpl implements LeadMeasureDao {
     public function updateLeadMeasure(LeadMeasure $leadMeasure) {
         try {
             $this->db->beginTransaction();
-            $dbst = $this->db->prepare('UPDATE lm_main SET lm_desc=:description, lm_status=:status WHERE lm_id=:id');
+            $dbst = $this->db->prepare('UPDATE lm_main SET lm_desc=:description, lm_status=:status, lm_target=:target, uom_ref=:uom, period_start_date=:start, period_end_date=:end, lm_designation=:designation WHERE lm_id=:id');
             $dbst->execute(array(
                 'description' => $leadMeasure->description,
                 'status' => $leadMeasure->leadMeasureEnvironmentStatus,
+                'target' => $leadMeasure->targetFigure,
+                'uom' => $leadMeasure->uom->id,
+                'start' => $leadMeasure->startingPeriod->format('Y-m-d'),
+                'end' => $leadMeasure->endingPeriod->format('Y-m-d'),
+                'designation' => $leadMeasure->designation,
                 'id' => $leadMeasure->id
             ));
             $this->db->commit();

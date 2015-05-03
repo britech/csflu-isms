@@ -256,7 +256,7 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
     public function updateLeadMeasure(LeadMeasure $leadMeasure) {
         $unitBreakthrough = $this->daoSource->getUnitBreakthroughByLeadMeasure($leadMeasure);
         foreach ($unitBreakthrough->leadMeasures as $data) {
-            if ($data->id != $leadMeasure->id && $data->description == $leadMeasure->description) {
+            if ($data->id != $leadMeasure->id && ($data->description == $leadMeasure->description || $data->designation == $leadMeasure->designation)) {
                 throw new ServiceException("Update failed");
             }
         }

@@ -306,6 +306,7 @@ class UbtController extends Controller {
             'unit' => $departmentData,
             'uom' => $uomData
         ));
+        $unitBreakthrough->uom = $this->modelLoaderUtil->loadUomModel($unitBreakthrough->uom->id);
 
         if (!$unitBreakthrough->validate()) {
             $this->setSessionData('validation', $unitBreakthrough->validationMessages);
@@ -328,61 +329,7 @@ class UbtController extends Controller {
         }
         $this->redirect(array('ubt/view', 'id' => $unitBreakthrough->id));
     }
-
-    public function updateLeadMeasure($id = null) {
-        if (is_null($id)) {
-            $this->validatePostData(array('LeadMeasure'));
-            $this->processLeadMeasureUpdate();
-        }
-        $leadMeasure = $this->loadLeadMeasureModel($id);
-        $unitBreakthrough = $this->loadModel(null, $leadMeasure);
-        $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
-
-        $this->title = ApplicationConstants::APP_NAME . ' - Manage Lead Measures';
-        $this->render('ubt/lead-measures', array(
-            'breadcrumb' => array(
-                'Home' => array('site/index'),
-                'Strategy Map Directory' => array('map/index'),
-                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
-                'Unit Breakthrough' => array('ubt/view', 'id' => $unitBreakthrough->id),
-                'Manage Lead Measures' => array('ubt/manageLeadMeasures', 'ubt' => $unitBreakthrough->id),
-                'Update' => 'active'),
-            'model' => $leadMeasure,
-            'ubtModel' => $unitBreakthrough,
-            'validation' => $this->getSessionData('validation'),
-            'notif' => $this->getSessionData('notif')
-        ));
-        $this->unsetSessionData('validation');
-    }
-
-    private function processLeadMeasureUpdate() {
-        $leadMeasureData = $this->getFormData('LeadMeasure');
-        $leadMeasure = new LeadMeasure();
-        $leadMeasure->bindValuesUsingArray(array('leadmeasure' => $leadMeasureData), $leadMeasure);
-        $oldLeadMeasure = $this->loadLeadMeasureModel($leadMeasure->id);
-
-        if ($leadMeasure->computePropertyChanges($oldLeadMeasure) > 0 && $leadMeasure->validate()) {
-            try {
-                $this->ubtService->updateLeadMeasure($leadMeasure);
-                $unitBreakthrough = $this->loadModel(null, $leadMeasure);
-                $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $leadMeasure, $oldLeadMeasure);
-                $this->setSessionData('notif', array('class' => 'info', 'message' => 'Lead Measure updated'));
-                $this->redirect(array('ubt/manageLeadMeasures', 'ubt' => $unitBreakthrough->id));
-            } catch (ServiceException $ex) {
-                $this->logger->error($ex->getMessage(), $ex);
-                $this->setSessionData('validation', array($ex->getMessage()));
-                $this->redirect(array('ubt/updateLeadMeasure', 'id' => $oldLeadMeasure->id));
-            }
-        } elseif ($leadMeasure->computePropertyChanges($oldLeadMeasure) > 0 && !$leadMeasure->validate()) {
-            $this->setSessionData('validation', $leadMeasure->validationMessages);
-            $this->redirect(array('ubt/updateLeadMeasure', 'id' => $oldLeadMeasure->id));
-        } elseif ($leadMeasure->computePropertyChanges($oldLeadMeasure) == 0) {
-            $this->logger->debug('no changes');
-            $this->redirect(array('ubt/updateLeadMeasure', 'id' => $oldLeadMeasure->id));
-        }
-    }
-
+    
     public function updateLeadMeasureStatus() {
         try {
             $this->validatePostData(array('lm', 'status'));
