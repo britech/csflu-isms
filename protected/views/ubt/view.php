@@ -7,15 +7,22 @@ use org\csflu\isms\models\ubt\LeadMeasure;
 <?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
 
 <div class="ink-alert block info" style="margin-top: 0px;">
-    <h4><?php echo $data->description; ?></h4>
+    <h4><?php echo $data->unit->name; ?></h4>
     <p>
-        <strong>Unit</strong>
-        <span style="display: block; margin-bottom: 10px;"><?php echo $data->unit->name; ?></span>
+        <strong>Unit Breakthrough</strong>
+        <span style="display: block; margin-bottom: 10px;"><?php echo $data->description; ?></span>
 
-        <strong>Lead Measures</strong>
+        <strong>Lead Measure 1</strong>
         <?php foreach ($data->leadMeasures as $leadMeasure): ?>
-            <?php if ($leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE): ?>
-                <span style="display: block;">*&nbsp;<?php echo $leadMeasure->description; ?></span>
+            <?php if ($leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE && $leadMeasure->designation == LeadMeasure::DESIGNATION_1): ?>
+                <span style="display: block; margin-bottom: 10px;">*&nbsp;<?php echo $leadMeasure->description; ?></span>
+            <?php endif; ?>
+        <?php endforeach; ?>
+
+        <strong>Lead Measure 2</strong>
+        <?php foreach ($data->leadMeasures as $leadMeasure): ?>
+            <?php if ($leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE && $leadMeasure->designation == LeadMeasure::DESIGNATION_2): ?>
+                <span style="display: block; margin-bottom: 10px;">*&nbsp;<?php echo $leadMeasure->description; ?></span>
             <?php endif; ?>
         <?php endforeach; ?>
 
