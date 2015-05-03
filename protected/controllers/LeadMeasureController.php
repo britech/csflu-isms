@@ -136,4 +136,36 @@ class LeadMeasureController extends Controller {
         return implode('&nbsp;|&nbsp;', $links);
     }
 
+    public function update($id = null) {
+        if (is_null($id)) {
+            
+        }
+        $model = $this->modelLoaderUtil->loadLeadMeasureModel($id);
+        $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel(null, $model);
+        $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, null, null, null, $unitBreakthrough);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Lead Measures';
+        $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
+        $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
+        $model->startingPeriod = $model->startingPeriod->format('Y-m-d');
+        $model->endingPeriod = $model->endingPeriod->format('Y-m-d');
+        $this->render('ubt/lead-measures', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
+                'Unit Breakthrough' => array('ubt/view', 'id' => $unitBreakthrough->id),
+                'Manage Lead Measures' => array('leadMeasure/index', 'ubt' => $unitBreakthrough->id),
+                'Update' => 'active'),
+            'model' => $model,
+            'ubtModel' => $unitBreakthrough,
+            'uomModel' => $model->uom,
+            'designationList' => LeadMeasure::listDesignationTypes(),
+            'statusList' => LeadMeasure::listEnvironmentStatus(),
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+    }
+
 }

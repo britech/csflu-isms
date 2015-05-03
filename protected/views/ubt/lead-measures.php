@@ -60,28 +60,22 @@ $form = new Form(array(
             </div>
             <div class="all-50">
                 <div class="control-group">
-                    <?php echo $form->renderLabel($model, 'baselineFigure', array('required' => true)); ?>
-                    <div class="control">
-                        <div id="baseline-input"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="all-50">
-                <div class="control-group">
                     <?php echo $form->renderLabel($model, 'targetFigure', array('required' => true)); ?>
                     <div class="control">
                         <div id="target-input"></div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="control-group column-group quarter-gutters">
-            <?php echo $form->renderLabel($model, 'uom', array('required' => true, 'class' => 'all-30 content-right')); ?>
-            <div class="control all-70">
-                <div id="uom-input"></div>
+            <div class="all-50">
+                <div class="control-group">
+                    <?php echo $form->renderLabel($model, 'uom', array('required' => true)); ?>
+                    <div class="control">
+                        <div id="uom-input"></div>
+                    </div>
+                </div>
             </div>
         </div>
+
         <?php
         if ($model->isNew()) {
             echo $form->renderSubmitButton('Enlist', array('class' => 'ink-button green flat', 'style' => 'margin-top:10px; margin-left:0px;'));
@@ -90,7 +84,6 @@ $form = new Form(array(
         }
         ?>
         <?php echo $form->renderHiddenField($model, 'id'); ?>
-        <?php echo $form->renderHiddenField($model, 'baselineFigure'); ?>
         <?php echo $form->renderHiddenField($model, 'targetFigure') ?>
         <?php echo $form->renderHiddenField($model, 'startingPeriod', array('id' => 'lm-start')); ?>
         <?php echo $form->renderHiddenField($model, 'endingPeriod', array('id' => 'lm-end')); ?>

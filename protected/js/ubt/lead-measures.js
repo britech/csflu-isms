@@ -43,17 +43,6 @@ $(document).ready(function() {
         });
     });
 
-    $("#baseline-input").jqxNumberInput({
-        theme: 'office',
-        height: '35px',
-        textAlign: 'left',
-        digits: 12,
-        symbol: ''
-    }).on("valuechanged", function(event) {
-        console.log($("#baseline-input").val());
-        $("[name*=baselineFigure]").val($("#baseline-input").val());
-    });
-
     $("#target-input").jqxNumberInput({
         theme: 'office',
         height: '35px',
@@ -64,10 +53,6 @@ $(document).ready(function() {
         console.log($("#target-input").val());
         $("[name*=targetFigure]").val($("#target-input").val());
     });
-
-    if ($("#baseline").val() !== '') {
-        $("#baseline-input").val($("[name*=baselineFigure]").val());
-    }
 
     if ($("#target").val() !== '') {
         $("#target-input").val($("[name*=targetFigure]").val());
@@ -198,7 +183,6 @@ $(document).ready(function() {
                     "description": $("[name*=description]").val(),
                     "designation": $("[name*=designation]").val(),
                     "leadMeasureEnvironmentStatus": $("[name*=leadMeasureEnvironmentStatus]").val(),
-                    "baselineFigure": $("[name*=baselineFigure]").val(),
                     "targetFigure": $("[name*=targetFigure]").val(),
                     "startingPeriod": $("#lm-start").val(),
                     "endingPeriod": $("#lm-end").val()

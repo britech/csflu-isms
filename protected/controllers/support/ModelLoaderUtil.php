@@ -233,6 +233,28 @@ class ModelLoaderUtil {
         return $measure;
     }
 
+    /**
+     * Retrieves the LeadMeasure entity
+     * @param String $id Retrieve by its identifier
+     * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
+     * @return LeadMeasure
+     */
+    public function loadLeadMeasureModel($id, array $properties = array()) {
+        $leadMeasure = $this->ubtService->retrieveLeadMeasure($id);
+        $url = $this->resolveProperty($properties, self::KEY_URL, array('map/index'));
+        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, false);
+        $message = $this->resolveProperty($properties, self::KEY_MSG, "No Lead Measure found");
+        if (is_null($leadMeasure->id)) {
+            $this->controller->setSessionData('notif', array('message' => $message));
+            if ($remote) {
+                $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
+            } else {
+                $this->controller->redirect($url);
+            }
+        }
+        return $leadMeasure;
+    }
+
     private function retrieveMyAccountModel(array $properties) {
         $id = $this->controller->getSessionData('user');
         $userAccount = $this->userService->getAccountById($id);

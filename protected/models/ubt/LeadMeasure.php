@@ -10,8 +10,7 @@ use org\csflu\isms\models\commons\UnitOfMeasure;
  *
  * @property String $id
  * @property String $description
- * @property int $designation Description
- * @property String $baselineFigure
+ * @property int $designation
  * @property String $targetFigure
  * @property UnitOfMeasure $uom
  * @property \DateTime $startingPeriod
@@ -31,7 +30,6 @@ class LeadMeasure extends Model {
     private $id;
     private $description;
     private $designation = self::DESIGNATION_1;
-    private $baselineFigure;
     private $targetFigure;
     private $uom;
     private $leadMeasureEnvironmentStatus = self::STATUS_ACTIVE;
@@ -98,10 +96,6 @@ class LeadMeasure extends Model {
             array_push($this->validationMessages, '- Target Figure should be defined');
         }
 
-        if (strlen($this->baselineFigure) > 1 && !is_numeric($this->baselineFigure)) {
-            array_push($this->validationMessages, '- Baseline Figure should be in numerical representation');
-        }
-
         if (strlen($this->targetFigure) > 1 && !is_numeric($this->targetFigure)) {
             array_push($this->validationMessages, '- Target Figure should be in numerical representation');
         }
@@ -135,7 +129,6 @@ class LeadMeasure extends Model {
                 . "Designation:\t{$this->translateDesignationType()}\n"
                 . "Timeline:\t{$this->startingPeriod->format('M. d, Y')} to {$this->endingPeriod->format('M. d, Y')}\n"
                 . "Status:\t{$this->translateEnvironmentStatus()}\n"
-                . "Baseline\t{$this->baselineFigure} {$this->uom->description}\n"
                 . "Target:\t{$this->targetFigure} {$this->uom->description}";
     }
 
@@ -150,10 +143,6 @@ class LeadMeasure extends Model {
         }
 
         if ($oldModel->designation != $this->designation) {
-            $counter++;
-        }
-
-        if ($oldModel->baselineFigure != $this->baselineFigure) {
             $counter++;
         }
 
@@ -188,10 +177,6 @@ class LeadMeasure extends Model {
 
         if ($oldModel->designation != $this->designation) {
             $translation.="Designation:\t{$this->translateDesignationType()}\n";
-        }
-
-        if ($oldModel->baselineFigure != $this->baselineFigure) {
-            $translation.="Baseline:\t{$this->baselineFigure} {$this->uom->description}\n";
         }
 
         if ($oldModel->targetFigure != $this->targetFigure) {

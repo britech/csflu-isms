@@ -5,6 +5,7 @@ namespace org\csflu\isms\dao\ubt;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\ubt\LeadMeasureDao;
+use org\csflu\isms\dao\commons\UnitOfMeasureDaoSqlImpl;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\ubt\LeadMeasure;
 
@@ -16,9 +17,13 @@ use org\csflu\isms\models\ubt\LeadMeasure;
 class LeadMeasureDaoSqlImpl implements LeadMeasureDao {
 
     private $db;
+    private $logger;
+    private $uomDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
+        $this->logger = \Logger::getLogger(__CLASS__);
+        $this->uomDaoSource = new UnitOfMeasureDaoSqlImpl();
     }
 
     public function insertLeadMeasures(UnitBreakthrough $unitBreakthrough) {
@@ -26,11 +31,10 @@ class LeadMeasureDaoSqlImpl implements LeadMeasureDao {
             $this->db->beginTransaction();
 
             foreach ($unitBreakthrough->leadMeasures as $leadMeasure) {
-                $dbst = $this->db->prepare('INSERT INTO lm_main(lm_desc, lm_baseline, lm_target, uom_ref, period_start_date, period_end_date, lm_designation, lm_status, ubt_ref) '
-                        . 'VALUES(:description, :baseline, :target, :uom, :start, :end, :designation, :status, :ubt)');
+                $dbst = $this->db->prepare('INSERT INTO lm_main(lm_desc, lm_target, uom_ref, period_start_date, period_end_date, lm_designation, lm_status, ubt_ref) '
+                        . 'VALUES(:description, :target, :uom, :start, :end, :designation, :status, :ubt)');
                 $dbst->execute(array(
                     'description' => $leadMeasure->description,
-                    'baseline' => $leadMeasure->baselineFigure,
                     'target' => $leadMeasure->targetFigure,
                     'uom' => $leadMeasure->uom->id,
                     'start' => $leadMeasure->startingPeriod->format('Y-m-d'),
@@ -67,15 +71,23 @@ class LeadMeasureDaoSqlImpl implements LeadMeasureDao {
 
     public function getLeadMeasure($id) {
         try {
-            $dbst = $this->db->prepare('SELECT lm_id, lm_desc, lm_status FROM lm_main WHERE lm_id=:id');
+            $dbst = $this->db->prepare('SELECT lm_id, lm_desc, lm_status, lm_target, uom_ref, period_start_date, period_end_date, lm_designation FROM lm_main WHERE lm_id=:id');
             $dbst->execute(array('id' => $id));
 
             $leadMeasure = new LeadMeasure();
             while ($data = $dbst->fetch()) {
                 list($leadMeasure->id,
                         $leadMeasure->description,
-                        $leadMeasure->leadMeasureEnvironmentStatus) = $data;
+                        $leadMeasure->leadMeasureEnvironmentStatus,
+                        $leadMeasure->targetFigure,
+                        $uom,
+                        $startDate,
+                        $endDate,
+                        $leadMeasure->designation) = $data;
             }
+            $leadMeasure->startingPeriod = \DateTime::createFromFormat('Y-m-d', $startDate);
+            $leadMeasure->endingPeriod = \DateTime::createFromFormat('Y-m-d', $endDate);
+            $leadMeasure->uom = $this->uomDaoSource->getUomInfo($uom);
             return $leadMeasure;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
