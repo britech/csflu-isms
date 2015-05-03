@@ -3,7 +3,7 @@ $(document).ready(function() {
         source: new $.jqx.dataAdapter({
             datatype: 'json',
             datafields: [
-                {name: 'description'},
+                {name: 'description', type: 'string'},
                 {name: 'unit'},
                 {name: 'status'},
                 {name: 'action'}
