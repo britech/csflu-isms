@@ -3,6 +3,7 @@
 namespace org\csflu\isms\controllers\support;
 
 use org\csflu\isms\core\Controller;
+use org\csflu\isms\core\Model;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\map\Perspective;
@@ -18,6 +19,7 @@ use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\indicator\LeadOffice;
 use org\csflu\isms\models\indicator\Target;
 use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl;
 use org\csflu\isms\service\commons\UnitOfMeasureSimpleImpl;
@@ -253,6 +255,29 @@ class ModelLoaderUtil {
             }
         }
         return $leadMeasure;
+    }
+
+    /**
+     * Retrieves the WigSession entity
+     * @param type $id Retrieve by its identifier
+     * @param Commitment $commitment Retrieve through a Commitment entity
+     * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
+     * @return WigSession
+     */
+    public function loadWigSessionModel($id = null, Commitment $commitment = null, array $properties = array()) {
+        $wigSession = $this->ubtService->getWigSessionData($id, $commitment);
+        $url = $this->resolveProperty($properties, self::KEY_URL, array('ubt/manage'));
+        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, false);
+        $message = $this->resolveProperty($properties, self::KEY_MSG, "WIG Session not found");
+        if (is_null($wigSession->id)) {
+            $this->controller->setSessionData('notif', array('message' => $message));
+            if ($remote) {
+                $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
+            } else {
+                $this->controller->redirect($url);
+            }
+        }
+        return $wigSession;
     }
 
     private function retrieveMyAccountModel(array $properties) {
