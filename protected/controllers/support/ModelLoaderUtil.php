@@ -26,6 +26,7 @@ use org\csflu\isms\service\commons\UnitOfMeasureSimpleImpl;
 use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl;
 use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl;
+use org\csflu\isms\service\ubt\CommitmentManagementServiceSimpleImpl;
 
 /**
  * Description of ModelLoaderUtil
@@ -35,7 +36,7 @@ use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl;
 class ModelLoaderUtil {
 
     const KEY_URL = "url";
-    const KEY_REMOTE = "isRemote";
+    const KEY_REMOTE = "remote";
     const KEY_MSG = "message";
 
     private static $instance = null;
@@ -47,6 +48,7 @@ class ModelLoaderUtil {
     private $userService;
     private $departmentService;
     private $scorecardService;
+    private $commitService;
 
     private function __construct(Controller $controller) {
         $this->controller = $controller;
@@ -57,6 +59,7 @@ class ModelLoaderUtil {
         $this->userService = new SimpleUserManagementServiceImpl();
         $this->departmentService = new DepartmentServiceSimpleImpl();
         $this->scorecardService = new ScorecardManagementServiceSimpleImpl();
+        $this->commitService = new CommitmentManagementServiceSimpleImpl();
     }
 
     /**
@@ -259,17 +262,48 @@ class ModelLoaderUtil {
 
     /**
      * Retrieves the WigSession entity
-     * @param type $id Retrieve by its identifier
+     * @param String $id Retrieve by its identifier
      * @param Commitment $commitment Retrieve through a Commitment entity
      * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
      * @return WigSession
      */
     public function loadWigSessionModel($id = null, Commitment $commitment = null, array $properties = array()) {
         $wigSession = $this->ubtService->getWigSessionData($id, $commitment);
-        $url = $this->resolveProperty($properties, self::KEY_URL, array('ubt/manage'));
-        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, false);
-        $message = $this->resolveProperty($properties, self::KEY_MSG, "WIG Session not found");
-        if (is_null($wigSession->id)) {
+        $updatedProperties = $this->resolvePropertyValues($properties, array('ubt/manage'), false, "WIG Session not found");
+        
+        return $this->resolveModel($updatedProperties, $wigSession);
+    }
+
+    /**
+     * Retrieves the Commitment entity
+     * @param String $id Retrieve by its identifier
+     * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
+     * @return Commitment
+     */
+    public function loadCommitmentModel($id, array $properties = array()) {
+        $commitment = $this->commitService->getCommitmentData($id);
+        $updatedProperties = $this->resolvePropertyValues($properties, array('ubt/manage'), false, "Commitment not found");
+        
+        return $this->resolveModel($updatedProperties, $commitment);
+    }
+
+    private function resolvePropertyValues(array $properties, $defaultUrl, $defaultRemoteIndicator, $defaultMessage) {
+        $url = $this->resolveProperty($properties, self::KEY_URL, $defaultUrl);
+        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, $defaultRemoteIndicator);
+        $message = $this->resolveProperty($properties, self::KEY_MSG, $defaultMessage);
+
+        return array(
+            self::KEY_URL => $url,
+            self::KEY_REMOTE => $remote,
+            self::KEY_MSG => $message
+        );
+    }
+
+    private function resolveModel(array $properties, Model $model) {
+        $url = ApplicationUtils::getProperty($properties, self::KEY_URL);
+        $remote = ApplicationUtils::getProperty($properties, self::KEY_REMOTE);
+        $message = ApplicationUtils::getProperty($properties, self::KEY_MSG);
+        if (is_null($model->id)) {
             $this->controller->setSessionData('notif', array('message' => $message));
             if ($remote) {
                 $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
@@ -277,7 +311,7 @@ class ModelLoaderUtil {
                 $this->controller->redirect($url);
             }
         }
-        return $wigSession;
+        return $model;
     }
 
     private function retrieveMyAccountModel(array $properties) {

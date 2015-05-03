@@ -12,6 +12,7 @@ use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\controllers\support\WigSessionControllerSupport;
+use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as UnitBreakthroughManagementService;
 use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl;
 use org\csflu\isms\service\ubt\CommitmentManagementServiceSimpleImpl;
@@ -27,6 +28,7 @@ class WigController extends Controller {
     private $userService;
     private $commitmentService;
     private $controllerSupport;
+    private $modelLoaderUtil;
     private $logger;
 
     public function __construct() {
@@ -36,11 +38,11 @@ class WigController extends Controller {
         $this->userService = new SimpleUserManagementServiceImpl();
         $this->commitmentService = new CommitmentManagementServiceSimpleImpl();
         $this->controllerSupport = WigSessionControllerSupport::getInstance($this);
+        $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
     }
 
     public function index($ubt) {
         $unitBreakthrough = $this->loadUbtModel($ubt);
-
         $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
         $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
         $this->title = ApplicationConstants::APP_NAME . ' - Manage WIG Sessions';
@@ -60,10 +62,9 @@ class WigController extends Controller {
     }
 
     public function listMeetings() {
-        $this->validatePostData(array('ubt'));
-
+        $this->validatePostData(array('ubt'), true);
         $id = $this->getFormData('ubt');
-        $unitBreakthrough = $this->loadUbtModel($id);
+        $unitBreakthrough = $this->loadUbtModel($id, null, true);
         $data = array();
         $pointer = 0;
         foreach ($unitBreakthrough->wigMeetings as $wigMeeting) {
@@ -159,7 +160,7 @@ class WigController extends Controller {
         $this->validatePostData(array('id'));
 
         $id = $this->getFormData('id');
-        $wigSession = $this->loadModel($id, true);
+        $wigSession = $this->loadModel($id, null, true);
         $unitBreakthrough = $this->loadUbtModel(null, $wigSession, true);
 
         $this->ubtService->deleteWigSession($id);
@@ -215,50 +216,19 @@ class WigController extends Controller {
     }
 
     private function loadModel($id = null, Commitment $commitment = null, $remote = false) {
-        $wigSession = $this->ubtService->getWigSessionData($id, $commitment);
-        if (is_null($wigSession->id)) {
-            $this->setSessionData('notif', array('message' => 'WIG Session not found'));
-            $url = array('ubt/manage');
-            if ($remote) {
-                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->redirect($url);
-            }
-        }
-        return $wigSession;
+        return $this->modelLoaderUtil->loadWigSessionModel($id, $commitment, array('remote' => $remote));
     }
 
     private function loadAccountModel($id) {
-        $account = $this->userService->getAccountById($id);
-        if (is_null($account->id)) {
-            $this->setSessionData('notif', array('message' => 'Employee not found'));
-            $this->redirect(array('ubt/manage'));
-        }
-        return $account;
+        return $this->modelLoaderUtil->loadAccountModel($id);
     }
 
     private function loadUbtModel($id = null, WigSession $wigSession = null, $remote = false) {
-        $unitBreakthrough = $this->ubtService->getUnitBreakthrough($id, null, $wigSession);
-        if (is_null($unitBreakthrough->id)) {
-            $this->setSessionData('notif', array('message' => 'Unit Breakthrough not found'));
-            $url = array('map/index');
-            if ($remote) {
-                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->redirect($url);
-            }
-        }
-        $unitBreakthrough->validationMode = Model::VALIDATION_MODE_UPDATE;
-        return $unitBreakthrough;
+        return $this->modelLoaderUtil->loadUnitBreakthroughModel($id, null, $wigSession, array('remote' => $remote));
     }
 
     private function loadCommitmentModel($id) {
-        $commitment = $this->commitmentService->getCommitmentData($id);
-        if (is_null($commitment->id)) {
-            $this->setSessionData('notif', array('Commitment data not found'));
-            $this->redirect(array('ubt/manage'));
-        }
-        return $commitment;
+        return $this->modelLoaderUtil->loadCommitmentModel($id);
     }
 
 }
