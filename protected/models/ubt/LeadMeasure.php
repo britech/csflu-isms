@@ -127,7 +127,7 @@ class LeadMeasure extends Model {
         return "[LeadMeasure added]\n\n"
                 . "Description:\t{$this->description}\n"
                 . "Designation:\t{$this->translateDesignationType()}\n"
-                . "Timeline:\t{$this->startingPeriod->format('M. d, Y')} to {$this->endingPeriod->format('M. d, Y')}\n"
+                . "Timeline:\t{$this->startingPeriod->format('M. Y')} to {$this->endingPeriod->format('M. Y')}\n"
                 . "Status:\t{$this->translateEnvironmentStatus()}\n"
                 . "Target:\t{$this->targetFigure} {$this->uom->description}";
     }
@@ -188,11 +188,11 @@ class LeadMeasure extends Model {
         }
 
         if ($oldModel->startingPeriod->format('Y-m-d') != $this->startingPeriod->format('Y-m-d')) {
-            $translation.="Starting Period:\t{$this->startingPeriod->format('Y-m-d')}\n";
+            $translation.="Starting Period:\t{$this->startingPeriod->format('M. Y')}\n";
         }
 
         if ($oldModel->endingPeriod->format('Y-m-d') != $this->endingPeriod->format('Y-m-d')) {
-            $translation.="Ending Period:\t{$this->endingPeriod->format('Y-m-d')}\n";
+            $translation.="Ending Period:\t{$this->endingPeriod->format('M. Y')}\n";
         }
 
         return $translation;
