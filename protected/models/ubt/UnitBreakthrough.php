@@ -94,10 +94,6 @@ class UnitBreakthrough extends Model {
             array_push($this->validationMessages, '- Unit of Measure should be defined');
         }
 
-        if (strlen($this->baselineFigure) < 1) {
-            array_push($this->validationMessages, '- Baseline Figure should be defined');
-        }
-
         if (strlen($this->targetFigure) < 1) {
             array_push($this->validationMessages, '- Target Figure should be defined');
         }
