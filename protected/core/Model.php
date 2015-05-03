@@ -33,7 +33,7 @@ abstract class Model {
                 throw new ModelException('Data binding failure');
             }
             $value = is_array($value) ? implode($this->arrayDelimiter, $value) : $value;
-            $model->$property = ucwords(strtolower(htmlentities(trim($value), ENT_COMPAT, 'UTF-8')));
+            $model->$property = (htmlentities(trim($value), ENT_COMPAT, 'UTF-8'));
         }
     }
 
