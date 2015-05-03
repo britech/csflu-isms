@@ -9,7 +9,6 @@ use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
-use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\commons\UnitOfMeasure;
@@ -17,11 +16,7 @@ use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
-use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
-use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
-use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl as DepartmentService;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as UnitBreakthroughManagementService;
-use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl as UserManagementService;
 
 /**
  * Description of UbtController
@@ -31,20 +26,12 @@ use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl as UserManagement
 class UbtController extends Controller {
 
     private $logger;
-    private $mapService;
-    private $scorecardService;
-    private $departmentService;
     private $ubtService;
-    private $userService;
     private $modelLoaderUtil;
 
     public function __construct() {
         $this->checkAuthorization();
-        $this->mapService = new StrategyMapManagementService();
-        $this->scorecardService = new ScorecardManagementService();
-        $this->departmentService = new DepartmentService();
         $this->ubtService = new UnitBreakthroughManagementService();
-        $this->userService = new UserManagementService();
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->logger = \Logger::getLogger(__CLASS__);
     }
@@ -95,7 +82,7 @@ class UbtController extends Controller {
         foreach ($unitBreakthroughs as $unitBreakthrough) {
             array_push($data, array(
                 'description' => $unitBreakthrough->description,
-                'status' => UnitBreakthrough::translateUbtStatusCode($unitBreakthrough->unitBreakthroughEnvironmentStatus),
+                'status' => $unitBreakthrough->translateUbtStatusCode(),
                 'unit' => $unitBreakthrough->unit->name,
                 'action' => ApplicationUtils::generateLink(array('ubt/view', 'id' => $unitBreakthrough->id), 'View')
             ));
@@ -112,10 +99,10 @@ class UbtController extends Controller {
 
         $data = array();
         foreach ($unitBreakthroughs as $unitBreakthrough) {
-            $map = $this->loadMapModel(null, $unitBreakthrough);
+            $map = $this->modelLoaderUtil->loadMapModel(null, null, null, null, null, $unitBreakthrough);
             array_push($data, array(
                 'id' => $unitBreakthrough->id,
-                'description' => $unitBreakthrough->description,
+                'description' => strval($unitBreakthrough->description),
                 'status' => UnitBreakthrough::translateUbtStatusCode($unitBreakthrough->unitBreakthroughEnvironmentStatus),
                 'map' => $map->name,
                 'action' => $this->resolveActionLinks($unitBreakthrough)
@@ -329,35 +316,6 @@ class UbtController extends Controller {
         }
         $this->redirect(array('ubt/view', 'id' => $unitBreakthrough->id));
     }
-    
-    public function updateLeadMeasureStatus() {
-        try {
-            $this->validatePostData(array('lm', 'status'));
-        } catch (ControllerException $ex) {
-            $this->logger->warn($ex->getMessage(), $ex);
-            $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
-            return;
-        }
-        $id = $this->getFormData('lm');
-        $status = $this->getFormData('status');
-
-        $leadMeasure = $this->loadLeadMeasureModel($id, true);
-        $leadMeasure->leadMeasureEnvironmentStatus = $status;
-
-        $oldLeadMeasure = $this->loadLeadMeasureModel($id, true);
-        $unitBreakthrough = $this->loadModel(null, $leadMeasure);
-        if ($leadMeasure->computePropertyChanges($oldLeadMeasure) > 0) {
-            try {
-                $this->ubtService->updateLeadMeasureStatus($leadMeasure);
-                $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $leadMeasure, $oldLeadMeasure);
-                $this->setSessionData('notif', array('class' => 'info', 'message' => "Lead Measure - {$leadMeasure->description} is now set to {$leadMeasure->translateEnvironmentStatus($leadMeasure->leadMeasureEnvironmentStatus)}"));
-            } catch (ServiceException $ex) {
-                $this->setSessionData('notif', array('class' => 'error', 'message' => $ex->getMessage()));
-                $this->logger->warn($ex->getMessage(), $ex);
-            }
-        }
-        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('ubt/manageLeadMeasures', 'ubt' => $unitBreakthrough->id))));
-    }
 
     private function purifyUbtInput(UnitBreakthrough $unitBreakthrough) {
         //purify objectives
@@ -400,47 +358,6 @@ class UbtController extends Controller {
                 $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, "[MeasureProfile linked]\n\nMeasure Profile:\t{$measure->indicator->description}");
             }
         }
-    }
-
-    private function loadLeadMeasureModel($id, $remote = false) {
-        $leadMeasure = $this->ubtService->retrieveLeadMeasure($id);
-        if (is_null($leadMeasure->id)) {
-            $this->setSessionData('notif', array('message' => 'Lead Measure not found'));
-            $url = array('map/index');
-            if ($remote) {
-                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->redirect($url);
-            }
-        }
-        $leadMeasure->validationMode = Model::VALIDATION_MODE_UPDATE;
-        return $leadMeasure;
-    }
-
-    private function loadModel($id = null, LeadMeasure $leadMeasure = null, $remote = false) {
-        $unitBreakthrough = $this->ubtService->getUnitBreakthrough($id, $leadMeasure);
-        if (is_null($unitBreakthrough->id)) {
-            $this->setSessionData('notif', array('message' => 'Unit Breakthrough not found'));
-            $url = array('map/index');
-            if ($remote) {
-                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->redirect($url);
-            }
-        }
-        $unitBreakthrough->validationMode = Model::VALIDATION_MODE_UPDATE;
-        return $unitBreakthrough;
-    }
-
-    private function loadMapModel($id = null, UnitBreakthrough $unitBreakthrough = null) {
-        $strategyMap = $this->mapService->getStrategyMap($id, null, null, null, null, $unitBreakthrough);
-        if (is_null($strategyMap->id)) {
-            $this->setSessionData('notif', array('message' => 'Strategy Map not found'));
-            $this->redirect(array('map/index'));
-        }
-        $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
-        $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
-        return $strategyMap;
     }
 
 }

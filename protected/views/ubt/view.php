@@ -15,14 +15,14 @@ use org\csflu\isms\models\ubt\LeadMeasure;
         <strong>Lead Measure 1</strong>
         <?php foreach ($data->leadMeasures as $leadMeasure): ?>
             <?php if ($leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE && $leadMeasure->designation == LeadMeasure::DESIGNATION_1): ?>
-                <span style="display: block; margin-bottom: 10px;">*&nbsp;<?php echo $leadMeasure->description; ?></span>
+                <span style="display: block"><?php echo $leadMeasure->description; ?></span>
             <?php endif; ?>
         <?php endforeach; ?>
 
-        <strong>Lead Measure 2</strong>
+        <strong style="display: block; margin-top: 10px;">Lead Measure 2</strong>
         <?php foreach ($data->leadMeasures as $leadMeasure): ?>
             <?php if ($leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE && $leadMeasure->designation == LeadMeasure::DESIGNATION_2): ?>
-                <span style="display: block; margin-bottom: 10px;">*&nbsp;<?php echo $leadMeasure->description; ?></span>
+                <span style="display: block;"><?php echo $leadMeasure->description; ?></span>
             <?php endif; ?>
         <?php endforeach; ?>
 

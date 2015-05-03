@@ -24,7 +24,6 @@ $(document).ready(function() {
         pageable: true,
         pageSize: 25,
         filterable: true,
-        filterMode: 'simple',
         sortable: true,
         selectionMode: 'singleRow'
     }).on("rowClick", function() {
@@ -164,8 +163,13 @@ $(document).ready(function() {
         var id = data[1];
         var status = data[2];
 
-        $.post("?r=ubt/updateLeadMeasureStatus",
-                {lm: id, status: status},
+        $.post("?r=leadMeasure/updateStatus",
+                {
+                    "LeadMeasure":{
+                        'id': id,
+                        'leadMeasureEnvironmentStatus': status
+                    }
+                },
         function(data) {
             var response = $.parseJSON(data);
             window.location = response.url;

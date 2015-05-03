@@ -204,4 +204,38 @@ class LeadMeasureController extends Controller {
         $this->redirect(array('leadMeasure/index', 'ubt' => $unitBreakthrough->id));
     }
 
+    public function updateStatus() {
+        $this->validatePostData(array('LeadMeasure'), true);
+
+        $leadMeasureData = $this->getFormData('LeadMeasure');
+        $id = $leadMeasureData['id'];
+        $status = $leadMeasureData['leadMeasureEnvironmentStatus'];
+
+        $leadMeasure = $this->modelLoaderUtil->loadLeadMeasureModel($id, array('remote' => true));
+        $leadMeasure->leadMeasureEnvironmentStatus = $status;
+        $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel(null, $leadMeasure, null, array('remote' => true));
+
+        if ($status == LeadMeasure::STATUS_INACTIVE) {
+            $leadMeasure->designation = LeadMeasure::DESIGNATION_0;
+        } elseif ($status == LeadMeasure::STATUS_ACTIVE) {
+            foreach ($unitBreakthrough->leadMeasures as $data) {
+                if ($id != $data->id && $data->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE) {
+                    $pointer = $data->designation;
+                }
+            }
+            $leadMeasure->designation = $pointer == LeadMeasure::DESIGNATION_1 ? LeadMeasure::DESIGNATION_2 : LeadMeasure::DESIGNATION_1;
+        }
+
+        $oldModel = $this->modelLoaderUtil->loadLeadMeasureModel($id, array('remote' => true));
+        try {
+            $this->ubtService->updateLeadMeasureStatus($leadMeasure);
+            $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $leadMeasure, $oldModel);
+            $this->setSessionData('notif', array('class' => 'info', 'message' => "Lead Measure - {$leadMeasure->description} is now set to {$leadMeasure->translateEnvironmentStatus()}"));
+        } catch (ServiceException $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+            $this->setSessionData('validation', array($ex->getMessage()));
+        }
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('leadMeasure/index', 'ubt' => $unitBreakthrough->id))));
+    }
+
 }

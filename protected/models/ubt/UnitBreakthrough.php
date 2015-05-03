@@ -56,9 +56,10 @@ class UnitBreakthrough extends Model {
         );
     }
 
-    public static function translateUbtStatusCode($statusCode) {
-        if (array_key_exists($statusCode, self::listUbtStatusCodes())) {
-            return self::listUbtStatusCodes()[$statusCode];
+    public function translateUbtStatusCode($statusCode = null) {
+        $code = is_null($statusCode) ? $this->unitBreakthroughEnvironmentStatus : $statusCode;
+        if (array_key_exists($code, self::listUbtStatusCodes())) {
+            return self::listUbtStatusCodes()[$code];
         }
         return null;
     }
@@ -165,7 +166,7 @@ class UnitBreakthrough extends Model {
         return "[UnitBreakthrough added]\n\n"
                 . "Department:\t{$this->unit->name}\n"
                 . "Unit Breakthrough:\t{$this->description}\n"
-                . "Status:\t{$this->translateUbtStatusCode($this->unitBreakthroughEnvironmentStatus)}\n"
+                . "Status:\t{$this->translateUbtStatusCode()}\n"
                 . "Timeline:\t{$this->startingPeriod->format('F-Y')} - {$this->endingPeriod->format('F-Y')}\n"
                 . "Baseline: {$this->baselineFigure} {$this->uom->description}\n"
                 . "Target: {$this->targetFigure} {$this->uom->description}";
@@ -240,7 +241,7 @@ class UnitBreakthrough extends Model {
         }
 
         if ($oldModel->unitBreakthroughEnvironmentStatus != $this->unitBreakthroughEnvironmentStatus) {
-            $translation.="Status:\t{$this->translateUbtStatusCode($this->unitBreakthroughEnvironmentStatus)}";
+            $translation.="Status:\t{$this->translateUbtStatusCode()}";
         }
 
         return $translation;
