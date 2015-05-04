@@ -23,7 +23,6 @@ class LeadMeasure extends Model {
     const STATUS_ACTIVE = "A";
     const STATUS_INACTIVE = "I";
     const STATUS_COMPLETE = "C";
-    const DESIGNATION_0 = 0;
     const DESIGNATION_1 = 1;
     const DESIGNATION_2 = 2;
 
@@ -46,7 +45,6 @@ class LeadMeasure extends Model {
 
     public static function listDesignationTypes() {
         return array(
-            self::DESIGNATION_0 => 'Disabled',
             self::DESIGNATION_1 => 'Lead Measure 1',
             self::DESIGNATION_2 => 'Lead Measure 2'
         );
@@ -98,10 +96,6 @@ class LeadMeasure extends Model {
 
         if (strlen($this->targetFigure) > 1 && !is_numeric($this->targetFigure)) {
             array_push($this->validationMessages, '- Target Figure should be in numerical representation');
-        }
-
-        if ($this->leadMeasureEnvironmentStatus == self::STATUS_ACTIVE && $this->designation == self::DESIGNATION_0) {
-            array_push($this->validationMessages, '- Lead Measure should be not active if the designation is disabled');
         }
 
         if (!($this->startingPeriod instanceof \DateTime || $this->endingPeriod instanceof \DateTime)) {
