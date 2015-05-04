@@ -79,10 +79,11 @@ class CommitmentCrudDaoSqlImpl implements CommitmentCrudDao {
                 list($commitment->id,
                         $user,
                         $commitment->commitment,
-                        $commitment->commitmentEnvironmentStatus) = $data;
+                        $status) = $data;
             }
             $commitment->user = $this->userDao->getUserAccount($user);
             $commitment->commitmentMovements = $this->commitMovementDao->listMovements($commitment);
+            $commitment->commitmentEnvironmentStatus = strtoupper($status);
             return $commitment;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());

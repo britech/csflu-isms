@@ -32,6 +32,7 @@ class Commitment extends Model {
     private $commitmentEnvironmentStatus = self::STATUS_PENDING;
     
     public static function translateStatusCode($code){
+        $code = strtoupper($code);
         $description = "";
         
         switch ($code){
