@@ -5,6 +5,7 @@ namespace org\csflu\isms\models\ubt;
 use org\csflu\isms\core\Model;
 use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\models\ubt\UnitBreakthroughMovement;
+use org\csflu\isms\models\ubt\WigMeeting;
 
 /**
  * Description of WigMeeting
@@ -13,7 +14,8 @@ use org\csflu\isms\models\ubt\UnitBreakthroughMovement;
  * @property \DateTime $startingPeriod
  * @property \DateTime $endingPeriod
  * @property Commitment[] $commitments
- * @property UnitBreakthroughMovement $movementUpdate Description
+ * @property UnitBreakthroughMovement $movementUpdate
+ * @property WigMeeting $wigMeeting
  * @property String $wigMeetingEnvironmentStatus
  * @author britech
  */
@@ -27,6 +29,7 @@ class WigSession extends Model {
     private $endingPeriod;
     private $commitments;
     private $movementUpdate;
+    private $wigMeeting;
     private $wigMeetingEnvironmentStatus = self::STATUS_OPEN;
 
     public static function listWigMeetingEnvironmentStatus() {
@@ -87,7 +90,7 @@ class WigSession extends Model {
         }
         return $translation;
     }
-    
+
     public function getModelTranslationAsDeletedEntity() {
         return "[WigSession deleted]\n\nStarting Period:\t{$this->startingPeriod->format('Y-m-d')}\nEnding Period:\t{$this->endingPeriod->format('Y-m-d')}";
     }
