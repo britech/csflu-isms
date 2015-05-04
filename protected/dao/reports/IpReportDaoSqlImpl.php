@@ -37,7 +37,8 @@ class IpReportDaoSqlImpl implements IpReportDao {
             $commitments = array();
             while ($data = $dbst->fetch()) {
                 $commitment = new Commitment();
-                list($commitment->id, $commitment->commitmentEnvironmentStatus) = $data;
+                list($commitment->id, $status) = $data;
+                $commitment->commitmentEnvironmentStatus = strtoupper($status);
                 $commitments = array_merge($commitments, array($commitment));
             }
             return $commitments;
