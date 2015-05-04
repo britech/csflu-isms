@@ -214,18 +214,7 @@ class LeadMeasureController extends Controller {
         $leadMeasure = $this->modelLoaderUtil->loadLeadMeasureModel($id, array('remote' => true));
         $leadMeasure->leadMeasureEnvironmentStatus = $status;
         $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel(null, $leadMeasure, null, array('remote' => true));
-
-        if ($status == LeadMeasure::STATUS_INACTIVE) {
-            $leadMeasure->designation = LeadMeasure::DESIGNATION_0;
-        } elseif ($status == LeadMeasure::STATUS_ACTIVE) {
-            foreach ($unitBreakthrough->leadMeasures as $data) {
-                if ($id != $data->id && $data->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE) {
-                    $pointer = $data->designation;
-                }
-            }
-            $leadMeasure->designation = $pointer == LeadMeasure::DESIGNATION_1 ? LeadMeasure::DESIGNATION_2 : LeadMeasure::DESIGNATION_1;
-        }
-
+        
         $oldModel = $this->modelLoaderUtil->loadLeadMeasureModel($id, array('remote' => true));
         try {
             $this->ubtService->updateLeadMeasureStatus($leadMeasure);

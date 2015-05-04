@@ -274,7 +274,7 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         }
 
         if (count($activeLeadMeasures) == 2 && !in_array($leadMeasure->id, $activeLeadMeasures) && $leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_ACTIVE) {
-            throw new ServiceException("Maximum of LeadMeasures under the 'Active' flag is reached");
+            throw new ServiceException("Maximum number of Lead Measures under the 'Active' flag is reached");
         } elseif (count($activeLeadMeasures) == 1 && in_array($leadMeasure->id, $activeLeadMeasures) && $leadMeasure->leadMeasureEnvironmentStatus == LeadMeasure::STATUS_INACTIVE) {
             throw new ServiceException("At least one LeadMeasure should be active");
         }
