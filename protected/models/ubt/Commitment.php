@@ -31,11 +31,11 @@ class Commitment extends Model {
     private $commitmentMovements;
     private $commitmentEnvironmentStatus = self::STATUS_PENDING;
     
-    public static function translateStatusCode($code){
-        $code = strtoupper($code);
+    public function translateStatusCode($code = null){
+        $status = is_null($code)? $this->commitmentEnvironmentStatus : strtoupper($code);
         $description = "";
         
-        switch ($code){
+        switch ($status){
             case self::STATUS_PENDING:
                 $description = "Pending";
                 break;
