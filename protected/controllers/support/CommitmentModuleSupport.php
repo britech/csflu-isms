@@ -8,6 +8,7 @@ use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\ubt\Commitment;
+use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
 use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl;
 use org\csflu\isms\service\ubt\CommitmentManagementServiceSimpleImpl;
@@ -23,6 +24,7 @@ class CommitmentModuleSupport {
     private $ubtService;
     private $userService;
     private $commitmentService;
+    private $modelLoaderUtil;
     private $logger;
     private $controller;
 
@@ -32,6 +34,7 @@ class CommitmentModuleSupport {
         $this->userService = new SimpleUserManagementServiceImpl();
         $this->commitmentService = new CommitmentManagementServiceSimpleImpl();
         $this->controller = $controller;
+        $this->modelLoaderUtil = ModelLoaderUtil::getInstance($controller);
     }
 
     /**
@@ -64,13 +67,14 @@ class CommitmentModuleSupport {
             }
         }
 
-        $unitBreakthrough = $this->ubtService->getUnitBreakthrough($unitBreakthroughs[0]->id);
+        $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel($unitBreakthroughs[0]->id);
         foreach ($unitBreakthrough->wigMeetings as $wigSession) {
             if ($wigSession->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN) {
                 return $wigSession;
             }
         }
 
+        $url = array('wig/index', 'ubt' => $unitBreakthrough->id);
         $this->controller->setSessionData('notif', array('class' => 'error', 'message' => "No open WigSession found for {$unitBreakthrough->description}"));
         if ($remote) {
             $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
@@ -85,17 +89,7 @@ class CommitmentModuleSupport {
      * @return UserAccount
      */
     public function loadAccountModel($remote = false) {
-        $account = $this->userService->getAccountById($this->controller->getSessionData('user'));
-        if (is_null($account->id)) {
-            $url = array('site/logout');
-            $this->logger->warn("User {$this->controller->getSessionData('user')} was not found. Forcing log-out mechanism");
-            if ($remote) {
-                $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->controller->redirect($url);
-            }
-        }
-        return $account;
+        return $this->modelLoaderUtil->loadAccountModel(null, array('remote' => $remote));
     }
 
     /**
