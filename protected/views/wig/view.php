@@ -6,15 +6,13 @@ use org\csflu\isms\util\ModelFormGenerator as Form;
 use org\csflu\isms\models\ubt\WigSession;
 ?>
 <script type="text/javascript" src="protected/js/wig/view.js"></script>
-<div class="all-80">
-    <?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
-</div>
+<?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
 
 <?php
-    if($data->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN){
-        $file = "wig/_commitments";
-    }
-    $this->renderPartial($file, $params);
+if ($data->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN) {
+    $file = "wig/_commitments";
+}
+$this->renderPartial($file, $params);
 ?>
 
 <div id="timeline-prompt">

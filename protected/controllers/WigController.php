@@ -209,6 +209,10 @@ class WigController extends Controller {
     }
 
     public function close($id = null) {
+        if (is_null($id)) {
+            $this->validatePostData(array('WigSession', 'WigMeeting', 'UnitBreakthroughMovement'));
+            $this->closeWigSession();
+        }
         $wigSession = $this->loadModel($id);
         $unitBreakthrough = $this->loadUbtModel(null, $wigSession);
 
@@ -228,8 +232,33 @@ class WigController extends Controller {
             'ubtModel' => $unitBreakthrough,
             'sessionModel' => $wigSession,
             'collatedCommitments' => $this->controllerSupport->collateCommitments($wigSession),
-            'accounts' => $this->controllerSupport->listEmployees()
+            'accounts' => $this->controllerSupport->listEmployees(),
+            'validation' => $this->getSessionData('validation')
         ));
+        $this->unsetSessionData('validation');
+    }
+
+    private function closeWigSession() {
+        $wigSessionData = $this->getFormData('WigSession');
+        $wigMeetingData = $this->getFormData('WigMeeting');
+        $ubtMovementData = $this->getFormData('UnitBreakthroughMovement');
+
+        $wigSession = new WigSession();
+        $wigSession->bindValuesUsingArray(array(
+            'wigsession' => $wigSessionData,
+            'wigMeeting' => $wigMeetingData,
+            'movementUpdate' => $ubtMovementData
+        ));
+        $wigSession->wigMeetingEnvironmentStatus = WigSession::STATUS_CLOSED;
+
+        if (!($wigSession->movementUpdate->validate() || $wigSession->wigMeeting->validate())) {
+            $validationMessage = array_merge($wigSession->movementUpdate->validationMessages, $wigSession->wigMeeting->validationMessages);
+            $this->setSessionData('validation', $validationMessage);
+            $this->redirect(array('wig/close', 'id' => $wigSession->id));
+        }
+
+        $this->setSessionData('notif', array('class' => 'info', 'message' => "WIG Session successfully closed"));
+        $this->redirect(array('wig/view', 'id' => $wigSession->id));
     }
 
     public function validateWigClosureInput() {
