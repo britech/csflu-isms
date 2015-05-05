@@ -28,6 +28,15 @@ class UnitBreakthroughMovement extends Model {
         
     }
 
+    public function getAttributeNames() {
+        return array(
+            'ubtFigure' => 'UBT Figure',
+            'firstLeadMeasureFigure' => 'Lead Measure 1 Figure',
+            'secondLeadMeasureFigure' => 'Lead Measure 2 Figure',
+            'notes' => 'Notes'
+        );
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }

@@ -46,8 +46,8 @@ class WigMeeting extends Model {
         return array(
             'actualSessionStartDate' => 'Actual Start Date',
             'actualSessionEndDate' => 'Actual End Date',
-            'meetingVenue' => 'Venue',
-            'meetingDate' => 'Date',
+            'meetingVenue' => 'Meeting Venue',
+            'meetingDate' => 'Meeting Date',
             'meetingTimeStart' => 'Time Start',
             'meetingTimeEnd' => 'Time End'
         );
