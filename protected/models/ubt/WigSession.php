@@ -40,6 +40,16 @@ class WigSession extends Model {
     }
 
     public function bindValuesUsingArray(array $valueArray) {
+        if(array_key_exists('wigMeeting', $valueArray)){
+            $this->wigMeeting = new WigMeeting();
+            $this->wigMeeting->bindValuesUsingArray(array('wigmeeting'=>$valueArray['wigMeeting']));
+        }
+        
+        if(array_key_exists('movementUpdate', $valueArray)){
+            $this->movementUpdate = new UnitBreakthroughMovement();
+            $this->movementUpdate->bindValuesUsingArray(array('unitbreakthroughmovement'=>$valueArray['movementUpdate']), $this->movementUpdate);
+        }
+        
         parent::bindValuesUsingArray($valueArray, $this);
 
         $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
