@@ -42,6 +42,8 @@ class WigMeeting extends Model {
         if (!$this->meetingDate instanceof \DateTime) {
             array_push($this->validationMessages, '- Meeting Date should be defined');
         }
+        
+        return count($this->validationMessages) == 0;
     }
 
     public function getAttributeNames() {

@@ -40,6 +40,8 @@ class UnitBreakthroughMovement extends Model {
         if (strlen($this->secondLeadMeasureFigure) > 1 && !is_numeric($this->secondLeadMeasureFigure)) {
             array_push($this->validationMessages, '- Lead Measure 2 Figure should in numerical representation');
         }
+        
+        return count($this->validationMessages) == 0;
     }
 
     public function getAttributeNames() {

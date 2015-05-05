@@ -128,7 +128,8 @@ $(document).ready(function() {
                 "UnitBreakthroughMovement": {
                     'ubtFigure': $("[name*=ubtFigure]").val(),
                     'firstLeadMeasureFigure': $("[name*=firstLeadMeasureFigure]").val(),
-                    'secondLeadMeasureFigure': $("[name*=secondLeadMeasureFigure]").val()
+                    'secondLeadMeasureFigure': $("[name*=secondLeadMeasureFigure]").val(),
+                    'notes': $("[name*=notes]").val()
                 }
             },
             async: false,
