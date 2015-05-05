@@ -3,7 +3,6 @@
 namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
-use org\csflu\isms\core\Model;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\util\ApplicationUtils;
@@ -11,6 +10,8 @@ use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\ubt\Commitment;
+use org\csflu\isms\models\ubt\UnitBreakthroughMovement;
+use org\csflu\isms\models\ubt\WigMeeting;
 use org\csflu\isms\controllers\support\WigSessionControllerSupport;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as UnitBreakthroughManagementService;
@@ -204,6 +205,30 @@ class WigController extends Controller {
                 'Movement Log' => 'active'
             ),
             'data' => $commitmentData
+        ));
+    }
+
+    public function close($id = null) {
+        $wigSession = $this->loadModel($id);
+        $unitBreakthrough = $this->loadUbtModel(null, $wigSession);
+
+        $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
+        $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
+        $this->title = ApplicationConstants::APP_NAME . ' - Close WIG Session';
+        $this->render('wig/close', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Manage Unit Breakthroughs' => array('ubt/manage'),
+                'Manage WIG Sessions' => array('wig/index', 'ubt' => $unitBreakthrough->id),
+                'WIG Session' => array('wig/view', 'id' => $wigSession->id),
+                'Close' => 'active'
+            ),
+            'meetingModel' => new WigMeeting(),
+            'movementModel' => new UnitBreakthroughMovement(),
+            'ubtModel' => $unitBreakthrough,
+            'sessionModel' => $wigSession,
+            'collatedCommitments' => $this->controllerSupport->collateCommitments($wigSession),
+            'accounts' => $this->controllerSupport->listEmployees()
         ));
     }
 
