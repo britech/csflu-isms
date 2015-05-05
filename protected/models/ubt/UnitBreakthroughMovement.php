@@ -25,7 +25,21 @@ class UnitBreakthroughMovement extends Model {
     private $notes;
 
     public function validate() {
+        if (strlen($this->notes) < 1) {
+            array_push($this->validationMessages, '- Notes should be defined');
+        }
+
+        if (strlen($this->ubtFigure) > 1 && !is_numeric($this->ubtFigure)) {
+            array_push($this->validationMessages, '- UBT Figure should in numerical representation');
+        }
         
+        if (strlen($this->firstLeadMeasureFigure) > 1 && !is_numeric($this->firstLeadMeasureFigure)) {
+            array_push($this->validationMessages, '- Lead Measure 1 Figure should in numerical representation');
+        }
+        
+        if (strlen($this->secondLeadMeasureFigure) > 1 && !is_numeric($this->secondLeadMeasureFigure)) {
+            array_push($this->validationMessages, '- Lead Measure 2 Figure should in numerical representation');
+        }
     }
 
     public function getAttributeNames() {

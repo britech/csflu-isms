@@ -232,6 +232,31 @@ class WigController extends Controller {
         ));
     }
 
+    public function validateWigClosureInput() {
+        $this->validatePostData(array('WigMeeting', 'UnitBreakthroughMovement'), true);
+
+        $wigMeetingData = $this->getFormData('WigMeeting');
+        $ubtMovementData = $this->getFormData('UnitBreakthroughMovement');
+
+        $wigMeeting = new WigMeeting();
+        $wigMeeting->bindValuesUsingArray(array('wigmeeting' => $wigMeetingData));
+
+        $ubtMovement = new UnitBreakthroughMovement();
+        $ubtMovement->bindValuesUsingArray(array('unitbreakthroughmovement' => $ubtMovementData), $ubtMovement);
+
+        $validationMessages = array();
+        if (!($wigMeeting->validate() || $ubtMovement->validate())) {
+            $validationMessages = array_merge($wigMeeting->validationMessages, $ubtMovement->validationMessages);
+            $validationData = "";
+            foreach ($validationMessages as $message) {
+                $validationData.="{$message}\n";
+            }
+            $this->renderAjaxJsonResponse(array('message' => nl2br($validationData)));
+        } else {
+            $this->renderAjaxJsonResponse(array('respCode' => '00'));
+        }
+    }
+
     private function resolveActionLinks(WigSession $wigMeeting) {
         $links = array(ApplicationUtils::generateLink(array('wig/view', 'id' => $wigMeeting->id), 'View'));
         if ($wigMeeting->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN && count($wigMeeting->commitments) == 0 && is_null($wigMeeting->movementUpdate)) {

@@ -59,7 +59,12 @@ $(document).ready(function() {
     }).on('change', function(event) {
         var source = event.target.id;
         var date = event.args.date;
-        var timeString = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+        var minutes = date.getMinutes().toString().length === 1 ? "0" + date.getMinutes() : date.getMinutes();
+        var hours = date.getHours().toString().length === 1 ? "0" + date.getHours() : date.getHours();
+
+
+        var timeString = hours + ":" + minutes + ":00";
 
         if (source === 'meeting-time-start-input') {
             $("[name*=meetingTimeStart]").val(timeString);
@@ -67,8 +72,8 @@ $(document).ready(function() {
             $("[name*=meetingTimeEnd]").val(timeString);
         }
     });
-    
-    $("#ubt-input").jqxNumberInput({ 
+
+    $("#ubt-input").jqxNumberInput({
         theme: 'office',
         height: '40px',
         textAlign: 'left',
@@ -78,8 +83,8 @@ $(document).ready(function() {
     }).on("valuechanged", function() {
         $("[name*=ubtFigure]").val($("#ubt-input").val());
     });
-    
-    $("#lm1-input").jqxNumberInput({ 
+
+    $("#lm1-input").jqxNumberInput({
         theme: 'office',
         height: '40px',
         textAlign: 'left',
@@ -90,8 +95,8 @@ $(document).ready(function() {
         console.log($("#baseline-input").val());
         $("[name*=firstLeadMeasureFigure]").val($("#lm1-input").val());
     });
-    
-    $("#lm2-input").jqxNumberInput({ 
+
+    $("#lm2-input").jqxNumberInput({
         theme: 'office',
         height: '40px',
         textAlign: 'left',
@@ -101,6 +106,47 @@ $(document).ready(function() {
     }).on("valuechanged", function(event) {
         console.log($("#baseline-input").val());
         $("[name*=secondLeadMeasureFigure]").val($("#lm2-input").val());
+    });
+
+    $("#validation-container").hide();
+
+    $(".ink-form").submit(function() {
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=wig/validateWigClosureInput",
+            data: {
+                "WigMeeting": {
+                    'actualSessionStartDate': $("[name*=actualSessionStartDate]").val(),
+                    'actualSessionEndDate': $("[name*=actualSessionEndDate]").val(),
+                    'meetingVenue': $("[name*=meetingVenue]").val(),
+                    'meetingDate': $("[name*=meetingDate]").val(),
+                    'meetingTimeStart': $("[name*=meetingTimeStart]").val(),
+                    'meetingTimeEnd': $("[name*=meetingTimeEnd]").val()
+                },
+                "UnitBreakthroughMovement": {
+                    'ubtFigure': $("[name*=ubtFigure]").val(),
+                    'firstLeadMeasureFigure': $("[name*=firstLeadMeasureFigure]").val(),
+                    'secondLeadMeasureFigure': $("[name*=secondLeadMeasureFigure]").val()
+                }
+            },
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                    if (!result) {
+                        $("#validation-container").show();
+                        $("#validation-message").html(response.message);
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+        });
+
+        return result;
     });
 
 });

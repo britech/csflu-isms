@@ -18,7 +18,10 @@ $form = new ModelFormGenerator(array(
 <div class="ink-alert basic info" style="margin-top: 0px;">
     <strong>Important Note:</strong>&nbsp;Fields with * are required.
 </div>
-<div id="validation-container"></div>
+<div id="validation-container" class="ink-alert block">
+    <h4>Validation errors. Please check your entries</h4>
+    <p id="validation-message"></p>
+</div>
 <?php
 if (isset($params['validation']) and ! empty($params['validation'])) {
     $this->viewWarningPage('Validation error/s. Please check your entries', implode('<br/>', $params['validation']));
