@@ -128,4 +128,11 @@ interface UnitBreakthroughManagementService {
      * @param String $id
      */
     public function deleteWigSession($id);
+    
+    /**
+     * Closes the WigSession entity, updating the commitments of pending and ongoing to unfinished and enlists movement of the UnitBreakthrough entity
+     * @param WigSession $wigSession
+     * @throws ServiceException
+     */
+    public function closeWigSession(WigSession $wigSession);
 }

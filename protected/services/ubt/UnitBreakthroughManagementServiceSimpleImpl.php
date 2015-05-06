@@ -17,6 +17,7 @@ use org\csflu\isms\dao\ubt\LeadMeasureDaoSqlImpl as LeadMeasureDao;
 use org\csflu\isms\dao\ubt\WigSessionDaoSqlmpl as WigSessionDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
+use org\csflu\isms\dao\ubt\UnitBreakthroughMovementDaoSqlImpl;
 
 /**
  *
@@ -29,6 +30,7 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
     private $wigSessionDaoSource;
     private $objectiveDaoSource;
     private $measureProfileDaoSource;
+    private $movementDaoSource;
     private $logger;
 
     public function __construct() {
@@ -37,6 +39,7 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         $this->wigSessionDaoSource = new WigSessionDao();
         $this->objectiveDaoSource = new ObjectiveDao();
         $this->measureProfileDaoSource = new MeasureProfileDao();
+        $this->movementDaoSource = new UnitBreakthroughMovementDaoSqlImpl();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -285,6 +288,15 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         }
 
         $this->leadMeasureDaoSource->updateLeadMeasure($leadMeasure);
+    }
+
+    public function closeWigSession(WigSession $wigSession) {
+        $checkData = $this->wigSessionDaoSource->getWigSessionData($wigSession->id);
+
+        if ($checkData->wigMeetingEnvironmentStatus == WigSession::STATUS_CLOSED) {
+            throw new ServiceException("WIG Session already closed");
+        }
+        $this->movementDaoSource->enlistUbtMovement($wigSession);
     }
 
 }
