@@ -32,15 +32,15 @@ class UnitBreakthroughMovement extends Model {
         if (strlen($this->ubtFigure) > 1 && !is_numeric($this->ubtFigure)) {
             array_push($this->validationMessages, '- UBT Figure should in numerical representation');
         }
-        
+
         if (strlen($this->firstLeadMeasureFigure) > 1 && !is_numeric($this->firstLeadMeasureFigure)) {
             array_push($this->validationMessages, '- Lead Measure 1 Figure should in numerical representation');
         }
-        
+
         if (strlen($this->secondLeadMeasureFigure) > 1 && !is_numeric($this->secondLeadMeasureFigure)) {
             array_push($this->validationMessages, '- Lead Measure 2 Figure should in numerical representation');
         }
-        
+
         return count($this->validationMessages) == 0;
     }
 
@@ -51,6 +51,13 @@ class UnitBreakthroughMovement extends Model {
             'secondLeadMeasureFigure' => 'Lead Measure 2 Figure',
             'notes' => 'Notes'
         );
+    }
+
+    public function getModelTranslationAsNewEntity() {
+        return "[Movement recorded]\nUBT:\t{$this->ubtFigure}\n"
+                . "Lead Measure 1:\t{$this->firstLeadMeasureFigure}\n"
+                . "Lead Measure 2:\t{$this->secondLeadMeasureFigure}\n"
+                . "Notes:\t{$this->notes}";
     }
 
     public function __set($name, $value) {

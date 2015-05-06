@@ -23,7 +23,7 @@ class WigMeeting extends Model {
     private $meetingDate;
     private $meetingTimeStart;
     private $meetingTimeEnd;
-    
+
     public function validate() {
         if (!($this->actualSessionStartDate instanceof \DateTime || $this->actualSessionEndDate instanceof \DateTime)) {
             array_push($this->validationMessages, '- Actual WIG Timeline should be defined');
@@ -35,14 +35,14 @@ class WigMeeting extends Model {
 
         if (!($this->meetingTimeStart instanceof \DateTime || $this->meetingTimeEnd instanceof \DateTime)) {
             array_push($this->validationMessages, '- Meeting Time should defined');
-        } elseif(($this->meetingTimeStart instanceof \DateTime && $this->meetingTimeStart instanceof \DateTime) && $this->meetingTimeEnd < $this->meetingTimeStart){
+        } elseif (($this->meetingTimeStart instanceof \DateTime && $this->meetingTimeStart instanceof \DateTime) && $this->meetingTimeEnd < $this->meetingTimeStart) {
             array_push($this->validationMessages, '- Time Start is greater than the Time End');
         }
 
         if (!$this->meetingDate instanceof \DateTime) {
             array_push($this->validationMessages, '- Meeting Date should be defined');
         }
-        
+
         return count($this->validationMessages) == 0;
     }
 
@@ -59,12 +59,19 @@ class WigMeeting extends Model {
 
     public function bindValuesUsingArray(array $valueArray) {
         parent::bindValuesUsingArray($valueArray, $this);
-        
+
         $this->actualSessionStartDate = \DateTime::createFromFormat('Y-m-d', $this->actualSessionStartDate);
         $this->actualSessionEndDate = \DateTime::createFromFormat('Y-m-d', $this->actualSessionEndDate);
         $this->meetingDate = \DateTime::createFromFormat('Y-m-d', $this->meetingDate);
         $this->meetingTimeStart = \DateTime::createFromFormat('H:i:s', $this->meetingTimeStart);
         $this->meetingTimeEnd = \DateTime::createFromFormat('H:i:s', $this->meetingTimeEnd);
+    }
+
+    public function getModelTranslationAsNewEntity() {
+        return "[Meeting enlisted]\n"
+                . "Actual Timeline:\t{$this->actualSessionStartDate->format('M. d, Y')} - {$this->actualSessionEndDate->format('M. d, Y')}\n"
+                . "Meeting Time:\t{$this->meetingTimeStart->format('h:i A')} - {$this->meetingTimeEnd->format('h:i A')}\n"
+                . "Venue:\t{$this->meetingVenue}";
     }
 
     public function __set($name, $value) {
