@@ -40,20 +40,22 @@ class WigSession extends Model {
     }
 
     public function bindValuesUsingArray(array $valueArray) {
-        if(array_key_exists('wigMeeting', $valueArray)){
+        if (array_key_exists('wigMeeting', $valueArray)) {
             $this->wigMeeting = new WigMeeting();
-            $this->wigMeeting->bindValuesUsingArray(array('wigmeeting'=>$valueArray['wigMeeting']));
+            $this->wigMeeting->bindValuesUsingArray(array('wigmeeting' => $valueArray['wigMeeting']));
         }
-        
-        if(array_key_exists('movementUpdate', $valueArray)){
-            $this->movementUpdate = new UnitBreakthroughMovement();
-            $this->movementUpdate->bindValuesUsingArray(array('unitbreakthroughmovement'=>$valueArray['movementUpdate']), $this->movementUpdate);
-        }
-        
-        parent::bindValuesUsingArray($valueArray, $this);
 
-        $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
-        $this->endingPeriod = \DateTime::createFromFormat('Y-m-d', $this->endingPeriod);
+        if (array_key_exists('movementUpdate', $valueArray)) {
+            $this->movementUpdate = new UnitBreakthroughMovement();
+            $this->movementUpdate->bindValuesUsingArray(array('unitbreakthroughmovement' => $valueArray['movementUpdate']), $this->movementUpdate);
+        }
+
+        if (array_key_exists('wigsession', $valueArray)) {
+            parent::bindValuesUsingArray($valueArray, $this);
+
+            $this->startingPeriod = \DateTime::createFromFormat('Y-m-d', $this->startingPeriod);
+            $this->endingPeriod = \DateTime::createFromFormat('Y-m-d', $this->endingPeriod);
+        }
     }
 
     public function translateWigMeetingEnvironmentStatus() {
@@ -86,6 +88,10 @@ class WigSession extends Model {
             $counter++;
         }
 
+        if ($this->wigMeetingEnvironmentStatus != $wigSession->wigMeetingEnvironmentStatus) {
+            $counter++;
+        }
+
         return $counter;
     }
 
@@ -97,6 +103,10 @@ class WigSession extends Model {
 
         if ($this->endingPeriod->format('Y-m-d') != $wigSession->endingPeriod->format('Y-m-d')) {
             $translation.="Ending Date:\t{$this->endingPeriod->format('Y-m-d')}";
+        }
+
+        if ($this->wigMeetingEnvironmentStatus != $wigSession->wigMeetingEnvironmentStatus) {
+            $translation.="Status:\t{$this->translateWigMeetingEnvironmentStatus()}";
         }
         return $translation;
     }
