@@ -102,6 +102,7 @@ require_once 'dao/ubt/LeadMeasureDao.php';
 require_once 'dao/ubt/WigSessionDao.php';
 require_once 'dao/ubt/CommitmentCrudDao.php';
 require_once 'dao/ubt/CommitmentMovementDao.php';
+require_once 'dao/ubt/UnitBreakthroughMovementDao.php';
 require_once 'dao/reports/IpReportDao.php';
 
 #dao-implementations
@@ -126,6 +127,7 @@ require_once 'dao/ubt/LeadMeasureDaoSqlImpl.php';
 require_once 'dao/ubt/WigSessionDaoSqlmpl.php';
 require_once 'dao/ubt/CommitmentCrudDaoSqlImpl.php';
 require_once 'dao/ubt/CommitmentMovementDaoSqlImpl.php';
+require_once 'dao/ubt/UniBreakthroughMovementDaoSqlImpl.php';
 require_once 'dao/reports/IpReportDaoSqlImpl.php';
 
 #service-interfaces
