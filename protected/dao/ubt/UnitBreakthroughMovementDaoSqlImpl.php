@@ -15,7 +15,7 @@ use org\csflu\isms\core\ConnectionManager;
  *
  * @author britech
  */
-class UniBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao {
+class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao {
 
     private $db;
     private $logger;
