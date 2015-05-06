@@ -44,7 +44,7 @@ class WigSession extends Model {
             $this->wigMeeting = new WigMeeting();
             $this->wigMeeting->bindValuesUsingArray(array('wigmeeting' => $valueArray['wigMeeting']));
         }
-        
+
         if (array_key_exists('wigsession', $valueArray)) {
             parent::bindValuesUsingArray($valueArray, $this);
 
@@ -53,11 +53,12 @@ class WigSession extends Model {
         }
     }
 
-    public function translateWigMeetingEnvironmentStatus() {
-        if (!array_key_exists($this->wigMeetingEnvironmentStatus, self::listWigMeetingEnvironmentStatus())) {
+    public function translateStatusCode($code = null) {
+        $status = is_null($code) ? $this->wigMeetingEnvironmentStatus : strtoupper($code);
+        if (!array_key_exists($status, self::listWigMeetingEnvironmentStatus())) {
             return "Undefined";
         } else {
-            return self::listWigMeetingEnvironmentStatus()[$this->wigMeetingEnvironmentStatus];
+            return self::listWigMeetingEnvironmentStatus()[$status];
         }
     }
 
@@ -83,10 +84,6 @@ class WigSession extends Model {
             $counter++;
         }
 
-        if ($this->wigMeetingEnvironmentStatus != $wigSession->wigMeetingEnvironmentStatus) {
-            $counter++;
-        }
-
         return $counter;
     }
 
@@ -97,13 +94,14 @@ class WigSession extends Model {
         }
 
         if ($this->endingPeriod->format('Y-m-d') != $wigSession->endingPeriod->format('Y-m-d')) {
-            $translation.="Ending Date:\t{$this->endingPeriod->format('Y-m-d')}";
+            $translation.="Ending Date:\t{$this->endingPeriod->format('Y-m-d')}\n";
         }
 
-        if ($this->wigMeetingEnvironmentStatus != $wigSession->wigMeetingEnvironmentStatus) {
-            $translation.="Status:\t{$this->translateWigMeetingEnvironmentStatus()}";
-        }
         return $translation;
+    }
+
+    public function getClosedWigSessionLogOutput() {
+        return "[WIG Session closed]\n\nTimeline:{$this->startingPeriod->format('M. j, Y')} - {$this->endingPeriod->format('M. j, Y')}";
     }
 
     public function getModelTranslationAsDeletedEntity() {

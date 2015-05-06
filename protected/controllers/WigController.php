@@ -72,7 +72,7 @@ class WigController extends Controller {
             array_push($data, array(
                 'number' => $pointer,
                 'timeline' => "{$wigMeeting->startingPeriod->format('M. j')} - {$wigMeeting->endingPeriod->format('M. j')}",
-                'status' => $wigMeeting->translateWigMeetingEnvironmentStatus(),
+                'status' => $wigMeeting->translateStatusCode(),
                 'action' => $this->resolveActionLinks($wigMeeting)
             ));
             $pointer++;
@@ -257,7 +257,7 @@ class WigController extends Controller {
         $unitBreakthrough = $this->loadUbtModel(null, $wigSession);
         try {
             $this->ubtService->closeWigSession($wigSession);
-            $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession, $this->loadModel($wigSession->id));
+            $this->logCustomRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession->getClosedWigSessionLogOutput());
             $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession->wigMeeting);
             $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $ubtMovement);
             $this->setSessionData('notif', array('class' => 'info', 'message' => "WIG Session successfully closed"));
