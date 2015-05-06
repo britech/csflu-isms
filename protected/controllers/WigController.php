@@ -243,9 +243,8 @@ class WigController extends Controller {
         $wigMeetingData = $this->getFormData('WigMeeting');
         $ubtMovementData = $this->getFormData('UnitBreakthroughMovement');
 
-        $wigSession = new WigSession();
+        $wigSession = $this->loadModel($wigSessionData['id']);
         $wigSession->bindValuesUsingArray(array(
-            'wigsession' => $wigSessionData,
             'wigMeeting' => $wigMeetingData,
             'movementUpdate' => $ubtMovementData
         ));
@@ -257,7 +256,17 @@ class WigController extends Controller {
             $this->redirect(array('wig/close', 'id' => $wigSession->id));
         }
 
-        $this->setSessionData('notif', array('class' => 'info', 'message' => "WIG Session successfully closed"));
+        $unitBreakthrough = $this->loadUbtModel(null, $wigSession);
+        try {
+            $this->ubtService->closeWigSession($wigSession);
+            $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession, $this->loadModel($wigSession->id));
+            $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession->wigMeeting);
+            $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession->movementUpdate);
+            $this->setSessionData('notif', array('class' => 'info', 'message' => "WIG Session successfully closed"));
+        } catch (ServiceException $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+            $this->setSessionData('notif', array('message' => $ex->getMessage()));
+        }
         $this->redirect(array('wig/view', 'id' => $wigSession->id));
     }
 
