@@ -241,16 +241,14 @@ class WigController extends Controller {
     private function closeWigSession() {
         $wigSessionData = $this->getFormData('WigSession');
         $wigMeetingData = $this->getFormData('WigMeeting');
-        $ubtMovementData = $this->getFormData('UnitBreakthroughMovement');
-
+        
+        $ubtMovement = $this->constructUbtMovementData();
         $wigSession = $this->loadModel($wigSessionData['id']);
-        $wigSession->bindValuesUsingArray(array(
-            'wigMeeting' => $wigMeetingData,
-            'movementUpdate' => $ubtMovementData
-        ));
+        $wigSession->bindValuesUsingArray(array('wigMeeting' => $wigMeetingData));
+        $wigSession->movementUpdates = array($ubtMovement);
         $wigSession->wigMeetingEnvironmentStatus = WigSession::STATUS_CLOSED;
 
-        if (!($wigSession->movementUpdate->validate() || $wigSession->wigMeeting->validate())) {
+        if (!($ubtMovement->validate() || $wigSession->wigMeeting->validate())) {
             $validationMessage = array_merge($wigSession->movementUpdate->validationMessages, $wigSession->wigMeeting->validationMessages);
             $this->setSessionData('validation', $validationMessage);
             $this->redirect(array('wig/close', 'id' => $wigSession->id));
@@ -261,13 +259,23 @@ class WigController extends Controller {
             $this->ubtService->closeWigSession($wigSession);
             $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession, $this->loadModel($wigSession->id));
             $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession->wigMeeting);
-            $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession->movementUpdate);
+            $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $ubtMovement);
             $this->setSessionData('notif', array('class' => 'info', 'message' => "WIG Session successfully closed"));
         } catch (ServiceException $ex) {
             $this->logger->error($ex->getMessage(), $ex);
             $this->setSessionData('notif', array('message' => $ex->getMessage()));
         }
         $this->redirect(array('wig/view', 'id' => $wigSession->id));
+    }
+
+    private function constructUbtMovementData() {
+        $ubtMovementData = $this->getFormData('UnitBreakthroughMovement');
+
+        $movementData = new UnitBreakthroughMovement();
+        $movementData->bindValuesUsingArray(array(
+            'unitbreakthroughmovement' => $ubtMovementData), $movementData);
+
+        return $movementData;
     }
 
     public function validateWigClosureInput() {

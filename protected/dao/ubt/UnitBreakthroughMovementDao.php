@@ -17,7 +17,13 @@ interface UnitBreakthroughMovementDao {
      * @param WigSession $wigSession
      * @throws DataAccessException
      */
-    public function enlistUbtMovement(WigSession $wigSession);
+    public function closeWigSession(WigSession $wigSession);
+    
+    /**
+     * @param WigSession $wigSession
+     * @throws DataAccessException
+     */
+    public function recordUbtMovement(WigSession $wigSession);
     
     /**
      * @param String $id

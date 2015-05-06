@@ -14,7 +14,7 @@ use org\csflu\isms\models\ubt\WigMeeting;
  * @property \DateTime $startingPeriod
  * @property \DateTime $endingPeriod
  * @property Commitment[] $commitments
- * @property UnitBreakthroughMovement $movementUpdate
+ * @property UnitBreakthroughMovement[] $movementUpdates
  * @property WigMeeting $wigMeeting
  * @property String $wigMeetingEnvironmentStatus
  * @author britech
@@ -28,7 +28,7 @@ class WigSession extends Model {
     private $startingPeriod;
     private $endingPeriod;
     private $commitments;
-    private $movementUpdate;
+    private $movementUpdates;
     private $wigMeeting;
     private $wigMeetingEnvironmentStatus = self::STATUS_OPEN;
 
@@ -44,12 +44,7 @@ class WigSession extends Model {
             $this->wigMeeting = new WigMeeting();
             $this->wigMeeting->bindValuesUsingArray(array('wigmeeting' => $valueArray['wigMeeting']));
         }
-
-        if (array_key_exists('movementUpdate', $valueArray)) {
-            $this->movementUpdate = new UnitBreakthroughMovement();
-            $this->movementUpdate->bindValuesUsingArray(array('unitbreakthroughmovement' => $valueArray['movementUpdate']), $this->movementUpdate);
-        }
-
+        
         if (array_key_exists('wigsession', $valueArray)) {
             parent::bindValuesUsingArray($valueArray, $this);
 

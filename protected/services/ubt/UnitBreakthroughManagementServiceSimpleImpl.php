@@ -296,7 +296,7 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         if ($checkData->wigMeetingEnvironmentStatus == WigSession::STATUS_CLOSED) {
             throw new ServiceException("WIG Session already closed");
         }
-        $this->movementDaoSource->enlistUbtMovement($wigSession);
+        $this->movementDaoSource->closeWigSession($wigSession);
     }
 
 }

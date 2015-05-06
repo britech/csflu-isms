@@ -25,7 +25,7 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
-    public function enlistUbtMovement(WigSession $wigSession) {
+    public function closeWigSession(WigSession $wigSession) {
         try {
             $this->db->beginTransaction();
 
@@ -40,15 +40,6 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
                 'id' => $wigSession->id
             ));
 
-            $movementDbst = $this->db->prepare('INSERT INTO ubt_movement(wig_ref, ubt_figure, lm1_figure, lm2_figure, notes) VALUES(:wig, :ubt, :lm1, :lm2, :notes)');
-            $movementDbst->execute(array(
-                'wig' => $wigSession->id,
-                'ubt' => $wigSession->movementUpdate->ubtFigure,
-                'lm1' => $wigSession->movementUpdate->firstLeadMeasureFigure,
-                'lm2' => $wigSession->movementUpdate->secondLeadMeasureFigure,
-                'notes' => $wigSession->movementUpdate->notes
-            ));
-
             $commitmentsDbst = $this->db->prepare('UPDATE commitments_main SET status=:status WHERE status IN (:stat1, :stat2) AND wig_ref=:wig');
             $commitmentsDbst->execute(array(
                 'status' => Commitment::STATUS_UNFINISHED,
@@ -56,8 +47,9 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
                 'stat2' => Commitment::STATUS_ONGOING,
                 'wig' => $wigSession->id
             ));
-
             $this->db->commit();
+            
+            $this->recordUbtMovement($wigSession);
         } catch (\PDOException $ex) {
             $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
@@ -119,6 +111,28 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
 
             return $this->retrieveUbtMovementDataByIdentifier($id);
         } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function recordUbtMovement(WigSession $wigSession) {
+        try {
+            $this->db->beginTransaction();
+
+            foreach ($wigSession->movementUpdates as $movementData) {
+                $dbst = $this->db->prepare('INSERT INTO ubt_movement(wig_ref, ubt_figure, lm1_figure, lm2_figure, notes) VALUES(:wig, :ubt, :lm1, :lm2, :notes)');
+                $dbst->execute(array(
+                    'wig' => $wigSession->id,
+                    'ubt' => $movementData->ubtFigure,
+                    'lm1' => $movementData->firstLeadMeasureFigure,
+                    'lm2' => $movementData->secondLeadMeasureFigure,
+                    'notes' => $movementData->notes
+                ));
+            }
+
+            $this->db->commit();
+        } catch (\PDOException $ex) {
+            $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }
