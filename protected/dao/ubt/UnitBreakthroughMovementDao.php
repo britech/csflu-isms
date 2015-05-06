@@ -26,23 +26,16 @@ interface UnitBreakthroughMovementDao {
     public function recordUbtMovement(WigSession $wigSession);
     
     /**
-     * @param String $id
-     * @return UnitBreakthroughMovement
-     * @throws DataAccessException
-     */
-    public function retrieveUbtMovementDataByIdentifier($id);
-    
-    /**
-     * @param WigSession $wigSession
-     * @return UnitBreakthroughMovement
-     * @throws DataAccessException
-     */
-    public function retrieveUbtMovementDataByWigSession(WigSession $wigSession);
-    
-    /**
      * @param WigSession $wigSession
      * @return WigMeeting
      * @throws DataAccessException
      */
     public function retrieveWigMeetingData(WigSession $wigSession);
+    
+    /**
+     * @param WigSession $wigSession
+     * @return UnitBreakthroughMovement[]
+     * @throws DataAccessException
+     */
+    public function listUnitBreakthroughMovements(WigSession $wigSession);
 }

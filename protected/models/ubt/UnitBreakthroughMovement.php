@@ -7,7 +7,6 @@ use org\csflu\isms\core\Model;
 /**
  * Description of UnitBreakthroughMovement
  *
- * @property String $id
  * @property \DateTime $dateEntered
  * @property String $ubtFigure
  * @property String $firstLeadMeasureFigure
@@ -17,7 +16,6 @@ use org\csflu\isms\core\Model;
  */
 class UnitBreakthroughMovement extends Model {
 
-    private $id;
     private $dateEntered;
     private $ubtFigure;
     private $firstLeadMeasureFigure;

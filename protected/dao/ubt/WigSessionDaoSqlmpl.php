@@ -4,6 +4,7 @@ namespace org\csflu\isms\dao\ubt;
 
 use org\csflu\isms\dao\ubt\WigSessionDao;
 use org\csflu\isms\dao\ubt\CommitmentCrudDaoSqlImpl;
+use org\csflu\isms\dao\ubt\UnitBreakthroughMovementDaoSqlImpl;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\models\ubt\WigSession;
@@ -19,10 +20,12 @@ class WigSessionDaoSqlmpl implements WigSessionDao {
 
     private $db;
     private $commitCrudDaoSource;
+    private $movementDaoSource;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
         $this->commitCrudDaoSource = new CommitmentCrudDaoSqlImpl();
+        $this->movementDaoSource = new UnitBreakthroughMovementDaoSqlImpl();
     }
 
     public function insertWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough) {
@@ -66,14 +69,17 @@ class WigSessionDaoSqlmpl implements WigSessionDao {
             $dbst = $this->db->prepare('SELECT wig_id, period_start_date, period_end_date, status FROM ubt_wig WHERE wig_id=:id');
             $dbst->execute(array('id' => $id));
 
-            $wigMeeting = new WigSession();
+            $wigSession = new WigSession();
             while ($data = $dbst->fetch()) {
-                list($wigMeeting->id, $startDate, $endDate, $wigMeeting->wigMeetingEnvironmentStatus) = $data;
+                list($wigSession->id, $startDate, $endDate, $wigSession->wigMeetingEnvironmentStatus) = $data;
             }
-            $wigMeeting->startingPeriod = \DateTime::createFromFormat('Y-m-d', $startDate);
-            $wigMeeting->endingPeriod = \DateTime::createFromFormat('Y-m-d', $endDate);
-            $wigMeeting->commitments = $this->commitCrudDaoSource->listCommitments($wigMeeting);
-            return $wigMeeting;
+            $wigSession->startingPeriod = \DateTime::createFromFormat('Y-m-d', $startDate);
+            $wigSession->endingPeriod = \DateTime::createFromFormat('Y-m-d', $endDate);
+            $wigSession->commitments = $this->commitCrudDaoSource->listCommitments($wigSession);
+            $wigSession->wigMeeting = $this->movementDaoSource->retrieveWigMeetingData($wigSession);
+            $wigSession->movementUpdates = $this->movementDaoSource->listUnitBreakthroughMovements($wigSession);
+            
+            return $wigSession;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }

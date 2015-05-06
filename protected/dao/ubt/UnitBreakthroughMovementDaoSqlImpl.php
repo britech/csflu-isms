@@ -56,27 +56,6 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
         }
     }
 
-    public function retrieveUbtMovementDataByIdentifier($id) {
-        try {
-            $dbst = $this->db->prepare('SELECT movement_id, date_entered, ubt_figure, lm1_figure, lm2_figure, notes FROM ubt_movement WHERE movement_id=:id');
-            $dbst->execute(array('id' => $id));
-
-            $ubtMovement = new UnitBreakthroughMovement();
-            while ($data = $dbst->fetch()) {
-                list($ubtMovement->id,
-                        $timestamp,
-                        $ubtMovement->ubtFigure,
-                        $ubtMovement->firstLeadMeasureFigure,
-                        $ubtMovement->secondLeadMeasureFigure,
-                        $ubtMovement->notes) = $data;
-            }
-            $ubtMovement->dateEntered = \DateTime::createFromFormat('Y-m-d H:i:s', $timestamp);
-            return $ubtMovement;
-        } catch (\PDOException $ex) {
-            throw new DataAccessException($ex->getMessage());
-        }
-    }
-
     public function retrieveWigMeetingData(WigSession $wigSession) {
         try {
             $dbst = $this->db->prepare('SELECT actual_start_date, actual_end_date, meeting_venue, meeting_time_start, meeting_time_end FROM ubt_wig WHERE wig_id=:id');
@@ -100,21 +79,6 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
         }
     }
 
-    public function retrieveUbtMovementDataByWigSession(WigSession $wigSession) {
-        try {
-            $dbst = $this->db->prepare('SELECT movement_id FROM ubt_movement WHERE wig_ref=:wig');
-            $dbst->execute(array('wig' => $wigSession->id));
-
-            while ($data = $dbst->fetch()) {
-                list($id) = $data;
-            }
-
-            return $this->retrieveUbtMovementDataByIdentifier($id);
-        } catch (\PDOException $ex) {
-            throw new DataAccessException($ex->getMessage());
-        }
-    }
-
     public function recordUbtMovement(WigSession $wigSession) {
         try {
             $this->db->beginTransaction();
@@ -133,6 +97,29 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+    
+    public function listUnitBreakthroughMovements(WigSession $wigSession) {
+        try {
+            $dbst = $this->db->prepare('SELECT date_entered, ubt_figure, lm1_figure, lm2_figure, notes FROM ubt_movement WHERE wig_ref=:ref');
+            $dbst->execute(array('ref'=>$wigSession->id));
+            
+            $movements = array();
+            while($data = $dbst->fetch()){
+                $movement = new UnitBreakthroughMovement();
+                list($date,
+                        $movement->ubtFigure,
+                        $movement->firstLeadMeasureFigure,
+                        $movement->secondLeadMeasureFigure,
+                        $movement->notes) = $data;
+                $movement->dateEntered = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
+                $movements = array_merge($movements, array($movement));
+            }
+            
+            return $movements;
+        } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
     }
