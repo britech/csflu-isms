@@ -39,4 +39,8 @@ class UnitOfMeasure extends Model {
         return array('symbol' => 'Symbol', 'description' => 'Unit of Measure');
     }
 
+    public function getAppropriateUomDisplay() {
+        return strlen($this->symbol) < 1 ? $this->description : $this->symbol;
+    }
+
 }
