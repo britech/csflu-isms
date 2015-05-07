@@ -11,6 +11,8 @@ use org\csflu\isms\models\ubt\WigSession;
 <?php
 if ($data->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN) {
     $file = "wig/_commitments";
+} elseif ($data->wigMeetingEnvironmentStatus == WigSession::STATUS_CLOSED){
+    $file = "wig/_movement-log";
 }
 $this->renderPartial($file, $params);
 ?>

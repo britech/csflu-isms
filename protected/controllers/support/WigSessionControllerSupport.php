@@ -7,7 +7,11 @@ use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\models\reports\IpReportOutput;
+use org\csflu\isms\models\ubt\UnitBreakthroughMovement;
+use org\csflu\isms\models\ubt\UnitBreakthrough;
+use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\controllers\support\CommitmentModuleSupport;
+use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl;
 
 /**
@@ -22,10 +26,12 @@ class WigSessionControllerSupport {
     private $controller;
     private $commitmentModuleSupport;
     private $userService;
+    private $modelLoaderUtil;
 
     private function __construct(Controller $controller) {
         $this->controller = $controller;
         $this->commitmentModuleSupport = CommitmentModuleSupport::getInstance($controller);
+        $this->modelLoaderUtil = ModelLoaderUtil::getInstance($controller);
         $this->userService = new SimpleUserManagementServiceImpl();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
@@ -82,6 +88,68 @@ class WigSessionControllerSupport {
             }
         }
         return $output;
+    }
+
+    /**
+     * Resolves the movement data in the LeadMeasure component
+     * @param WigSession $wigSession
+     * @param LeadMeasure[] $leadMeasures
+     * @param UnitBreakthroughMovement $movementData
+     * @param int $designation
+     * @return string
+     */
+    public function resolveLeadMeasureMovements(WigSession $wigSession, array $leadMeasures, UnitBreakthroughMovement $movementData, $designation) {
+        foreach ($leadMeasures as $leadMeasure) {
+            if ($wigSession->startingPeriod >= $leadMeasure->startingPeriod && $wigSession->endingPeriod <= $leadMeasure->endingPeriod && $designation == $leadMeasure->designation) {
+                return $this->retrieveLeadMeasureMovement($leadMeasure, $movementData, $designation);
+            }
+        }
+    }
+
+    private function retrieveLeadMeasureMovement(LeadMeasure $leadMeasure, UnitBreakthroughMovement $movementData, $designation) {
+        if ($designation == LeadMeasure::DESIGNATION_1 && $leadMeasure->designation == LeadMeasure::DESIGNATION_1) {
+            return $this->resolveLeadMeasureMovement($movementData->firstLeadMeasureFigure, $leadMeasure);
+        } elseif ($designation == LeadMeasure::DESIGNATION_2 && $leadMeasure->designation == LeadMeasure::DESIGNATION_2) {
+            return $this->resolveLeadMeasureMovement($movementData->secondLeadMeasureFigure, $leadMeasure);
+        }
+    }
+
+    /**
+     * Resolves the movement data in the UnitBreakthrough component
+     * @param UnitBreakthroughMovement $movementData
+     * @param UnitBreakthrough $ubt
+     * @return string
+     */
+    public function resolveUnitBreakthroughMovement(UnitBreakthroughMovement $movementData, UnitBreakthrough $ubt) {
+        if (strlen($movementData->ubtFigure) < 1) {
+            return "No Movement";
+        } else {
+            return "{$movementData->ubtFigure} {$ubt->uom->getAppropriateUomDisplay()}";
+        }
+    }
+
+    private function resolveLeadMeasureMovement($leadMeasureMovement, LeadMeasure $leadMeasure) {
+        if(strlen($leadMeasureMovement) < 1){
+            return "No Movement";
+        } else {
+            return "{$leadMeasureMovement} {$leadMeasure->uom->getAppropriateUomDisplay()}";
+        }
+    }
+    
+    /**
+     * Retrieves the aligned Lead Measure entity from the time the WigSession is established
+     * @param WigSession $wigSession
+     * @param LeadMeasure[] $leadMeasures
+     * @param int $designation
+     * @return LeadMeasure
+     */
+    public function retrieveAlignedLeadMeasure(WigSession $wigSession, array $leadMeasures, $designation){
+        $wigSessionData = $this->modelLoaderUtil->loadWigSessionModel($wigSession->id);
+        foreach($leadMeasures as $leadMeasure){
+            if($wigSessionData->startingPeriod >= $leadMeasure->startingPeriod && $wigSessionData->endingPeriod <= $leadMeasure->endingPeriod && $designation == $leadMeasure->designation){
+                return $leadMeasure;
+            }
+        }
     }
 
 }

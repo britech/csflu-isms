@@ -12,6 +12,7 @@ use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\models\ubt\UnitBreakthroughMovement;
 use org\csflu\isms\models\ubt\WigMeeting;
+use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\controllers\support\WigSessionControllerSupport;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as UnitBreakthroughManagementService;
@@ -114,7 +115,7 @@ class WigController extends Controller {
         $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
         $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
 
-        $this->layout = "column-2";
+        $this->layout = $wigSession->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN ? "column-2" : "column-1";
         $this->title = ApplicationConstants::APP_NAME . ' - WIG Session Info';
         $this->render('wig/view', array(
             'breadcrumb' => array(
@@ -130,9 +131,31 @@ class WigController extends Controller {
             'tableData' => $this->controllerSupport->collateCommitments($wigSession),
             'accounts' => $this->controllerSupport->listEmployees(),
             'ubt' => $unitBreakthrough,
+            'lm1' => $this->controllerSupport->retrieveAlignedLeadMeasure($wigSession, $unitBreakthrough->leadMeasures, LeadMeasure::DESIGNATION_1),
+            'lm2' => $this->controllerSupport->retrieveAlignedLeadMeasure($wigSession, $unitBreakthrough->leadMeasures, LeadMeasure::DESIGNATION_2),
             'notif' => $this->getSessionData('notif')
         ));
         $this->unsetSessionData('notif');
+    }
+
+    public function listUbtMovements() {
+        $this->validatePostData(array('wig'), true);
+
+        $id = $this->getFormData('wig');
+        $wigSession = $this->loadModel($id, null, true);
+        $ubt = $this->loadUbtModel(null, $wigSession, true);
+
+        $data = array();
+        foreach ($wigSession->movementUpdates as $movementData) {
+            array_push($data, array(
+                'date' => $movementData->dateEntered->format('M d, Y g:i:s A'),
+                'ubt' => $this->controllerSupport->resolveUnitBreakthroughMovement($movementData, $ubt),
+                'lm1' => $this->controllerSupport->resolveLeadMeasureMovements($wigSession, $ubt->leadMeasures, $movementData, LeadMeasure::DESIGNATION_1),
+                'lm2' => $this->controllerSupport->resolveLeadMeasureMovements($wigSession, $ubt->leadMeasures, $movementData, LeadMeasure::DESIGNATION_2),
+                'notes' => nl2br(implode("\n", explode('+', $movementData->notes)))
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     public function update() {
@@ -241,7 +264,7 @@ class WigController extends Controller {
     private function closeWigSession() {
         $wigSessionData = $this->getFormData('WigSession');
         $wigMeetingData = $this->getFormData('WigMeeting');
-        
+
         $ubtMovement = $this->constructUbtMovementData();
         $wigSession = $this->loadModel($wigSessionData['id']);
         $wigSession->bindValuesUsingArray(array('wigMeeting' => $wigMeetingData));
