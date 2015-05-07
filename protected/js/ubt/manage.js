@@ -17,9 +17,9 @@ $(document).ready(function() {
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Unit Breakthrough</span>', dataField: 'description', width: '50%'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Unit Breakthrough</span>', dataField: 'description', width: '70%'},
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Status</span>', dataField: 'status', cellsAlign: 'center', width: '10%'},
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Actions</span>', dataField: 'action', width: '40%', cellsAlign: 'center'}
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Actions</span>', dataField: 'action', width: '20%', cellsAlign: 'center'}
         ],
         width: '100%',
         pageable: true,

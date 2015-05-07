@@ -108,32 +108,10 @@ class UbtController extends Controller {
                 'description' => strval($unitBreakthrough->description),
                 'status' => UnitBreakthrough::translateUbtStatusCode($unitBreakthrough->unitBreakthroughEnvironmentStatus),
                 'map' => $map->name,
-                'action' => $this->resolveActionLinks($unitBreakthrough)
+                'action' => ApplicationUtils::generateLink(array('ubt/viewMovements', 'id' => $unitBreakthrough->id), 'UBT Movements') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink(array('wig/index', 'ubt' => $unitBreakthrough->id), 'Manage WIG Sessions')
             ));
         }
         $this->renderAjaxJsonResponse($data);
-    }
-
-    private function resolveActionLinks(UnitBreakthrough $unitBreakthrough) {
-        $links = array(ApplicationUtils::generateLink(array('ubt/viewMovements', 'id' => $unitBreakthrough->id), 'UBT Movements'));
-
-        switch ($unitBreakthrough->unitBreakthroughEnvironmentStatus) {
-            case UnitBreakthrough::STATUS_ACTIVE:
-                $links = array_merge($links, array(
-                    ApplicationUtils::generateLink(array('wig/index', 'ubt' => $unitBreakthrough->id), 'Manage WIG Sessions'),
-                    ApplicationUtils::generateLink('#', 'Flag as Complete', array('id' => "complete-{$unitBreakthrough->id}")),
-                    ApplicationUtils::generateLink('#', 'Flag as Inactive', array('id' => "inactivate-{$unitBreakthrough->id}"))
-                ));
-                break;
-
-            case UnitBreakthrough::STATUS_INACTIVE:
-                $links = array_merge($links, array(
-                    ApplicationUtils::generateLink('#', 'Activate UBT', array('id' => "activate-{$unitBreakthrough->id}"))
-                ));
-                break;
-        }
-
-        return implode('&nbsp;|&nbsp;', $links);
     }
 
     public function create($map) {
@@ -234,7 +212,7 @@ class UbtController extends Controller {
         $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
         $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
         $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
-        
+
         $this->render('ubt/update', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
@@ -254,7 +232,7 @@ class UbtController extends Controller {
 
     private function processUbtUpdate() {
         $unitBreakthrough = $this->controllerSupport->constructUpdateInputData();
-        
+
         if (!$unitBreakthrough->validate()) {
             $this->setSessionData('validation', $unitBreakthrough->validationMessages);
             $this->redirect(array('ubt/update', 'id' => $unitBreakthrough->id));
