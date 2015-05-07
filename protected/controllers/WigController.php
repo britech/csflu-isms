@@ -101,6 +101,7 @@ class WigController extends Controller {
             $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, $wigSession);
             $this->redirect(array('wig/view', 'id' => $id));
         } catch (ServiceException $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
             $this->setSessionData('validation', array($ex->getMessage()));
             $this->redirect(array('wig/index', 'ubt' => $unitBreakthrough->id));
         }

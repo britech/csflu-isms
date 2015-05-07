@@ -216,6 +216,10 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
     }
 
     public function insertWigSession(WigSession $wigSession, UnitBreakthrough $unitBreakthrough) {
+        if ($unitBreakthrough->unitBreakthroughEnvironmentStatus != UnitBreakthrough::STATUS_ACTIVE) {
+            throw new ServiceException("A WIG Session can only be enlisted in an active Unit Breakthrough");
+        }
+        
         $wigSessions = $this->wigSessionDaoSource->listWigSessions($unitBreakthrough);
         $startDate = $wigSession->startingPeriod->format('Y-m-d');
         $endDate = $wigSession->endingPeriod->format('Y-m-d');
