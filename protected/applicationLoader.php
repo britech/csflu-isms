@@ -19,6 +19,7 @@ require_once 'utils/ApplicationUtils.php';
 require_once 'controllers/support/ModelLoaderUtil.php';
 require_once 'controllers/support/CommitmentModuleSupport.php';
 require_once 'controllers/support/WigSessionControllerSupport.php';
+require_once 'controllers/support/UnitBreakthroughControllerSupport.php';
 
 #logging extension
 require_once 'ext/log4php/Logger.php';

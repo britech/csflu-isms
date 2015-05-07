@@ -16,6 +16,7 @@ use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
+use org\csflu\isms\controllers\support\UnitBreakthroughControllerSupport;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as UnitBreakthroughManagementService;
 
 /**
@@ -28,16 +29,18 @@ class UbtController extends Controller {
     private $logger;
     private $ubtService;
     private $modelLoaderUtil;
+    private $controllerSupport;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->ubtService = new UnitBreakthroughManagementService();
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
+        $this->controllerSupport = UnitBreakthroughControllerSupport::getInstance($this);
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
     public function index($map) {
-        $strategyMap = $this->modelLoaderUtil->loadMapModel($map);
+        $strategyMap = $this->loadMapModel($map);
 
         $this->title = ApplicationConstants::APP_NAME . ' - Manage UBTs';
         $this->layout = "column-2";
@@ -75,7 +78,7 @@ class UbtController extends Controller {
         $this->validatePostData(array('map'));
         $id = $this->getFormData('map');
 
-        $strategyMap = $this->modelLoaderUtil->loadMapModel($id);
+        $strategyMap = $this->loadMapModel($id);
         $unitBreakthroughs = $this->ubtService->listUnitBreakthrough($strategyMap);
 
         $data = array();
@@ -134,7 +137,7 @@ class UbtController extends Controller {
     }
 
     public function create($map) {
-        $strategyMap = $this->modelLoaderUtil->loadMapModel($map);
+        $strategyMap = $this->loadMapModel($map);
         $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
         $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
 
@@ -159,51 +162,18 @@ class UbtController extends Controller {
     }
 
     public function validateUbtInput() {
-        $unitBreakthrough = new UnitBreakthrough();
-
-        try {
-            $this->validatePostData(array('UnitBreakthrough', 'Department', 'UnitOfMeasure', 'Objective', 'MeasureProfile'));
-
-            $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
-            $departmentData = $this->getFormData('Department');
-            $uomData = $this->getFormData('UnitOfMeasure');
-            $objectiveData = $this->getFormData('Objective');
-            $measureProfileData = $this->getFormData('MeasureProfile');
-            $unitBreakthrough->bindValuesUsingArray(array(
-                'unit' => $departmentData,
-                'uom' => $uomData,
-                'objectives' => $objectiveData,
-                'measures' => $measureProfileData,
-                'unitbreakthrough' => $unitBreakthroughData
-            ));
-        } catch (ControllerException $ex) {
-            $this->logger->warn($ex->getMessage(), $ex);
-            $this->renderAjaxJsonResponse(array('respCode' => '70'));
-        }
-
+        $this->validatePostData(array('UnitBreakthrough', 'Department', 'UnitOfMeasure', 'Objective', 'MeasureProfile'), true);
+        $unitBreakthrough = $this->controllerSupport->constructEnlistmentInputData();
         $this->remoteValidateModel($unitBreakthrough);
     }
 
     public function insert() {
         $this->validatePostData(array('UnitBreakthrough', 'Objective', 'MeasureProfile', 'Department', 'UnitOfMeasure', 'StrategyMap'));
 
-        $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
-        $objectiveData = $this->getFormData('Objective');
-        $measureProfileData = $this->getFormData('MeasureProfile');
-        $departmentData = $this->getFormData('Department');
-        $uomData = $this->getFormData('UnitOfMeasure');
         $strategyMapData = $this->getFormData('StrategyMap');
+        $unitBreakthrough = $this->controllerSupport->constructEnlistmentInputData();
 
-        $unitBreakthrough = new UnitBreakthrough();
-        $unitBreakthrough->bindValuesUsingArray(array(
-            'unitbreakthrough' => $unitBreakthroughData,
-            'objectives' => $objectiveData,
-            'measures' => $measureProfileData,
-            'unit' => $departmentData,
-            'uom' => $uomData
-        ));
-
-        $strategyMap = $this->modelLoaderUtil->loadMapModel($strategyMapData['id']);
+        $strategyMap = $this->loadMapModel($strategyMapData['id']);
 
         if (!$unitBreakthrough->validate()) {
             $this->setSessionData('validation', $unitBreakthrough->validationMessages);
@@ -223,8 +193,8 @@ class UbtController extends Controller {
     }
 
     public function view($id) {
-        $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel($id);
-        $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, null, null, null, $unitBreakthrough);
+        $unitBreakthrough = $this->loadUbtModel($id);
+        $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
 
         $this->title = ApplicationConstants::APP_NAME . ' - About Unit Breakthrough';
         $this->layout = "column-2";
@@ -257,14 +227,14 @@ class UbtController extends Controller {
             $this->processUbtUpdate();
         }
 
-        $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel($id);
+        $unitBreakthrough = $this->loadUbtModel($id);
         $unitBreakthrough->validationMode = Model::VALIDATION_MODE_UPDATE;
-        $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, null, null, null, $unitBreakthrough);
+        $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
         $strategyMap->startingPeriodDate = $strategyMap->startingPeriodDate->format('Y-m-d');
         $strategyMap->endingPeriodDate = $strategyMap->endingPeriodDate->format('Y-m-d');
-
         $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
         $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
+        
         $this->render('ubt/update', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
@@ -283,18 +253,8 @@ class UbtController extends Controller {
     }
 
     private function processUbtUpdate() {
-        $unitBreakthroughData = $this->getFormData('UnitBreakthrough');
-        $departmentData = $this->getFormData('Department');
-        $uomData = $this->getFormData('UnitOfMeasure');
-
-        $unitBreakthrough = new UnitBreakthrough();
-        $unitBreakthrough->bindValuesUsingArray(array(
-            'unitbreakthrough' => $unitBreakthroughData,
-            'unit' => $departmentData,
-            'uom' => $uomData
-        ));
-        $unitBreakthrough->uom = $this->modelLoaderUtil->loadUomModel($unitBreakthrough->uom->id);
-
+        $unitBreakthrough = $this->controllerSupport->constructUpdateInputData();
+        
         if (!$unitBreakthrough->validate()) {
             $this->setSessionData('validation', $unitBreakthrough->validationMessages);
             $this->redirect(array('ubt/update', 'id' => $unitBreakthrough->id));
@@ -358,6 +318,14 @@ class UbtController extends Controller {
                 $this->logCustomRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $unitBreakthrough->id, "[MeasureProfile linked]\n\nMeasure Profile:\t{$measure->indicator->description}");
             }
         }
+    }
+
+    private function loadMapModel($id = null, UnitBreakthrough $unitBreakthrough = null, $remote = false) {
+        return $this->modelLoaderUtil->loadMapModel($id, null, null, null, null, $unitBreakthrough, array(ModelLoaderUtil::KEY_REMOTE => $remote));
+    }
+
+    private function loadUbtModel($id, $remote = false) {
+        return $this->modelLoaderUtil->loadUnitBreakthroughModel($id, null, null, array(ModelLoaderUtil::KEY_REMOTE => $remote));
     }
 
 }
