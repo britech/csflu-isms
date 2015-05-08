@@ -135,4 +135,10 @@ interface UnitBreakthroughManagementService {
      * @throws ServiceException
      */
     public function closeWigSession(WigSession $wigSession);
+    
+    /**
+     * Records the UnitBreakthroughMovement entity
+     * @param WigSession $wigSession
+     */
+    public function recordUbtMovement(WigSession $wigSession);
 }

@@ -303,4 +303,8 @@ class UnitBreakthroughManagementServiceSimpleImpl implements UnitBreakthroughMan
         $this->movementDaoSource->closeWigSession($wigSession);
     }
 
+    public function recordUbtMovement(WigSession $wigSession) {
+        $this->movementDaoSource->recordUbtMovement($wigSession);
+    }
+
 }
