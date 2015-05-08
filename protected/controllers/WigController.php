@@ -118,7 +118,7 @@ class WigController extends Controller {
         $unitBreakthrough->startingPeriod = $unitBreakthrough->startingPeriod->format('Y-m-d');
         $unitBreakthrough->endingPeriod = $unitBreakthrough->endingPeriod->format('Y-m-d');
 
-        $this->layout = $wigSession->wigMeetingEnvironmentStatus == WigSession::STATUS_OPEN ? "column-2" : "column-1";
+        $this->layout = "column-2";
         $this->title = ApplicationConstants::APP_NAME . ' - WIG Session Info';
         $this->render('wig/view', array(
             'breadcrumb' => array(
