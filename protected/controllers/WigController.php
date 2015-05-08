@@ -294,6 +294,33 @@ class WigController extends Controller {
         $this->redirect(array('wig/view', 'id' => $wigSession->id));
     }
 
+    public function generateReport($id) {
+        $wigSession = $this->loadModel($id);
+        $ubt = $this->loadUbtModel(null, $wigSession);
+
+        $ubtFigure = 0;
+        $lm1Figure = 0;
+        $lm2Figure = 0;
+        foreach ($wigSession->movementUpdates as $movement) {
+            $ubtFigure += floatval($movement->ubtFigure);
+            $lm1Figure += floatval($movement->firstLeadMeasureFigure);
+            $lm2Figure += floatval($movement->secondLeadMeasureFigure);
+        }
+        
+        $this->render('wig/report', array(
+            'wigData' => $wigSession,
+            'ubtData' => $ubt,
+            'lm1Data' => $this->controllerSupport->retrieveAlignedLeadMeasure($wigSession, $ubt->leadMeasures, LeadMeasure::DESIGNATION_1),
+            'lm2Data' => $this->controllerSupport->retrieveAlignedLeadMeasure($wigSession, $ubt->leadMeasures, LeadMeasure::DESIGNATION_2),
+            'ubtFigure' => $ubtFigure,
+            'lm1Figure' => $lm1Figure,
+            'lm2Figure' => $lm2Figure,
+            'timeDifference' => $wigSession->wigMeeting->meetingTimeStart->diff($wigSession->wigMeeting->meetingTimeEnd),
+            'collatedCommitments' => $this->controllerSupport->collateCommitments($wigSession),
+            'accounts' => $this->controllerSupport->listEmployees()
+        ));
+    }
+
     private function constructUbtMovementData() {
         $ubtMovementData = $this->getFormData('UnitBreakthroughMovement');
 
