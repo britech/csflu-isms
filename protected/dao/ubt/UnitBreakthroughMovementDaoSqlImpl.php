@@ -48,7 +48,7 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
                 'wig' => $wigSession->id
             ));
             $this->db->commit();
-            
+
             $this->recordUbtMovement($wigSession);
         } catch (\PDOException $ex) {
             $this->db->rollBack();
@@ -74,6 +74,7 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
             $wigMeeting->actualSessionEndDate = \DateTime::createFromFormat('Y-m-d', $endDate);
             $wigMeeting->meetingTimeStart = \DateTime::createFromFormat('H:i:s', $timeStart);
             $wigMeeting->meetingTimeEnd = \DateTime::createFromFormat('H:i:s', $timeEnd);
+            return $wigMeeting;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }
@@ -100,14 +101,14 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
             throw new DataAccessException($ex->getMessage());
         }
     }
-    
+
     public function listUnitBreakthroughMovements(WigSession $wigSession) {
         try {
             $dbst = $this->db->prepare('SELECT date_entered, ubt_figure, lm1_figure, lm2_figure, notes FROM ubt_movement WHERE wig_ref=:ref ORDER BY date_entered DESC');
-            $dbst->execute(array('ref'=>$wigSession->id));
-            
+            $dbst->execute(array('ref' => $wigSession->id));
+
             $movements = array();
-            while($data = $dbst->fetch()){
+            while ($data = $dbst->fetch()) {
                 $movement = new UnitBreakthroughMovement();
                 list($date,
                         $movement->ubtFigure,
@@ -117,7 +118,7 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
                 $movement->dateEntered = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
                 $movements = array_merge($movements, array($movement));
             }
-            
+
             return $movements;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
