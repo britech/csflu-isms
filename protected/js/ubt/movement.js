@@ -7,12 +7,13 @@ $(document).ready(function() {
                 {name: 'ubt', type: 'string'},
                 {name: 'lm1', type: 'string'},
                 {name: 'lm2', type: 'string'},
-                {name: 'notes', type: 'string'}
+                {name: 'notes', type: 'string'},
+                {name: 'wig', type: 'string'}
             ],
-            url: '?r=wig/listUbtMovements',
+            url: '?r=ubt/listUbtMovements',
             type: 'POST',
             data: {
-                wig: $("[id^=log]").attr("id").split("-")[1]
+                ubt: $("[id^=log]").attr("id").split("-")[1]
             }
         }),
         columnsresize: false,
@@ -28,7 +29,11 @@ $(document).ready(function() {
         pageable: true,
         pageSize: 10,
         sortable: true,
-        selectionMode: 'singleRow'
+        selectionMode: 'singleRow',
+        groups: ['wig'],
+        groupsRenderer: function(value, rowData, level) {
+            return "<strong>" + value + "</strong>";
+        }
     });
 
     $("#refresh").click(function() {

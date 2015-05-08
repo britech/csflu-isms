@@ -31,7 +31,10 @@ $(document).ready(function() {
         groups: ['map'],
         groupsRenderer: function(value, rowData, level) {
             return "<strong>" + value + "</strong>";
-
         }
+    });
+    
+    $("#refresh").click(function(){
+       $("[id^=ubtList]").jqxDataTable('updateBoundData'); 
     });
 });

@@ -6,7 +6,6 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\core\Model;
 use org\csflu\isms\util\ApplicationUtils;
-use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\map\Objective;
@@ -15,8 +14,10 @@ use org\csflu\isms\models\commons\UnitOfMeasure;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
+use org\csflu\isms\models\ubt\LeadMeasure;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\controllers\support\UnitBreakthroughControllerSupport;
+use org\csflu\isms\controllers\support\WigSessionControllerSupport;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl as UnitBreakthroughManagementService;
 
 /**
@@ -30,12 +31,14 @@ class UbtController extends Controller {
     private $ubtService;
     private $modelLoaderUtil;
     private $controllerSupport;
+    private $wigControllerSupport;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->ubtService = new UnitBreakthroughManagementService();
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->controllerSupport = UnitBreakthroughControllerSupport::getInstance($this);
+        $this->wigControllerSupport = WigSessionControllerSupport::getInstance($this);
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -108,7 +111,7 @@ class UbtController extends Controller {
                 'description' => strval($unitBreakthrough->description),
                 'status' => UnitBreakthrough::translateUbtStatusCode($unitBreakthrough->unitBreakthroughEnvironmentStatus),
                 'map' => $map->name,
-                'action' => ApplicationUtils::generateLink(array('ubt/viewMovements', 'id' => $unitBreakthrough->id), 'UBT Movements') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink(array('wig/index', 'ubt' => $unitBreakthrough->id), 'Manage WIG Sessions')
+                'action' => ApplicationUtils::generateLink(array('ubt/movements', 'id' => $unitBreakthrough->id), 'UBT Movements') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink(array('wig/index', 'ubt' => $unitBreakthrough->id), 'Manage WIG Sessions')
             ));
         }
         $this->renderAjaxJsonResponse($data);
@@ -228,6 +231,47 @@ class UbtController extends Controller {
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
+    }
+
+    public function movements($id) {
+        $ubt = $this->loadUbtModel($id);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - UBT Movements';
+        $this->layout = 'column-2';
+        $this->render('ubt/movements', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Manage Unit Breakthroughs' => array('ubt/manage'),
+                'UBT Movements' => 'active'
+            ),
+            'sidebar' => array(
+                'file' => 'ubt/_movement-navi'
+            ),
+            'data' => $ubt
+        ));
+    }
+
+    public function listUbtMovements() {
+        $this->validatePostData(array('ubt'));
+        $id = $this->getFormData('ubt');
+
+        $ubt = $this->loadUbtModel($id);
+        $data = array();
+        $weekNumber = 0;
+        foreach ($ubt->wigMeetings as $wigSession) {
+            foreach ($wigSession->movementUpdates as $movementData) {
+                array_push($data, array(
+                    'date' => $movementData->dateEntered->format('M d, Y g:i:s A'),
+                    'ubt' => $this->wigControllerSupport->resolveUnitBreakthroughMovement($movementData, $ubt),
+                    'lm1' => $this->wigControllerSupport->resolveLeadMeasureMovements($wigSession, $ubt->leadMeasures, $movementData, LeadMeasure::DESIGNATION_1),
+                    'lm2' => $this->wigControllerSupport->resolveLeadMeasureMovements($wigSession, $ubt->leadMeasures, $movementData, LeadMeasure::DESIGNATION_2),
+                    'notes' => nl2br(implode("\n", explode('+', $movementData->notes))),
+                    'wig' => "Week #{$weekNumber} ({$wigSession->startingPeriod->format('M d, Y')} - {$wigSession->endingPeriod->format('M d, Y')})"
+                ));
+            }
+            $weekNumber++;
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     private function processUbtUpdate() {

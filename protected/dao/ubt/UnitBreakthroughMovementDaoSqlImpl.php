@@ -103,7 +103,7 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
     
     public function listUnitBreakthroughMovements(WigSession $wigSession) {
         try {
-            $dbst = $this->db->prepare('SELECT date_entered, ubt_figure, lm1_figure, lm2_figure, notes FROM ubt_movement WHERE wig_ref=:ref');
+            $dbst = $this->db->prepare('SELECT date_entered, ubt_figure, lm1_figure, lm2_figure, notes FROM ubt_movement WHERE wig_ref=:ref ORDER BY date_entered DESC');
             $dbst->execute(array('ref'=>$wigSession->id));
             
             $movements = array();
