@@ -249,8 +249,10 @@ class UbtController extends Controller {
             'sidebar' => array(
                 'file' => 'ubt/_movement-navi'
             ),
-            'data' => $ubt
+            'data' => $ubt,
+            'notif' => $this->getSessionData('notif')
         ));
+        $this->unsetSessionData('notif');
     }
 
     public function listUbtMovements() {
@@ -278,7 +280,7 @@ class UbtController extends Controller {
 
     public function addMovement($id = null) {
         if (is_null($id)) {
-            
+            $this->enlistMovement();
         }
         $ubt = $this->loadUbtModel($id);
         $this->title = ApplicationConstants::APP_NAME . ' - Record UBT Movement';
@@ -293,10 +295,25 @@ class UbtController extends Controller {
             'sessionModel' => new WigSession(),
             'ubtModel' => $ubt,
             'validation' => $this->getSessionData('validation'),
-            'notif' => $this->getSessionData('notif')
         ));
         $this->unsetSessionData('validation');
-        $this->unsetSessionData('notif');
+    }
+
+    private function enlistMovement() {
+        $this->validatePostData(array('WigSession', 'UnitBreakthroughMovement'));
+
+        $wigSession = $this->controllerSupport->constructMovementData();
+        $ubt = $this->loadUbtModel(null, $wigSession);
+
+        if (!$wigSession->movementUpdates[0]->validate()) {
+            $this->setSessionData('validation', $wigSession->movementUpdates[0]->validationMessages);
+            $this->redirect(array('ubt/addMovement', 'id' => $ubt->id));
+        }
+
+        $this->ubtService->recordUbtMovement($wigSession);
+        $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_UBT, $ubt->id, $wigSession->movementUpdates[0]);
+        $this->setSessionData('notif', array('class' => 'success', 'message' => 'UBT Movement added'));
+        $this->redirect(array('ubt/movements', 'id' => $ubt->id));
     }
 
     public function validateMovementInput() {
@@ -392,8 +409,8 @@ class UbtController extends Controller {
         return $this->modelLoaderUtil->loadMapModel($id, null, null, null, null, $unitBreakthrough, array(ModelLoaderUtil::KEY_REMOTE => $remote));
     }
 
-    private function loadUbtModel($id, $remote = false) {
-        return $this->modelLoaderUtil->loadUnitBreakthroughModel($id, null, null, array(ModelLoaderUtil::KEY_REMOTE => $remote));
+    private function loadUbtModel($id = null, WigSession $wigSession = null, $remote = false) {
+        return $this->modelLoaderUtil->loadUnitBreakthroughModel($id, null, $wigSession, array(ModelLoaderUtil::KEY_REMOTE => $remote));
     }
 
 }

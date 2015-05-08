@@ -22,7 +22,6 @@ $form = new ModelFormGenerator(array(
         <div class="ink-alert basic info">
             <strong>Important Note:</strong>&nbsp;Fields with * are required.
         </div>
-        <?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
         <?php $this->renderPartial('commons/_validation', array('message' => $notif)); ?>
         <div class="ink-alert block" id="validation-container">
             <h4>Validation error. Please check your entries.</h4>
