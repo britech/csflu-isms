@@ -15,6 +15,8 @@ use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\ubt\LeadMeasure;
+use org\csflu\isms\models\ubt\UnitBreakthroughMovement;
+use org\csflu\isms\models\ubt\WigSession;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\controllers\support\UnitBreakthroughControllerSupport;
 use org\csflu\isms\controllers\support\WigSessionControllerSupport;
@@ -272,6 +274,50 @@ class UbtController extends Controller {
             $weekNumber++;
         }
         $this->renderAjaxJsonResponse($data);
+    }
+
+    public function addMovement($id = null) {
+        if (is_null($id)) {
+            
+        }
+        $ubt = $this->loadUbtModel($id);
+        $this->title = ApplicationConstants::APP_NAME . ' - Record UBT Movement';
+        $this->render('ubt/add-movement', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Manage Unit Breakthroughs' => array('ubt/manage'),
+                'UBT Movements' => array('ubt/movements', 'id' => $ubt->id),
+                'Add UBT Movement' => 'active'
+            ),
+            'model' => new UnitBreakthroughMovement(),
+            'sessionModel' => new WigSession(),
+            'ubtModel' => $ubt,
+            'validation' => $this->getSessionData('validation'),
+            'notif' => $this->getSessionData('notif')
+        ));
+        $this->unsetSessionData('validation');
+        $this->unsetSessionData('notif');
+    }
+
+    public function validateMovementInput() {
+        $this->validatePostData(array('WigSession', 'UnitBreakthroughMovement'), true);
+
+        $wigSession = $this->controllerSupport->constructMovementData();
+
+        $validationData = array();
+        if (strlen($wigSession->id) < 1) {
+            $validationData = array_merge($validationData, array('- WIG Session should be defined'));
+        }
+
+        if (!$wigSession->movementUpdates[0]->validate()) {
+            $validationData = array_merge($validationData, $wigSession->movementUpdates[0]->validationMessages);
+        }
+
+        if (count($validationData) > 0) {
+            $this->renderAjaxJsonResponse(array('message' => nl2br(implode("\n", $validationData))));
+        } else {
+            $this->renderAjaxJsonResponse(array('respCode' => '00'));
+        }
     }
 
     private function processUbtUpdate() {

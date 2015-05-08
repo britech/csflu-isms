@@ -4,6 +4,8 @@ namespace org\csflu\isms\controllers\support;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
+use org\csflu\isms\models\ubt\UnitBreakthroughMovement;
+use org\csflu\isms\models\ubt\WigSession;
 
 /**
  * Description of UnitBreakthroughControllerSupport
@@ -72,8 +74,26 @@ class UnitBreakthroughControllerSupport {
             'unit' => $departmentData,
             'uom' => $uomData
         ));
-        
+
         return $unitBreakthrough;
+    }
+
+    /**
+     * Constructs the input data needed for the UBTMovement data
+     * @return WigSession
+     */
+    public function constructMovementData() {
+        $wigSessionData = $this->controller->getFormData('WigSession');
+        $ubtMovementData = $this->controller->getFormData('UnitBreakthroughMovement');
+
+        $ubtMovement = new UnitBreakthroughMovement();
+        $ubtMovement->bindValuesUsingArray(array('unitbreakthroughmovement' => $ubtMovementData), $ubtMovement);
+
+        $wigSession = new WigSession();
+        $wigSession->bindValuesUsingArray(array('wigsession' => $wigSessionData));
+        $wigSession->movementUpdates = array($ubtMovement);
+        
+        return $wigSession;
     }
 
 }
