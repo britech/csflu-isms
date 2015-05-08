@@ -74,7 +74,9 @@ class WigController extends Controller {
                 'number' => $pointer,
                 'timeline' => "{$wigMeeting->startingPeriod->format('M. j')} - {$wigMeeting->endingPeriod->format('M. j')}",
                 'status' => $wigMeeting->translateStatusCode(),
-                'action' => $this->resolveActionLinks($wigMeeting)
+                'action' => $this->resolveActionLinks($wigMeeting),
+                'id' => $wigMeeting->id,
+                'description' => "Week #{$pointer} ({$wigMeeting->startingPeriod->format('M j')} - {$wigMeeting->endingPeriod->format('M j')})"
             ));
             $pointer++;
         }
