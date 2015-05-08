@@ -40,6 +40,13 @@ class CommitmentController extends Controller {
     public function enlist() {
         $this->title = ApplicationConstants::APP_NAME . ' - Enlist Commitments';
         $user = $this->commitmentModuleSupport->loadAccountModel();
+        $wigSession = $this->commitmentModuleSupport->loadOpenWigSession($user->employee->department);
+
+        if (strlen($wigSession->id) < 1) {
+            $this->logger->warn("No open WIG Sessions found");
+            $this->redirect(array('ip/index'));
+        }
+
         $this->render('commitment/enlist', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
@@ -48,7 +55,7 @@ class CommitmentController extends Controller {
             ),
             'model' => new Commitment(),
             'user' => $user,
-            'wigSession' => $this->commitmentModuleSupport->loadOpenWigSession($user->employee->department),
+            'wigSession' => $wigSession,
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');

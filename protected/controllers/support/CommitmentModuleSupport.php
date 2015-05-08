@@ -76,11 +76,8 @@ class CommitmentModuleSupport {
 
         $url = array('wig/index', 'ubt' => $unitBreakthrough->id);
         $this->controller->setSessionData('notif', array('class' => 'error', 'message' => "No open WigSession found for {$unitBreakthrough->description}"));
-        if ($remote) {
-            $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-        } else {
-            $this->controller->redirect($url);
-        }
+        $this->logger->warn($this->controller->getSessionData('notif')['message']);
+        return new WigSession();
     }
 
     /**
