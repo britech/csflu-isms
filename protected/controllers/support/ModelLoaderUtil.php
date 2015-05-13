@@ -20,6 +20,7 @@ use org\csflu\isms\models\indicator\LeadOffice;
 use org\csflu\isms\models\indicator\Target;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\ubt\Commitment;
+use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl;
 use org\csflu\isms\service\commons\UnitOfMeasureSimpleImpl;
@@ -27,6 +28,7 @@ use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl;
 use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl;
 use org\csflu\isms\service\ubt\CommitmentManagementServiceSimpleImpl;
+use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl;
 
 /**
  * Description of ModelLoaderUtil
@@ -49,6 +51,7 @@ class ModelLoaderUtil {
     private $departmentService;
     private $scorecardService;
     private $commitService;
+    private $initiativeService;
 
     private function __construct(Controller $controller) {
         $this->controller = $controller;
@@ -60,6 +63,7 @@ class ModelLoaderUtil {
         $this->departmentService = new DepartmentServiceSimpleImpl();
         $this->scorecardService = new ScorecardManagementServiceSimpleImpl();
         $this->commitService = new CommitmentManagementServiceSimpleImpl();
+        $this->initiativeService = new InitiativeManagementServiceSimpleImpl();
     }
 
     /**
@@ -270,7 +274,7 @@ class ModelLoaderUtil {
     public function loadWigSessionModel($id = null, Commitment $commitment = null, array $properties = array()) {
         $wigSession = $this->ubtService->getWigSessionData($id, $commitment);
         $updatedProperties = $this->resolvePropertyValues($properties, array('ubt/manage'), false, "WIG Session not found");
-        
+
         return $this->resolveModel($updatedProperties, $wigSession);
     }
 
@@ -283,8 +287,22 @@ class ModelLoaderUtil {
     public function loadCommitmentModel($id, array $properties = array()) {
         $commitment = $this->commitService->getCommitmentData($id);
         $updatedProperties = $this->resolvePropertyValues($properties, array('ubt/manage'), false, "Commitment not found");
-        
+
         return $this->resolveModel($updatedProperties, $commitment);
+    }
+
+    /**
+     * Retrieves the Initiative entity
+     * @param String $id Retrieve by its identifier
+     * @param Phase $phase Retrieve through a Phase entity
+     * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
+     * @return Initiative
+     */
+    public function loadInitiativeModel($id = null, Phase $phase = null, array $properties = array()) {
+        $initiative = $this->initiativeService->getInitiative($id, $phase);
+        $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "Initiative not found");
+
+        return $this->resolveModel($updatedProperties, $initiative);
     }
 
     private function resolvePropertyValues(array $properties, $defaultUrl, $defaultRemoteIndicator, $defaultMessage) {
