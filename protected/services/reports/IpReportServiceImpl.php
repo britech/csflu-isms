@@ -49,21 +49,23 @@ class IpReportServiceImpl implements IpReportService {
 
         $outputs = array();
         foreach ($wigSessions as $wigSession) {
-            $output = new IpReportOutput($this->filterCommitments($wigSession->commitments, $input->user), $wigSession);
-            array_push($outputs, $output);
+            if ($wigSession->startingPeriod >= $input->startingPeriod && $wigSession->endingPeriod <= $input->endingPeriod) {
+                $output = new IpReportOutput($this->filterCommitments($wigSession->commitments, $input->user), $wigSession);
+                array_push($outputs, $output);
+            }
         }
         return $outputs;
     }
 
     private function filterCommitments(array $commitments, UserAccount $userAccount) {
         $output = array();
-        
-        foreach($commitments as $commitment){
-            if($userAccount->id == $commitment->user->id){
-               $output = array_merge($output, array($commitment));
+
+        foreach ($commitments as $commitment) {
+            if ($userAccount->id == $commitment->user->id) {
+                $output = array_merge($output, array($commitment));
             }
         }
-        
+
         return $output;
     }
 
