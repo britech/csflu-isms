@@ -47,12 +47,16 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
-    public function listInitiatives(StrategyMap $strategyMap) {
-        return $this->daoSource->listInitiatives($strategyMap);
+    public function listInitiatives(StrategyMap $strategyMap = null, ImplementingOffice $implementingOffice = null) {
+        if (!is_null($strategyMap)) {
+            return $this->daoSource->listInitiativesByStrategyMap($strategyMap);
+        } elseif (!is_null($implementingOffice)) {
+            return $this->daoSource->listInitiativesByImplementingOffice($implementingOffice);
+        }
     }
 
     public function addInitiative(Initiative $initiative, StrategyMap $strategyMap) {
-        $initiatives = $this->daoSource->listInitiatives($strategyMap);
+        $initiatives = $this->daoSource->listInitiativesByStrategyMap($strategyMap);
 
         $found = false;
         foreach ($initiatives as $data) {
@@ -84,7 +88,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
 
     public function updateInitiative(Initiative $initiative) {
         $strategyMap = $this->mapDaoSource->getStrategyMapByInitiative($initiative);
-        $initiatives = $this->daoSource->listInitiatives($strategyMap);
+        $initiatives = $this->daoSource->listInitiativesByStrategyMap($strategyMap);
 
         $found = false;
         foreach ($initiatives as $data) {
@@ -287,7 +291,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         }
         $this->activityDaoSource->updateActivity($activity, $component);
     }
-    
+
     public function deleteActivity($id) {
         $this->activityDaoSource->deleteActivity($id);
     }

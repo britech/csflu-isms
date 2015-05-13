@@ -37,16 +37,15 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
         $this->phaseDaoSource = new PhaseDaoSqlImpl();
     }
 
-    public function listInitiatives(StrategyMap $strategyMap) {
+    public function listInitiativesByStrategyMap(StrategyMap $strategyMap) {
         try {
-            $dbst = $this->db->prepare('SELECT ini_id, ini_name FROM ini_main WHERE map_ref=:ref');
+            $dbst = $this->db->prepare('SELECT ini_id FROM ini_main WHERE map_ref=:ref');
             $dbst->execute(array('ref' => $strategyMap->id));
 
             $initiatives = array();
             while ($data = $dbst->fetch()) {
-                $initiative = new Initiative();
-                list($initiative->id, $initiative->title) = $data;
-                array_push($initiatives, $initiative);
+                list($id) = $data;
+                array_push($initiatives, $this->getInitiative($id));
             }
             return $initiatives;
         } catch (\PDOException $ex) {
@@ -305,8 +304,27 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
             while ($data = $dbst->fetch()) {
                 list($initiative) = $data;
             }
-            
+
             return $this->getInitiative($initiative);
+        } catch (\PDOException $ex) {
+            throw new DataAccessException($ex->getMessage());
+        }
+    }
+
+    public function listInitiativesByImplementingOffice(ImplementingOffice $implementingOffice) {
+        try {
+            $dbst = $this->db->prepare('SELECT DISTINCT(ini_ref) FROM ini_teams t1, ini_activities t2 WHERE dept_ref=:id AND owners LIKE %:code%');
+            $dbst->execute(array(
+                'id' => $implementingOffice->department->id,
+                'code' => $implementingOffice->department->code
+            ));
+
+            $initiatives = array();
+            while ($data = $dbst->fetch()) {
+                list($id) = $data;
+                array_push($initiatives, $this->getInitiative($id));
+            }
+            return $initiatives;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());
         }

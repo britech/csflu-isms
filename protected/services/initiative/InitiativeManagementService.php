@@ -23,7 +23,7 @@ interface InitiativeManagementService {
      * @param StrategyMap $strategyMap
      * @return Initiative[]
      */
-    public function listInitiatives(StrategyMap $strategyMap);
+    public function listInitiatives(StrategyMap $strategyMap = null, ImplementingOffice $implementingOffice = null);
     
     /**
      * Adds an Initiative in a given StrategyMap
