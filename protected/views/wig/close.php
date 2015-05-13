@@ -67,54 +67,65 @@ if (isset($params['validation']) and ! empty($params['validation'])) {
             <th style="width: 33%;">Commitments</th>
             <th style="width: 33%;">Status</th>
         </tr>
-        <?php foreach ($accounts as $account): ?>
-            <tr>
-                <td rowspan="<?php echo $collatedCommitments[$account->id]->countAll() ?>"><?php echo "{$account->employee->givenName} {$account->employee->lastName}"; ?></td>
-                <td>
-                    <?php
-                    foreach ($sessionModel->commitments as $commitment) {
-                        if ($commitment->user->id == $account->id) {
-                            $firstEntry = $commitment;
-                            break;
-                        }
-                    }
-                    ?>
-                    <?php echo "{$firstEntry->commitment} ({$firstEntry->translateStatusCode()})"; ?>
-                </td>
-                <td>
-                    <?php
-                    if (count($firstEntry->commitmentMovements) == 0) {
-                        echo "N/A";
-                    } else {
-                        $firstMovementData = "";
-                        foreach ($firstEntry->commitmentMovements as $movement) {
-                            $firstMovementData.=implode('&nbsp;|&nbsp;', explode('+', $movement->notes)) . "\n";
-                        }
-                        echo nl2br($firstMovementData);
-                    }
-                    ?>
-                </td>
-            </tr>
-            <?php foreach ($sessionModel->commitments as $data): ?>
-                <?php if ($data->id != $firstEntry->id && $data->user->id == $account->id): ?>
-                    <tr>
-                        <td style="border-left: 1px solid #bbb;"><?php echo "{$data->commitment} ({$data->translateStatusCode()})"; ?></td>
-                        <td>
-                            <?php
-                            if (count($data->commitmentMovements) == 0) {
-                                echo "N/A";
-                            } else {
-                                $movementData = "";
-                                foreach ($data->commitmentMovements as $movement) {
-                                    $movementData.=implode('&nbsp;|&nbsp;', explode('+', $movement->notes)) . "\n";
-                                }
-                                echo nl2br($movementData);
+        <?php
+        foreach ($accounts as $account):
+            $count = $collatedCommitments[$account->id]->countAll();
+            ?>
+
+            <?php if ($count == 0): ?>
+                <tr>
+                    <td><?php echo "{$account->employee->givenName} {$account->employee->lastName}"; ?></td>
+                    <td colspan="2">No Commitments defined</td>
+                </tr>
+            <?php else: ?>    
+                <tr>
+                    <td rowspan="<?php echo $collatedCommitments[$account->id]->countAll() ?>"><?php echo "{$account->employee->givenName} {$account->employee->lastName}"; ?></td>
+                    <td>
+                        <?php
+                        foreach ($sessionModel->commitments as $commitment) {
+                            if ($commitment->user->id == $account->id) {
+                                $firstEntry = $commitment;
+                                break;
                             }
-                            ?>
-                        </td>
-                    </tr>
-                <?php endif; ?>
-            <?php endforeach; ?>
+                        }
+                        ?>
+                        <?php echo "{$firstEntry->commitment} ({$firstEntry->translateStatusCode()})"; ?>
+                    </td>
+                    <td>
+                        <?php
+                        if (count($firstEntry->commitmentMovements) == 0) {
+                            echo "N/A";
+                        } else {
+                            $firstMovementData = "";
+                            foreach ($firstEntry->commitmentMovements as $movement) {
+                                $firstMovementData.=implode('&nbsp;|&nbsp;', explode('+', $movement->notes)) . "\n";
+                            }
+                            echo nl2br($firstMovementData);
+                        }
+                        ?>
+                    </td>
+                </tr>
+                <?php foreach ($sessionModel->commitments as $data): ?>
+                    <?php if ($data->id != $firstEntry->id && $data->user->id == $account->id): ?>
+                        <tr>
+                            <td style="border-left: 1px solid #bbb;"><?php echo "{$data->commitment} ({$data->translateStatusCode()})"; ?></td>
+                            <td>
+                                <?php
+                                if (count($data->commitmentMovements) == 0) {
+                                    echo "N/A";
+                                } else {
+                                    $movementData = "";
+                                    foreach ($data->commitmentMovements as $movement) {
+                                        $movementData.=implode('&nbsp;|&nbsp;', explode('+', $movement->notes)) . "\n";
+                                    }
+                                    echo nl2br($movementData);
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
         <?php endforeach; ?>
     </tbody>
     <tfoot>
