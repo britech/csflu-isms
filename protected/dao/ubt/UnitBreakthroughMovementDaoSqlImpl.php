@@ -29,7 +29,7 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
         try {
             $this->db->beginTransaction();
 
-            $meetingDbst = $this->db->prepare('UPDATE ubt_wig SET actual_start_date=:start_date, actual_end_date=:end_date, meeting_venue=:venue, meeting_time_start=:time_start, meeting_time_end=:time_end, status=:status WHERE wig_id=:id');
+            $meetingDbst = $this->db->prepare('UPDATE ubt_wig SET actual_start_date=:start_date, actual_end_date=:end_date, meeting_venue=:venue, meeting_time_start=:time_start, meeting_time_end=:time_end, status=:status, meeting_date=:date WHERE wig_id=:id');
             $meetingDbst->execute(array(
                 'start_date' => $wigSession->wigMeeting->actualSessionStartDate->format('Y-m-d'),
                 'end_date' => $wigSession->wigMeeting->actualSessionEndDate->format('Y-m-d'),
@@ -37,6 +37,7 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
                 'time_start' => $wigSession->wigMeeting->meetingTimeStart->format('H:i:s'),
                 'time_end' => $wigSession->wigMeeting->meetingTimeEnd->format('H:i:s'),
                 'status' => $wigSession->wigMeetingEnvironmentStatus,
+                'date' => $wigSession->wigMeeting->meetingDate->format('Y-m-d'),
                 'id' => $wigSession->id
             ));
 
@@ -58,7 +59,7 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
 
     public function retrieveWigMeetingData(WigSession $wigSession) {
         try {
-            $dbst = $this->db->prepare('SELECT actual_start_date, actual_end_date, meeting_venue, meeting_time_start, meeting_time_end FROM ubt_wig WHERE wig_id=:id');
+            $dbst = $this->db->prepare('SELECT actual_start_date, actual_end_date, meeting_venue, meeting_time_start, meeting_time_end, meeting_date FROM ubt_wig WHERE wig_id=:id');
             $dbst->execute(array('id' => $wigSession->id));
 
             $wigMeeting = new WigMeeting();
@@ -67,13 +68,15 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
                         $endDate,
                         $wigMeeting->meetingVenue,
                         $timeStart,
-                        $timeEnd) = $data;
+                        $timeEnd,
+                        $date) = $data;
             }
 
             $wigMeeting->actualSessionStartDate = \DateTime::createFromFormat('Y-m-d', $startDate);
             $wigMeeting->actualSessionEndDate = \DateTime::createFromFormat('Y-m-d', $endDate);
             $wigMeeting->meetingTimeStart = \DateTime::createFromFormat('H:i:s', $timeStart);
             $wigMeeting->meetingTimeEnd = \DateTime::createFromFormat('H:i:s', $timeEnd);
+            $wigMeeting->meetingDate = \DateTime::createFromFormat('Y-m-d', $date);
             return $wigMeeting;
         } catch (\PDOException $ex) {
             throw new DataAccessException($ex->getMessage());

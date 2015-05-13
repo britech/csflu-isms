@@ -70,7 +70,7 @@ class WigMeeting extends Model {
     public function getModelTranslationAsNewEntity() {
         return "[Meeting enlisted]\n"
                 . "Actual Timeline:\t{$this->actualSessionStartDate->format('M. d, Y')} - {$this->actualSessionEndDate->format('M. d, Y')}\n"
-                . "Meeting Time:\t{$this->meetingTimeStart->format('h:i A')} - {$this->meetingTimeEnd->format('h:i A')}\n"
+                . "Meeting Date/Time:\t{$this->meetingDate->format('M d, Y')} ({$this->meetingTimeStart->format('h:i A')} - {$this->meetingTimeEnd->format('h:i A')})\n"
                 . "Venue:\t{$this->meetingVenue}";
     }
 
