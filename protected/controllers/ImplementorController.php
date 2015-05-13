@@ -47,7 +47,7 @@ class ImplementorController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
-                'Manage Initiative' => array('initiative/manage', 'id' => $data->id),
+                'Manage Initiative' => array('initiative/view', 'id' => $data->id),
                 'Manage Implementing Offices' => 'active'
             ),
             'model' => new ImplementingOffice(),

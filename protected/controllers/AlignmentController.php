@@ -51,7 +51,7 @@ class AlignmentController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
-                'Manage Initiative' => array('initiative/manage', 'id' => $initiative->id),
+                'Manage Initiative' => array('initiative/view', 'id' => $initiative->id),
                 'Manage Strategy Alignments' => 'active'
             ),
             'measureModel' => new MeasureProfile(),

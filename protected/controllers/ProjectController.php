@@ -46,7 +46,7 @@ class ProjectController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
-                'Initiative' => array('initiative/manage', 'id' => $initiativeModel->id),
+                'Initiative' => array('initiative/view', 'id' => $initiativeModel->id),
                 'Manage Phases' => 'active'
             ),
             'phase' => new Phase(),
@@ -137,7 +137,7 @@ class ProjectController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
-                'Initiative' => array('initiative/manage', 'id' => $initiative->id),
+                'Initiative' => array('initiative/view', 'id' => $initiative->id),
                 'Manage Phases' => array('project/managePhases', 'initiative' => $initiative->id),
                 'Update Phase' => 'active'
             ),
@@ -204,7 +204,7 @@ class ProjectController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
-                'Initiative' => array('initiative/manage', 'id' => $initiativeModel->id),
+                'Initiative' => array('initiative/view', 'id' => $initiativeModel->id),
                 'Manage Components' => 'active'
             ),
             'model' => new Component(),
@@ -283,7 +283,7 @@ class ProjectController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
-                'Initiative' => array('initiative/manage', 'id' => $initiative->id),
+                'Initiative' => array('initiative/view', 'id' => $initiative->id),
                 'Manage Components' => array('project/manageComponents', 'initiative' => $initiative->id),
                 'Update Component' => 'active'
             ),
@@ -348,7 +348,7 @@ class ProjectController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
-                'Initiative' => array('initiative/manage', 'id' => $initiativeModel->id),
+                'Initiative' => array('initiative/view', 'id' => $initiativeModel->id),
                 'Manage Activities' => 'active'
             ),
             'model' => new Activity(),
@@ -480,7 +480,7 @@ class ProjectController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
-                'Initiative' => array('initiative/manage', 'id' => $initiative->id),
+                'Initiative' => array('initiative/view', 'id' => $initiative->id),
                 'Manage Activities' => array('project/manageActivities', 'initiative' => $initiative->id),
                 'Update Activity' => 'active'
             ),

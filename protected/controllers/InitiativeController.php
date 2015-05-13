@@ -15,6 +15,7 @@ use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\initiative\Initiative;
+use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
 use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl as DepartmentService;
@@ -32,10 +33,12 @@ class InitiativeController extends Controller {
     private $scorecardService;
     private $departmentService;
     private $initiativeService;
+    private $modelLoaderUtil;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->logger = \Logger::getLogger(__CLASS__);
+        $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->mapService = new StrategyMapManagementService();
         $this->scorecardService = new ScorecardManagementService();
         $this->departmentService = new DepartmentService();
@@ -77,7 +80,7 @@ class InitiativeController extends Controller {
         foreach ($initiatives as $initiative) {
             array_push($data, array(
                 'initiative' => $initiative->title,
-                'action' => ApplicationUtils::generateLink(array('initiative/manage', 'id' => $initiative->id), 'Manage')
+                'action' => ApplicationUtils::generateLink(array('initiative/view', 'id' => $initiative->id), 'View')
             ));
         }
         $this->renderAjaxJsonResponse($data);
@@ -152,7 +155,7 @@ class InitiativeController extends Controller {
             foreach ($initiative->implementingOffices as $implementingOffice) {
                 $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $id, $implementingOffice);
             }
-            $this->redirect(array('initiative/manage', 'id' => $id));
+            $this->redirect(array('initiative/view', 'id' => $id));
         } catch (ServiceException $ex) {
             $this->setSessionData('validation', array($ex->getMessage()));
             $this->redirect(array('initiative/create', 'map' => $strategyMap->id));
@@ -225,14 +228,18 @@ class InitiativeController extends Controller {
         $this->remoteValidateModel($initiative);
     }
 
-    public function manage($id) {
+    public function manage() {
+        
+    }
+
+    public function view($id) {
         $initiative = $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $initiative);
 
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Initiative';
 
         $this->layout = 'column-2';
-        $this->render('initiative/manage', array(
+        $this->render('initiative/view', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
@@ -241,17 +248,7 @@ class InitiativeController extends Controller {
                 'Initiative' => 'active'
             ),
             'sidebar' => array(
-                'data' => array(
-                    'header' => 'Actions',
-                    'links' => array(
-                        'Update Entry Data' => array('initiative/update', 'id' => $id),
-                        'Manage Implementing Offices' => array('implementor/index', 'initiative' => $id),
-                        'Manage Strategy Alignments' => array('alignment/manageInitiative', 'id' => $id),
-                        'Manage Phases' => array('project/managePhases', 'initiative' => $id),
-                        'Manage Components' => array('project/manageComponents', 'initiative' => $id),
-                        'Manage Activities' => array('project/manageActivities', 'initiative' => $id)
-                    )
-                )
+                'file' => 'initiative/_view-links'
             ),
             'notif' => $this->getSessionData('notif'),
             'model' => $initiative
@@ -280,7 +277,7 @@ class InitiativeController extends Controller {
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
                 'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
-                'Initiative' => array('initiative/manage', 'id' => $initiative->id),
+                'Initiative' => array('initiative/view', 'id' => $initiative->id),
                 'Update Initiative' => 'active'
             ),
             'model' => $initiative,
@@ -310,33 +307,25 @@ class InitiativeController extends Controller {
                 $this->initiativeService->updateInitiative($initiative);
                 $this->logRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_INITIATIVE, $initiative->id, $initiative, $oldInitiative);
                 $this->setSessionData('notif', array('class' => 'info', 'message' => 'Initiative updated'));
-                $this->redirect(array('initiative/manage', 'id' => $initiative->id));
+                $this->redirect(array('initiative/view', 'id' => $initiative->id));
             } catch (ServiceException $ex) {
+                $this->logger->error($ex->getMessage(), $ex);
                 $this->setSessionData('validation', array($ex->getMessage()));
                 $this->redirect(array('initiative/update', 'id' => $initiative->id));
             }
         } else {
-            $this->redirect(array('initiative/manage', 'id' => $initiative->id));
+            $this->redirect(array('initiative/view', 'id' => $initiative->id));
         }
     }
 
     private function loadModel($id) {
-        $initiative = $this->initiativeService->getInitiative($id);
-        if (is_null($initiative->id)) {
-            $this->setSessionData('notif', array('class' => '', 'message' => 'Initiative not found'));
-            $this->redirect(array('map/index'));
-        }
+        $initiative = $this->modelLoaderUtil->loadInitiativeModel($id);
         $initiative->validationMode = Model::VALIDATION_MODE_UPDATE;
         return $initiative;
     }
 
     private function loadMapModel($id = null, Initiative $initiative = null) {
-        $map = $this->mapService->getStrategyMap($id, null, null, null, $initiative);
-        if (is_null($map->id)) {
-            $this->setSessionData('notif', array('class' => '', 'message' => 'Strategy Map not found'));
-            $this->redirect(array('map/index'));
-        }
-        return $map;
+        return $this->modelLoaderUtil->loadMapModel($id, null, null, null, $initiative);
     }
 
 }
