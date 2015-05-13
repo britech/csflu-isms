@@ -7,55 +7,67 @@ error_reporting(0);
 
 $tbody = "";
 foreach ($accounts as $account) {
-    foreach ($sessionModel->commitments as $commitment) {
-        if ($commitment->user->id == $account->id) {
-            $firstEntry = $commitment;
-            break;
+    $firstRow = "";
+    $otherRow = "";
+    $count = $collatedCommitments[$account->id]->countAll();
+    $rowCount = $count == 0 ? 1 : $count;
+    if ($count > 0) {
+        foreach ($wigData->commitments as $commitment) {
+            if ($commitment->user->id == $account->id) {
+                $firstCommitmentEntry = $commitment->commitment;
+                $firstCommitmentMovementEntry = "";
+                if (count($commitment->commitmentMovements) == 0) {
+                    $firstCommitmentMovementEntry = "N/A";
+                } else {
+                    $entry = "";
+                    foreach ($commitment->commitmentMovements as $movement) {
+                        $entry.=implode('&nbsp;|&nbsp;', explode('+', $movement->notes)) . "\n";
+                    }
+                    $firstCommitmentMovementEntry = nl2br($entry);
+                }
+                $id = $commitment->id;
+                break;
+            }
         }
-    }
 
-    $firstEntryStatus = "";
-    if (count($firstEntry->commitmentMovements) == 0) {
-        $firstEntryStatus = "N/A";
+
+        $firstRow.= <<<ROW
+    <tr>
+        <td style="border: 1px solid #000000;" rowspan="{$rowCount}">{$account->employee->givenName} {$account->employee->lastName}</td>
+        <td style="border: 1px solid #000000;">{$firstCommitmentEntry}</td>
+        <td style="border: 1px solid #000000;">{$firstCommitmentMovementEntry}</td>
+    </tr>
+ROW;
+        foreach ($wigData->commitments as $data) {
+            if ($data->id != $id && $data->user->id == $account->id) {
+                $movementEntry = "";
+                if (count($data->commitmentMovements) == 0) {
+                    $movementEntry = "N/A";
+                } else {
+                    $entry = "";
+                    foreach ($data->commitmentMovements as $movement) {
+                        $entry.=implode('&nbsp;|&nbsp;', explode('+', $movement->notes)) . "\n";
+                    }
+                    $movementEntry = nl2br($entry);
+                }
+                $otherRow.=<<<ROW
+    <tr>
+        <td  style="border: 1px solid #000000;">{$data->commitment}</td>
+        <td  style="border: 1px solid #000000;">{$movementEntry}</td>
+    </tr>
+ROW;
+            }
+        }
     } else {
-        foreach ($firstEntry->commitmentMovements as $movement) {
-            $firstEntryStatus.=implode('&nbsp;|&nbsp;', explode('+', $movement->notes)) . "\n";
-        }
+        $firstRow.=<<<ROW
+    <tr>
+        <td style="border: 1px solid #000000;">{$account->employee->givenName} {$account->employee->lastName}</td>
+        <td style="border: 1px solid #000000;" colspan="2">No Commitments defined</td>
+    </tr>
+ROW;
     }
-
-    $otherCommitments = "";
-    foreach ($sessionModel->commitments as $data) {
-        if ($data->id != $firstEntry->id && $data->user->id == $account->id) {
-            $succeedingData .= <<<TABLE
-<tr>
-    <td style="border-left: 1px solid #bbb;"><?php echo "{$data->commitment} ({$data->translateStatusCode()})"; ?></td>
-                        <td>
-                            <?php
-                            if (count($data->commitmentMovements) == 0) {
-                                echo "N/A";
-                            } else {
-                                $movementData = "";
-                                foreach ($data->commitmentMovements as $movement) {
-                                    $movementData.=implode('&nbsp;|&nbsp;', explode('+', $movement->notes)) . "\n";
-                                }
-                                echo nl2br($movementData);
-                            }
-                            ?>
-                        </td>
-                    </tr>
-TABLE;
-        }
-    }
-    $tbody.=<<<TABLE
-<tr>
-  <td style="border: 1px solid #000000;" rowspan="{$collatedCommitments[$account->id]->countAll()}">{$account->employee->givenName} {$account->employee->lastName}</td>
-  <td style="border: 1px solid #000000;">{$firstEntry->commitment}</td>
-  <td style="border: 1px solid #000000;">{$firstEntryStatus}</td>
-</tr>
-TABLE;
+    $tbody.=$firstRow . $otherRow;
 }
-
-
 
 $html = <<<TABLE
 <table class="ink-table bordered" style="font-family: sans-serif; color: black;">
@@ -63,6 +75,10 @@ $html = <<<TABLE
         <tr>
             <td style="font-weight: bold; border: 1px solid #000000;">Unit</td>
             <td style="border: 1px solid #000000;" colspan="2">{$ubtData->unit->name}</td>
+        </tr>
+        <tr>
+            <td style="font-weight: bold; border: 1px solid #000000;">Date</td>
+            <td style="border: 1px solid #000000;" colspan="2">{$wigData->wigMeeting->meetingDate->format('M d, Y')}</td>
         </tr>
         <tr>
             <td style="font-weight: bold; border: 1px solid #000000;">Venue</td>
