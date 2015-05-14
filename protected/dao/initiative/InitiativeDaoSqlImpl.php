@@ -24,6 +24,7 @@ use org\csflu\isms\dao\initiative\PhaseDaoSqlImpl;
 class InitiativeDaoSqlImpl implements InitiativeDao {
 
     private $db;
+    private $logger;
     private $departmentDaoSource;
     private $objectiveDaoSource;
     private $measureProfileDaoSource;
@@ -31,6 +32,7 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
+        $this->logger = \Logger::getLogger(__CLASS__);
         $this->departmentDaoSource = new DepartmentDaoSqlImpl();
         $this->objectiveDaoSource = new ObjectiveDaoSqlImpl();
         $this->measureProfileDaoSource = new MeasureProfileDaoSqlImpl();
@@ -313,10 +315,10 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
 
     public function listInitiativesByImplementingOffice(ImplementingOffice $implementingOffice) {
         try {
-            $dbst = $this->db->prepare('SELECT DISTINCT(ini_ref) FROM ini_teams t1, ini_activities t2 WHERE dept_ref=:id AND owners LIKE %:code%');
+            $dbst = $this->db->prepare('SELECT DISTINCT(ini_ref) FROM ini_teams t1, ini_activities t2 WHERE dept_ref=:id OR owners LIKE :code');
             $dbst->execute(array(
                 'id' => $implementingOffice->department->id,
-                'code' => $implementingOffice->department->code
+                'code' => "%{$implementingOffice->department->code}%"
             ));
 
             $initiatives = array();

@@ -111,7 +111,7 @@ class UbtController extends Controller {
             array_push($data, array(
                 'id' => $unitBreakthrough->id,
                 'description' => strval($unitBreakthrough->description),
-                'status' => UnitBreakthrough::translateUbtStatusCode($unitBreakthrough->unitBreakthroughEnvironmentStatus),
+                'status' => $unitBreakthrough->translateUbtStatusCode(),
                 'map' => $map->name,
                 'action' => ApplicationUtils::generateLink(array('ubt/movements', 'id' => $unitBreakthrough->id), 'UBT Movements') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink(array('wig/index', 'ubt' => $unitBreakthrough->id), 'Manage WIG Sessions')
             ));
