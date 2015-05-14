@@ -57,6 +57,14 @@ class Initiative extends Model {
         );
     }
 
+    public function translateStatusCode($code = null) {
+        $statusCode = is_null($code) ? $this->initiativeEnvironmentStatus : $code;
+        if (array_key_exists($statusCode, self::getEnvironmentStatusTypes())) {
+            return self::getEnvironmentStatusTypes()[$statusCode];
+        }
+        return "Undefined";
+    }
+
     public function validate() {
         if (empty($this->title)) {
             array_push($this->validationMessages, "- {$this->getAttributeNames()['title']} should be defined");
@@ -193,7 +201,7 @@ class Initiative extends Model {
 
     public function getModelTranslationAsUpdatedEntity(Initiative $oldInitiative) {
         $translation = "[Initiative updated]\n\n";
-        
+
         if ($oldInitiative->title != $this->title) {
             $translation.="Title:\t{$this->title}\n";
         }
@@ -225,7 +233,7 @@ class Initiative extends Model {
         if ($oldInitiative->advisers != $this->advisers) {
             $translation.="Advisers:\t{$this->advisers}\n";
         }
-        
+
         return $translation;
     }
 
