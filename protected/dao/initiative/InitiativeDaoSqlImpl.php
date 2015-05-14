@@ -315,10 +315,9 @@ class InitiativeDaoSqlImpl implements InitiativeDao {
 
     public function listInitiativesByImplementingOffice(ImplementingOffice $implementingOffice) {
         try {
-            $dbst = $this->db->prepare('SELECT DISTINCT(ini_ref) FROM ini_teams t1, ini_activities t2 WHERE dept_ref=:id OR owners LIKE :code');
+            $dbst = $this->db->prepare('SELECT DISTINCT(ini_ref) FROM ini_teams WHERE dept_ref=:id');
             $dbst->execute(array(
                 'id' => $implementingOffice->department->id,
-                'code' => "%{$implementingOffice->department->code}%"
             ));
 
             $initiatives = array();
