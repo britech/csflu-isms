@@ -14,7 +14,7 @@ use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
                 <ul class="submenu" style="font-size: 15px;">
                     <li><?php echo ApplicationUtils::generateLink(array('map/index'), 'Strategy Management') ?></li>
                     <!--<li><?php echo ApplicationUtils::generateLink(array('scorecard/index'), 'Scorecard') ?></li>-->
-                    <li><?php echo ApplicationUtils::generateLink(array('initiative/index'), 'Initiative') ?></li>
+                    <li><?php echo ApplicationUtils::generateLink(array('initiative/manage'), 'Initiative') ?></li>
                     <li><?php echo ApplicationUtils::generateLink(array('ubt/manage'), 'Unit Breakthrough') ?></li>
                     <li><?php echo ApplicationUtils::generateLink(array('km/index'), 'Knowledge Management'); ?></li>
                 </ul>

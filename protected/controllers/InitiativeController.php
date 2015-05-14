@@ -15,6 +15,7 @@ use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\initiative\Initiative;
+use org\csflu\isms\models\initiative\ImplementingOffice;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
@@ -229,14 +230,49 @@ class InitiativeController extends Controller {
     }
 
     public function manage() {
-        
+        $account = $this->modelLoaderUtil->loadAccountModel();
+        $this->title = ApplicationConstants::APP_NAME . ' - Manage Initiative';
+        $this->layout = 'column-2';
+        $this->render('initiative/manage', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Manage Initiatives' => 'active'
+            ),
+            'sidebar' => array(
+                'file' => 'initiative/_manage-links'
+            ),
+            'department' => $account->employee->department
+        ));
+    }
+
+    public function listInitiativesByImplementingOffice() {
+        $this->validatePostData(array('department'));
+        $id = $this->getFormData('department');
+
+        $department = $this->modelLoaderUtil->loadDepartmentModel($id);
+        $implementingOffice = new ImplementingOffice();
+        $implementingOffice->department = $department;
+      
+        $initiatives = $this->initiativeService->listInitiatives(null, $implementingOffice);
+        $data = array();
+        foreach ($initiatives as $initiative) {
+            $map = $this->loadMapModel(null, $initiative);
+            array_push($data, array(
+                'id' => $initiative->id,
+                'description' => strval($initiative->title),
+                'status' => $initiative->translateStatusCode(),
+                'map' => $map->name,
+                'action' => ApplicationUtils::generateLink(array('project/index', 'initiative' => $initiative->id), 'Manage')
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     public function view($id) {
         $initiative = $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $initiative);
 
-        $this->title = ApplicationConstants::APP_NAME . ' - Manage Initiative';
+        $this->title = ApplicationConstants::APP_NAME . ' - About Initiative';
 
         $this->layout = 'column-2';
         $this->render('initiative/view', array(
