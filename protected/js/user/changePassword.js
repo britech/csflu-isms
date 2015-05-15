@@ -1,5 +1,6 @@
 $(document).ready(function() {
     $("#btnSubmit").hide();
+    $("#btnSubmit").prop('disabled', true);
 
     $("[name=oldPassword]").blur(function() {
         var password = $(this).val();
@@ -54,6 +55,11 @@ $(document).ready(function() {
             $("#confirmPassword-tip").html("");
             $("#password").val($(this).val());
         }
+    });
+
+    $(".ink-form").submit(function() {
+        var indicator = $("#btnSubmit").prop('disabled');
+        return !indicator;
     });
 
 });
