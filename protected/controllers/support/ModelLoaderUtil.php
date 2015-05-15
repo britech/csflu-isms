@@ -21,6 +21,8 @@ use org\csflu\isms\models\indicator\Target;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\models\initiative\Phase;
+use org\csflu\isms\models\initiative\Component;
+use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl;
 use org\csflu\isms\service\commons\UnitOfMeasureSimpleImpl;
@@ -303,6 +305,47 @@ class ModelLoaderUtil {
         $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "Initiative not found");
 
         return $this->resolveModel($updatedProperties, $initiative);
+    }
+
+    /**
+     * Retrieves the Phase entity
+     * @param String $id Retrieve through its identifier
+     * @param Component $component Retrieve through the Component entity
+     * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
+     * @return Phase
+     */
+    public function loadPhaseModel($id = null, Component $component = null, array $properties = array()) {
+        $phase = $this->initiativeService->getPhase($id, $component);
+        $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "Initiative Phase not found");
+
+        return $this->resolveModel($updatedProperties, $phase);
+    }
+
+    /**
+     * Retrieves the Component entity
+     * @param String $id Retrieve through its identifier
+     * @param Activity $activity Retrieve through the Activity entity
+     * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
+     * @return Component
+     */
+    public function loadComponentModel($id = null, Activity $activity = null, array $properties = array()) {
+        $component = $this->initiativeService->getComponent($id, $activity);
+        $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "Initiative Component not found");
+
+        return $this->resolveModel($updatedProperties, $component);
+    }
+
+    /**
+     * 
+     * @param String $id
+     * @param array $properties
+     * @return type
+     */
+    public function loadActivityModel($id, array $properties = array()) {
+        $activity = $this->initiativeService->getActivity($id);
+        $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "Initiative Activity not found");
+
+        return $this->resolveModel($updatedProperties, $activity);
     }
 
     private function resolvePropertyValues(array $properties, $defaultUrl, $defaultRemoteIndicator, $defaultMessage) {
