@@ -14,6 +14,7 @@ use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\models\initiative\Component;
 use org\csflu\isms\models\initiative\Activity;
+use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl as InitiativeManagementService;
 
@@ -27,10 +28,12 @@ class ProjectController extends Controller {
     private $logger;
     private $mapService;
     private $initiativeService;
+    private $modelLoaderUtil;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->logger = \Logger::getLogger(__CLASS__);
+        $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->mapService = new StrategyMapManagementService();
         $this->initiativeService = new InitiativeManagementService();
     }
@@ -538,67 +541,30 @@ class ProjectController extends Controller {
     }
 
     private function loadActivityModel($id, $remote = false) {
-        $activity = $this->initiativeService->getActivity($id);
-        if (is_null($activity->id)) {
-            $this->setSessionData('notif', array('message' => 'Activity not found'));
-            if ($remote) {
-                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
-            } else {
-                $this->redirect(array('map/index'));
-            }
-        }
+        $activity = $this->modelLoaderUtil->loadActivityModel($id, array(ModelLoaderUtil::KEY_REMOTE => $remote));
         return $activity;
     }
 
     private function loadComponentModel($id = null, Activity $activity = null, $remote = false) {
-        $component = $this->initiativeService->getComponent($id, $activity);
-        if (is_null($component->id)) {
-            $this->setSessionData('notif', array('message' => 'Component not found'));
-            if ($remote) {
-                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
-            } else {
-                $this->redirect(array('map/index'));
-            }
-        }
+        $component = $this->modelLoaderUtil->loadComponentModel($id, $activity, array(ModelLoaderUtil::KEY_REMOTE => $remote));
         return $component;
     }
 
     private function loadPhaseModel($id = null, Component $component = null, $remote = false) {
-        $phase = $this->initiativeService->getPhase($id, $component);
-        if (is_null($phase->id)) {
-            $this->setSessionData('notif', array('message' => 'Phase not found'));
-            if ($remote) {
-                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
-            } else {
-                $this->redirect(array('map/index'));
-            }
-        }
+        $phase = $this->modelLoaderUtil->loadPhaseModel($id, $component, array(ModelLoaderUtil::KEY_REMOTE => $remote));
         $phase->validationMode = Model::VALIDATION_MODE_UPDATE;
         return $phase;
     }
 
     private function loadInitiativeModel($id = null, Phase $phase = null, $remote = false) {
-        $initiative = $this->initiativeService->getInitiative($id, $phase);
-        if (is_null($initiative->id)) {
-            $this->setSessionData('notif', array('message' => 'Initiative not found'));
-            if ($remote) {
-                $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('map/index'))));
-            } else {
-                $this->redirect(array('map/index'));
-            }
-        }
+        $initiative = $this->modelLoaderUtil->loadInitiativeModel($id, $phase, array(ModelLoaderUtil::KEY_REMOTE => $remote));
         $initiative->startingPeriod = $initiative->startingPeriod->format('Y-m-d');
         $initiative->endingPeriod = $initiative->endingPeriod->format('Y-m-d');
         return $initiative;
     }
 
     private function loadMapModel(Initiative $initiative) {
-        $strategyMap = $this->mapService->getStrategyMap(null, null, null, null, $initiative);
-        if (is_null($strategyMap->id)) {
-            $this->setSessionData('notif', array('message' => 'Initiative not found'));
-            $this->redirect(array('map/index'));
-        }
-        return $strategyMap;
+        return $this->modelLoaderUtil->loadMapModel(null, null, null, null, $initiative, null);
     }
 
 }
