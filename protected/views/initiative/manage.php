@@ -12,8 +12,7 @@ use org\csflu\isms\util\FormGenerator;
     <div id="content">
         <?php
         $form = new FormGenerator(array(
-            'class' => 'ink-form',
-            'method' => FormGenerator::METHOD_GET
+            'class' => 'ink-form'
         ));
         echo $form->startComponent();
         ?>
