@@ -25,7 +25,6 @@ use org\csflu\isms\util\ModelFormGenerator;
             </div>
             <?php echo $form->renderHiddenField($model, 'id', array('id' => 'initiative')); ?>
             <?php echo $form->renderHiddenField($model, 'startingPeriod'); ?>
-            <?php echo $form->renderHiddenField($model, 'endingPeriod'); ?>
         </div>
         <?php echo $form->endComponent(); ?>
     </div>

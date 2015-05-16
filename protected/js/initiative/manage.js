@@ -70,37 +70,6 @@ $(document).ready(function() {
         animationType: 'none'
     }).on('change', function(event) {
         var date = event.args.date;
-
-        var lastDayOfEndingDate = 0;
-
-        switch (date.getMonth()) {
-            case 0:
-            case 2:
-            case 4:
-            case 6:
-            case 7:
-            case 9:
-            case 11:
-                lastDayOfEndingDate = 31;
-                break;
-
-            case 3:
-            case 5:
-            case 8:
-            case 10:
-                lastDayOfEndingDate = 30;
-                break;
-
-            case 1:
-                if (date.getFullYear() % 4 === 0) {
-                    lastDayOfEndingDate = 29;
-                } else {
-                    lastDayOfEndingDate = 28;
-                }
-                break;
-        }
-
         $("[name*=startingPeriod]").val(date.getFullYear() + "-" + (date.getMonth() + 1) + "-1");
-        $("[name*=endingPeriod]").val(date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + lastDayOfEndingDate);
     });
 });
