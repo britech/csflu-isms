@@ -15,7 +15,6 @@ use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\models\initiative\Component;
 use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
-use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl as InitiativeManagementService;
 
 /**
@@ -26,7 +25,6 @@ use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl as I
 class ProjectController extends Controller {
 
     private $logger;
-    private $mapService;
     private $initiativeService;
     private $modelLoaderUtil;
 
@@ -34,8 +32,29 @@ class ProjectController extends Controller {
         $this->checkAuthorization();
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
-        $this->mapService = new StrategyMapManagementService();
         $this->initiativeService = new InitiativeManagementService();
+    }
+
+    public function index() {
+        $this->validatePostData(array('id', 'startingPeriod'));
+        $id = $this->getFormData('id');
+        $date = $this->getFormData('startingPeriod');
+        $initiative = $this->loadInitiativeModel($id);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Activity Dashboard';
+        $this->layout = 'column-2';
+        $this->render('project/index', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Manage Initiatives' => array('initiative/manage'),
+                'Activity Dashboard' => 'active'
+            ),
+            'sidebar' => array(
+                'file' => 'project/_index-navi'
+            ),
+            'data' => $initiative,
+            'date' => \DateTime::createFromFormat('Y-m-d', $date)
+        ));
     }
 
     public function managePhases($initiative) {
