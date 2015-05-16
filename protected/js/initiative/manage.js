@@ -46,8 +46,8 @@ $(document).ready(function() {
 
     $('#timeline-container').jqxWindow({
         title: '<strong>Select Month and Year</strong>',
-        width: 400,
-        height: 180,
+        width: 500,
+        height: 190,
         resizable: false,
         draggable: false,
         isModal: true,
@@ -71,5 +71,15 @@ $(document).ready(function() {
     }).on('change', function(event) {
         var date = event.args.date;
         $("[name*=startingPeriod]").val(date.getFullYear() + "-" + (date.getMonth() + 1) + "-1");
+    });
+
+    $(".ink-form").submit(function() {
+        var date = $("[name*=startingPeriod]").val();
+        if (date === '') {
+            $("#tip").html("Coverage date is required.");
+            return false;
+        } else {
+            return true;
+        }
     });
 });

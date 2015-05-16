@@ -21,6 +21,7 @@ use org\csflu\isms\util\FormGenerator;
             <label>Timeline&nbsp;*</label>
             <div class="control">
                 <div id="timeline-input"></div>
+                <p class="tip" id="tip"></p>
                 <?php echo $form->renderSubmitButton('Filter Activities', array('class' => 'ink-button green flat', 'style' => 'margin-top: 1em; margin-left: 0px;')); ?>
             </div>
             <?php echo $form->renderHiddenField('id', array('id' => 'initiative')); ?>
