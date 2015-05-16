@@ -5,8 +5,13 @@ namespace org\csflu\isms\views;
 use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\util\ApplicationUtils;
 ?>
+<script type="text/javascript" src="protected/js/project/index.js"></script>
 <table class="ink-table bordered">
     <thead>
+        <tr>
+            <th style="text-align: right;">Initiative</th>
+            <th style="text-align: left;" colspan="3"><?php echo $data->title; ?></th>
+        </tr>
         <tr>
             <th style="text-align: right;">Covered Period</th>
             <th style="text-align: left;" colspan="3"><?php echo $date->format('F - Y') ?></th>
