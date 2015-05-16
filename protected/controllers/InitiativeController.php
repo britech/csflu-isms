@@ -241,7 +241,8 @@ class InitiativeController extends Controller {
             'sidebar' => array(
                 'file' => 'initiative/_manage-links'
             ),
-            'department' => $account->employee->department
+            'department' => $account->employee->department,
+            'model' => new Initiative()
         ));
     }
 
@@ -252,7 +253,7 @@ class InitiativeController extends Controller {
         $department = $this->modelLoaderUtil->loadDepartmentModel($id);
         $implementingOffice = new ImplementingOffice();
         $implementingOffice->department = $department;
-      
+
         $initiatives = $this->initiativeService->listInitiatives(null, $implementingOffice);
         $data = array();
         foreach ($initiatives as $initiative) {
@@ -262,7 +263,7 @@ class InitiativeController extends Controller {
                 'description' => strval($initiative->title),
                 'status' => $initiative->translateStatusCode(),
                 'map' => $map->name,
-                'action' => ApplicationUtils::generateLink(array('project/index', 'initiative' => $initiative->id), 'Manage')
+                'action' => ApplicationUtils::generateLink('#', 'Manage')
             ));
         }
         $this->renderAjaxJsonResponse($data);
