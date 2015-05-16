@@ -12,7 +12,7 @@ use org\csflu\isms\util\ModelFormGenerator;
     <div id="content">
         <?php
         $form = new ModelFormGenerator(array(
-            'action' => array('project/listActivities'),
+            'action' => array('project/index'),
             'class' => 'ink-form'
         ));
         echo $form->startComponent();
