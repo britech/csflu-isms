@@ -75,11 +75,12 @@ $(document).ready(function() {
 
     $(".ink-form").submit(function() {
         var date = $("[name*=startingPeriod]").val();
+        var id = $("#initiative").val();
         if (date === '') {
             $("#tip").html("Coverage date is required.");
-            return false;
         } else {
-            return true;
+            window.location = "?r=project/index&id=" + id + "&startingPeriod=" + date;
         }
+        return false;
     });
 });

@@ -12,8 +12,8 @@ use org\csflu\isms\util\FormGenerator;
     <div id="content">
         <?php
         $form = new FormGenerator(array(
-            'action' => array('project/index'),
-            'class' => 'ink-form'
+            'class' => 'ink-form',
+            'method' => FormGenerator::METHOD_GET
         ));
         echo $form->startComponent();
         ?>

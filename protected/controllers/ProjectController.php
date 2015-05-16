@@ -35,10 +35,8 @@ class ProjectController extends Controller {
         $this->initiativeService = new InitiativeManagementService();
     }
 
-    public function index() {
-        $this->validatePostData(array('id', 'startingPeriod'));
-        $id = $this->getFormData('id');
-        $date = $this->getFormData('startingPeriod');
+    public function index($id, $startingPeriod) {
+        $date = \DateTime::createFromFormat('Y-m-d', $startingPeriod);
         $initiative = $this->loadInitiativeModel($id);
 
         $this->title = ApplicationConstants::APP_NAME . ' - Activity Dashboard';
@@ -53,7 +51,7 @@ class ProjectController extends Controller {
                 'file' => 'project/_index-navi'
             ),
             'data' => $initiative,
-            'date' => \DateTime::createFromFormat('Y-m-d', $date)
+            'date' => $date
         ));
     }
 
