@@ -2,7 +2,7 @@
 
 namespace org\csflu\isms\views;
 
-use org\csflu\isms\util\ModelFormGenerator;
+use org\csflu\isms\util\FormGenerator;
 ?>
 <?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
 <script type="text/javascript" src="protected/js/initiative/manage.js"></script>
@@ -11,7 +11,7 @@ use org\csflu\isms\util\ModelFormGenerator;
 <div id="timeline-container">
     <div id="content">
         <?php
-        $form = new ModelFormGenerator(array(
+        $form = new FormGenerator(array(
             'action' => array('project/index'),
             'class' => 'ink-form'
         ));
@@ -23,8 +23,8 @@ use org\csflu\isms\util\ModelFormGenerator;
                 <div id="timeline-input"></div>
                 <?php echo $form->renderSubmitButton('Filter Activities', array('class' => 'ink-button green flat', 'style' => 'margin-top: 1em; margin-left: 0px;')); ?>
             </div>
-            <?php echo $form->renderHiddenField($model, 'id', array('id' => 'initiative')); ?>
-            <?php echo $form->renderHiddenField($model, 'startingPeriod'); ?>
+            <?php echo $form->renderHiddenField('id', array('id' => 'initiative')); ?>
+            <?php echo $form->renderHiddenField('startingPeriod'); ?>
         </div>
         <?php echo $form->endComponent(); ?>
     </div>
