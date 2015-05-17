@@ -45,7 +45,8 @@ class ActivityControllerSupport {
         $movement->user = $this->modelLoaderUtil->loadAccountModel();
 
         if (is_null($status)) {
-            
+            $activityMovementData = $this->controller->getFormData('ActivityMovement');
+            $movement->bindValuesUsingArray(array('activitymovement' => $activityMovementData), $movement);
         } else {
             $movement->notes = "Activity set to " . Activity::listEnvironmentStatusCodes()[$status];
         }

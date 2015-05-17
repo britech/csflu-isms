@@ -11,6 +11,7 @@ use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\initiative\Initiative;
+use org\csflu\isms\models\initiative\ActivityMovement;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\controllers\support\ActivityControllerSupport;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl;
@@ -57,9 +58,10 @@ class ActivityController extends Controller {
         $this->unsetSessionData('notif');
     }
 
-    public function manage($id, $period) {
+    public function manage($id) {
         $activity = $this->loadModel($id);
         $initiative = $this->loadInitiativeModel(null, $activity);
+        $period = $activity->startingPeriod->format('Y-m');
 
         $this->title = ApplicationConstants::APP_NAME;
         $this->layout = "column-2";
@@ -99,9 +101,34 @@ class ActivityController extends Controller {
         } catch (ServiceException $ex) {
             $this->logger->error($ex->getMessage(), $ex);
         }
-
-
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('activity/index', 'initiative' => $initiative->id, 'period' => $period))));
+    }
+
+    public function enlistMovement($id) {
+        $activity = $this->loadModel($id);
+        $initiative = $this->loadInitiativeModel(null, $activity);
+        $period = $activity->startingPeriod->format('Y-m');
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Enlist Movement';
+        $this->render('activity/enlist', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Manage Initiatives' => array('initiative/manage'),
+                'Activity Dashboard' => array('activity/index', 'initiative' => $initiative->id, 'period' => $period),
+                'Manage Activity' => array('activity/manage', 'id' => $activity->id),
+                'Enlist Movement' => 'active'
+            ),
+            'model' => new ActivityMovement(),
+            'activity' => $activity,
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+    }
+
+    public function validateMovementInput() {
+        $this->validatePostData(array('ActivityMovement'), true);
+        $activityMovement = $this->controllerSupport->constructActivityMovementEntity();
+        $this->remoteValidateModel($activityMovement);
     }
 
     private function logEnlistedMovements(Initiative $initiative, array $movements) {
