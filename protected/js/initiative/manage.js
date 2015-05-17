@@ -70,7 +70,7 @@ $(document).ready(function() {
         animationType: 'none'
     }).on('change', function(event) {
         var date = event.args.date;
-        $("[name*=startingPeriod]").val(date.getFullYear() + "-" + (date.getMonth() + 1) + "-1");
+        $("[name*=startingPeriod]").val(date.getFullYear() + "-" + (date.getMonth() + 1));
     });
 
     $(".ink-form").submit(function() {

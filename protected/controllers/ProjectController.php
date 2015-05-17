@@ -36,7 +36,7 @@ class ProjectController extends Controller {
     }
 
     public function index($id, $startingPeriod) {
-        $date = \DateTime::createFromFormat('Y-m-d', $startingPeriod);
+        $date = \DateTime::createFromFormat('Y-m-d', "{$startingPeriod}-1");
         $initiative = $this->loadInitiativeModel($id);
 
         $this->title = ApplicationConstants::APP_NAME . ' - Activity Dashboard';
