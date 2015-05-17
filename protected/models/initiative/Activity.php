@@ -42,6 +42,24 @@ class Activity extends Model {
     private $endingPeriod;
     private $activityEnvironmentStatus = self::STATUS_PENDING;
 
+    public static function listEnvironmentStatusCodes() {
+        return array(
+            self::STATUS_PENDING => 'Pending',
+            self::STATUS_ONGOING => 'Ongoing',
+            self::STATUS_FINISHED => 'Finished',
+            self::STATUS_DROPPED => 'Discontinued',
+            self::STATUS_UNFINISHED => 'Unfinished'
+        );
+    }
+    
+    public function translateStatusCode($code = null){
+        $statusCode = is_null($code) ? $this->activityEnvironmentStatus : $code;
+        if(array_key_exists($statusCode, self::listEnvironmentStatusCodes())){
+            return self::listEnvironmentStatusCodes()[$statusCode];
+        }
+        return 'Undefined';
+    }
+
     public function validate() {
         if (strlen($this->activityNumber) < 1) {
             array_push($this->validationMessages, '- Activity Number should be defined');
