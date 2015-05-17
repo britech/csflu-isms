@@ -3,6 +3,7 @@
 namespace org\csflu\isms\models\initiative;
 
 use org\csflu\isms\core\Model;
+use org\csflu\isms\models\initiative\ActivityMovement;
 
 /**
  * Description of Activity
@@ -18,6 +19,7 @@ use org\csflu\isms\core\Model;
  * @property String $owners
  * @property \DateTime $startingPeriod
  * @property \DateTime $endingPeriod
+ * @property ActivityMovement[] $movements
  * @property String $activityEnvironmentStatus
  * @author britech
  */
@@ -40,6 +42,7 @@ class Activity extends Model {
     private $owners;
     private $startingPeriod;
     private $endingPeriod;
+    private $movements;
     private $activityEnvironmentStatus = self::STATUS_PENDING;
 
     public static function listEnvironmentStatusCodes() {

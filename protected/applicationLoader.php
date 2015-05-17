@@ -69,6 +69,7 @@ require_once 'models/initiative/ImplementingOffice.php';
 require_once 'models/initiative/Phase.php';
 require_once 'models/initiative/Component.php';
 require_once 'models/initiative/Activity.php';
+require_once 'models/initiative/ActivityMovement.php';
 
 require_once 'models/ubt/UnitBreakthrough.php';
 require_once 'models/ubt/LeadMeasure.php';
