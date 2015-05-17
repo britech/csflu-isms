@@ -4,6 +4,8 @@ namespace org\csflu\isms\views;
 
 use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\util\ApplicationUtils;
+
+$this->renderPartial('commons/_notification', array('notif' => $notif));
 ?>
 <table class="ink-table bordered">
     <thead>

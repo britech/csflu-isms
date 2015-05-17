@@ -5,6 +5,7 @@ namespace org\csflu\isms\controllers;
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 
@@ -38,8 +39,10 @@ class ActivityController extends Controller {
                 'file' => 'activity/_index-navi'
             ),
             'data' => $data,
-            'date' => $date
+            'date' => $date,
+            'notif' => $this->getSessionData('notif')
         ));
+        $this->unsetSessionData('notif');
     }
 
     public function manage($id, $period) {
@@ -59,8 +62,22 @@ class ActivityController extends Controller {
                 'file' => 'activity/_manage-navi'
             ),
             'data' => $activity,
-            'initiative' => $initiative
+            'initiative' => $initiative,
+            'period' => $period
         ));
+    }
+
+    public function updateStatus() {
+        $this->validatePostData(array('id', 'status', 'period'), false);
+
+        $id = $this->getFormData('id');
+        $status = strtoupper($this->getFormData('status'));
+        $period = $this->getFormData('period');
+
+        $activity = $this->loadModel($id, true);
+        $initiative = $this->loadInitiativeModel(null, $activity, true);
+        $this->setSessionData('notif', array('class' => 'info', 'message' => "{$activity->title} set to {$activity->translateStatusCode($status)}"));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('activity/index', 'initiative' => $initiative->id, 'period' => $period))));
     }
 
     private function loadInitiativeModel($id = null, Activity $activity = null, $remote = false) {
@@ -77,7 +94,7 @@ class ActivityController extends Controller {
         $initiative->endingPeriod = $initiative->endingPeriod->format('Y-m-d');
         return $initiative;
     }
-
+    
     private function loadModel($id, $remote = false) {
         return $this->modelLoaderUtil->loadActivityModel($id, array(ModelLoaderUtil::KEY_REMOTE => $remote));
     }

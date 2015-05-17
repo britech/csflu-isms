@@ -33,6 +33,7 @@ use org\csflu\isms\models\initiative\Activity;
         <p id="text"></p>
         <input type="hidden" id="activity" value="<?php echo $data->id; ?>"/>
         <input type="hidden" id="status"/>
+        <input type="hidden" id="period" value="<?php echo $period; ?>"/>
         <div class="all-50 push-center align-center">
             <button class="ink-button red flat" id="accept">Yes</button>
             <button class="ink-button green flat" id="deny">No</button>

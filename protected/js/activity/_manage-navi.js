@@ -5,7 +5,7 @@ $(document).ready(function() {
         $("#text").html("Change status to: <strong>ONGOING</strong>");
         $("#dialog-status").jqxWindow('open');
     });
-    
+
     $("#pending").click(function() {
         $("#status").val('P');
         $("#text").html("Change status to: <strong>PENDING</strong>");
@@ -23,5 +23,22 @@ $(document).ready(function() {
         theme: 'office',
         animationType: 'none',
         cancelButton: $("#deny")
+    });
+
+    $("#accept").click(function() {
+        var id = $("#activity").val();
+        var status = $("#status").val();
+        var period = $("#period").val();
+
+        $.post("?r=activity/updateStatus",
+                {id: id, status: status, period: period},
+        function(data) {
+            try {
+                var response = $.parseJSON(data);
+                window.location = response.url;
+            } catch(e){
+                console.log(e);
+            }
+        });
     });
 });
