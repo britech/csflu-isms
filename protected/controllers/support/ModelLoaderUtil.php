@@ -339,7 +339,7 @@ class ModelLoaderUtil {
      * 
      * @param String $id
      * @param array $properties
-     * @return type
+     * @return Activity
      */
     public function loadActivityModel($id, array $properties = array()) {
         $activity = $this->initiativeService->getActivity($id);
