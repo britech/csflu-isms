@@ -111,7 +111,8 @@ class ActivityDaoSqlImpl implements ActivityDao {
                     . 'owners=:owners, '
                     . 'period_start_date=:start, '
                     . 'period_end_date=:end, '
-                    . 'component_ref=:component '
+                    . 'component_ref=:component, '
+                    . 'activity_status=:status '
                     . 'WHERE activity_id=:id');
 
             $dbst->execute(array(
@@ -126,6 +127,7 @@ class ActivityDaoSqlImpl implements ActivityDao {
                 'start' => $activity->startingPeriod->format('Y-m-d'),
                 'end' => $activity->endingPeriod->format('Y-m-d'),
                 'component' => $component->id,
+                'status' => $activity->activityEnvironmentStatus,
                 'id' => $activity->id
             ));
             $this->db->commit();
