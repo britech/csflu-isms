@@ -95,7 +95,6 @@ class ActivityDaoSqlImpl implements ActivityDao {
 
     public function updateActivity(Activity $activity, Component $component) {
         try {
-            $this->logger->debug($activity);
             $this->db->beginTransaction();
 
             $dbst = $this->db->prepare('UPDATE ini_activities SET activity_number=:number, '
