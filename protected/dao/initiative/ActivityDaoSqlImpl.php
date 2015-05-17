@@ -7,6 +7,7 @@ use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\models\initiative\Component;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\core\ConnectionManager;
+use org\csflu\isms\dao\initiative\ActivityMovementDaoSqlImpl;
 
 /**
  * Description of ActivityDaoSqlImpl
@@ -16,9 +17,11 @@ use org\csflu\isms\core\ConnectionManager;
 class ActivityDaoSqlImpl implements ActivityDao {
 
     private $db;
-    
+    private $movementDao;
+
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
+        $this->movementDao = new ActivityMovementDaoSqlImpl();
     }
 
     public function addActivity(Activity $activity, Component $component) {
@@ -86,6 +89,7 @@ class ActivityDaoSqlImpl implements ActivityDao {
             }
             $activity->startingPeriod = \DateTime::createFromFormat('Y-m-d', $activity->startingPeriod);
             $activity->endingPeriod = \DateTime::createFromFormat('Y-m-d', $activity->endingPeriod);
+            $activity->movements = $this->movementDao->listMovements($activity);
 
             return $activity;
         } catch (\PDOException $ex) {
@@ -134,14 +138,15 @@ class ActivityDaoSqlImpl implements ActivityDao {
     public function deleteActivity($id) {
         try {
             $this->db->beginTransaction();
-            
+
             $dbst = $this->db->prepare('DELETE FROM ini_activities WHERE activity_id=:id');
-            $dbst->execute(array('id'=>$id));
-            
+            $dbst->execute(array('id' => $id));
+
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
             throw new DataAccessException($ex->getMessage());
         }
     }
+
 }
