@@ -30,22 +30,22 @@ use org\csflu\isms\util\ApplicationUtils;
                     <?php if ($activity->startingPeriod == $date): ?>
                         <tr>
                             <?php if ($activity->activityEnvironmentStatus == Activity::STATUS_PENDING): ?>
-                                <td><?php echo ApplicationUtils::generateLink('#', $activity->title, array('id' => "pending-{$activity->id}")); ?></td>
+                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id), $activity->title); ?></td>
                             <?php else: ?>
                                 <td>&nbsp;</td>
                             <?php endif; ?>
                             <?php if ($activity->activityEnvironmentStatus == Activity::STATUS_ONGOING): ?>
-                                <td><?php echo ApplicationUtils::generateLink('#', $activity->title, array('id' => "ongoing-{$activity->id}")); ?></td>
+                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id), $activity->title); ?></td>
                             <?php else: ?>
                                 <td>&nbsp;</td>
                             <?php endif; ?>
                             <?php if ($activity->activityEnvironmentStatus == Activity::STATUS_FINISHED): ?>
-                                <td><?php echo ApplicationUtils::generateLink('#', $activity->title, array('id' => "finished-{$activity->id}")); ?></td>
+                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id), $activity->title); ?></td>
                             <?php else: ?>
                                 <td>&nbsp;</td>
                             <?php endif; ?>
                             <?php if ($activity->activityEnvironmentStatus == Activity::STATUS_STALLED): ?>
-                                <td><?php echo ApplicationUtils::generateLink('#', $activity->title, array('id' => "stalled-{$activity->id}")); ?></td>
+                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id), $activity->title); ?></td>
                             <?php else: ?>
                                 <td>&nbsp;</td>
                             <?php endif; ?>
