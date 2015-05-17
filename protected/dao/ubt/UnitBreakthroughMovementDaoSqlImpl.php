@@ -88,13 +88,14 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
             $this->db->beginTransaction();
 
             foreach ($wigSession->movementUpdates as $movementData) {
-                $dbst = $this->db->prepare('INSERT INTO ubt_movement(wig_ref, ubt_figure, lm1_figure, lm2_figure, notes) VALUES(:wig, :ubt, :lm1, :lm2, :notes)');
+                $dbst = $this->db->prepare('INSERT INTO ubt_movement(wig_ref, ubt_figure, lm1_figure, lm2_figure, notes, user_ref) VALUES(:wig, :ubt, :lm1, :lm2, :notes, :user)');
                 $dbst->execute(array(
                     'wig' => $wigSession->id,
                     'ubt' => $movementData->ubtFigure,
                     'lm1' => $movementData->firstLeadMeasureFigure,
                     'lm2' => $movementData->secondLeadMeasureFigure,
-                    'notes' => $movementData->notes
+                    'notes' => $movementData->notes,
+                    'user' => $movementData->user->id
                 ));
             }
 

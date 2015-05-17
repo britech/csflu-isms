@@ -6,6 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\models\ubt\UnitBreakthroughMovement;
 use org\csflu\isms\models\ubt\WigSession;
+use org\csflu\isms\controllers\support\ModelLoaderUtil;
 
 /**
  * Description of UnitBreakthroughControllerSupport
@@ -16,10 +17,12 @@ class UnitBreakthroughControllerSupport {
 
     private static $instance = null;
     private $controller;
+    private $modelLoaderUtil;
     private $logger;
 
     private function __construct(Controller $controller) {
         $this->controller = $controller;
+        $this->modelLoaderUtil = ModelLoaderUtil::getInstance($controller);
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -88,11 +91,12 @@ class UnitBreakthroughControllerSupport {
 
         $ubtMovement = new UnitBreakthroughMovement();
         $ubtMovement->bindValuesUsingArray(array('unitbreakthroughmovement' => $ubtMovementData), $ubtMovement);
+        $ubtMovement->user = $this->modelLoaderUtil->loadAccountModel();
 
         $wigSession = new WigSession();
         $wigSession->bindValuesUsingArray(array('wigsession' => $wigSessionData));
         $wigSession->movementUpdates = array($ubtMovement);
-        
+
         return $wigSession;
     }
 

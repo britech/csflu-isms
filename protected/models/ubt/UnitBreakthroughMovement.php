@@ -3,10 +3,12 @@
 namespace org\csflu\isms\models\ubt;
 
 use org\csflu\isms\core\Model;
+use org\csflu\isms\models\uam\UserAccount;
 
 /**
  * Description of UnitBreakthroughMovement
  *
+ * @property UserAccount $user
  * @property \DateTime $dateEntered
  * @property String $ubtFigure
  * @property String $firstLeadMeasureFigure
@@ -16,6 +18,7 @@ use org\csflu\isms\core\Model;
  */
 class UnitBreakthroughMovement extends Model {
 
+    private $user;
     private $dateEntered;
     private $ubtFigure;
     private $firstLeadMeasureFigure;

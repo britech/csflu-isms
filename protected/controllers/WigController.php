@@ -306,7 +306,7 @@ class WigController extends Controller {
             $lm1Figure += floatval($movement->firstLeadMeasureFigure);
             $lm2Figure += floatval($movement->secondLeadMeasureFigure);
         }
-        
+
         $this->render('wig/report', array(
             'wigData' => $wigSession,
             'ubtData' => $ubt,
@@ -323,11 +323,10 @@ class WigController extends Controller {
 
     private function constructUbtMovementData() {
         $ubtMovementData = $this->getFormData('UnitBreakthroughMovement');
-
         $movementData = new UnitBreakthroughMovement();
         $movementData->bindValuesUsingArray(array(
             'unitbreakthroughmovement' => $ubtMovementData), $movementData);
-
+        $movementData->user = $this->modelLoaderUtil->loadAccountModel();
         return $movementData;
     }
 
