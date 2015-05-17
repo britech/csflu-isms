@@ -26,8 +26,8 @@ class Activity extends Model {
     const STATUS_PENDING = "P";
     const STATUS_ONGOING = "A";
     const STATUS_FINISHED = "C";
-    const STATUS_STALLED = "S";
     const STATUS_DROPPED = "D";
+    const STATUS_UNFINISHED = "I";
 
     private $id;
     private $activityNumber;
@@ -122,10 +122,10 @@ class Activity extends Model {
     public function computePropertyChanges(Activity $oldModel) {
         $counter = 0;
 
-        if($this->activityNumber != $oldModel->activityNumber){
+        if ($this->activityNumber != $oldModel->activityNumber) {
             $counter++;
         }
-        
+
         if ($this->title != $oldModel->title) {
             $counter++;
         }
@@ -167,11 +167,11 @@ class Activity extends Model {
 
     public function getModelTranslationAsUpdatedEntity(Activity $oldModel) {
         $translation = "[Activity updated]\n\n";
-        
-        if($this->activityNumber != $oldModel->activityNumber){
+
+        if ($this->activityNumber != $oldModel->activityNumber) {
             $translation.="Activity Number:\t{$this->activityNumber}";
         }
-        
+
         if ($this->title != $oldModel->title) {
             $translation.="Activity:\t{$this->title}\n";
         }
@@ -216,7 +216,7 @@ class Activity extends Model {
                 . "Number:\t{$this->activityNumber}\n"
                 . "Activity:\t{$this->title}\n";
     }
-    
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
