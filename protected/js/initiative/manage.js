@@ -79,7 +79,7 @@ $(document).ready(function() {
         if (date === '') {
             $("#tip").html("Coverage date is required.");
         } else {
-            window.location = "?r=activity/index&initiative=" + id + "&startingPeriod=" + date;
+            window.location = "?r=activity/index&initiative=" + id + "&period=" + date;
         }
         return false;
     });
