@@ -15,6 +15,7 @@ use org\csflu\isms\models\initiative\Activity;
             <li><?php echo ApplicationUtils::generateLink(array('activity/finish', 'id' => $data->id), 'Set to Finished'); ?></li>
         <?php elseif ($data->activityEnvironmentStatus == Activity::STATUS_ONGOING): ?>
             <li><?php echo ApplicationUtils::generateLink('#', 'Set to Pending', array('id' => "pending")); ?></li>
+            <li><?php echo ApplicationUtils::generateLink(array('activity/enlistMovement', 'id' => $data->id), 'Enlist Movement'); ?></li>
             <li><?php echo ApplicationUtils::generateLink(array('activity/finish', 'id' => $data->id), 'Set to Finished'); ?></li>
             <li><?php echo ApplicationUtils::generateLink(array('activity/stop', 'id' => $data->id), 'Set to Discontinued'); ?></li>
         <?php elseif ($data->activityEnvironmentStatus == Activity::STATUS_FINISHED || $data->activityEnvironmentStatus == Activity::STATUS_DROPPED): ?>
@@ -28,7 +29,7 @@ use org\csflu\isms\models\initiative\Activity;
 
 <div id="dialog-status">
     <div id="content">
-        <p><strong>Activity:</strong>&nbsp;<?php echo $data->title;?></p>
+        <p><strong>Activity:</strong>&nbsp;<?php echo $data->title; ?></p>
         <p id="text"></p>
         <input type="hidden" id="activity" value="<?php echo $data->id; ?>"/>
         <input type="hidden" id="status"/>
