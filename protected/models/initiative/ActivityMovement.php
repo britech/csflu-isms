@@ -35,7 +35,7 @@ class ActivityMovement extends Model {
         if (strlen($this->budgetAmount) > 1 && !is_numeric($this->budgetAmount)) {
             array_push($this->validationMessages, '- Budget Amount should be in numerical representation');
         }
-        
+
         return count($this->validationMessages) == 0;
     }
 
@@ -45,6 +45,13 @@ class ActivityMovement extends Model {
             'budgetAmount' => 'Budget Spent',
             'notes' => 'Notes'
         );
+    }
+
+    public function getModelTranslationAsNewEntity() {
+        return "[Movement added]\n\n"
+                . "Output:\t{$this->actualFigure}\n"
+                . "Budget Spent:\t{$this->budgetAmount}\n"
+                . "Notes:\t{$this->notes}";
     }
 
     public function __set($name, $value) {
