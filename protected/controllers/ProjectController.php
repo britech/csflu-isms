@@ -34,27 +34,7 @@ class ProjectController extends Controller {
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->initiativeService = new InitiativeManagementService();
     }
-
-    public function index($id, $startingPeriod) {
-        $date = \DateTime::createFromFormat('Y-m-d', "{$startingPeriod}-1");
-        $initiative = $this->loadInitiativeModel($id);
-
-        $this->title = ApplicationConstants::APP_NAME . ' - Activity Dashboard';
-        $this->layout = 'column-2';
-        $this->render('project/index', array(
-            'breadcrumb' => array(
-                'Home' => array('site/index'),
-                'Manage Initiatives' => array('initiative/manage'),
-                'Activity Dashboard' => 'active'
-            ),
-            'sidebar' => array(
-                'file' => 'project/_index-navi'
-            ),
-            'data' => $initiative,
-            'date' => $date
-        ));
-    }
-
+    
     public function managePhases($initiative) {
         $initiativeModel = $this->loadInitiativeModel($initiative);
         $strategyMap = $this->loadMapModel($initiativeModel);

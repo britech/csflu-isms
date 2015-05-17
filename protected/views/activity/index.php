@@ -5,7 +5,6 @@ namespace org\csflu\isms\views;
 use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\util\ApplicationUtils;
 ?>
-<script type="text/javascript" src="protected/js/project/index.js"></script>
 <table class="ink-table bordered">
     <thead>
         <tr>
