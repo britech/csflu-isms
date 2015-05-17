@@ -169,4 +169,10 @@ interface InitiativeManagementService {
      * @return Activity
      */
     public function getActivity($id);
+    
+    /**
+     * Inserts the underlying ActivityMovmement entities in the selected Activity entity
+     * @param Activity $activity
+     */
+    public function insertActivityMovement(Activity $activity);
 }

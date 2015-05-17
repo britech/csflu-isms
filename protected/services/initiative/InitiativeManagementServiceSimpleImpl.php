@@ -19,6 +19,7 @@ use org\csflu\isms\dao\initiative\ActivityDaoSqlImpl as ActivityDao;
 use org\csflu\isms\dao\map\StrategyMapDaoSqlImpl as StrategyMapDao;
 use org\csflu\isms\dao\map\ObjectiveDaoSqlImpl as ObjectiveDao;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
+use org\csflu\isms\dao\initiative\ActivityMovementDaoSqlImpl as ActivityMovementDao;
 
 /**
  * Description of InitiativeManagementServiceSimpleImpl
@@ -35,6 +36,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
     private $mapDaoSource;
     private $objectiveDaoSource;
     private $mpDaoSource;
+    private $movementDaoSource;
 
     public function __construct() {
         $this->daoSource = new InitiativeDao();
@@ -44,6 +46,7 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
         $this->mapDaoSource = new StrategyMapDao();
         $this->objectiveDaoSource = new ObjectiveDao();
         $this->mpDaoSource = new MeasureProfileDao();
+        $this->movementDaoSource = new ActivityMovementDao();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -298,6 +301,10 @@ class InitiativeManagementServiceSimpleImpl implements InitiativeManagementServi
 
     public function getActivity($id) {
         return $this->activityDaoSource->getActivity($id);
+    }
+
+    public function insertActivityMovement(Activity $activity) {
+        $this->movementDaoSource->recordMovements($activity);
     }
 
 }
