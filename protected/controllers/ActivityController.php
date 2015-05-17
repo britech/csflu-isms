@@ -4,10 +4,16 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\exceptions\ControllerException;
+use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\initiative\Activity;
+use org\csflu\isms\models\commons\RevisionHistory;
+use org\csflu\isms\models\uam\ModuleAction;
+use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
+use org\csflu\isms\controllers\support\ActivityControllerSupport;
+use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl;
 
 /**
  * Description of ActivityController
@@ -16,11 +22,17 @@ use org\csflu\isms\controllers\support\ModelLoaderUtil;
  */
 class ActivityController extends Controller {
 
+    private $logger;
     private $modelLoaderUtil;
+    private $controllerSupport;
+    private $initiativeService;
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->logger = \Logger::getLogger(__CLASS__);
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
+        $this->controllerSupport = ActivityControllerSupport::getInstance($this);
+        $this->initiativeService = new InitiativeManagementServiceSimpleImpl();
     }
 
     public function index($initiative, $period) {
@@ -75,9 +87,27 @@ class ActivityController extends Controller {
         $period = $this->getFormData('period');
 
         $activity = $this->loadModel($id, true);
+        $activity->activityEnvironmentStatus = $status;
+        $activity->movements = array($this->controllerSupport->constructActivityMovementEntity($status));
         $initiative = $this->loadInitiativeModel(null, $activity, true);
-        $this->setSessionData('notif', array('class' => 'info', 'message' => "{$activity->title} set to {$activity->translateStatusCode($status)}"));
+        try {
+            $this->initiativeService->updateActivity($activity, $this->modelLoaderUtil->loadComponentModel(null, $activity, array(ModelLoaderUtil::KEY_REMOTE => true)));
+            $this->initiativeService->insertActivityMovement($activity);
+            $this->logCustomRevision(RevisionHistory::TYPE_UPDATE, ModuleAction::MODULE_INITIATIVE, $initiative->id, "[Activity Status Update]\n\nActivity:\t{$activity->title}\nStatus:\t{$activity->translateStatusCode()}");
+            $this->logEnlistedMovements($initiative, $activity->movements);
+            $this->setSessionData('notif', array('class' => 'info', 'message' => "{$activity->title} set to {$activity->translateStatusCode($status)}"));
+        } catch (ServiceException $ex) {
+            $this->logger->error($ex->getMessage(), $ex);
+        }
+
+
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('activity/index', 'initiative' => $initiative->id, 'period' => $period))));
+    }
+
+    private function logEnlistedMovements(Initiative $initiative, array $movements) {
+        foreach ($movements as $movement) {
+            $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $initiative->id, $movement);
+        }
     }
 
     private function loadInitiativeModel($id = null, Activity $activity = null, $remote = false) {
@@ -94,7 +124,7 @@ class ActivityController extends Controller {
         $initiative->endingPeriod = $initiative->endingPeriod->format('Y-m-d');
         return $initiative;
     }
-    
+
     private function loadModel($id, $remote = false) {
         return $this->modelLoaderUtil->loadActivityModel($id, array(ModelLoaderUtil::KEY_REMOTE => $remote));
     }
