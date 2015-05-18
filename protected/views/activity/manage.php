@@ -1,3 +1,4 @@
+<?php $this->renderPartial('commons/_notification', array('notif' => $notif)); ?>
 <table class="ink-table bordered">
     <tbody>
         <tr>

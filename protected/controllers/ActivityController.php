@@ -77,8 +77,10 @@ class ActivityController extends Controller {
             ),
             'data' => $activity,
             'initiative' => $initiative,
-            'period' => $period
+            'period' => $period,
+            'notif' => $this->getSessionData('notif')
         ));
+        $this->unsetSessionData('notif');
     }
 
     public function updateStatus() {
@@ -129,6 +131,23 @@ class ActivityController extends Controller {
         $this->validatePostData(array('ActivityMovement'), true);
         $activityMovement = $this->controllerSupport->constructActivityMovementEntity();
         $this->remoteValidateModel($activityMovement);
+    }
+
+    public function insertMovement() {
+        $this->validatePostData(array('ActivityMovement', 'Activity'));
+
+        $activityMovement = $this->controllerSupport->constructActivityMovementEntity();
+        $activityData = $this->getFormData('Activity');
+        $id = $activityData['id'];
+        $activity = new Activity();
+        $activity->id = $id;
+        $activity->movements = array($activityMovement);
+        $initiative = $this->loadInitiativeModel(null, $activity);
+
+        $this->initiativeService->insertActivityMovement($activity);
+        $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $initiative->id, $activityMovement);
+        $this->setSessionData('notif', array('class' => 'success', 'message' => "Activity Movement succesfully logged"));
+        $this->redirect(array('activity/manage', 'id' => $activity->id));
     }
 
     private function logEnlistedMovements(Initiative $initiative, array $movements) {
