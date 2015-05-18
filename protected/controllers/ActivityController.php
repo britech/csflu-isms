@@ -141,6 +141,13 @@ class ActivityController extends Controller {
         $id = $activityData['id'];
         $activity = new Activity();
         $activity->id = $id;
+
+        if (!$activityMovement->validate()) {
+            $this->setSessionData('validation', $activityMovement->validationMessages);
+            $this->redirect(array('activity/manage', 'id' => $activity->id));
+            return;
+        }
+
         $activity->movements = array($activityMovement);
         $initiative = $this->loadInitiativeModel(null, $activity);
 
