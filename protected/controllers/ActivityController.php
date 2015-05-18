@@ -122,6 +122,8 @@ class ActivityController extends Controller {
             ),
             'model' => new ActivityMovement(),
             'activity' => $activity,
+            'action' => array('activity/insertMovement'),
+            'header' => 'Enlist Activity Movement',
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');

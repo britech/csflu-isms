@@ -5,7 +5,7 @@ namespace org\csflu\isms\views;
 use org\csflu\isms\util\ModelFormGenerator;
 
 $form = new ModelFormGenerator(array(
-    'action' => array('activity/insertMovement'),
+    'action' => $action,
     'class' => 'ink-form',
     'hasFieldset' => true
         ));
@@ -18,7 +18,7 @@ $form = new ModelFormGenerator(array(
 <div class="column-group quarter-gutters">
     <div class="all-60 push-center">
         <?php echo $form->startComponent(); ?>
-        <?php echo $form->constructHeader('Enlist Activity Movement'); ?>
+        <?php echo $form->constructHeader($header); ?>
         <div class="ink-alert basic info">
             <strong>Important Note:&nbsp;</strong>Fields with * are required.
         </div>
@@ -50,6 +50,7 @@ $form = new ModelFormGenerator(array(
         <?php echo $form->renderHiddenField($model, 'actualFigure'); ?>
         <?php echo $form->renderHiddenField($model, 'budgetAmount'); ?>
         <?php echo $form->renderHiddenField($activity, 'id'); ?>
+        <?php echo $form->renderHiddenField($activity, 'activityEnvironmentStatus'); ?>
         <?php echo $form->endComponent(); ?>
     </div>
 </div>
