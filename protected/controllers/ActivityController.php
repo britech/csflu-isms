@@ -186,6 +186,32 @@ class ActivityController extends Controller {
         $this->unsetSessionData('validation');
     }
 
+    public function stop($id = null) {
+        if (is_null($id)) {
+            $this->processFormInput();
+        }
+
+        $activity = $this->loadModel($id);
+        $activity->activityEnvironmentStatus = Activity::STATUS_DROPPED;
+        $initiative = $this->loadInitiativeModel(null, $activity);
+        $this->title = ApplicationConstants::APP_NAME . ' - Discontinue Activity';
+        $this->render('activity/enlist', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Manage Initiatives' => array('initiative/manage'),
+                'Activity Dashboard' => array('activity/index', 'initiative' => $initiative->id, 'period' => $activity->startingPeriod->format('Y-m')),
+                'Manage Activity' => array('activity/manage', 'id' => $activity->id),
+                'Set Activity to Discontinued' => 'active'
+            ),
+            'model' => new ActivityMovement(),
+            'activity' => $activity,
+            'action' => array('activity/finish'),
+            'header' => 'Set Activity to Discontinued',
+            'validation' => $this->getSessionData('validation')
+        ));
+        $this->unsetSessionData('validation');
+    }
+
     private function processFormInput() {
         $this->validatePostData(array('ActivityMovement', 'Activity'));
 
