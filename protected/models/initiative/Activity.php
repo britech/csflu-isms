@@ -54,10 +54,10 @@ class Activity extends Model {
             self::STATUS_UNFINISHED => 'Unfinished'
         );
     }
-    
-    public function translateStatusCode($code = null){
+
+    public function translateStatusCode($code = null) {
         $statusCode = is_null($code) ? $this->activityEnvironmentStatus : $code;
-        if(array_key_exists($statusCode, self::listEnvironmentStatusCodes())){
+        if (array_key_exists($statusCode, self::listEnvironmentStatusCodes())) {
             return self::listEnvironmentStatusCodes()[$statusCode];
         }
         return 'Undefined';
@@ -236,6 +236,14 @@ class Activity extends Model {
         return "[Activity deleted]\n\n"
                 . "Number:\t{$this->activityNumber}\n"
                 . "Activity:\t{$this->title}\n";
+    }
+
+    public function computeRemainingBudget() {
+        $budget = 0.00;
+        foreach ($this->movements as $movement) {
+            $budget+=floatval($movement->budgetAmount);
+        }
+        return floatval($this->budgetAmount) - $budget;
     }
 
     public function __set($name, $value) {
