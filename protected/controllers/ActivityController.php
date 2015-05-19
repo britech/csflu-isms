@@ -12,6 +12,7 @@ use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ActivityMovement;
+use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\controllers\support\ActivityControllerSupport;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl;
@@ -207,6 +208,44 @@ class ActivityController extends Controller {
             'validation' => $this->getSessionData('validation')
         ));
         $this->unsetSessionData('validation');
+    }
+
+    public function movementLog($id, $period) {
+        $activity = $this->loadModel($id);
+        $initiative = $this->loadInitiativeModel(null, $activity);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Movement Log';
+        $this->layout = "column-2";
+        $this->render('activity/log', array(
+            'breadcrumb' => array(
+                'Home' => array('site/index'),
+                'Manage Initiatives' => array('initiative/manage'),
+                'Activity Dashboard' => array('activity/index', 'initiative' => $initiative->id, 'period' => $period),
+                'Manage Activity' => array('activity/manage', 'id' => $activity->id, 'period' => $period),
+                'Movement Log' => 'active'
+            ),
+            'sidebar' => array(
+                'file' => 'activity/_log-navi'
+            ),
+            'id' => $activity->id
+        ));
+    }
+
+    public function listMovements() {
+        $this->validatePostData(array('id'));
+        $id = $this->getFormData('id');
+        $activity = $this->loadModel($id, true);
+        $data = array();
+        foreach ($activity->movements as $movement) {
+            array_push($data, array(
+                'date_entered' => $movement->movementTimestamp->format('M d, Y'),
+                'user_entered' => $movement->retrieveName(),
+                'output' => $movement->resolveOutputValue(),
+                'amount' => $movement->resolveBudgetValue(),
+                'notes' => $movement->constructNotes()
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     private function processFormInput() {
