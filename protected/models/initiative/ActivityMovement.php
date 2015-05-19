@@ -54,6 +54,23 @@ class ActivityMovement extends Model {
                 . "Notes:\t{$this->notes}";
     }
 
+    public function retrieveName() {
+        $firstName = substr($this->user->employee->givenName, 0, 1);
+        return "{$firstName}. {$this->user->employee->lastName}";
+    }
+
+    public function resolveOutputValue() {
+        return is_null($this->actualFigure) || strlen($this->actualFigure) < 1 ? "-" : number_format(floatval($this->actualFigure), 2);
+    }
+
+    public function resolveBudgetValue() {
+        return is_null($this->budgetAmount) || strlen($this->budgetAmount) < 1 || empty(floatval($this->budgetAmount)) ? "-" : "PHP ".number_format(floatval($this->budgetAmount), 2);
+    }
+
+    public function constructNotes() {
+        return nl2br(implode("\n", explode("+", $this->notes)));
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
