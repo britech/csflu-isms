@@ -28,7 +28,7 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
         <?php foreach ($data->phases as $phase): ?>
             <?php foreach ($phase->components as $component): ?>
                 <?php foreach ($component->activities as $activity): ?>
-                    <?php if ($activity->startingPeriod == $date): ?>
+                    <?php if ($activity->startingPeriod == $date || ($date <= $activity->endingPeriod && $date >= $activity->startingPeriod)): ?>
                         <tr>
                             <?php if ($activity->activityEnvironmentStatus == Activity::STATUS_PENDING): ?>
                                 <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id), $activity->title); ?></td>
