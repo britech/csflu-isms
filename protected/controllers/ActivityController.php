@@ -58,10 +58,9 @@ class ActivityController extends Controller {
         $this->unsetSessionData('notif');
     }
 
-    public function manage($id) {
+    public function manage($id, $period) {
         $activity = $this->loadModel($id);
         $initiative = $this->loadInitiativeModel(null, $activity);
-        $period = $activity->startingPeriod->format('Y-m');
 
         $this->title = ApplicationConstants::APP_NAME;
         $this->layout = "column-2";
@@ -107,10 +106,9 @@ class ActivityController extends Controller {
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('activity/index', 'initiative' => $initiative->id, 'period' => $period))));
     }
 
-    public function enlistMovement($id) {
+    public function enlistMovement($id, $period) {
         $activity = $this->loadModel($id);
         $initiative = $this->loadInitiativeModel(null, $activity);
-        $period = $activity->startingPeriod->format('Y-m');
 
         $this->title = ApplicationConstants::APP_NAME . ' - Enlist Movement';
         $this->render('activity/enlist', array(
@@ -118,7 +116,7 @@ class ActivityController extends Controller {
                 'Home' => array('site/index'),
                 'Manage Initiatives' => array('initiative/manage'),
                 'Activity Dashboard' => array('activity/index', 'initiative' => $initiative->id, 'period' => $period),
-                'Manage Activity' => array('activity/manage', 'id' => $activity->id),
+                'Manage Activity' => array('activity/manage', 'id' => $activity->id, 'period' => $period),
                 'Enlist Movement' => 'active'
             ),
             'model' => new ActivityMovement(),
@@ -160,11 +158,10 @@ class ActivityController extends Controller {
         $this->redirect(array('activity/manage', 'id' => $activity->id));
     }
 
-    public function finish($id = null) {
-        if (is_null($id)) {
+    public function finish($id = null, $period = null) {
+        if (is_null($id) && is_null($period)) {
             $this->processFormInput();
         }
-
         $activity = $this->loadModel($id);
         $activity->activityEnvironmentStatus = Activity::STATUS_FINISHED;
         $initiative = $this->loadInitiativeModel(null, $activity);
@@ -173,8 +170,8 @@ class ActivityController extends Controller {
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Manage Initiatives' => array('initiative/manage'),
-                'Activity Dashboard' => array('activity/index', 'initiative' => $initiative->id, 'period' => $activity->startingPeriod->format('Y-m')),
-                'Manage Activity' => array('activity/manage', 'id' => $activity->id),
+                'Activity Dashboard' => array('activity/index', 'initiative' => $initiative->id, 'period' => $period),
+                'Manage Activity' => array('activity/manage', 'id' => $activity->id, 'period' => $period),
                 'Set Activity to Finished' => 'active'
             ),
             'model' => new ActivityMovement(),
@@ -186,8 +183,8 @@ class ActivityController extends Controller {
         $this->unsetSessionData('validation');
     }
 
-    public function stop($id = null) {
-        if (is_null($id)) {
+    public function stop($id = null, $period = null) {
+        if (is_null($id) && is_null($period)) {
             $this->processFormInput();
         }
 
@@ -199,8 +196,8 @@ class ActivityController extends Controller {
             'breadcrumb' => array(
                 'Home' => array('site/index'),
                 'Manage Initiatives' => array('initiative/manage'),
-                'Activity Dashboard' => array('activity/index', 'initiative' => $initiative->id, 'period' => $activity->startingPeriod->format('Y-m')),
-                'Manage Activity' => array('activity/manage', 'id' => $activity->id),
+                'Activity Dashboard' => array('activity/index', 'initiative' => $initiative->id, 'period' => $period),
+                'Manage Activity' => array('activity/manage', 'id' => $activity->id, 'period' => $period),
                 'Set Activity to Discontinued' => 'active'
             ),
             'model' => new ActivityMovement(),

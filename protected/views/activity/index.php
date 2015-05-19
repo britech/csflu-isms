@@ -31,22 +31,22 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
                     <?php if ($activity->startingPeriod == $date || ($date <= $activity->endingPeriod && $date >= $activity->startingPeriod)): ?>
                         <tr>
                             <?php if ($activity->activityEnvironmentStatus == Activity::STATUS_PENDING): ?>
-                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id), $activity->title); ?></td>
+                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id, 'period' => $date->format('Y-m')), $activity->title); ?></td>
                             <?php else: ?>  
                                 <td>&nbsp;</td>
                             <?php endif; ?>
                             <?php if ($activity->activityEnvironmentStatus == Activity::STATUS_ONGOING): ?>
-                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id), $activity->title); ?></td>
+                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id, 'period' => $date->format('Y-m')), $activity->title); ?></td>
                             <?php else: ?>
                                 <td>&nbsp;</td>
                             <?php endif; ?>
                             <?php if ($activity->activityEnvironmentStatus == Activity::STATUS_FINISHED): ?>
-                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id), $activity->title); ?></td>
+                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id, 'period' => $date->format('Y-m')), $activity->title); ?></td>
                             <?php else: ?>
                                 <td>&nbsp;</td>
                             <?php endif; ?>
                             <?php if ($activity->activityEnvironmentStatus == Activity::STATUS_DROPPED): ?>
-                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id), $activity->title); ?></td>
+                                <td><?php echo ApplicationUtils::generateLink(array('activity/manage', 'id' => $activity->id, 'period' => $date->format('Y-m')), $activity->title); ?></td>
                             <?php else: ?>
                                 <td>&nbsp;</td>
                             <?php endif; ?>
