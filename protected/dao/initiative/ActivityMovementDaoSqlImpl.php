@@ -26,7 +26,7 @@ class ActivityMovementDaoSqlImpl implements ActivityMovementDao {
 
     public function listMovements(Activity $activity) {
         try {
-            $dbst = $this->db->prepare('SELECT user_ref, actual_figure, budget_amount, movement_timestamp, notes FROM ini_movement WHERE activity_ref=:ref');
+            $dbst = $this->db->prepare('SELECT user_ref, actual_figure, budget_amount, movement_timestamp, notes FROM ini_movement WHERE activity_ref=:ref ORDER BY movement_timestamp DESC');
             $dbst->execute(array('ref' => $activity->id));
 
             $movements = array();
