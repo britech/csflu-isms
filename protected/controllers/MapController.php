@@ -115,7 +115,7 @@ class MapController extends Controller {
                         'Manage Perspectives' => array('perspective/manage', 'map' => $id),
                         'Manage Strategic Themes' => array('theme/manage', 'map' => $id),
                         'Manage Objectives' => array('objective/manage', 'map' => $strategyMap->id),
-                        'Manage Lead Measures' => array('measure/index', 'map' => $strategyMap->id),
+                        'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
                         'Manage Initiatives' => array('initiative/index', 'map' => $strategyMap->id),
                         'Manage Unit Breakthroughs' => array('ubt/index', 'map' => $strategyMap->id)))),
             'strategyMap' => $strategyMap,
