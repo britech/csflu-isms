@@ -23,6 +23,8 @@ use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\models\initiative\Phase;
 use org\csflu\isms\models\initiative\Component;
 use org\csflu\isms\models\initiative\Activity;
+use org\csflu\isms\models\indicator\Indicator;
+use org\csflu\isms\models\indicator\Baseline;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl;
 use org\csflu\isms\service\commons\UnitOfMeasureSimpleImpl;
@@ -31,6 +33,7 @@ use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl;
 use org\csflu\isms\service\ubt\CommitmentManagementServiceSimpleImpl;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl;
+use org\csflu\isms\service\indicator\IndicatorManagementServiceSimpleImpl;
 
 /**
  * Description of ModelLoaderUtil
@@ -54,6 +57,7 @@ class ModelLoaderUtil {
     private $scorecardService;
     private $commitService;
     private $initiativeService;
+    private $indicatorService;
 
     private function __construct(Controller $controller) {
         $this->controller = $controller;
@@ -66,6 +70,7 @@ class ModelLoaderUtil {
         $this->scorecardService = new ScorecardManagementServiceSimpleImpl();
         $this->commitService = new CommitmentManagementServiceSimpleImpl();
         $this->initiativeService = new InitiativeManagementServiceSimpleImpl();
+        $this->indicatorService = new IndicatorManagementServiceSimpleImpl();
     }
 
     /**
@@ -273,8 +278,8 @@ class ModelLoaderUtil {
 
     /**
      * Retrieves the Activity entity
-     * @param String $id
-     * @param array $properties
+     * @param String $id Retrieve through its identifier
+     * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
      * @return Activity
      */
     public function loadActivityModel($id, array $properties = array()) {
@@ -282,6 +287,33 @@ class ModelLoaderUtil {
         $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "Initiative Activity not found");
 
         return $this->resolveModel($updatedProperties, $activity);
+    }
+    
+    /**
+     * Retrieves the Indicator entity
+     * @param String $id Retrieve through its identifier
+     * @param Baseline $baseline Retrieve through a Baseline entity
+     * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
+     * @return Indicator
+     */
+    public function loadIndicatorModel($id = null, Baseline $baseline = null, array $properties = array()){
+        $indicator = $this->indicatorService->retrieveIndicator($id, $baseline);
+        $updatedProperties = $this->resolvePropertyValues($properties, array('km/indicators'), false, "Indicator not found");
+        
+        return $this->resolveModel($updatedProperties, $indicator);
+    }
+    
+    /**
+     * Retrieves the Baseline entity
+     * @param String $id Retrieve through its identifier
+     * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
+     * @return Baseline
+     */
+    public function loadBaselineModel($id, array $properties = array()){
+        $baseline = $this->indicatorService->getBaseline($id);
+        $updatedProperties = $this->resolvePropertyValues($properties, array('km/indicators'), false, "Baseline data not found");
+        
+        return $this->resolveModel($updatedProperties, $baseline);
     }
 
     private function resolvePropertyValues(array $properties, $defaultUrl, $defaultRemoteIndicator, $defaultMessage) {
