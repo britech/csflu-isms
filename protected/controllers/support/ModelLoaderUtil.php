@@ -90,18 +90,9 @@ class ModelLoaderUtil {
      */
     public function loadUnitBreakthroughModel($id = null, LeadMeasure $leadMeasure = null, WigSession $wigSession = null, array $properties = array()) {
         $unitBreakthrough = $this->ubtService->getUnitBreakthrough($id, $leadMeasure, $wigSession);
-        $url = $this->resolveProperty($properties, self::KEY_URL, array('map/index'));
-        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, false);
-        $message = $this->resolveProperty($properties, self::KEY_MSG, "Unit Breakthrough not found");
-        if (is_null($unitBreakthrough->id)) {
-            $this->controller->setSessionData('notif', array('message' => $message));
-            if ($remote) {
-                $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->controller->redirect($url);
-            }
-        }
-        return $unitBreakthrough;
+        $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "Unit Breakthrough not found");
+
+        return $this->resolveModel($updatedProperties, $unitBreakthrough);
     }
 
     /**
@@ -117,18 +108,9 @@ class ModelLoaderUtil {
      */
     public function loadMapModel($id = null, Perspective $perspective = null, Objective $objective = null, Theme $theme = null, Initiative $initiative = null, UnitBreakthrough $unitBreakthrough = null, array $properties = array()) {
         $map = $this->mapService->getStrategyMap($id, $perspective, $objective, $theme, $initiative, $unitBreakthrough);
-        $url = $this->resolveProperty($properties, self::KEY_URL, array('map/index'));
-        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, false);
-        $message = $this->resolveProperty($properties, self::KEY_MSG, "Strategy Map not found");
-        if (is_null($map->id)) {
-            $this->controller->setSessionData('notif', array('message' => $message));
-            if ($remote) {
-                $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->controller->redirect($url);
-            }
-        }
-        return $map;
+        $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "Strategy Map not found");
+
+        return $this->resolveModel($updatedProperties, $map);
     }
 
     /**
@@ -139,18 +121,9 @@ class ModelLoaderUtil {
      */
     public function loadUomModel($id, array $properties = array()) {
         $uom = $this->uomService->getUomInfo($id);
-        $url = $this->resolveProperty($properties, self::KEY_URL, array('uom/index'));
-        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, false);
-        $message = $this->resolveProperty($properties, self::KEY_MSG, "No data found");
-        if (is_null($uom->id)) {
-            $this->controller->setSessionData('notif', array('message' => $message));
-            if ($remote) {
-                $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->controller->redirect($url);
-            }
-        }
-        return $uom;
+        $updatedProperties = $this->resolvePropertyValues($properties, array('uom/index'), false, "No data found");
+
+        return $this->resolveModel($updatedProperties, $uom);
     }
 
     /**
@@ -166,19 +139,9 @@ class ModelLoaderUtil {
         } elseif (!is_null($code)) {
             $department = $this->departmentService->getDepartmentDetail(array('code' => $code));
         }
+        $updatedProperties = $this->resolvePropertyValues($properties, array('department/index'), false, "No data found");
 
-        $url = $this->resolveProperty($properties, self::KEY_URL, array('department/index'));
-        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, false);
-        $message = $this->resolveProperty($properties, self::KEY_MSG, "No data found");
-        if (is_null($department->id)) {
-            $this->controller->setSessionData('notif', array('message' => $message));
-            if ($remote) {
-                $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->controller->redirect($url);
-            }
-        }
-        return $department;
+        return $this->resolveModel($updatedProperties, $department);
     }
 
     /**
@@ -204,18 +167,9 @@ class ModelLoaderUtil {
      */
     public function loadObjectiveModel($id, array $properties = array()) {
         $objective = $this->mapService->getObjective($id);
-        $url = $this->resolveProperty($properties, self::KEY_URL, array('map/index'));
-        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, false);
-        $message = $this->resolveProperty($properties, self::KEY_MSG, "No Objective found");
-        if (is_null($objective->id)) {
-            $this->controller->setSessionData('notif', array('message' => $message));
-            if ($remote) {
-                $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->controller->redirect($url);
-            }
-        }
-        return $objective;
+        $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "No Objective found");
+        
+        return $this->resolveModel($updatedProperties, $objective);
     }
 
     /**
@@ -230,18 +184,9 @@ class ModelLoaderUtil {
      */
     public function loadMeasureProfileModel($id = null, LeadOffice $leadOffice = null, Target $target = null, array $properties = array()) {
         $measure = $this->scorecardService->getMeasureProfile($id, $leadOffice, $target);
-        $url = $this->resolveProperty($properties, self::KEY_URL, array('map/index'));
-        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, false);
-        $message = $this->resolveProperty($properties, self::KEY_MSG, "No Measure Profile found");
-        if (is_null($measure->id)) {
-            $this->controller->setSessionData('notif', array('message' => $message));
-            if ($remote) {
-                $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->controller->redirect($url);
-            }
-        }
-        return $measure;
+        $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "No Measure Profile found");
+       
+        return $this->resolveModel($updatedProperties, $measure);
     }
 
     /**
@@ -252,18 +197,9 @@ class ModelLoaderUtil {
      */
     public function loadLeadMeasureModel($id, array $properties = array()) {
         $leadMeasure = $this->ubtService->retrieveLeadMeasure($id);
-        $url = $this->resolveProperty($properties, self::KEY_URL, array('map/index'));
-        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, false);
-        $message = $this->resolveProperty($properties, self::KEY_MSG, "No Lead Measure found");
-        if (is_null($leadMeasure->id)) {
-            $this->controller->setSessionData('notif', array('message' => $message));
-            if ($remote) {
-                $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->controller->redirect($url);
-            }
-        }
-        return $leadMeasure;
+        $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "No Lead Measure found");
+        
+        return $this->resolveModel($updatedProperties, $leadMeasure);
     }
 
     /**
@@ -336,7 +272,7 @@ class ModelLoaderUtil {
     }
 
     /**
-     * 
+     * Retrieves the Activity entity
      * @param String $id
      * @param array $properties
      * @return Activity
@@ -395,26 +331,15 @@ class ModelLoaderUtil {
 
     private function retrieveOtherAccountModel($id, array $properties) {
         $userAccount = $this->userService->getAccountById($id);
-        $url = $this->resolveProperty($properties, self::KEY_URL, array('user/index'));
-        $remote = $this->resolveProperty($properties, self::KEY_REMOTE, false);
-        $message = $this->resolveProperty($properties, self::KEY_MSG, "User not found");
-        if (is_null($userAccount->id)) {
-            $this->controller->setSessionData('notif', $message);
-
-            if ($remote) {
-                $this->controller->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl($url)));
-            } else {
-                $this->controller->redirect($url);
-            }
-        }
-        return $userAccount;
+        $updatedProperties = $this->resolvePropertyValues($properties,  array('user/index'), false, "User not found");
+        
+        return $this->resolveModel($updatedProperties, $userAccount);
     }
 
     private function resolveProperty(array $properties, $propertyName, $defaultValue) {
         $property = ApplicationUtils::getProperty($properties, $propertyName);
 
         if (is_null($property)) {
-            $this->logger->warn("null value for {$propertyName}. Using default {$defaultValue}");
             $property = $defaultValue;
         }
         return $property;
