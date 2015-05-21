@@ -356,6 +356,7 @@ class IndicatorController extends Controller {
 
         if (is_null($indicator->id)) {
             $this->setSessionData('notif', array('class' => '', 'message' => 'Indicator not found'));
+            $this->redirect(array('km/indicators'));
         } else {
             return $indicator;
         }
