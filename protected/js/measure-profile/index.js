@@ -37,4 +37,8 @@ $(document).ready(function() {
             }
         }
     });
+
+    $("#refresh").click(function() {
+        $("[id^=profileList]").jqxDataTable('updateBoundData');
+    });
 });

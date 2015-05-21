@@ -44,9 +44,6 @@ class MeasureController extends Controller {
     }
 
     public function index($map) {
-        if (!isset($map) || empty($map)) {
-            throw new ControllerException("Another parameter is needed to process this request");
-        }
         $strategyMap = $this->loadMapModel($map);
         $this->layout = 'column-2';
         $this->title = ApplicationConstants::APP_NAME . ' - Measure Profiles';
@@ -55,13 +52,9 @@ class MeasureController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Manage Measure Profiles' => 'active'
-            ),
+                'Manage Measure Profiles' => 'active'),
             'sidebar' => array(
-                'data' => array('header' => 'Actions',
-                    'links' => array('Create Measure Profile' => array('measure/create', 'map' => $strategyMap->id))
-                )
-            ),
+                'file' => 'measure-profile/_index-navi'),
             'map' => $strategyMap->id
         ));
     }
