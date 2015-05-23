@@ -46,7 +46,7 @@ class ActivityControllerSupport {
 
         if (is_null($status)) {
             $activityMovementData = $this->controller->getFormData('ActivityMovement');
-            $movement->bindValuesUsingArray(array('activitymovement' => $activityMovementData), $movement);
+            $movement->bindValuesUsingArray(array('activitymovement' => $activityMovementData));
         } else {
             $movement->notes = "Activity set to " . Activity::listEnvironmentStatusCodes()[$status];
         }
