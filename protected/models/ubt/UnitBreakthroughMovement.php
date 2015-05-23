@@ -60,6 +60,11 @@ class UnitBreakthroughMovement extends Model {
                 . "Lead Measure 2:\t{$this->secondLeadMeasureFigure}\n"
                 . "Notes:\t{$this->notes}";
     }
+    
+    public function getShortName(){
+        $firstName = substr($this->user->employee->givenName, 0, 1);
+        return "{$firstName}. {$this->user->employee->lastName}";
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;
