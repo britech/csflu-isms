@@ -8,6 +8,7 @@ use org\csflu\isms\models\ubt\WigMeeting;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\dao\ubt\UnitBreakthroughMovementDao;
+use org\csflu\isms\dao\uam\UserManagementDaoSqlImpl;
 use org\csflu\isms\core\ConnectionManager;
 
 /**
@@ -18,10 +19,12 @@ use org\csflu\isms\core\ConnectionManager;
 class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao {
 
     private $db;
+    private $userDao;
     private $logger;
 
     public function __construct() {
         $this->db = ConnectionManager::getConnectionInstance();
+        $this->userDao = new UserManagementDaoSqlImpl();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -108,7 +111,7 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
 
     public function listUnitBreakthroughMovements(WigSession $wigSession) {
         try {
-            $dbst = $this->db->prepare('SELECT date_entered, ubt_figure, lm1_figure, lm2_figure, notes FROM ubt_movement WHERE wig_ref=:ref ORDER BY date_entered DESC');
+            $dbst = $this->db->prepare('SELECT date_entered, ubt_figure, lm1_figure, lm2_figure, notes, user_ref FROM ubt_movement WHERE wig_ref=:ref ORDER BY date_entered DESC');
             $dbst->execute(array('ref' => $wigSession->id));
 
             $movements = array();
@@ -118,8 +121,10 @@ class UnitBreakthroughMovementDaoSqlImpl implements UnitBreakthroughMovementDao 
                         $movement->ubtFigure,
                         $movement->firstLeadMeasureFigure,
                         $movement->secondLeadMeasureFigure,
-                        $movement->notes) = $data;
+                        $movement->notes,
+                        $user) = $data;
                 $movement->dateEntered = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
+                $movement->user = $this->userDao->getUserAccount($user);
                 $movements = array_merge($movements, array($movement));
             }
 
