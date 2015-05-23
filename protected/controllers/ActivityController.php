@@ -12,7 +12,6 @@ use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\initiative\ActivityMovement;
-use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\controllers\support\ActivityControllerSupport;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl;
@@ -92,7 +91,9 @@ class ActivityController extends Controller {
 
         $activity = $this->loadModel($id, true);
         $activity->activityEnvironmentStatus = $status;
-        $activity->movements = array($this->controllerSupport->constructActivityMovementEntity($status));
+        $movement = $this->controllerSupport->constructActivityMovementEntity($status);
+        $movement->periodDate = \DateTime::createFromFormat('Y-m-d', "{$period}-1");
+        $activity->movements = array($movement);
         $initiative = $this->loadInitiativeModel(null, $activity, true);
         try {
             $this->initiativeService->updateActivity($activity, $this->modelLoaderUtil->loadComponentModel(null, $activity, array(ModelLoaderUtil::KEY_REMOTE => true)));
