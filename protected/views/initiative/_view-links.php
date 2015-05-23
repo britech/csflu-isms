@@ -13,5 +13,6 @@ use org\csflu\isms\util\ApplicationUtils;
         <li><?php echo ApplicationUtils::generateLink(array('project/managePhases', 'initiative' => $model->id), 'Manage Phases'); ?></li>
         <li><?php echo ApplicationUtils::generateLink(array('project/manageComponents', 'initiative' => $model->id), 'Manage Components'); ?></li>
         <li><?php echo ApplicationUtils::generateLink(array('project/manageActivities', 'initiative' => $model->id), 'Manage Activities'); ?></li>
+        <li><?php echo ApplicationUtils::generateLink(array('report/initiativeDetail', 'id' => $model->id), 'Generate Program of Work'); ?></li>
     </ul>
 </div>
