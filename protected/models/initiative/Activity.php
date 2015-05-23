@@ -238,12 +238,67 @@ class Activity extends Model {
                 . "Activity:\t{$this->title}\n";
     }
 
-    public function computeRemainingBudget() {
+    public function computeRemainingBudget(\DateTime $period) {
         $budget = 0.00;
         foreach ($this->movements as $movement) {
-            $budget+=floatval($movement->budgetAmount);
+            if ($period == $movement->periodDate) {
+                $budget+=floatval($movement->budgetAmount);
+            }
         }
         return floatval($this->budgetAmount) - $budget;
+    }
+
+    public function resolveActualFigure(\DateTime $period) {
+        if (strlen($this->targetFigure) > 0) {
+            $actual = 0.00;
+            foreach ($this->movements as $movement) {
+                if ($period == $movement->periodDate) {
+                    $actual += floatval($movement->actualFigure);
+                }
+            }
+            return $actual;
+        } else {
+            return "{$this->translateStatusCode()} Activity";
+        }
+    }
+
+    public function computeCompletionPercentage(\DateTime $period) {
+        if (strlen($this->targetFigure) > 0) {
+            $actual = $this->resolveActualFigure($period);
+            $target = floatval($this->targetFigure);
+            return (($actual - $target) / $target) * 100;
+        } else {
+            switch ($this->activityEnvironmentStatus) {
+                case self::STATUS_FINISHED:
+                    return 100;
+                default:
+                    return "-";
+            }
+        }
+    }
+
+    public function resolveCompletionPercentage(\DateTime $period) {
+        $output = $this->computeCompletionPercentage($period);
+        if (is_numeric($output)) {
+            return number_format($output, 2) . "%";
+        }
+        return $output;
+    }
+
+    public function resolveBudgetFigure() {
+        if (strlen($this->budgetAmount) > 0 && !empty(floatval($this->budgetAmount))) {
+            return "PHP " . number_format(floatval($this->budgetAmount));
+        } else {
+            return "-";
+        }
+    }
+
+    public function resolveBudgetUtilization(\DateTime $period) {
+        if (strlen($this->budgetAmount) > 0 && !empty(floatval($this->budgetAmount))) {
+            return "PHP " . number_format($this->computeRemainingBudget($period));
+        } else {
+            return "-";
+        }
     }
 
     public function __set($name, $value) {
