@@ -151,7 +151,7 @@ class WigController extends Controller {
         $data = array();
         foreach ($wigSession->movementUpdates as $movementData) {
             array_push($data, array(
-                'date' => $movementData->dateEntered->format('M d, Y g:i:s A'),
+                'user'=> nl2br("{$movementData->getShortName()}\n{$movementData->dateEntered->format('M d, Y g:i:s A')}"),
                 'ubt' => $this->controllerSupport->resolveUnitBreakthroughMovement($movementData, $ubt),
                 'lm1' => $this->controllerSupport->resolveLeadMeasureMovements($wigSession, $ubt->leadMeasures, $movementData, LeadMeasure::DESIGNATION_1),
                 'lm2' => $this->controllerSupport->resolveLeadMeasureMovements($wigSession, $ubt->leadMeasures, $movementData, LeadMeasure::DESIGNATION_2),

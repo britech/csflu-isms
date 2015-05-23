@@ -265,7 +265,7 @@ class UbtController extends Controller {
         foreach ($ubt->wigMeetings as $wigSession) {
             foreach ($wigSession->movementUpdates as $movementData) {
                 array_push($data, array(
-                    'date' => $movementData->dateEntered->format('M d, Y g:i:s A'),
+                    'user' => nl2br("{$movementData->getShortName()}\n{$movementData->dateEntered->format('M d, Y g:i:s A')}"),
                     'ubt' => $this->wigControllerSupport->resolveUnitBreakthroughMovement($movementData, $ubt),
                     'lm1' => $this->wigControllerSupport->resolveLeadMeasureMovements($wigSession, $ubt->leadMeasures, $movementData, LeadMeasure::DESIGNATION_1),
                     'lm2' => $this->wigControllerSupport->resolveLeadMeasureMovements($wigSession, $ubt->leadMeasures, $movementData, LeadMeasure::DESIGNATION_2),

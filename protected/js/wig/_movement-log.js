@@ -3,7 +3,7 @@ $(document).ready(function() {
         source: new $.jqx.dataAdapter({
             datatype: 'json',
             datafields: [
-                {name: 'date', type: 'string'},
+                {name: 'user', type: 'string'},
                 {name: 'ubt', type: 'string'},
                 {name: 'lm1', type: 'string'},
                 {name: 'lm2', type: 'string'},
@@ -18,7 +18,7 @@ $(document).ready(function() {
         columnsresize: false,
         theme: 'office',
         columns: [
-            {text: '<span style="text-align:center; display: block; font-weight: bold;">Date Entered</span>', dataField: 'date', width: '20%', cellsAlign: 'center'},
+            {text: '<span style="text-align:center; display: block; font-weight: bold;">Entered By</span>', dataField: 'user', width: '20%'},
             {text: '<span style="text-align:center; display: block; font-weight: bold;">UBT Movement</span>', dataField: 'ubt', width: '20%', cellsAlign: 'center'},
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Lead Measure 1 Movement</span>', dataField: 'lm1', width: '20%', cellsAlign: 'center'},
             {text: '<span style="text-align:center; display: block; font-weight: bold;">Lead Measure 2 Movement</span>', dataField: 'lm2', width: '20%', cellsAlign: 'center'},
