@@ -55,7 +55,7 @@ class ActivityMovement extends Model {
 
     public function getModelTranslationAsNewEntity() {
         return "[Movement added]\n\n"
-                . "Period Covered:\t{$this->periodDate->format('F Y')}"
+                . "Period Covered:\t{$this->periodDate->format('F Y')}\n"
                 . "Output:\t{$this->actualFigure}\n"
                 . "Budget Spent:\t{$this->budgetAmount}\n"
                 . "Notes:\t{$this->notes}";
