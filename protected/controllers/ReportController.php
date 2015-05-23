@@ -47,4 +47,32 @@ class ReportController extends Controller {
         ));
     }
 
+    public function initiativeDetail($id) {
+        $initiative = $this->modelLoaderUtil->loadInitiativeModel($id);
+
+        $measures = "";
+        foreach ($initiative->leadMeasures as $leadMeasures) {
+            $measures.="-&nbsp;{$leadMeasures->indicator->description}\n";
+        }
+
+        $objectives = "";
+        foreach ($initiative->objectives as $objective) {
+            $objectives.="-&nbsp;{$objective->description}\n";
+        }
+
+        $teams = "";
+        foreach ($initiative->implementingOffices as $implementingOffice) {
+            $teams.="-&nbsp;{$implementingOffice->department->name}\n";
+        }
+
+        $this->render('report/initiative-pow', array(
+            'initiative' => $initiative,
+            'measures' => nl2br($measures),
+            'objectives' => nl2br($objectives),
+            'beneficiaries' => implode(', ', explode('+', $initiative->beneficiaries)),
+            'teams' => nl2br($teams),
+            'advisers' => nl2br(implode("\n", explode('+', $initiative->advisers)))
+        ));
+    }
+
 }
