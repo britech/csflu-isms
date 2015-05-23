@@ -31,7 +31,7 @@ $headerHtml = <<<HEADER
     <th style="border: 1px solid #000000; background-color: #C4D79B;" colspan="2">PROJECT TEAM</th>
 </tr>
 <tr>
-    <td style="border: 1px solid #000000;" colspan="2" rowspan="2">{$initiative->title}</td>
+    <th style="border: 1px solid #000000;" colspan="2" rowspan="2">{$initiative->title}</th>
     <td style="border: 1px solid #000000;" colspan="2" rowspan="2">{$initiative->description}</td>
     <td style="border: 1px solid #000000;" colspan="3" rowspan="2">{$measures}</td>
     <th style="border: 1px solid #000000; background-color: #C5D9F1;" colspan="2">OWNER/S</th>
@@ -98,7 +98,7 @@ PHASE;
         if ($activityCount > 0) {
             $bodyHtml.=<<<ACTIVITY
 <tr>
-    <td style="border: 1px solid #000000;" rowspan="{$activityCount}">{$component->activities[0]->activityNumber}</td>
+    <td style="border: 1px solid #000000; text-align: center;" rowspan="{$activityCount}">{$component->activities[0]->activityNumber}</td>
     <td style="border: 1px solid #000000;" rowspan="{$activityCount}">{$component->activities[0]->startingPeriod->format('M Y')} - {$component->activities[0]->endingPeriod->format('M Y')}</td>
     <td style="border: 1px solid #000000;" rowspan="{$activityCount}">{$component->description}</td>
     <td style="border: 1px solid #000000;">{$component->activities[0]->title}</td>

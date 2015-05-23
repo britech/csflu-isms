@@ -50,6 +50,11 @@ class ReportController extends Controller {
     public function initiativeDetail($id) {
         $initiative = $this->modelLoaderUtil->loadInitiativeModel($id);
 
+        if (count($initiative->phases) < 1) {
+            $this->setSessionData('notif', array('message' => 'Cannot Generate: Program of Work'));
+            $this->redirect(array('initiative/view', 'id' => $initiative->id));
+        }
+
         $measures = "";
         foreach ($initiative->leadMeasures as $leadMeasures) {
             $measures.="-&nbsp;{$leadMeasures->indicator->description}\n";

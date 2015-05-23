@@ -71,21 +71,21 @@ foreach ($initiative->phases as $phase) {
     <th style="border: 1px solid #000000; background-color: #FFFF99;" colspan="9">PHASE {$phase->phaseNumber}: {$phase->title}</th>
 </tr>
 <tr>
-    <td style="border: 1px solid #000000;" colspan="9">{$phase->description}</td>
+    <td style="border: 1px solid #000000; text-align: center;" colspan="9">{$phase->description}</td>
 </tr>
 PHASE;
 
     $contentHeader = <<<HEADER
 <tr>
-    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">TARGET DATE</th>
-    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">COMPONENT</th>
-    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">ACTIVITY</th>
-    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">TARGET</th>
-    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">ACTUAL</th>
-    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">PERCENT</th>
-    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">BUDGET</th>
-    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">BUDGET UTILIZED</th>
-    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">REMARKS</th>
+    <th style="border: 1px solid #000000; width: 15%; background-color: #C5D9F1;">TARGET DATE</th>
+    <th style="border: 1px solid #000000; width: 15%; background-color: #C5D9F1;">COMPONENT</th>
+    <th style="border: 1px solid #000000; width: 15%; background-color: #C5D9F1;">ACTIVITY</th>
+    <th style="border: 1px solid #000000; width: 9%; background-color: #C5D9F1;">TARGET</th>
+    <th style="border: 1px solid #000000; width: 10%; background-color: #C5D9F1;">ACTUAL</th>
+    <th style="border: 1px solid #000000; width: 9%; background-color: #C5D9F1;">PERCENT</th>
+    <th style="border: 1px solid #000000; width: 9%; background-color: #C5D9F1;">BUDGET</th>
+    <th style="border: 1px solid #000000; width: 9%; background-color: #C5D9F1;">BUDGET UTILIZED</th>
+    <th style="border: 1px solid #000000; width: 9%; background-color: #C5D9F1;">REMARKS</th>
 </tr>
 HEADER;
 
@@ -94,7 +94,7 @@ HEADER;
         foreach ($component->activities as $activity) {
             $contentBody.=<<<BODY
 <tr>
-    <td style="border: 1px solid #000000;">{$activity->endingPeriod->format('M Y')}</td>
+    <td style="border: 1px solid #000000;">{$activity->startingPeriod->format('M Y')} - {$activity->endingPeriod->format('M Y')}</td>
     <td style="border: 1px solid #000000;">{$component->description}</td>
     <td style="border: 1px solid #000000;">{$activity->title}</td>
     <td style="border: 1px solid #000000;">{$activity->descriptionOfTarget}</td>
