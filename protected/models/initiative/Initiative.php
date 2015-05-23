@@ -302,6 +302,16 @@ class Initiative extends Model {
         return number_format($this->computeBudgetBurnRate($date), 2) . " %";
     }
 
+    public function resolveTotalBudgetAllocation() {
+        $budgetAmount = 0.00;
+        foreach ($this->phases as $phase) {
+            foreach ($phase->components as $component) {
+                $budgetAmount+=$component->computeTotalBudgetAllocation();
+            }
+        }
+        return 'PHP ' . number_format($budgetAmount);
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
