@@ -24,7 +24,7 @@
             </tr>
             <tr>
                 <th style="text-align: left;">Remaining Budget</th>
-                <td><?php echo "PHP " . number_format($data->computeRemainingBudget(), 2); ?></td>
+                <td><?php echo "PHP " . number_format($data->computeRemainingBudget($date), 2); ?></td>
             </tr>
         <?php endif; ?>
     </tbody>
