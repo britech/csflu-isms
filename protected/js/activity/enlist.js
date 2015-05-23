@@ -33,6 +33,7 @@ $(document).ready(function() {
             url: "?r=activity/validateMovementInput",
             data: {
                 "ActivityMovement": {
+                    'periodDate': $("[name*=periodDate]").val(),
                     'actualFigure': $("[name*=actualFigure]").val(),
                     'budgetAmount': $("[name*=budgetAmount]").val(),
                     'notes': $("[name*=notes]").val()

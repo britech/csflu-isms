@@ -47,6 +47,7 @@ $form = new ModelFormGenerator(array(
                 <?php echo $form->renderSubmitButton('Enlist', array('class' => 'ink-button green flat', 'style' => 'margin-top: 1em; margin-left: 0px;')); ?>
             </div>
         </div>
+        <?php echo $form->renderHiddenField($model, 'periodDate');?>
         <?php echo $form->renderHiddenField($model, 'actualFigure'); ?>
         <?php echo $form->renderHiddenField($model, 'budgetAmount'); ?>
         <?php echo $form->renderHiddenField($activity, 'id'); ?>
