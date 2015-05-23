@@ -240,6 +240,35 @@ class Initiative extends Model {
     public function isNew() {
         return empty($this->id);
     }
+    
+    public function filterPhases(\DateTime $period){
+        $filteredPhases = array();
+        foreach($this->phases as $phase){
+            $filteredComponents = array();
+            foreach($phase->components as $component){
+                $activities = $this->filterActivities($component, $period);
+                if(count($activities) > 0){
+                    $component->activities = $activities;
+                    $filteredComponents = array_merge($filteredComponents, array($component));
+                }    
+            }
+            if(count($filteredComponents) > 0){
+                $phase->components = $filteredComponents;
+                $filteredPhases = array_merge($filteredPhases, array($phase));
+            }
+        }
+        $this->phases = $filteredPhases;
+    }
+    
+    private function filterActivities(Component $component, \DateTime $date){
+        $activities = array();
+        foreach($component->activities as $activity){
+            if($activity->startingPeriod == $date || ($date <= $activity->endingPeriod && $date >= $activity->startingPeriod)){
+                $activities = array_merge($activities, array($activity));
+            }
+        }
+        return $activities;
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;
