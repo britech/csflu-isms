@@ -26,15 +26,16 @@ class ActivityMovementDaoSqlImpl implements ActivityMovementDao {
 
     public function listMovements(Activity $activity) {
         try {
-            $dbst = $this->db->prepare('SELECT user_ref, actual_figure, budget_amount, movement_timestamp, notes FROM ini_movement WHERE activity_ref=:ref ORDER BY movement_timestamp DESC');
+            $dbst = $this->db->prepare('SELECT user_ref, actual_figure, budget_amount, movement_timestamp, notes, period_date FROM ini_movement WHERE activity_ref=:ref ORDER BY movement_timestamp DESC');
             $dbst->execute(array('ref' => $activity->id));
 
             $movements = array();
             while ($data = $dbst->fetch()) {
                 $movement = new ActivityMovement();
-                list($user, $movement->actualFigure, $movement->budgetAmount, $date, $movement->notes) = $data;
+                list($user, $movement->actualFigure, $movement->budgetAmount, $date, $movement->notes, $period) = $data;
                 $movement->user = $this->userDao->getUserAccount($user);
                 $movement->movementTimestamp = \DateTime::createFromFormat('Y-m-d H:i:s', $date);
+                $movement->periodDate = \DateTime::createFromFormat('Y-m-d', $period);
                 $movements = array_merge($movements, array($movement));
             }
             return $movements;
@@ -47,13 +48,14 @@ class ActivityMovementDaoSqlImpl implements ActivityMovementDao {
         try {
             $this->db->beginTransaction();
             foreach ($activity->movements as $movement) {
-                $dbst = $this->db->prepare('INSERT INTO ini_movement(activity_ref, user_ref, actual_figure, budget_amount, notes) VALUES(:activity, :user, :figure, :budget, :notes)');
+                $dbst = $this->db->prepare('INSERT INTO ini_movement(activity_ref, user_ref, actual_figure, budget_amount, notes, period_date) VALUES(:activity, :user, :figure, :budget, :notes, :date)');
                 $dbst->execute(array(
                     'activity' => $activity->id,
                     'user' => $movement->user->id,
                     'figure' => $movement->actualFigure,
                     'budget' => $movement->budgetAmount,
-                    'notes' => $movement->notes
+                    'notes' => $movement->notes,
+                    'date' => $movement->periodDate->format('Y-m-d')
                 ));
             }
             $this->db->commit();
