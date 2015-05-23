@@ -293,6 +293,14 @@ class Activity extends Model {
             return "-";
         }
     }
+    
+    public function resolveBudgetSource() {
+        if(strlen($this->budgetAmount) > 0 && !empty(floatval($this->budgetAmount))){
+            return $this->sourceOfBudget;
+        } else {
+            return "-";
+        }
+    }
 
     public function resolveBudgetUtilization(\DateTime $period) {
         if (strlen($this->budgetAmount) > 0 && !empty(floatval($this->budgetAmount))) {
@@ -300,6 +308,10 @@ class Activity extends Model {
         } else {
             return "-";
         }
+    }
+    
+    public function resolveOwners(){
+        return implode(", ", explode('+', $this->owners));
     }
 
     public function __set($name, $value) {
