@@ -36,7 +36,32 @@ class Component extends Model {
     public function isNew() {
         return empty($this->id);
     }
-    
+
+    public function computeTotalCompletionPercentage(\DateTime $period) {
+        $percentage = 0.00;
+        foreach ($this->activities as $activity) {
+            $output = $activity->computeCompletionPercentage($period);
+            $percentage+=is_numeric($output) ? $output : 0;
+        }
+        return $percentage;
+    }
+
+    public function computeTotalBudgetAllocation() {
+        $budget = 0.00;
+        foreach ($this->activities as $activity) {
+            $budget += floatval($activity->budgetAmount);
+        }
+        return $budget;
+    }
+
+    public function computeTotalRemainingBudget(\DateTime $period) {
+        $utilized = 0.00;
+        foreach ($this->activities as $activity) {
+            $utilized += $activity->computeRemainingBudget($period);
+        }
+        return $utilized;
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
@@ -50,4 +75,5 @@ class Component extends Model {
         $component->id = $this->id;
         $component->description = $this->description;
     }
+
 }
