@@ -7,16 +7,16 @@ error_reporting(0);
 
 $headerHtml = <<<HEADER
 <tr>
-    <th style="border: 1px solid #000000; background-color: black; color: white;" colspan="9">FIRST LEVEL STRATEGIC INITIATIVES</th>
+    <th style="border: 1px solid #000000; background-color: #0070C0; color: white;" colspan="9">FIRST LEVEL STRATEGIC INITIATIVES</th>
 </tr>
 <tr>
     <th style="border: 1px solid #000000;" colspan="4">PROGRESS FOR THE MONTH OF:</th>
     <td style="border: 1px solid #000000;" colspan="5">{$period->format('F Y')}</td>
 </tr>
 <tr>
-    <th style="border: 1px solid #000000;" colspan="4">INITIATIVE NAME</th>
-    <th style="border: 1px solid #000000;" colspan="3">DESCRIPTION/INNOVATIVE COMPONENT</th>
-    <th style="border: 1px solid #000000;" colspan="2">INITIATIVE TEAM</th>
+    <th style="border: 1px solid #000000; background-color: #C4D79B;" colspan="4">INITIATIVE NAME</th>
+    <th style="border: 1px solid #000000; background-color: #C4D79B;" colspan="3">DESCRIPTION/INNOVATIVE COMPONENT</th>
+    <th style="border: 1px solid #000000; background-color: #C4D79B;" colspan="2">INITIATIVE TEAM</th>
 </tr>
 <tr>
     <td style="border: 1px solid #000000; text-align: center;" colspan="4">{$initiative->title}</td>
@@ -25,16 +25,16 @@ $headerHtml = <<<HEADER
 </tr>
 
 <tr>
-    <th style="border: 1px solid #000000; background-color: black; color: white;" colspan="9">PROJECT MANAGEMENT COMPONENT</th>
+    <th style="border: 1px solid #000000; background-color: #0070C0; color: white;" colspan="9">PROJECT MANAGEMENT COMPONENT</th>
 </tr>
 <tr>
-    <th style="border: 1px solid #000000;" colspan="1">STATUS</th>
-    <th style="border: 1px solid #000000;" colspan="2">APPROVED CONCEPT</th>
-    <th style="border: 1px solid #000000;" colspan="1">ADOPTED IN AIP</th>
-    <th style="border: 1px solid #000000;" colspan="1">OWNER IS INFORMED</th>
-    <th style="border: 1px solid #000000;" colspan="1">ORGANIZED PROJECT TEAM</th>
-    <th style="border: 1px solid #000000;" colspan="1">APPROVED BUDGET</th>
-    <th style="border: 1px solid #000000;" colspan="2">REPORTING MECHANISM</th>
+    <th style="border: 1px solid #000000; background-color: darkblue; color: white;" colspan="1">Status</th>
+    <th style="border: 1px solid #000000; background-color: darkblue; color: white;" colspan="2">Approved Concept</th>
+    <th style="border: 1px solid #000000; background-color: darkblue; color: white;" colspan="1">Adopted in AIP</th>
+    <th style="border: 1px solid #000000; background-color: darkblue; color: white;" colspan="1">Owner is Informed</th>
+    <th style="border: 1px solid #000000; background-color: darkblue; color: white;" colspan="1">Organized Project Team</th>
+    <th style="border: 1px solid #000000; background-color: darkblue; color: white;" colspan="1">Approved Budget</th>
+    <th style="border: 1px solid #000000; background-color: darkblue; color: white;" colspan="2">Reporting Mechanism</th>
 </tr>
 <tr>
     <td style="border: 1px solid #000000; text-align: center;" colspan="1">{$initiative->translateStatusCode()}</td>
@@ -47,10 +47,10 @@ $headerHtml = <<<HEADER
 </tr>
 
 <tr>
-    <th style="border: 1px solid #000000;" colspan="4">BENEFICIARIES</th>
-    <th style="border: 1px solid #000000;" colspan="1">TARGET</th>
-    <th style="border: 1px solid #000000;" colspan="1">REALIZED</th>
-    <th style="border: 1px solid #000000;" colspan="3">REMARKS</th>
+    <th style="border: 1px solid #000000; background-color: #C4D79B;" colspan="4">BENEFICIARIES</th>
+    <th style="border: 1px solid #000000; background-color: #C4D79B;" colspan="1">TARGET</th>
+    <th style="border: 1px solid #000000; background-color: #C4D79B;" colspan="1">REALIZED</th>
+    <th style="border: 1px solid #000000; background-color: #C4D79B;" colspan="3">REMARKS</th>
 </tr>
 <tr>
     <td style="border: 1px solid #000000;" colspan="4">{$beneficiaries}</td>
@@ -60,7 +60,7 @@ $headerHtml = <<<HEADER
 </tr>
 
 <tr>
-    <th style="border: 1px solid #000000; background-color: black; color: white;" colspan="9">PROJECT MILESTONES AND BUDGET</th>
+    <th style="border: 1px solid #000000; background-color: #0070C0; color: white;" colspan="9">PROJECT MILESTONES AND BUDGET</th>
 </tr>
 HEADER;
 
@@ -68,7 +68,7 @@ $content = "";
 foreach ($initiative->phases as $phase) {
     $phaseHeader = <<<PHASE
 <tr>
-    <th style="border: 1px solid #000000;" colspan="9">PHASE {$phase->phaseNumber}: {$phase->title}</th>
+    <th style="border: 1px solid #000000; background-color: #FFFF99;" colspan="9">PHASE {$phase->phaseNumber}: {$phase->title}</th>
 </tr>
 <tr>
     <td style="border: 1px solid #000000;" colspan="9">{$phase->description}</td>
@@ -77,15 +77,15 @@ PHASE;
 
     $contentHeader = <<<HEADER
 <tr>
-    <th style="border: 1px solid #000000; width: 11%;">TARGET DATE</th>
-    <th style="border: 1px solid #000000; width: 11%;">COMPONENT</th>
-    <th style="border: 1px solid #000000; width: 11%;">ACTIVITY</th>
-    <th style="border: 1px solid #000000; width: 11%;">TARGET</th>
-    <th style="border: 1px solid #000000; width: 11%;">ACTUAL</th>
-    <th style="border: 1px solid #000000; width: 11%;">PERCENT</th>
-    <th style="border: 1px solid #000000; width: 11%;">BUDGET</th>
-    <th style="border: 1px solid #000000; width: 11%;">BUDGET UTILIZED</th>
-    <th style="border: 1px solid #000000; width: 11%;">REMARKS</th>
+    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">TARGET DATE</th>
+    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">COMPONENT</th>
+    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">ACTIVITY</th>
+    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">TARGET</th>
+    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">ACTUAL</th>
+    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">PERCENT</th>
+    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">BUDGET</th>
+    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">BUDGET UTILIZED</th>
+    <th style="border: 1px solid #000000; width: 11%; background-color: #C5D9F1;">REMARKS</th>
 </tr>
 HEADER;
 
@@ -113,11 +113,11 @@ BODY;
 
 $footerHtml = <<<FOOTER
 <tr>
-    <th style="border: 1px solid #000000;" colspan="5">ACCOMPLISHMENT RATE</th>
+    <th style="border: 1px solid #000000; background-color: #C5D9F1;" colspan="5">ACCOMPLISHMENT RATE</th>
     <th style="border: 1px solid #000000;" colspan="4">{$initiative->resolveAccomplishmentRate($period)}</th>
 </tr>
 <tr>
-    <th style="border: 1px solid #000000;" colspan="5">BUDGET BURN RATE</th>
+    <th style="border: 1px solid #000000; background-color: #C5D9F1;" colspan="5">BUDGET BURN RATE</th>
     <th style="border: 1px solid #000000;" colspan="4">{$initiative->resolveBudgetBurnRate($period)}</th>
 </tr>
 FOOTER;
