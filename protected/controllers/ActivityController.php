@@ -110,7 +110,9 @@ class ActivityController extends Controller {
     public function enlistMovement($id, $period) {
         $activity = $this->loadModel($id);
         $initiative = $this->loadInitiativeModel(null, $activity);
-
+        $movement = new ActivityMovement();
+        $movement->periodDate = "{$period}-1";
+        
         $this->title = ApplicationConstants::APP_NAME . ' - Enlist Movement';
         $this->render('activity/enlist', array(
             'breadcrumb' => array(
@@ -120,7 +122,7 @@ class ActivityController extends Controller {
                 'Manage Activity' => array('activity/manage', 'id' => $activity->id, 'period' => $period),
                 'Enlist Movement' => 'active'
             ),
-            'model' => new ActivityMovement(),
+            'model' => $movement,
             'activity' => $activity,
             'action' => array('activity/insertMovement'),
             'header' => 'Enlist Activity Movement',
@@ -156,7 +158,7 @@ class ActivityController extends Controller {
         $this->initiativeService->insertActivityMovement($activity);
         $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_INITIATIVE, $initiative->id, $activityMovement);
         $this->setSessionData('notif', array('class' => 'success', 'message' => "Activity Movement succesfully logged"));
-        $this->redirect(array('activity/manage', 'id' => $activity->id));
+        $this->redirect(array('activity/manage', 'id' => $activity->id, 'period'=>$activityMovement->periodDate->format('Y-m')));
     }
 
     public function finish($id = null, $period = null) {
