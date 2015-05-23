@@ -53,6 +53,10 @@ class Component extends Model {
         }
         return $budget;
     }
+    
+    public function resolveTotalBudgetAllocation(){
+        return 'PHP '.number_format($this->computeTotalBudgetAllocation());
+    }
 
     public function computeTotalRemainingBudget(\DateTime $period) {
         $utilized = 0.00;
