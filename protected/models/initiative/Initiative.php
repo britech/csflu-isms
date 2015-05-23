@@ -240,34 +240,66 @@ class Initiative extends Model {
     public function isNew() {
         return empty($this->id);
     }
-    
-    public function filterPhases(\DateTime $period){
+
+    public function filterPhases(\DateTime $period) {
         $filteredPhases = array();
-        foreach($this->phases as $phase){
+        foreach ($this->phases as $phase) {
             $filteredComponents = array();
-            foreach($phase->components as $component){
+            foreach ($phase->components as $component) {
                 $activities = $this->filterActivities($component, $period);
-                if(count($activities) > 0){
+                if (count($activities) > 0) {
                     $component->activities = $activities;
                     $filteredComponents = array_merge($filteredComponents, array($component));
-                }    
+                }
             }
-            if(count($filteredComponents) > 0){
+            if (count($filteredComponents) > 0) {
                 $phase->components = $filteredComponents;
                 $filteredPhases = array_merge($filteredPhases, array($phase));
             }
         }
         $this->phases = $filteredPhases;
     }
-    
-    private function filterActivities(Component $component, \DateTime $date){
+
+    private function filterActivities(Component $component, \DateTime $date) {
         $activities = array();
-        foreach($component->activities as $activity){
-            if($activity->startingPeriod == $date || ($date <= $activity->endingPeriod && $date >= $activity->startingPeriod)){
+        foreach ($component->activities as $activity) {
+            if ($activity->startingPeriod == $date || ($date <= $activity->endingPeriod && $date >= $activity->startingPeriod)) {
                 $activities = array_merge($activities, array($activity));
             }
         }
         return $activities;
+    }
+
+    public function computeAccomplishmentRate(\DateTime $date) {
+        $numberOfActivities = 0;
+        $completionPercentage = 0.00;
+        foreach ($this->phases as $phase) {
+            foreach ($phase->components as $component) {
+                $numberOfActivities += count($component->activities);
+                $completionPercentage += $component->computeTotalCompletionPercentage($date);
+            }
+        }
+        return $completionPercentage / $numberOfActivities;
+    }
+
+    public function resolveAccomplishmentRate(\DateTime $date) {
+        return number_format($this->computeAccomplishmentRate($date), 2) . " %";
+    }
+
+    public function computeBudgetBurnRate(\DateTime $date) {
+        $budgetAmount = 0.00;
+        $utilizedBudgetAmount = 0.00;
+        foreach ($this->phases as $phase) {
+            foreach ($phase->components as $component) {
+                $budgetAmount += $component->computeTotalBudgetAllocation();
+                $utilizedBudgetAmount += $component->computeTotalRemainingBudget($date);
+            }
+        }
+        return (($budgetAmount - $utilizedBudgetAmount) / $budgetAmount) * 100;
+    }
+
+    public function resolveBudgetBurnRate(\DateTime $date) {
+        return number_format($this->computeBudgetBurnRate($date), 2) . " %";
     }
 
     public function __set($name, $value) {
