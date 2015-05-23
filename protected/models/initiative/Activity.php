@@ -241,7 +241,7 @@ class Activity extends Model {
     public function computeRemainingBudget(\DateTime $period) {
         $budget = 0.00;
         foreach ($this->movements as $movement) {
-            if ($period == $movement->periodDate) {
+            if ($period == $movement->periodDate || ($period >= $this->startingPeriod && $period <= $this->endingPeriod)) {
                 $budget+=floatval($movement->budgetAmount);
             }
         }
@@ -252,7 +252,7 @@ class Activity extends Model {
         if (strlen($this->targetFigure) > 0) {
             $actual = 0.00;
             foreach ($this->movements as $movement) {
-                if ($period == $movement->periodDate) {
+                if ($period == $movement->periodDate || ($period >= $this->startingPeriod && $period <= $this->endingPeriod)) {
                     $actual += floatval($movement->actualFigure);
                 }
             }
@@ -266,7 +266,8 @@ class Activity extends Model {
         if (strlen($this->targetFigure) > 0) {
             $actual = $this->resolveActualFigure($period);
             $target = floatval($this->targetFigure);
-            return (($actual - $target) / $target) * 100;
+            $percentage = (($actual - $target) / $target) * 100;
+            return $percentage > 0 ? $percentage : 0;
         } else {
             switch ($this->activityEnvironmentStatus) {
                 case self::STATUS_FINISHED:
