@@ -24,12 +24,26 @@ class ReportController extends Controller {
     }
 
     public function initiativeUpdate($id, $period) {
-        $periodDate = \DateTime::createFromFormat('Y-m', $period);
+        $date = "{$period}-1";
+        $periodDate = \DateTime::createFromFormat('Y-m-d', $date);
         $initiative = $this->modelLoaderUtil->loadInitiativeModel($id);
+        $initiative->filterPhases($periodDate);
+
+        if (count($initiative->phases) == 0) {
+            $this->setSessionData('notif', array('message' => 'Update Report cannot be generated'));
+            $this->redirect(array('activity/index', 'initiative' => $initiative->id, 'period' => $period));
+        }
+
+        $teams = "";
+        foreach ($initiative->implementingOffices as $implementingOffice) {
+            $teams.="-&nbsp;{$implementingOffice->department->name}\n";
+        }
 
         $this->render('report/initiative-update', array(
             'period' => $periodDate,
-            'initiative' => $initiative
+            'initiative' => $initiative,
+            'teams' => nl2br($teams),
+            'beneficiaries' => implode(', ', explode('+', $initiative->beneficiaries))
         ));
     }
 
