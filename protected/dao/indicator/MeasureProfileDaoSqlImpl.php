@@ -24,6 +24,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
     private $indicatorDataSource;
     private $objectiveDataSource;
     private $departmentDaoSource;
+    private $movementDaoSource;
     private $logger;
 
     public function __construct() {
@@ -31,6 +32,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
         $this->indicatorDataSource = new IndicatorDaoSqlImpl();
         $this->objectiveDataSource = new ObjectiveDaoSqlImpl();
         $this->departmentDaoSource = new DepartmentDaoSqlImpl();
+        $this->movementDaoSource = new MeasureProfileMovementDaoSqlImpl();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -98,6 +100,7 @@ class MeasureProfileDaoSqlImpl implements MeasureProfileDao {
             $measureProfile->timelineEnd = \DateTime::createFromFormat('Y-m-d', $end);
             $measureProfile->leadOffices = $this->listLeadOffices($measureProfile);
             $measureProfile->targets = $this->listTargets($measureProfile);
+            $measureProfile->movements = $this->movementDaoSource->listMeasureProfileMovements($measureProfile);
 
             return $measureProfile;
         } catch (\PDOException $ex) {
