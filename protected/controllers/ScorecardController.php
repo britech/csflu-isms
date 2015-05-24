@@ -62,7 +62,7 @@ class ScorecardController extends Controller {
             if ($readOnly) {
                 $actions = ApplicationUtils::generateLink(array('measure/view', 'id' => $leadMeasure->id), 'View');
             } else {
-                $actions = ApplicationUtils::generateLink(array('measure/view', 'id' => $leadMeasure->id), 'View') . " | " . ApplicationUtils::generateLink(array('measure/movements', 'id' => $leadMeasure->id), 'Manage Movements');
+                $actions = ApplicationUtils::generateLink(array('measure/view', 'id' => $leadMeasure->id), 'View') . " | " . ApplicationUtils::generateLink('#', 'Manage Movements', array('id' => "movement-{$leadMeasure->id}"));
             }
 
             array_push($data, array(
