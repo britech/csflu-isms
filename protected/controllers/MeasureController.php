@@ -55,7 +55,9 @@ class MeasureController extends Controller {
                 'Manage Measure Profiles' => 'active'),
             'sidebar' => array(
                 'file' => 'measure-profile/_index-navi'),
-            'map' => $strategyMap->id
+            'map' => $strategyMap->id,
+            'startingPeriod' => $strategyMap->startingPeriodDate->format('Y-m-d'),
+            'endingPeriod' => $strategyMap->endingPeriodDate->format('Y-m-d')
         ));
     }
 
