@@ -57,6 +57,8 @@ require_once 'models/uam/ModuleAction.php';
 require_once 'models/indicator/Indicator.php';
 require_once 'models/indicator/Baseline.php';
 require_once 'models/indicator/MeasureProfile.php';
+require_once 'models/indicator/MeasureProfileMovement.php';
+require_once 'models/indicator/MeasureProfileMovementLog.php';
 require_once 'models/indicator/LeadOffice.php';
 require_once 'models/indicator/Target.php';
 

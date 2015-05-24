@@ -20,6 +20,7 @@ use org\csflu\isms\models\indicator\Target;
  * @property String $measureProfileEnvironmentStatus
  * @property \DateTime $timelineStart
  * @property \DateTime $timelineEnd
+ * @property MeasureProfileMovement $movement
  * @author britech
  */
 class MeasureProfile extends Model {
@@ -45,6 +46,7 @@ class MeasureProfile extends Model {
     private $measureProfileEnvironmentStatus;
     private $timelineStart;
     private $timelineEnd;
+    private $movement;
     public $periods;
 
     public function validate() {
