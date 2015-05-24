@@ -6,7 +6,6 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\util\ApplicationUtils;
-use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl as StrategyMapManagementService;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
 
