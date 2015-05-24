@@ -38,10 +38,12 @@ $(document).ready(function() {
             }
         }
     }).on('rowClick', function(event) {
-        var args = event.args;
-        var id = args.row.id;
-        $("[name=id]").val(id);
-        $("#timeline-container").jqxWindow('open');
+        $("[id^=movement]").click(function() {
+            var args = event.args;
+            var id = args.row.id;
+            $("[name=id]").val(id);
+            $("#timeline-container").jqxWindow('open');
+        });
     });
 
     $("#refresh").click(function() {
@@ -79,7 +81,7 @@ $(document).ready(function() {
         var date = event.args.date;
         $("[name=period]").val(date.getFullYear() + "-" + (date.getMonth() + 1));
     });
-    
+
     $(".ink-form").submit(function() {
         var date = $("[name=period]").val();
         var id = $("[name=id]").val();
