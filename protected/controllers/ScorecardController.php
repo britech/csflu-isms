@@ -3,7 +3,11 @@
 namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
+use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
+use org\csflu\isms\models\map\Objective;
+use org\csflu\isms\models\indicator\MeasureProfile;
+use org\csflu\isms\models\indicator\MeasureProfileMovement;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
 
@@ -49,8 +53,45 @@ class ScorecardController extends Controller {
         $this->renderAjaxJsonResponse($data);
     }
 
-    private function loadMapModel($id) {
-        return $this->modelLoaderUtil->loadMapModel($id);
+    public function movements($measure, $period) {
+        $periodDate = \DateTime::createFromFormat('Y-m-d', "{$period}-1");
+        $measureProfile = $this->loadMeasureProfileModel($measure);
+        $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
+
+        $this->layout = "column-2";
+        $this->title = ApplicationConstants::APP_NAME . ' - Scorecard Movements';
+        $this->render('scorecard/index', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Manage Movements' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'scorecard/_index-navi'
+            ),
+            'measureProfile' => $measureProfile,
+            'period' => $periodDate,
+            'model' => $this->resolveMovementModel($measureProfile, $periodDate)
+        ));
+    }
+
+    private function resolveMovementModel(MeasureProfile $measureProfile, \DateTime $period) {
+        foreach ($measureProfile->movements as $movement) {
+            if ($movement->periodDate == $period) {
+                return $movement;
+            }
+        }
+        return new MeasureProfileMovement();
+    }
+
+    private function loadMapModel($id = null, Objective $objective = null) {
+        return $this->modelLoaderUtil->loadMapModel($id, null, $objective);
+    }
+
+    private function loadMeasureProfileModel($id) {
+        return $this->modelLoaderUtil->loadMeasureProfileModel($id);
     }
 
 }
