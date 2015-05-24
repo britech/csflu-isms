@@ -18,6 +18,13 @@ use org\csflu\isms\core\Model;
  */
 class Controller {
 
+    const COMPONENT_BREADCRUMB = "breadcrumb";
+    const COMPONENT_SIDEBAR = "sidebar";
+    const SUB_COMPONENT_SIDEBAR_FILE = "file";
+    const SUB_COMPONENT_SIDEBAR_DATA = "data";
+    const SUB_COMPONENT_SIDEBAR_DATA_HEADER = "header";
+    const SUB_COMPONENT_SIDEBAR_DATA_LINKS = "links";
+
     public $title;
     public $layout = "column-1";
     private $loggingService;
@@ -110,7 +117,7 @@ class Controller {
 
     protected final function logCustomRevision($revisionType, $module, $referenceId, $notes) {
         $this->loggingService = new RevisionHistoryLoggingService();
-        
+
         $revision = new RevisionHistory();
         $revision->employee = new Employee();
         $revision->employee->id = $_SESSION['employee'];
