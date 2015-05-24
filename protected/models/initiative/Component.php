@@ -18,7 +18,7 @@ class Component extends Model {
     private $id;
     private $description;
     private $activities;
-
+    
     public function __construct($description = null, $id = null) {
         if (!is_null($description)) {
             $this->description = $description;
@@ -53,9 +53,10 @@ class Component extends Model {
         }
         return $budget;
     }
-    
-    public function resolveTotalBudgetAllocation(){
-        return 'PHP '.number_format($this->computeTotalBudgetAllocation());
+
+    public function resolveTotalBudgetAllocation() {
+        $budget = $this->computeTotalBudgetAllocation();
+        return $budget > 0 ? 'PHP ' . number_format($this->computeTotalBudgetAllocation()) : "-";
     }
 
     public function computeTotalRemainingBudget(\DateTime $period) {
@@ -64,6 +65,26 @@ class Component extends Model {
             $utilized += $activity->computeRemainingBudget($period);
         }
         return $utilized;
+    }
+
+    public function findUniqueActivityNumbers() {
+        $activityNumbers = array();
+        foreach ($this->activities as $activity) {
+            if (!in_array($activity->activityNumber, $activityNumbers)) {
+                $activityNumbers = array_merge($activityNumbers, array($activity->activityNumber));
+            }
+        }
+        return $activityNumbers;
+    }
+
+    public function findActivitiesByActivityNumber($activityNumber) {
+        $activities = array();
+        foreach ($this->activities as $activity) {
+            if ($activityNumber == $activity->activityNumber) {
+                $activities = array_merge($activities, array($activity));
+            }
+        }
+        return $activities;
     }
 
     public function __set($name, $value) {

@@ -94,33 +94,38 @@ foreach ($initiative->phases as $phase) {
 PHASE;
 
     foreach ($phase->components as $component) {
-        $activityCount = count($component->activities);
-        if ($activityCount > 0) {
-            $bodyHtml.=<<<ACTIVITY
+        $activityNumbers = $component->findUniqueActivityNumbers();
+
+        foreach ($activityNumbers as $activityNumber) {
+            $activities = $component->findActivitiesByActivityNumber($activityNumber);
+            $activityCount = count($activities);
+            if ($activityCount > 0) {
+                $bodyHtml.=<<<ACTIVITY
 <tr>
-    <td style="border: 1px solid #000000; text-align: center;" rowspan="{$activityCount}">{$component->activities[0]->activityNumber}</td>
-    <td style="border: 1px solid #000000;" rowspan="{$activityCount}">{$component->activities[0]->startingPeriod->format('M Y')} - {$component->activities[0]->endingPeriod->format('M Y')}</td>
+    <td style="border: 1px solid #000000; text-align: center;" rowspan="{$activityCount}">{$activities[0]->activityNumber}</td>
+    <td style="border: 1px solid #000000;" rowspan="{$activityCount}">{$activities[0]->startingPeriod->format('M Y')} - {$activities[0]->endingPeriod->format('M Y')}</td>
     <td style="border: 1px solid #000000;" rowspan="{$activityCount}">{$component->description}</td>
-    <td style="border: 1px solid #000000;">{$component->activities[0]->title}</td>
-    <td style="border: 1px solid #000000;">{$component->activities[0]->descriptionOfTarget}</td>
-    <td style="border: 1px solid #000000;">{$component->activities[0]->indicator}</td>
-    <td style="border: 1px solid #000000;">{$component->activities[0]->resolveBudgetFigure()}</td>
-    <td style="border: 1px solid #000000;">{$component->activities[0]->resolveBudgetSource()}</td>
-    <td style="border: 1px solid #000000;">{$component->activities[0]->resolveOwners()}</td>
+    <td style="border: 1px solid #000000;">{$activities[0]->title}</td>
+    <td style="border: 1px solid #000000;">{$activities[0]->descriptionOfTarget}</td>
+    <td style="border: 1px solid #000000;">{$activities[0]->indicator}</td>
+    <td style="border: 1px solid #000000;">{$activities[0]->resolveBudgetFigure()}</td>
+    <td style="border: 1px solid #000000;">{$activities[0]->resolveBudgetSource()}</td>
+    <td style="border: 1px solid #000000;">{$activities[0]->resolveOwners()}</td>
 </tr>
 ACTIVITY;
 
-            for ($i = 1; $i < $activityCount; $i++) {
-                $bodyHtml.=<<<ACTIVITY
+                for ($i = 1; $i < $activityCount; $i++) {
+                    $bodyHtml.=<<<ACTIVITY
 <tr>
-    <td style="border: 1px solid #000000;">{$component->activities[$i]->title}</td>
-    <td style="border: 1px solid #000000;">{$component->activities[$i]->descriptionOfTarget}</td>
-    <td style="border: 1px solid #000000;">{$component->activities[$i]->indicator}</td>
-    <td style="border: 1px solid #000000;">{$component->activities[$i]->resolveBudgetFigure()}</td>
-    <td style="border: 1px solid #000000;">{$component->activities[$i]->resolveBudgetSource()}</td>
-    <td style="border: 1px solid #000000;">{$component->activities[$i]->resolveOwners()}</td>
+    <td style="border: 1px solid #000000;">{$activities[$i]->title}</td>
+    <td style="border: 1px solid #000000;">{$activities[$i]->descriptionOfTarget}</td>
+    <td style="border: 1px solid #000000;">{$activities[$i]->indicator}</td>
+    <td style="border: 1px solid #000000;">{$activities[$i]->resolveBudgetFigure()}</td>
+    <td style="border: 1px solid #000000;">{$activities[$i]->resolveBudgetSource()}</td>
+    <td style="border: 1px solid #000000;">{$activities[$i]->resolveOwners()}</td>
 </tr>
 ACTIVITY;
+                }
             }
         }
     }
