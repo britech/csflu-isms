@@ -191,4 +191,4 @@ $pdf->AddPage('P');
 $pdf->writeHTML($css, 1);
 $pdf->writeHTML($logHtml);
 
-$pdf->Output("RPT_INITIATIVE_UPDATE_{$initiative->id}_{$period->format('F_Y')}.pdf", 'D');
+$pdf->Output("RPT_INITIATIVE_UPDATE_{$initiative->title}_{$period->format('F_Y')}.pdf", 'D');

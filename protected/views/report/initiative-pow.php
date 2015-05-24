@@ -157,4 +157,4 @@ $css = file_get_contents('assets/ink/css/ink.css');
 $pdf->writeHTML($css, 1);
 $pdf->writeHTML($html);
 
-$pdf->Output("RPT_INITIATIVE_POW_{$initiative->id}.pdf", 'D');
+$pdf->Output("RPT_INITIATIVE_POW_{$initiative->title}.pdf", 'D');
