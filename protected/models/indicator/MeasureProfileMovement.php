@@ -7,7 +7,6 @@ use org\csflu\isms\core\Model;
 /**
  * Description of MeasureProfileMovement
  *
- * @property string $id
  * @property \DateTime $periodDate
  * @property string $movementValue
  * @property MeasureProfileMovementLog[] $movementLogs
@@ -15,7 +14,6 @@ use org\csflu\isms\core\Model;
  */
 class MeasureProfileMovement extends Model {
 
-    private $id;
     private $periodDate;
     private $movementValue;
     private $movementLogs;
