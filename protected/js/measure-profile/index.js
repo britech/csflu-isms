@@ -3,7 +3,6 @@ $(document).ready(function() {
         source: new $.jqx.dataAdapter({
             datatype: 'json',
             datafields: [
-                {name: 'id', type: 'string'},
                 {name: 'perspective'},
                 {name: 'objective'},
                 {name: 'indicator'},
@@ -40,7 +39,7 @@ $(document).ready(function() {
     }).on('rowClick', function(event) {
         $("[id^=movement]").click(function() {
             var args = event.args;
-            var id = args.row.id;
+            var id = $(this).attr('id').split('-')[1];
             $("[name=id]").val(id);
             $("#timeline-container").jqxWindow('open');
         });
