@@ -9,18 +9,20 @@ use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\indicator\MeasureProfileMovement;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
+use org\csflu\isms\service\alignment\StrategyAlignmentServiceSimpleImpl;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
 
 class ScorecardController extends Controller {
 
-    private $mapService;
     private $scorecardService;
+    private $alignmentService;
     private $modelLoaderUtil;
     private $logger;
 
     public function __construct() {
         $this->checkAuthorization();
         $this->scorecardService = new ScorecardManagementService();
+        $this->alignmentService = new StrategyAlignmentServiceSimpleImpl();
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->layout = 'column-2';
@@ -73,7 +75,9 @@ class ScorecardController extends Controller {
             ),
             'measureProfile' => $measureProfile,
             'period' => $periodDate,
-            'model' => $this->resolveMovementModel($measureProfile, $periodDate)
+            'model' => $this->resolveMovementModel($measureProfile, $periodDate),
+            'initiatives' => $this->alignmentService->listAlignedInitiatives($strategyMap, null, $measureProfile),
+            'unitBreakthroughs'=>$this->alignmentService->listAlignedUnitBreakthroughs($strategyMap, null, $measureProfile)
         ));
     }
 
