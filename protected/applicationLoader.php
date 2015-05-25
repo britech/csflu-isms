@@ -152,6 +152,7 @@ require_once 'services/initiative/InitiativeManagementService.php';
 require_once 'services/ubt/UnitBreakthroughManagementService.php';
 require_once 'services/ubt/CommitmentManagementService.php';
 require_once 'services/reports/IpReportService.php';
+require_once 'services/alignment/StrategyAlignmentService.php';
 
 #service-implementations
 require_once 'services/commons/DepartmentServiceSimpleImpl.php';
@@ -166,6 +167,7 @@ require_once 'services/initiative/InitiativeManagementServiceSimpleImpl.php';
 require_once 'services/ubt/UnitBreakthroughManagementServiceSimpleImpl.php';
 require_once 'services/ubt/CommitmentManagementServiceSimpleImpl.php';
 require_once 'services/reports/IpReportServiceImpl.php';
+require_once 'services/alignment/StrategyAlignmentServiceSimpleImpl.php';
 
 session_start();
 ob_start();
