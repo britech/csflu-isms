@@ -108,6 +108,36 @@ class WigSession extends Model {
         return "[WigSession deleted]\n\nStarting Period:\t{$this->startingPeriod->format('Y-m-d')}\nEnding Period:\t{$this->endingPeriod->format('Y-m-d')}";
     }
 
+    public function computeUbtMovement() {
+        $value = 0.00;
+
+        foreach ($this->movementUpdates as $movementUpdate) {
+            $value += floatval($movementUpdate->ubtFigure);
+        }
+
+        return $value;
+    }
+
+    public function computeFirstLeadMeasureMovement() {
+        $value = 0.00;
+
+        foreach ($this->movementUpdates as $movementUpdate) {
+            $value += floatval($movementUpdate->firstLeadMeasureFigure);
+        }
+
+        return $value;
+    }
+
+    public function computeSecondLeadMeasureMovement() {
+        $value = 0.00;
+
+        foreach ($this->movementUpdates as $movementUpdate) {
+            $value += floatval($movementUpdate->secondLeadMeasureFigure);
+        }
+
+        return $value;
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
