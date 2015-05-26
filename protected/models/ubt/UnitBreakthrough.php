@@ -247,6 +247,64 @@ class UnitBreakthrough extends Model {
         return $translation;
     }
 
+    public function filterLeadMeasures(\DateTime $period) {
+        $filteredLeadMeasures = array();
+
+        foreach ($this->leadMeasures as $leadMeasure) {
+            if ($period >= $leadMeasure->startingPeriod && $period <= $leadMeasure->endingPeriod) {
+                $filteredLeadMeasures = array_merge($filteredLeadMeasures, array($leadMeasure));
+            }
+        }
+
+        return $filteredLeadMeasures;
+    }
+
+    public function computeUnitBreakthroughMovement(\DateTime $period) {
+        $value = 0.00;
+
+        foreach ($this->wigMeetings as $wigMeeting) {
+            if ($wigMeeting->startingPeriod >= $period && $period <= $wigMeeting->endingPeriod) {
+                $value += $wigMeeting->computeUbtMovement();
+            }
+        }
+
+        return $value;
+    }
+
+    public function resolveUnitBreakthroughMovement(\DateTime $period) {
+        $output = $this->computeUnitBreakthroughMovement($period);
+        return empty($output) ? "No Movement" : number_format($output) . " {$this->uom->description}";
+    }
+
+    public function computeLeadMeasuresMovement(\DateTime $period, $designation) {
+        $value = 0.00;
+        $this->filterLeadMeasures($period);
+        foreach ($this->wigMeetings as $wigMeeting) {
+            if ($wigMeeting->startingPeriod >= $period && $period <= $wigMeeting->endingPeriod) {
+                $value += ($designation == LeadMeasure::DESIGNATION_1) ? $wigMeeting->computeFirstLeadMeasureMovement() : $wigMeeting->computeSecondLeadMeasureMovement();
+            }
+        }
+        return $value;
+    }
+
+    public function resolveLeadMeasuresMovement(\DateTime $period, $designation) {
+        $this->filterLeadMeasures($period);
+        $output = $this->computeLeadMeasuresMovement($period, $designation);
+
+        $uom1 = $this->leadMeasures[0]->uom->getAppropriateUomDisplay();
+        $uom2 = $this->leadMeasures[1]->uom->getAppropriateUomDisplay();
+
+        if (empty($output)) {
+            return "No Movement";
+        } else {
+            if ($designation == LeadMeasure::DESIGNATION_1) {
+                return number_format($output) . " {$uom1}";
+            } elseif ($designation == LeadMeasure::DESIGNATION_2) {
+                return number_format($output) . " {$uom2}";
+            }
+        }
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
