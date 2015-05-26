@@ -8,6 +8,7 @@ use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\indicator\MeasureProfileMovement;
+use org\csflu\isms\models\indicator\MeasureProfileMovementLog;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\alignment\StrategyAlignmentServiceSimpleImpl;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
@@ -25,7 +26,6 @@ class ScorecardController extends Controller {
         $this->alignmentService = new StrategyAlignmentServiceSimpleImpl();
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->logger = \Logger::getLogger(__CLASS__);
-        $this->layout = 'column-2';
     }
 
     public function listLeadMeasures() {
@@ -77,7 +77,29 @@ class ScorecardController extends Controller {
             'period' => $periodDate,
             'model' => $this->resolveMovementModel($measureProfile, $periodDate),
             'initiatives' => $this->alignmentService->listAlignedInitiatives($strategyMap, null, $measureProfile),
-            'unitBreakthroughs'=>$this->alignmentService->listAlignedUnitBreakthroughs($strategyMap, null, $measureProfile)
+            'unitBreakthroughs' => $this->alignmentService->listAlignedUnitBreakthroughs($strategyMap, null, $measureProfile)
+        ));
+    }
+
+    public function enlistMovement($measure, $period) {
+        $measureProfile = $this->loadMeasureProfileModel($measure);
+        $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
+        $model = new MeasureProfileMovement();
+        $model->periodDate = "{$period}-1";
+        $this->render('scorecard/enlist', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Manage Movements' => array('scorecard/movements', 'measure' => $measureProfile->id, 'period' => $period),
+                'Enlist Movement' => 'active'
+            ),
+            'movementModel' => $model,
+            'movementLogModel' => new MeasureProfileMovementLog(),
+            'userModel' => $this->modelLoaderUtil->loadAccountModel(),
+            'measureProfileModel' => $measureProfile,
+            'period' => \DateTime::createFromFormat('Y-m-d', $model->periodDate)
         ));
     }
 
