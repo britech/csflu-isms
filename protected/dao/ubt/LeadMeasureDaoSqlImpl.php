@@ -54,7 +54,7 @@ class LeadMeasureDaoSqlImpl implements LeadMeasureDao {
 
     public function listLeadMeasures(UnitBreakthrough $unitBreakthrough) {
         try {
-            $dbst = $this->db->prepare('SELECT lm_id FROM lm_main WHERE ubt_ref=:ubt');
+            $dbst = $this->db->prepare('SELECT lm_id FROM lm_main WHERE ubt_ref=:ubt ORDER BY lm_designation ASC');
             $dbst->execute(array('ubt' => $unitBreakthrough->id));
 
             $leadMeasures = array();
