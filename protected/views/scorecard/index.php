@@ -5,14 +5,16 @@ namespace org\csflu\isms\views;
 use org\csflu\isms\models\ubt\LeadMeasure;
 ?>
 <table class="ink-table bordered">
-    <thead>
-        <tr>
-            <th style="text-align: left; width: 50%;">Initiative</th>
-            <th style="text-align: left; width: 25%;">Accomplishment Rate</th>
-            <th style="text-align: left; width: 25%;">Budget Burn Rate</th>
-        </tr>
-    </thead>
     <tbody>
+        <!-- START INITIATIVE COMPONENT -->
+        <tr>
+            <th colspan="4">INITIATIVES</th>
+        </tr>
+        <tr>
+            <th style="text-align: left;" colspan="2">Initiative</th>
+            <th style="text-align: left;" colspan="1">Accomplishment Rate</th>
+            <th style="text-align: left;" colspan="1">Budget Burn Rate</th>
+        </tr>
         <?php if (count($initiatives) == 0): ?>
             <tr>
                 <td colspan="3">No Initiatives Aligned</td>
@@ -20,24 +22,23 @@ use org\csflu\isms\models\ubt\LeadMeasure;
         <?php else: ?>
             <?php foreach ($initiatives as $initiative): ?>
                 <tr>
-                    <td><?php echo $initiative->title; ?></td>
-                    <td><?php echo $initiative->resolveAccomplishmentRate($period) ?></td>
-                    <td><?php echo $initiative->resolveBudgetBurnRate($period) ?></td>
+                    <td colspan="2"><?php echo $initiative->title; ?></td>
+                    <td colspan="1"><?php echo $initiative->resolveAccomplishmentRate($period) ?></td>
+                    <td colspan="1"><?php echo $initiative->resolveBudgetBurnRate($period) ?></td>
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>
-    </tbody>
-</table>
+        <!-- END INITIATIVE COMPONENT -->
 
-<table class="ink-table bordered">
-    <thead>
+        <!-- START UBT COMPONENT -->
+        <tr>
+            <th colspan="4">UNIT BREAKTHROUGHS</th>
+        </tr>
         <tr>
             <th style="text-align: left; width: 25%;" colspan="1">Unit</th>
             <th style="text-align: left; width: 50%;" colspan="2">Unit Breakthrough and Lead Measures</th>
-            <th style="text-align: left; width: 25%;" colspan="3">Movement Value</th>
+            <th style="text-align: left; width: 25%;" colspan="1">Movement Value</th>
         </tr>
-    </thead>
-    <tbody>
         <?php if (count($unitBreakthroughs) == 0): ?>
             <tr>
                 <td colspan="4">No Initiatives Aligned</td>
@@ -65,5 +66,6 @@ use org\csflu\isms\models\ubt\LeadMeasure;
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>
+        <!-- END UBT COMPONENT -->
     </tbody>
 </table>
