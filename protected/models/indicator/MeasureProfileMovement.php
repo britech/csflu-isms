@@ -45,9 +45,9 @@ class MeasureProfileMovement extends Model {
         }
 
         return "[Movement added]\n\n"
-                . "Period:\t{$this->periodDate->format('M Y')}"
+                . "Period:\t{$this->periodDate->format('M Y')}\n"
                 . "Value:\t{$this->movementValue}\n\n"
-                . "==========[Logs]\n{$logData}\n==========";
+                . "==========[Logs]==========\n{$logData}\n==========[Logs]==========";
     }
 
     public function __set($name, $value) {
