@@ -138,16 +138,10 @@ class Controller {
     }
 
     protected final function validatePostData(array $keyNames, $remote = false) {
-        $this->logger = \Logger::getLogger(__CLASS__);
         $counter = 0;
         $data = filter_input_array(INPUT_POST);
         if (is_null($data) || empty($data)) {
-            if ($remote) {
-                $this->renderAjaxJsonResponse(array('respCode' => '70'));
-                $this->logger->error("Parameter/s are needed to process this request");
-            } else {
-                throw new ControllerException("Parameter/s are needed to process this request");
-            }
+            throw new ControllerException("Parameter/s are needed to process this request");
         }
 
         foreach ($keyNames as $key) {
@@ -157,12 +151,7 @@ class Controller {
         }
 
         if ($counter > 0) {
-            if ($remote) {
-                $this->renderAjaxJsonResponse(array('respCode' => '70'));
-                $this->logger->error("Parameter/s are needed to process this request");
-            } else {
-                throw new ControllerException("Parameter/s are needed to process this request");
-            }
+            throw new ControllerException("Parameter/s are needed to process this request");
         }
     }
 
