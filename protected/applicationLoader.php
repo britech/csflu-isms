@@ -21,6 +21,7 @@ require_once 'controllers/support/CommitmentModuleSupport.php';
 require_once 'controllers/support/WigSessionControllerSupport.php';
 require_once 'controllers/support/UnitBreakthroughControllerSupport.php';
 require_once 'controllers/support/ActivityControllerSupport.php';
+require_once 'controllers/support/ScorecardControllerSupport.php';
 
 #logging extension
 require_once 'ext/log4php/Logger.php';

@@ -11,6 +11,7 @@ use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\indicator\MeasureProfileMovement;
 use org\csflu\isms\models\indicator\MeasureProfileMovementLog;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
+use org\csflu\isms\controllers\support\ScorecardControllerSupport;
 use org\csflu\isms\service\alignment\StrategyAlignmentServiceSimpleImpl;
 use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl as ScorecardManagementService;
 
@@ -19,6 +20,7 @@ class ScorecardController extends Controller {
     private $scorecardService;
     private $alignmentService;
     private $modelLoaderUtil;
+    private $controllerSupport;
     private $logger;
 
     public function __construct() {
@@ -26,6 +28,7 @@ class ScorecardController extends Controller {
         $this->scorecardService = new ScorecardManagementService();
         $this->alignmentService = new StrategyAlignmentServiceSimpleImpl();
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
+        $this->controllerSupport = ScorecardControllerSupport::getInstance($this);
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -98,7 +101,6 @@ class ScorecardController extends Controller {
             ),
             'movementModel' => $model,
             'movementLogModel' => new MeasureProfileMovementLog(),
-            'userModel' => $this->modelLoaderUtil->loadAccountModel(),
             'measureProfileModel' => $measureProfile,
             'period' => \DateTime::createFromFormat('Y-m-d', $model->periodDate)
         ));
@@ -106,21 +108,11 @@ class ScorecardController extends Controller {
 
     public function validateMovementInput() {
         try {
-            $this->validatePostData(array('MeasureProfileMovement', 'MeasureProfileMovementLog', 'UserAccount'));
-            $measureProfileMovementData = $this->getFormData('MeasureProfileMovement');
-            $measureProfileMovementLogData = $this->getFormData('MeasureProfileMovementLog');
-            $userAccountData = $this->getFormData('UserAccount');
+            $this->validatePostData(array('MeasureProfileMovement', 'MeasureProfileMovementLog'));
 
-            $measureProfileMovement = new MeasureProfileMovement();
-            $measureProfileMovement->bindValuesUsingArray(array(
-                'measureprofilemovement' => $measureProfileMovementData
-            ));
+            $measureProfileMovement = $this->controllerSupport->constructMovementEntity();
+            $measureProfileMovementLog = $this->controllerSupport->constructMovementLogEntity();
 
-            $measureProfileMovementLog = new MeasureProfileMovementLog();
-            $measureProfileMovementLog->bindValuesUsingArray(array(
-                'measureprofilemovementlog' => $measureProfileMovementLogData,
-                'user' => $userAccountData
-            ));
             $measureProfileMovement->validate();
             $measureProfileMovementLog->validate();
             $validationMessages = array_merge($measureProfileMovement->validationMessages, $measureProfileMovementLog->validationMessages);
