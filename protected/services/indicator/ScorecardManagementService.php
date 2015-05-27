@@ -6,6 +6,7 @@ use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\indicator\LeadOffice;
 use org\csflu\isms\models\indicator\Target;
 use org\csflu\isms\models\map\StrategyMap;
+use org\csflu\isms\models\indicator\MeasureProfileMovement;
 use org\csflu\isms\exceptions\ServiceException;
 
 /**
@@ -61,13 +62,13 @@ interface ScorecardManagementService {
      * @throws ServiceException
      */
     public function insertLeadOffices(MeasureProfile $measureProfile);
-    
+
     /**
      * Updates the LeadOffice entity
      * @param LeadOffice $leadOffice
      */
     public function updateLeadOffice(LeadOffice $leadOffice);
-    
+
     /**
      * Deletes the LeadOffice entity
      * @param LeadOffice $id
@@ -80,19 +81,19 @@ interface ScorecardManagementService {
      * @throws ServiceException
      */
     public function insertTargets(MeasureProfile $measureProfile);
-    
+
     /**
      * Updates the Target entity
      * @param Target $target
      */
     public function updateTarget(Target $target);
-    
+
     /**
      * Deletes the Target entity
      * @param String $id
      */
     public function deleteTarget($id);
-    
+
     /**
      * Retrieves a Target entity under the selected Measure Profile
      * @param MeasureProfile $measureProfile
@@ -100,4 +101,18 @@ interface ScorecardManagementService {
      * @return Target Description
      */
     public function getTarget(MeasureProfile $measureProfile, $id);
+
+    /**
+     * Enlists the movement of the selected MeasureProfile entity
+     * @param MeasureProfile $measureProfile
+     * @param MeasureProfileMovement $measureProfileMovement
+     */
+    public function enlistMovement(MeasureProfile $measureProfile, MeasureProfileMovement $measureProfileMovement);
+
+    /**
+     * Updates the enlisted movement of the selected MeasureProfile entity
+     * @param MeasureProfile $measureProfile
+     * @param MeasureProfileMovement $measureProfileMovement
+     */
+    public function updateMovement(MeasureProfile $measureProfile, MeasureProfileMovement $measureProfileMovement);
 }

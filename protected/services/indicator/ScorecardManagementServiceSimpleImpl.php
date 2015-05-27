@@ -5,11 +5,13 @@ namespace org\csflu\isms\service\indicator;
 use org\csflu\isms\service\indicator\ScorecardManagementService;
 use org\csflu\isms\dao\indicator\MeasureProfileDaoSqlImpl as MeasureProfileDao;
 use org\csflu\isms\dao\map\StrategyMapDaoSqlImpl as StrategyMapDao;
+use org\csflu\isms\dao\indicator\MeasureProfileMovementDaoSqlImpl;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\models\map\StrategyMap;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\indicator\LeadOffice;
 use org\csflu\isms\models\indicator\Target;
+use org\csflu\isms\models\indicator\MeasureProfileMovement;
 
 /**
  * Description of ScorecardManagementServiceSimpleImpl
@@ -19,12 +21,14 @@ use org\csflu\isms\models\indicator\Target;
 class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService {
 
     private $daoSource;
+    private $movementDaoSource;
     private $mapDaoSource;
     private $logger;
 
     public function __construct() {
         $this->daoSource = new MeasureProfileDao();
         $this->mapDaoSource = new StrategyMapDao();
+        $this->movementDaoSource = new MeasureProfileMovementDaoSqlImpl();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
@@ -157,6 +161,14 @@ class ScorecardManagementServiceSimpleImpl implements ScorecardManagementService
 
     public function deleteTarget($id) {
         $this->daoSource->deleteTarget($id);
+    }
+
+    public function enlistMovement(MeasureProfile $measureProfile, MeasureProfileMovement $measureProfileMovement) {
+        $this->movementDaoSource->insertMovement($measureProfile, $measureProfileMovement);
+    }
+
+    public function updateMovement(MeasureProfile $measureProfile, MeasureProfileMovement $measureProfileMovement) {
+        $this->movementDaoSource->updateMovement($measureProfile, $measureProfileMovement);
     }
 
 }
