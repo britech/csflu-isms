@@ -23,10 +23,6 @@ class MeasureProfileMovement extends Model {
             array_push($this->validationMessages, '- Time Period should be defined');
         }
 
-        if (!strlen($this->movementValue) > 0) {
-            array_push($this->validationMessages, '- Movement value should be defined');
-        }
-
         return count($this->validationMessages) == 0;
     }
 
