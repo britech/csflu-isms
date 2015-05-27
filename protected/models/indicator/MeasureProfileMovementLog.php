@@ -46,6 +46,12 @@ class MeasureProfileMovementLog extends Model {
         );
     }
 
+    public function getModelTranslationAsNewEntity() {
+        return "[Log Entry]\n\n"
+                . "User:\t{$this->user->employee->id}\n"
+                . "Remarks:\t" . nl2br(implode("\n", explode("+", $this->notes)));
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }

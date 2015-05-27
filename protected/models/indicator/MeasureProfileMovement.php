@@ -38,6 +38,18 @@ class MeasureProfileMovement extends Model {
         );
     }
 
+    public function getModelTranslationAsNewEntity() {
+        $logData = "";
+        foreach ($this->movementLogs as $movementLog) {
+            $logData.="{$movementLog->getModelTranslationAsNewEntity()}";
+        }
+
+        return "[Movement added]\n\n"
+                . "Period:\t{$this->periodDate->format('M Y')}"
+                . "Value:\t{$this->movementValue}\n\n"
+                . "==========[Logs]\n{$logData}\n==========";
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
