@@ -3,6 +3,7 @@
 namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
+use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\map\Objective;
@@ -101,6 +102,38 @@ class ScorecardController extends Controller {
             'measureProfileModel' => $measureProfile,
             'period' => \DateTime::createFromFormat('Y-m-d', $model->periodDate)
         ));
+    }
+
+    public function validateMovementInput() {
+        try {
+            $this->validatePostData(array('MeasureProfileMovement', 'MeasureProfileMovementLog', 'UserAccount'));
+            $measureProfileMovementData = $this->getFormData('MeasureProfileMovement');
+            $measureProfileMovementLogData = $this->getFormData('MeasureProfileMovementLog');
+            $userAccountData = $this->getFormData('UserAccount');
+
+            $measureProfileMovement = new MeasureProfileMovement();
+            $measureProfileMovement->bindValuesUsingArray(array(
+                'measureprofilemovement' => $measureProfileMovementData
+            ));
+
+            $measureProfileMovementLog = new MeasureProfileMovementLog();
+            $measureProfileMovementLog->bindValuesUsingArray(array(
+                'measureprofilemovementlog' => $measureProfileMovementLogData,
+                'user' => $userAccountData
+            ));
+            $measureProfileMovement->validate();
+            $measureProfileMovementLog->validate();
+            $validationMessages = array_merge($measureProfileMovement->validationMessages, $measureProfileMovementLog->validationMessages);
+
+            if (count($validationMessages) == 0) {
+                $this->renderAjaxJsonResponse(array('respCode' => '00'));
+            } else {
+                $this->viewWarningPage('Validation error/s. Please check your entries', nl2br(implode("\n", $validationMessages)));
+            }
+        } catch (ControllerException $ex) {
+            $this->renderAjaxJsonResponse(array('respCode' => '70'));
+            $this->logger->error($ex->getMessage(), $ex);
+        }
     }
 
     private function resolveMovementModel(MeasureProfile $measureProfile, \DateTime $period) {

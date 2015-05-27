@@ -22,6 +22,8 @@ $form = new ModelFormGenerator(array(
         <div class="ink-alert basic info">
             <strong>Important Note:&nbsp;</strong>Fields with * are required
         </div>
+        <?php $this->renderPartial('commons/_validation', array('message' => $notif)); ?>
+        <div id="validation-container"></div>
         <div class="control-group">
             <?php echo $form->renderLabel($measureProfileModel, 'indicator'); ?>
             <div class="control">

@@ -17,6 +17,34 @@ $(document).ready(function() {
     });
 
     $(".ink-form").submit(function() {
-        return false;
+        var result = false;
+
+        $.ajax({
+            type: "POST",
+            url: "?r=scorecard/validateMovementInput",
+            data: {
+                "MeasureProfileMovement": {
+                    'movementValue': $("[name*=movementValue]").val(),
+                    'periodDate': $("[name*=periodDate]").val()
+                },
+                "MeasureProfileMovementLog": {
+                    'notes': $("[name*=notes]").val()
+                },
+                "UserAccount": {
+                    'id': $("#user").val()
+                }
+            },
+            async: false,
+            success: function(data) {
+                try {
+                    response = $.parseJSON(data);
+                    result = response.respCode === '00';
+                } catch (e) {
+                    $("#validation-container").html(data);
+                }
+            }
+        });
+
+        return result;
     });
 });
