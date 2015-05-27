@@ -10,6 +10,8 @@ use org\csflu\isms\models\map\Objective;
 use org\csflu\isms\models\indicator\MeasureProfile;
 use org\csflu\isms\models\indicator\MeasureProfileMovement;
 use org\csflu\isms\models\indicator\MeasureProfileMovementLog;
+use org\csflu\isms\models\commons\RevisionHistory;
+use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\controllers\support\ScorecardControllerSupport;
 use org\csflu\isms\service\alignment\StrategyAlignmentServiceSimpleImpl;
@@ -81,8 +83,10 @@ class ScorecardController extends Controller {
             'period' => $periodDate,
             'model' => $this->resolveMovementModel($measureProfile, $periodDate),
             'initiatives' => $this->alignmentService->listAlignedInitiatives($strategyMap, null, $measureProfile),
-            'unitBreakthroughs' => $this->alignmentService->listAlignedUnitBreakthroughs($strategyMap, null, $measureProfile)
+            'unitBreakthroughs' => $this->alignmentService->listAlignedUnitBreakthroughs($strategyMap, null, $measureProfile),
+            'notif' => $this->getSessionData('notif')
         ));
+        $this->unsetSessionData('notif');
     }
 
     public function enlistMovement($measure, $period) {
@@ -126,6 +130,32 @@ class ScorecardController extends Controller {
             $this->renderAjaxJsonResponse(array('respCode' => '70'));
             $this->logger->error($ex->getMessage(), $ex);
         }
+    }
+
+    public function insertMovement() {
+        $this->validatePostData(array('MeasureProfileMovement', 'MeasureProfileMovementLog', 'MeasureProfile'));
+
+        $id = $this->getFormData('MeasureProfile')['id'];
+        $measureProfile = $this->loadMeasureProfileModel($id);
+
+        $movementLog = $this->controllerSupport->constructMovementLogEntity();
+        $movement = $this->controllerSupport->constructMovementEntity();
+        $movement->movementLogs = array($movementLog);
+
+        $movementLog->validate();
+        $movement->validate();
+        $validationMessages = array_merge($movement->validationMessages, $movementLog->validationMessages);
+
+        if (count($validationMessages) > 0) {
+            $this->setSessionData('validation', $validationMessages);
+            $this->redirect(array('scorecard/enlistMovement', 'measure' => $measureProfile->id, 'period' => $movement->periodDate->format('Y-m')));
+            return;
+        }
+
+        $this->scorecardService->enlistMovement($measureProfile, $movement);
+        $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SCARD, $measureProfile->id, $movement);
+        $this->setSessionData('notif', array('class' => 'success', 'message' => 'Movement successfully logged'));
+        $this->redirect(array('scorecard/movements', 'measure' => $measureProfile->id, 'period' => $movement->periodDate->format('Y-m')));
     }
 
     private function resolveMovementModel(MeasureProfile $measureProfile, \DateTime $period) {
