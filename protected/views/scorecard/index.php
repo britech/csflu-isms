@@ -3,6 +3,8 @@
 namespace org\csflu\isms\views;
 
 use org\csflu\isms\models\ubt\LeadMeasure;
+
+$this->renderPartial('commons/_notification', array('notif' => $notif));
 ?>
 <table class="ink-table bordered">
     <tbody>
