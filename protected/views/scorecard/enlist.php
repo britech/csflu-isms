@@ -58,7 +58,6 @@ $form = new ModelFormGenerator(array(
         <?php echo $form->renderHiddenField($measureProfileModel, 'id'); ?>
         <?php echo $form->renderHiddenField($movementModel, 'periodDate'); ?>
         <?php echo $form->renderHiddenField($movementModel, 'movementValue'); ?>
-        <?php echo $form->renderHiddenField($userModel, 'id', array(ModelFormGenerator::PROPERTY_ID => 'user')); ?>
         <?php echo $form->endComponent(); ?>
     </div>
 </div>

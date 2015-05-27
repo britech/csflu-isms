@@ -29,9 +29,6 @@ $(document).ready(function() {
                 },
                 "MeasureProfileMovementLog": {
                     'notes': $("[name*=notes]").val()
-                },
-                "UserAccount": {
-                    'id': $("#user").val()
                 }
             },
             async: false,
