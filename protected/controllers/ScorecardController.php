@@ -202,13 +202,57 @@ class ScorecardController extends Controller {
             $this->redirect(array('scorecard/updateMovement', 'measure' => $measureProfile->id, 'period' => $movement->periodDate->format('Y-m')));
             return;
         }
-        
+
         if ($movement->computePropertyChanges($oldModel) > 0) {
             $this->scorecardService->updateMovement($measureProfile, $movement);
             $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SCARD, $measureProfile->id, $movement);
             $this->setSessionData('notif', array('class' => 'info', 'message' => 'Movement successfully updated'));
         }
         $this->redirect(array('scorecard/movements', 'measure' => $measureProfile->id, 'period' => $movement->periodDate->format('Y-m')));
+    }
+
+    public function movementLog($measure, $period) {
+        $measureProfile = $this->loadMeasureProfileModel($measure);
+        $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
+
+        $this->title = ApplicationConstants::APP_NAME . ' - Movement Logs';
+        $this->layout = "column-2";
+        $this->render('scorecard/movement-log', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Manage Movements' => array('scorecard/movements', 'measure' => $measureProfile->id, 'period' => $period),
+                'Movement Log' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'scorecard/_log-navi'
+            ),
+            'profileId' => $measureProfile->id,
+            'period' => "{$period}-1"
+        ));
+    }
+
+    public function listMovements() {
+        $this->validatePostData(array('measure', 'period'));
+
+        $id = $this->getFormData('measure');
+        $measureProfile = $this->loadMeasureProfileModel($id);
+
+        $period = $this->getFormData('period');
+        $date = \DateTime::createFromFormat('Y-m-d', $period);
+
+        $movement = $this->resolveMovementModel($measureProfile, $date);
+        $data = array();
+        foreach ($movement->movementLogs as $movementLog) {
+            array_push($data, array(
+                'logStamp' => $movementLog->dateEntered->format('M d, Y H:i:s'),
+                'user' => $movementLog->user->employee->getShortName(),
+                'logs' => nl2br(implode("\n", explode("+", $movementLog->notes)))
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
     private function resolveMovementModel(MeasureProfile $measureProfile, \DateTime $period) {
