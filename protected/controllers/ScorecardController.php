@@ -158,6 +158,59 @@ class ScorecardController extends Controller {
         $this->redirect(array('scorecard/movements', 'measure' => $measureProfile->id, 'period' => $movement->periodDate->format('Y-m')));
     }
 
+    public function updateMovement($measure = null, $period = null) {
+        if (is_null($measure) && is_null($period)) {
+            $this->validatePostData(array('MeasureProfileMovement', 'MeasureProfileMovementLog', 'MeasureProfile'));
+            $this->processMovementUpdate();
+        }
+
+        $measureProfile = $this->loadMeasureProfileModel($measure);
+        $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
+        $movement = new MeasureProfileMovement();
+        $movement->periodDate = "{$period}-1";
+        $this->render('scorecard/update', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Measure Profiles' => array('measure/index', 'map' => $strategyMap->id),
+                'Manage Movements' => array('scorecard/movements', 'measure' => $measureProfile->id, 'period' => $period),
+                'Update Movement' => 'active'
+            ),
+            'movementModel' => $movement,
+            'movementLogModel' => new MeasureProfileMovementLog(),
+            'measureProfileModel' => $measureProfile,
+            'period' => \DateTime::createFromFormat('Y-m-d', "{$period}-1")
+        ));
+    }
+
+    private function processMovementUpdate() {
+        $id = $this->getFormData('MeasureProfile')['id'];
+        $measureProfile = $this->loadMeasureProfileModel($id);
+
+        $movementLog = $this->controllerSupport->constructMovementLogEntity();
+        $movement = $this->controllerSupport->constructMovementEntity();
+        $movement->movementLogs = array($movementLog);
+        $oldModel = $this->resolveMovementModel($measureProfile, $movement->periodDate);
+
+        $movementLog->validate();
+        $movement->validate();
+        $validationMessages = array_merge($movement->validationMessages, $movementLog->validationMessages);
+
+        if (count($validationMessages) > 0) {
+            $this->setSessionData('validation', $validationMessages);
+            $this->redirect(array('scorecard/updateMovement', 'measure' => $measureProfile->id, 'period' => $movement->periodDate->format('Y-m')));
+            return;
+        }
+        
+        if ($movement->computePropertyChanges($oldModel) > 0) {
+            $this->scorecardService->updateMovement($measureProfile, $movement);
+            $this->logRevision(RevisionHistory::TYPE_INSERT, ModuleAction::MODULE_SCARD, $measureProfile->id, $movement);
+            $this->setSessionData('notif', array('class' => 'info', 'message' => 'Movement successfully updated'));
+        }
+        $this->redirect(array('scorecard/movements', 'measure' => $measureProfile->id, 'period' => $movement->periodDate->format('Y-m')));
+    }
+
     private function resolveMovementModel(MeasureProfile $measureProfile, \DateTime $period) {
         foreach ($measureProfile->movements as $movement) {
             if ($movement->periodDate == $period) {
