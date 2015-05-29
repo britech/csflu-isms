@@ -27,34 +27,40 @@ class Employee extends Model {
     private $department;
     private $position;
     private $loginAccount;
-    
+
     public function validate() {
         
     }
-    
+
     public function bindValuesUsingArray(array $valueArray) {
-        if(array_key_exists('department', $valueArray)){
+        if (array_key_exists('department', $valueArray)) {
             $this->department = new Department();
             $this->department->bindValuesUsingArray($valueArray, $this->department);
-        } 
-        
-        if(array_key_exists('position', $valueArray)){
+        }
+
+        if (array_key_exists('position', $valueArray)) {
             $this->position = new Position();
             $this->position->bindValuesUsingArray($valueArray, $this->position);
         }
-        
-        if(array_key_exists('loginaccount', $valueArray)){
+
+        if (array_key_exists('loginaccount', $valueArray)) {
             $this->loginAccount = new LoginAccount();
             $this->loginAccount->bindValuesUsingArray($valueArray, $this->loginAccount);
         }
         parent::bindValuesUsingArray($valueArray, $this);
     }
-    
+
+    public function getShortName() {
+        $firstName = substr($this->givenName, 0, 1);
+        return "{$firstName}. {$this->lastName}";
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
-    
+
     public function __get($name) {
         return $this->$name;
     }
+
 }
