@@ -50,6 +50,10 @@ class MeasureProfileMovement extends Model {
                 . "==========[Logs]==========\n{$logData}\n==========[Logs]==========";
     }
 
+    public function computePropertyChanges(MeasureProfileMovement $oldModel) {
+        return $this->movementValue != $oldModel->movementValue ? 1 : 0;
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
