@@ -7,16 +7,33 @@ use org\csflu\isms\models\ubt\LeadMeasure;
 $this->renderPartial('commons/_notification', array('notif' => $notif));
 ?>
 <table class="ink-table bordered">
+    <thead>
+        <tr>
+            <th colspan="3">SCORECARD MOVEMENT</th>
+        </tr>
+    </thead>
     <tbody>
-        <!-- START INITIATIVE COMPONENT -->
+        <tr>
+            <td style="width: 50%; font-weight: bold;"><?php echo $measureProfile->indicator->description; ?></td>
+            <td style="width: 25%; font-weight: bold;">&nbsp;</td>
+            <td style="width: 25%; font-weight: bold;">&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="ink-table bordered">
+    <thead>
         <tr>
             <th colspan="4">INITIATIVES</th>
         </tr>
         <tr>
-            <th style="text-align: left;" colspan="2">Initiative</th>
-            <th style="text-align: left;" colspan="1">Accomplishment Rate</th>
-            <th style="text-align: left;" colspan="1">Budget Burn Rate</th>
+            <th style="text-align: left; width: 33%">Initiative</th>
+            <th style="text-align: left; width: 33%">Accomplishment Rate</th>
+            <th style="text-align: left; width: 33%">Budget Burn Rate</th>
         </tr>
+    </thead>
+    <tbody>
+
         <?php if (count($initiatives) == 0): ?>
             <tr>
                 <td colspan="3">No Initiatives Aligned</td>
@@ -24,15 +41,17 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
         <?php else: ?>
             <?php foreach ($initiatives as $initiative): ?>
                 <tr>
-                    <td colspan="2"><?php echo $initiative->title; ?></td>
-                    <td colspan="1"><?php echo $initiative->resolveAccomplishmentRate($period) ?></td>
-                    <td colspan="1"><?php echo $initiative->resolveBudgetBurnRate($period) ?></td>
+                    <td><?php echo $initiative->title; ?></td>
+                    <td><?php echo $initiative->resolveAccomplishmentRate($period) ?></td>
+                    <td><?php echo $initiative->resolveBudgetBurnRate($period) ?></td>
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>
-        <!-- END INITIATIVE COMPONENT -->
+    </tbody>
+</table>
 
-        <!-- START UBT COMPONENT -->
+<table class="ink-table bordered">
+    <thead>
         <tr>
             <th colspan="4">UNIT BREAKTHROUGHS</th>
         </tr>
@@ -41,9 +60,11 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
             <th style="text-align: left; width: 50%;" colspan="2">Unit Breakthrough and Lead Measures</th>
             <th style="text-align: left; width: 25%;" colspan="1">Movement Value</th>
         </tr>
+    </thead>
+    <tbody>       
         <?php if (count($unitBreakthroughs) == 0): ?>
             <tr>
-                <td colspan="4">No Initiatives Aligned</td>
+                <td colspan="4">No Unit Breakthroughs Aligned</td>
             </tr>
         <?php else: ?>
             <?php
@@ -68,6 +89,5 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>
-        <!-- END UBT COMPONENT -->
     </tbody>
 </table>
