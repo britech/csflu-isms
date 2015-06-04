@@ -298,9 +298,9 @@ class UnitBreakthrough extends Model {
             return "No Movement";
         } else {
             if ($designation == LeadMeasure::DESIGNATION_1) {
-                return number_format($output) . " {$uom1}";
+                return number_format($output, 2) . " {$uom1}";
             } elseif ($designation == LeadMeasure::DESIGNATION_2) {
-                return number_format($output) . " {$uom2}";
+                return number_format($output, 2) . " {$uom2}";
             }
         }
     }
