@@ -263,7 +263,7 @@ class UnitBreakthrough extends Model {
         $value = 0.00;
 
         foreach ($this->wigMeetings as $wigMeeting) {
-            if ($wigMeeting->startingPeriod >= $period && $period <= $wigMeeting->endingPeriod) {
+            if ($wigMeeting->endingPeriod <= $period) {
                 $value += $wigMeeting->computeUbtMovement();
             }
         }
@@ -273,14 +273,14 @@ class UnitBreakthrough extends Model {
 
     public function resolveUnitBreakthroughMovement(\DateTime $period) {
         $output = $this->computeUnitBreakthroughMovement($period);
-        return empty($output) ? "No Movement" : number_format($output) . " {$this->uom->description}";
+        return empty($output) ? "-" : number_format($output) . " {$this->uom->description}";
     }
 
     public function computeLeadMeasuresMovement(\DateTime $period, $designation) {
         $value = 0.00;
         $this->filterLeadMeasures($period);
         foreach ($this->wigMeetings as $wigMeeting) {
-            if ($wigMeeting->startingPeriod >= $period && $period <= $wigMeeting->endingPeriod) {
+            if ($wigMeeting->endingPeriod <= $period) {
                 $value += ($designation == LeadMeasure::DESIGNATION_1) ? $wigMeeting->computeFirstLeadMeasureMovement() : $wigMeeting->computeSecondLeadMeasureMovement();
             }
         }
@@ -295,7 +295,7 @@ class UnitBreakthrough extends Model {
         $uom2 = $this->leadMeasures[1]->uom->getAppropriateUomDisplay();
 
         if (empty($output)) {
-            return "No Movement";
+            return "-";
         } else {
             if ($designation == LeadMeasure::DESIGNATION_1) {
                 return number_format($output, 2) . " {$uom1}";

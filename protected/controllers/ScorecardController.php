@@ -80,7 +80,7 @@ class ScorecardController extends Controller {
                 self::SUB_COMPONENT_SIDEBAR_FILE => 'scorecard/_index-navi'
             ),
             'measureProfile' => $measureProfile,
-            'period' => $periodDate,
+            'period' => ApplicationUtils::generateEndingPeriodDate($periodDate),
             'model' => $this->resolveMovementModel($measureProfile, $periodDate),
             'initiatives' => $this->alignmentService->listAlignedInitiatives($strategyMap, null, $measureProfile),
             'unitBreakthroughs' => $this->alignmentService->listAlignedUnitBreakthroughs($strategyMap, null, $measureProfile),
