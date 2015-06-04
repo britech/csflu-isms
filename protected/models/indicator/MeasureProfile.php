@@ -250,6 +250,24 @@ class MeasureProfile extends Model {
         return $message . implode("\n", $data);
     }
 
+    public function resolveLatestMovementValue(\DateTime $date) {
+        foreach ($this->movements as $movement) {
+            if ($date >= $movement->periodDate && $movement->periodDate <= $date) {
+                return "{$movement->movementValue} {$this->indicator->uom->getAppropriateUomDisplay()}";
+            }
+        }
+        return "-";
+    }
+    
+    public function resolveLatestMovementRemarks(\DateTime $date){
+        foreach($this->movements as $movement){
+            if($date >= $movement->periodDate && $movement->periodDate <= $date){
+                return nl2br(implode("\n", explode("+", $movement->movementLogs[0]->notes)));
+            }
+        }
+        return "-";
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }

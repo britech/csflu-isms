@@ -14,9 +14,13 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
     </thead>
     <tbody>
         <tr>
-            <td style="width: 50%; font-weight: bold;"><?php echo $measureProfile->indicator->description; ?></td>
-            <td style="width: 25%; font-weight: bold;">&nbsp;</td>
-            <td style="width: 25%; font-weight: bold;">&nbsp;</td>
+            <td style="width: 50%; font-weight: bold;" rowspan="2"><?php echo $measureProfile->indicator->description; ?></td>
+            <td style="width: 25%;">Movement as of<br/><?php echo $period->format('F Y') ?></td>
+            <td style="width: 25%;">Remarks</td>
+        </tr>
+        <tr>
+            <td style="width: 25%; font-weight: bold; border-left: #bbbbbb solid 1px;"><?php echo $measureProfile->resolveLatestMovementValue($period); ?></td>
+            <td style="width: 25%; font-weight: bold;"><?php echo $measureProfile->resolveLatestMovementRemarks($period);?></td>
         </tr>
     </tbody>
 </table>
