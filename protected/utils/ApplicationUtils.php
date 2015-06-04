@@ -3,6 +3,7 @@
 namespace org\csflu\isms\util;
 
 use org\csflu\isms\exceptions\ApplicationException;
+
 /**
  * 
  * @author britech
@@ -75,6 +76,42 @@ class ApplicationUtils {
             }
         }
         return array_combine($listValues, $listNames);
+    }
+
+    /**
+     * 
+     * @param \DateTime $period
+     * @return \DateTime
+     */
+    public static function generateEndingPeriodDate(\DateTime $period) {
+        $year = intval($period->format('Y'));
+        $month = intval($period->format('n'));
+        $day = 1;
+
+        switch ($month) {
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
+                $day = "31";
+                break;
+            
+            case 4:
+            case 6:
+            case 7:
+            case 11:
+                $day = "30";
+                break;
+            
+            case 2:
+                $day = boolval($period->format('L')) ? "29" : "28";
+                break;
+        }
+
+        return \DateTime::createFromFormat('Y-n-d', "{$year}-{$month}-{$day}");
     }
 
 }
