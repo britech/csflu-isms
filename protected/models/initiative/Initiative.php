@@ -257,7 +257,7 @@ class Initiative extends Model {
                 $filteredPhases = array_merge($filteredPhases, array($phase));
             }
         }
-        $this->phases = $filteredPhases;
+        return $filteredPhases;
     }
 
     private function filterActivities(Component $component, \DateTime $date) {
@@ -271,11 +271,11 @@ class Initiative extends Model {
     }
 
     public function computeAccomplishmentRate(\DateTime $date) {
-        $this->filterPhases($date);
-        if (count($this->phases) > 0) {
+        $phases = $this->filterPhases($date);
+        if (count($phases) > 0) {
             $numberOfActivities = 0;
             $completionPercentage = 0.00;
-            foreach ($this->phases as $phase) {
+            foreach ($phases as $phase) {
                 $numberOfActivities += $this->countTotalActivities($phase);
                 $completionPercentage += $this->countTotalCompletionPercentage($phase, $date);
             }
@@ -305,11 +305,11 @@ class Initiative extends Model {
     }
 
     public function computeBudgetBurnRate(\DateTime $date) {
-        $this->filterPhases($date);
-        if (count($this->phases) > 0) {
+        $phases = $this->filterPhases($date);
+        if (count($phases) > 0) {
             $budgetAmount = 0.00;
             $utilizedBudgetAmount = 0.00;
-            foreach ($this->phases as $phase) {
+            foreach ($phases as $phase) {
                 $budgetAmount += $this->countTotalBudgetAllocation($phase);
                 $utilizedBudgetAmount += $this->countTotalRemainingBudget($phase, $date);
             }

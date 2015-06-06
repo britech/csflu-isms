@@ -27,7 +27,7 @@ class ReportController extends Controller {
         $date = "{$period}-1";
         $periodDate = \DateTime::createFromFormat('Y-m-d', $date);
         $initiative = $this->modelLoaderUtil->loadInitiativeModel($id);
-        $initiative->filterPhases($periodDate);
+        $initiative->phases = $initiative->filterPhases($periodDate);
 
         if (count($initiative->phases) == 0) {
             $this->setSessionData('notif', array('message' => 'Update Report cannot be generated'));

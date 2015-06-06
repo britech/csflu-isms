@@ -39,7 +39,8 @@ class ActivityController extends Controller {
     public function index($initiative, $period) {
         $date = \DateTime::createFromFormat('Y-m-d', "{$period}-1");
         $data = $this->loadInitiativeModel($initiative);
-
+        $data->phases = $data->filterPhases($date);
+        
         $this->title = ApplicationConstants::APP_NAME . ' - Activity Dashboard';
         $this->layout = 'column-2';
         $this->render('activity/index', array(
