@@ -20,7 +20,7 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
         </tr>
         <tr>
             <td style="width: 25%; font-weight: bold; border-left: #bbbbbb solid 1px;"><?php echo $measureProfile->resolveLatestMovementValue($period); ?></td>
-            <td style="width: 25%; font-weight: bold;"><?php echo $measureProfile->resolveLatestMovementRemarks($period);?></td>
+            <td style="width: 25%; font-weight: bold;"><?php echo $measureProfile->resolveLatestMovementRemarks($period); ?></td>
         </tr>
     </tbody>
 </table>
@@ -37,7 +37,6 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
         </tr>
     </thead>
     <tbody>
-
         <?php if (count($initiatives) == 0): ?>
             <tr>
                 <td colspan="3">No Initiatives Aligned</td>
@@ -46,8 +45,15 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
             <?php foreach ($initiatives as $initiative): ?>
                 <tr>
                     <td><?php echo $initiative->title; ?></td>
-                    <td><?php echo $initiative->resolveAccomplishmentRate($period) ?></td>
-                    <td><?php echo $initiative->resolveBudgetBurnRate($period) ?></td>
+                    <?php
+                    $phaseCount = count($initiative->filterPhases($period));
+                    if (empty($phaseCount)):
+                        ?>
+                        <td colspan="2">No activities defined</td>
+                    <?php else: ?>
+                        <td><?php echo $initiative->resolveAccomplishmentRate($period) ?></td>
+                        <td><?php echo $initiative->resolveBudgetBurnRate($period) ?></td>
+                    <?php endif; ?>
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>
