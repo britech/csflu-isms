@@ -266,7 +266,7 @@ class Activity extends Model {
         if (strlen($this->targetFigure) > 0) {
             $actual = $this->resolveActualFigure($period);
             $target = floatval($this->targetFigure);
-            $percentage = (($actual - $target) / $target) * 100;
+            $percentage = ($actual/ $target) * 100;
             return $percentage > 0 ? $percentage : 0;
         } else {
             switch ($this->activityEnvironmentStatus) {
