@@ -130,6 +130,14 @@ class MeasureProfile extends Model {
         return array(self::TYPE_LEAD => 'Lead Measure',
             self::TYPE_LAG => 'Lag Measure');
     }
+    
+    public function translateFrequencyTypeCode($code = null){
+        $frequencyCode = is_null($code) ? $this->frequencyOfMeasure : $code;
+        if(array_key_exists($frequencyCode, self::getFrequencyTypes())){
+            return self::getFrequencyTypes()[$frequencyCode];
+        }
+        return "Undefined";
+    }
 
     public static function getFrequencyTypes() {
         return array(self::FREQUENCY_DAILY => 'Daily',
