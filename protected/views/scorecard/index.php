@@ -46,8 +46,7 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
                 <tr>
                     <td><?php echo $initiative->title; ?></td>
                     <?php
-                    $phaseCount = count($initiative->filterPhases($period));
-                    if (empty($phaseCount)):
+                    if (empty($initiative->countActivities())):
                         ?>
                         <td colspan="2">No activities defined</td>
                     <?php else: ?>

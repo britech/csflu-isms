@@ -292,6 +292,14 @@ class Initiative extends Model {
         return $numberOfActivities;
     }
 
+    public function countActivities() {
+        $totalActivities = 0;
+        foreach($this->phases as $phase){
+            $totalActivities += $this->countTotalActivities($phase);
+        }
+        return $totalActivities;
+    }
+
     private function countTotalCompletionPercentage(Phase $phase, \DateTime $period) {
         $completionPercentage = 0.00;
         foreach ($phase->components as $component) {
