@@ -78,7 +78,7 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
         <?php else: ?>
             <?php
             foreach ($unitBreakthroughs as $unitBreakthrough):
-                $unitBreakthrough->filterLeadMeasures($period);
+                $leadMeasures = $unitBreakthrough->filterLeadMeasures($period);
                 ?>
                 <tr>
                     <td rowspan="3"><?php echo $unitBreakthrough->unit->name; ?></td>
@@ -88,12 +88,12 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
                 </tr>
                 <tr>
                     <td style="border-left: #bbbbbb solid 1px; font-size: 10px;">Lead Measure 1</td>
-                    <td><?php echo $unitBreakthrough->leadMeasures[0]->description ?></td>
+                    <td><?php echo $leadMeasures[0]->description ?></td>
                     <td><?php echo $unitBreakthrough->resolveLeadMeasuresMovement($period, LeadMeasure::DESIGNATION_1); ?></td>
                 </tr>
                 <tr>
                     <td style="border-left: #bbbbbb solid 1px; font-size: 10px;">Lead Measure 2</td>
-                    <td><?php echo $unitBreakthrough->leadMeasures[1]->description ?></td>
+                    <td><?php echo $leadMeasures[1]->description ?></td>
                     <td><?php echo $unitBreakthrough->resolveLeadMeasuresMovement($period, LeadMeasure::DESIGNATION_2); ?></td>
                 </tr>
             <?php endforeach; ?>

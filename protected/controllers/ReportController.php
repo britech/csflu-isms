@@ -3,8 +3,10 @@
 namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
+use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl;
+use org\csflu\isms\service\alignment\StrategyAlignmentServiceSimpleImpl;
 
 /**
  * Description of ReportController
@@ -15,12 +17,14 @@ class ReportController extends Controller {
 
     private $logger;
     private $initiativeService;
+    private $alignmentService;
     private $modelLoaderUtil;
 
     public function __construct() {
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->initiativeService = new InitiativeManagementServiceSimpleImpl();
+        $this->alignmentService = new StrategyAlignmentServiceSimpleImpl();
     }
 
     public function initiativeUpdate($id, $period) {
@@ -77,6 +81,20 @@ class ReportController extends Controller {
             'beneficiaries' => implode(', ', explode('+', $initiative->beneficiaries)),
             'teams' => nl2br($teams),
             'advisers' => nl2br(implode("\n", explode('+', $initiative->advisers)))
+        ));
+    }
+
+    public function scorecardUpdate($measure, $period) {
+        $date = ApplicationUtils::generateEndingPeriodDate(\DateTime::createFromFormat('Y-m-d', "{$period}-1"));
+        $measureProfile = $this->modelLoaderUtil->loadMeasureProfileModel($measure);
+        $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, $measureProfile->objective);
+
+        $this->render('report/scorecard-update', array(
+            'period' => $date,
+            'strategyMap' => $strategyMap,
+            'measureProfile' => $measureProfile,
+            'initiatives' => $this->alignmentService->listAlignedInitiatives($strategyMap, null, $measureProfile),
+            'unitBreakthroughs' => $this->alignmentService->listAlignedUnitBreakthroughs($strategyMap, null, $measureProfile)
         ));
     }
 
