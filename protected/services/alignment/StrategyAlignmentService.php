@@ -15,6 +15,14 @@ use org\csflu\isms\models\ubt\UnitBreakthrough;
 interface StrategyAlignmentService {
     
     /**
+     * Retrieves the Measure Profile that are aligned in the selected Objective entity
+     * @param StrategyMap $strategyMap
+     * @param Objective $objective
+     * @return MeasureProfile
+     */
+    public function listAlignedMeasureProfiles(StrategyMap $strategyMap, Objective $objective);
+    
+    /**
      * Retrieves the Initiatives that are aligned in the selected Objective or MeasureProfile entity
      * @param StrategyMap $strategyMap
      * @param Objective $objective

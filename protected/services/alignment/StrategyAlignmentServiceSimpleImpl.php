@@ -9,6 +9,7 @@ use org\csflu\isms\models\initiative\Initiative;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
 use org\csflu\isms\dao\initiative\InitiativeDaoSqlImpl;
 use org\csflu\isms\dao\ubt\UnitBreakthroughDaoSqlImpl;
+use org\csflu\isms\service\indicator\ScorecardManagementServiceSimpleImpl;
 
 /**
  * Description of StrategyAlignmentServiceSimpleImpl
@@ -19,10 +20,12 @@ class StrategyAlignmentServiceSimpleImpl implements StrategyAlignmentService {
 
     private $initiativeDao;
     private $ubtDao;
+    private $scorecardService;
 
     public function __construct() {
         $this->initiativeDao = new InitiativeDaoSqlImpl();
         $this->ubtDao = new UnitBreakthroughDaoSqlImpl();
+        $this->scorecardService = new ScorecardManagementServiceSimpleImpl();
     }
 
     public function listAlignedInitiatives(StrategyMap $strategyMap, Objective $objective = null, MeasureProfile $measureProfile = null) {
@@ -85,6 +88,17 @@ class StrategyAlignmentServiceSimpleImpl implements StrategyAlignmentService {
             }
         }
         return $result;
+    }
+
+    public function listAlignedMeasureProfiles(StrategyMap $strategyMap, Objective $objective) {
+        $measureProfiles = $this->scorecardService->listMeasureProfiles($strategyMap);
+        $alignedMeasureProfiles = array();
+        foreach ($measureProfiles as $measureProfile) {
+            if ($measureProfile->objective == $objective) {
+                $alignedMeasureProfiles = array_merge($alignedMeasureProfiles, array($measureProfile));
+            }
+        }
+        return $alignedMeasureProfiles;
     }
 
 }
