@@ -270,7 +270,7 @@ class Initiative extends Model {
         return $activities;
     }
 
-    public function computeAccomplishmentRate(\DateTime $date) {
+    private function computeAccomplishmentRate(\DateTime $date) {
         $phases = $this->filterPhases($date);
         if (count($phases) > 0) {
             $numberOfActivities = 0;
@@ -308,11 +308,11 @@ class Initiative extends Model {
         return $completionPercentage;
     }
 
-    public function resolveAccomplishmentRate(\DateTime $date) {
+    public function resolvePeriodicalAccomplishmentRate(\DateTime $date) {
         return number_format($this->computeAccomplishmentRate($date), 2) . " %";
     }
 
-    public function computeBudgetBurnRate(\DateTime $date) {
+    private function computeBudgetBurnRate(\DateTime $date) {
         $phases = $this->filterPhases($date);
         if (count($phases) > 0) {
             $budgetAmount = 0.00;
@@ -342,7 +342,7 @@ class Initiative extends Model {
         return $utilizedBudget;
     }
 
-    public function resolveBudgetBurnRate(\DateTime $date) {
+    public function resolvePeriodicalBudgetBurnRate(\DateTime $date) {
         return number_format($this->computeBudgetBurnRate($date), 2) . " %";
     }
 

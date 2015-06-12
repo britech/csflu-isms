@@ -114,11 +114,11 @@ BODY;
 $footerHtml = <<<FOOTER
 <tr>
     <th style="border: 1px solid #000000; background-color: #C5D9F1;" colspan="5">ACCOMPLISHMENT RATE</th>
-    <th style="border: 1px solid #000000;" colspan="4">{$initiative->resolveAccomplishmentRate($period)}</th>
+    <th style="border: 1px solid #000000;" colspan="4">{$initiative->resolvePeriodicalAccomplishmentRate($period)}</th>
 </tr>
 <tr>
     <th style="border: 1px solid #000000; background-color: #C5D9F1;" colspan="5">BUDGET BURN RATE</th>
-    <th style="border: 1px solid #000000;" colspan="4">{$initiative->resolveBudgetBurnRate($period)}</th>
+    <th style="border: 1px solid #000000;" colspan="4">{$initiative->resolvePeriodicalBudgetBurnRate($period)}</th>
 </tr>
 FOOTER;
 
