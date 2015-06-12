@@ -50,8 +50,8 @@ $this->renderPartial('commons/_notification', array('notif' => $notif));
                         ?>
                         <td colspan="2">No activities defined</td>
                     <?php else: ?>
-                        <td><?php echo $initiative->resolveAccomplishmentRate($period) ?></td>
-                        <td><?php echo $initiative->resolveBudgetBurnRate($period) ?></td>
+                        <td><?php echo $initiative->resolveTotalAccomplishmentRate($period) ?></td>
+                        <td><?php echo $initiative->resolveTotalBudgetBurnRate($period) ?></td>
                     <?php endif; ?>
                 </tr>
             <?php endforeach; ?>

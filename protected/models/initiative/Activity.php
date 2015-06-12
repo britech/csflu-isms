@@ -238,21 +238,21 @@ class Activity extends Model {
                 . "Activity:\t{$this->title}\n";
     }
 
-    public function computeRemainingBudget(\DateTime $period) {
+    public function computeRemainingBudget(\DateTime $period, $overall = false) {
         $budget = 0.00;
         foreach ($this->movements as $movement) {
-            if ($period == $movement->periodDate || ($period >= $this->startingPeriod && $period <= $this->endingPeriod)) {
+            if ((!$overall && ($period == $movement->periodDate || ($period >= $this->startingPeriod && $period <= $this->endingPeriod))) || ($overall && $period >= $movement->periodDate)) {
                 $budget+=floatval($movement->budgetAmount);
             }
         }
         return floatval($this->budgetAmount) - $budget;
     }
 
-    public function resolveActualFigure(\DateTime $period) {
+    public function resolveActualFigure(\DateTime $period, $overall = false) {
         if (strlen($this->targetFigure) > 0) {
             $actual = 0.00;
             foreach ($this->movements as $movement) {
-                if ($period == $movement->periodDate || ($period >= $this->startingPeriod && $period <= $this->endingPeriod)) {
+                if ((!$overall && ($period == $movement->periodDate || ($period >= $this->startingPeriod && $period <= $this->endingPeriod))) || ($overall && ($period >= $movement->periodDate))) {
                     $actual += floatval($movement->actualFigure);
                 }
             }
@@ -262,9 +262,9 @@ class Activity extends Model {
         }
     }
 
-    public function computeCompletionPercentage(\DateTime $period) {
+    public function computeCompletionPercentage(\DateTime $period, $overall = false) {
         if (strlen($this->targetFigure) > 0) {
-            $actual = $this->resolveActualFigure($period);
+            $actual = $this->resolveActualFigure($period, $overall);
             $target = floatval($this->targetFigure);
             $percentage = ($actual/ $target) * 100;
             return $percentage > 0 ? $percentage : 0;
@@ -321,19 +321,6 @@ class Activity extends Model {
     public function __get($name) {
         return $this->$name;
     }
-
-    public function __clone() {
-        $activity = new Activity();
-        $activity->id = $this->id;
-        $activity->activityNumber = $this->activityNumber;
-        $activity->descriptionOfTarget = $this->descriptionOfTarget;
-        $activity->targetFigure = $this->targetFigure;
-        $activity->indicator = $this->indicator;
-        $activity->owners = $this->owners;
-        $activity->startingPeriod = $this->startingPeriod;
-        $activity->endingPeriod = $this->endingPeriod;
-        $activity->budgetAmount = $this->budgetAmount;
-        $activity->sourceOfBudget = $this->sourceOfBudget;
-    }
+    
 
 }

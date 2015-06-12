@@ -103,6 +103,38 @@ class Phase extends Model {
     public function isNew() {
         return empty($this->id);
     }
+    
+    public function computePeriodicalAccomplishmentRate(\DateTime $date){
+        $completionPercentage = 0.0;
+        foreach($this->components as $component){
+            $completionPercentage += $component->computeTotalCompletionPercentage($date);
+        }
+        return $completionPercentage;
+    }
+    
+    public function computeTotalAccomplishmentRate(\DateTime $date){
+        $completionPercentage = 0.0;
+        foreach($this->components as $component){
+            $completionPercentage += $component->computeTotalCompletionPercentage($date, true);
+        }
+        return $completionPercentage;
+    }
+    
+    public function computeRemainingPeriodicalBudget(\DateTime $date){
+        $utilizedBudget = 0.0;
+        foreach($this->components as $component){
+            $utilizedBudget += $component->computeTotalRemainingBudget($date);
+        }
+        return $utilizedBudget;
+    }
+    
+    public function computeRemainingTotalBudget(\DateTime $date){
+        $utilizedBudget = 0.0;
+        foreach($this->components as $component){
+            $utilizedBudget += $component->computeTotalRemainingBudget($date, true);
+        }
+        return $utilizedBudget;
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;

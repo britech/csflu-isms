@@ -270,14 +270,14 @@ class Initiative extends Model {
         return $activities;
     }
 
-    private function computeAccomplishmentRate(\DateTime $date) {
+    private function computePeriodicalAccomplishmentRate(\DateTime $date) {
         $phases = $this->filterPhases($date);
         if (count($phases) > 0) {
             $numberOfActivities = 0;
             $completionPercentage = 0.00;
             foreach ($phases as $phase) {
                 $numberOfActivities += $this->countTotalActivities($phase);
-                $completionPercentage += $this->countTotalCompletionPercentage($phase, $date);
+                $completionPercentage += $phase->computePeriodicalAccomplishmentRate($date);
             }
             return $completionPercentage / $numberOfActivities;
         }
@@ -294,32 +294,39 @@ class Initiative extends Model {
 
     public function countActivities() {
         $totalActivities = 0;
-        foreach($this->phases as $phase){
+        foreach ($this->phases as $phase) {
             $totalActivities += $this->countTotalActivities($phase);
         }
         return $totalActivities;
     }
 
-    private function countTotalCompletionPercentage(Phase $phase, \DateTime $period) {
-        $completionPercentage = 0.00;
-        foreach ($phase->components as $component) {
-            $completionPercentage += $component->computeTotalCompletionPercentage($period);
-        }
-        return $completionPercentage;
-    }
-
     public function resolvePeriodicalAccomplishmentRate(\DateTime $date) {
-        return number_format($this->computeAccomplishmentRate($date), 2) . " %";
+        return number_format($this->computePeriodicalAccomplishmentRate($date), 2) . " %";
     }
 
-    private function computeBudgetBurnRate(\DateTime $date) {
+    private function computeTotalAccomplishmentRate(\DateTime $date) {
+        $activityCount = $this->countActivities();
+        if (!empty($activityCount)) {
+            foreach ($this->phases as $phase) {
+                $completionPercentage += $phase->computeTotalAccomplishmentRate($date);
+            }
+            return $completionPercentage / $activityCount;
+        }
+        return 0;
+    }
+
+    public function resolveTotalAccomplishmentRate(\DateTime $date) {
+        return number_format($this->computeTotalAccomplishmentRate($date), 2) . "%";
+    }
+
+    private function computePeriodicalBudgetBurnRate(\DateTime $date) {
         $phases = $this->filterPhases($date);
         if (count($phases) > 0) {
             $budgetAmount = 0.00;
             $utilizedBudgetAmount = 0.00;
             foreach ($phases as $phase) {
                 $budgetAmount += $this->countTotalBudgetAllocation($phase);
-                $utilizedBudgetAmount += $this->countTotalRemainingBudget($phase, $date);
+                $utilizedBudgetAmount += $phase->computeRemainingPeriodicalBudget($date);
             }
             return (($budgetAmount - $utilizedBudgetAmount) / $budgetAmount) * 100;
         }
@@ -334,16 +341,26 @@ class Initiative extends Model {
         return $budgetAmount;
     }
 
-    private function countTotalRemainingBudget(Phase $phase, \DateTime $period) {
-        $utilizedBudget = 0.00;
-        foreach ($phase->components as $component) {
-            $utilizedBudget += $component->computeTotalRemainingBudget($period);
-        }
-        return $utilizedBudget;
+    public function resolvePeriodicalBudgetBurnRate(\DateTime $date) {
+        return number_format($this->computePeriodicalBudgetBurnRate($date), 2) . " %";
     }
 
-    public function resolvePeriodicalBudgetBurnRate(\DateTime $date) {
-        return number_format($this->computeBudgetBurnRate($date), 2) . " %";
+    private function computeTotalBudgetBurnRate(\DateTime $date) {
+        $activityCount = $this->countActivities();
+        if (!empty($activityCount)) {
+            $budgetAmount = 0.00;
+            $utilizedBudgetAmount = 0.00;
+            foreach ($this->phases as $phase) {
+                $budgetAmount += $this->countTotalBudgetAllocation($phase);
+                $utilizedBudgetAmount += $phase->computeRemainingTotalBudget($date);
+            }
+            return (($budgetAmount - $utilizedBudgetAmount) / $budgetAmount) * 100;
+        }
+        return 0;
+    }
+
+    public function resolveTotalBudgetBurnRate(\DateTime $date) {
+        return number_format($this->computeTotalBudgetBurnRate($date), 2) . "%";
     }
 
     public function resolveTotalBudgetAllocation() {

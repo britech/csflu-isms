@@ -37,10 +37,10 @@ class Component extends Model {
         return empty($this->id);
     }
 
-    public function computeTotalCompletionPercentage(\DateTime $period) {
+    public function computeTotalCompletionPercentage(\DateTime $period, $overall = false) {
         $percentage = 0.00;
         foreach ($this->activities as $activity) {
-            $output = $activity->computeCompletionPercentage($period);
+            $output = $activity->computeCompletionPercentage($period, $overall);
             $percentage+=is_numeric($output) ? $output : 0;
         }
         return $percentage;
@@ -59,10 +59,10 @@ class Component extends Model {
         return $budget > 0 ? 'PHP ' . number_format($this->computeTotalBudgetAllocation()) : "-";
     }
 
-    public function computeTotalRemainingBudget(\DateTime $period) {
+    public function computeTotalRemainingBudget(\DateTime $period, $overall = false) {
         $utilized = 0.00;
         foreach ($this->activities as $activity) {
-            $utilized += $activity->computeRemainingBudget($period);
+            $utilized += $activity->computeRemainingBudget($period, $overall);
         }
         return $utilized;
     }
