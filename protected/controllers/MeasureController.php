@@ -225,7 +225,8 @@ class MeasureController extends Controller {
                     'links' => array(
                         'Update Profile' => array('measure/update', 'id' => $measureProfile->id),
                         'Manage Lead Offices' => array('measure/manageOffices', 'profile' => $measureProfile->id),
-                        'Manage Targets' => array('measure/manageTargets', 'profile' => $measureProfile->id)
+                        'Manage Targets' => array('measure/manageTargets', 'profile' => $measureProfile->id),
+                        'Generate Measure Profile' => array('report/measureProfile', 'id' => $measureProfile->id)
                     )
                 )
             ),

@@ -7,6 +7,7 @@ use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl;
 use org\csflu\isms\service\alignment\StrategyAlignmentServiceSimpleImpl;
+use org\csflu\isms\models\indicator\LeadOffice;
 
 /**
  * Description of ReportController
@@ -95,6 +96,66 @@ class ReportController extends Controller {
             'measureProfile' => $measureProfile,
             'initiatives' => $this->alignmentService->listAlignedInitiatives($strategyMap, null, $measureProfile),
             'unitBreakthroughs' => $this->alignmentService->listAlignedUnitBreakthroughs($strategyMap, null, $measureProfile)
+        ));
+    }
+
+    public function measureProfile($id) {
+        $measureProfile = $this->modelLoaderUtil->loadMeasureProfileModel($id);
+        $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, $measureProfile->objective);
+
+        $setters = array();
+        $owners = array();
+        $trackers = array();
+
+        foreach ($measureProfile->leadOffices as $leadOffice) {
+            $positions = explode("/", $leadOffice->designation);
+
+            if (in_array(LeadOffice::RESPONSBILITY_TRACKER, $positions)) {
+                $trackers = array_merge($trackers, array("- {$leadOffice->department->name}"));
+            }
+
+            if (in_array(LeadOffice::RESPONSIBILITY_ACCOUNTABLE, $positions)) {
+                $owners = array_merge($owners, array("- {$leadOffice->department->name}"));
+            }
+
+            if (in_array(LeadOffice::RESPONSIBILITY_SETTER, $positions)) {
+                $setters = array_merge($setters, array("- {$leadOffice->department->name}"));
+            }
+        }
+
+        $baselineYears = array();
+        $targetYears = array();
+        foreach ($measureProfile->indicator->baselineData as $baseline) {
+            if (!in_array($baseline->coveredYear, $baselineYears)) {
+                $baselineYears = array_merge($baselineYears, array($baseline->coveredYear));
+            }
+        }
+
+        foreach ($measureProfile->targets as $target) {
+            if (!in_array($target->coveredYear, $targetYears)) {
+                $targetYears = array_merge($targetYears, array($target->coveredYear));
+            }
+        }
+
+        $dataGroups = array();
+        foreach ($measureProfile->targets as $target) {
+            if (!in_array($target->dataGroup, $dataGroups)) {
+                $dataGroups = array_merge($dataGroups, array($target->dataGroup));
+            }
+        }
+
+        $this->render('report/measure-profile', array(
+            'measureProfile' => $measureProfile,
+            'strategyMap' => $strategyMap,
+            'setters' => nl2br(implode("\n", $setters)),
+            'owners' => nl2br(implode("\n", $owners)),
+            'trackers' => nl2br(implode("\n", $trackers)),
+            'baselineYears' => $baselineYears,
+            'targetYears' => $targetYears,
+            'dataGroups' => $dataGroups,
+            'baselineCount' => count($baselineYears),
+            'targetsCount' => count($targetYears),
+            'dataSource' => nl2br(implode("\n", explode("+", $measureProfile->indicator->dataSource)))
         ));
     }
 
