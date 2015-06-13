@@ -28,7 +28,9 @@ class Controller {
     public $title;
     public $layout = "column-1";
     private $loggingService;
-    private $logger;
+    protected $isRbacEnabled = false;
+    protected $moduleCode = "";
+    protected $actionCode = "";
 
     /*
      * @param mixed $view
