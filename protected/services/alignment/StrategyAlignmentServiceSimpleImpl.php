@@ -94,7 +94,7 @@ class StrategyAlignmentServiceSimpleImpl implements StrategyAlignmentService {
         $measureProfiles = $this->scorecardService->listMeasureProfiles($strategyMap);
         $alignedMeasureProfiles = array();
         foreach ($measureProfiles as $measureProfile) {
-            if ($measureProfile->objective == $objective) {
+            if ($objective->id == $measureProfile->objective->id) {
                 $alignedMeasureProfiles = array_merge($alignedMeasureProfiles, array($measureProfile));
             }
         }
