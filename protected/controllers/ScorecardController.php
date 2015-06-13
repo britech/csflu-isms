@@ -27,6 +27,9 @@ class ScorecardController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_SCARD;
+        $this->actionCode = "MPMOV";
         $this->scorecardService = new ScorecardManagementService();
         $this->alignmentService = new StrategyAlignmentServiceSimpleImpl();
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
