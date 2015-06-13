@@ -21,7 +21,7 @@ use org\csflu\isms\models\ubt\WigSession;
                 <?php endif; ?>
 
             <?php else: ?>
-                <li><?php echo ApplicationUtils::generateLink(array('wig/generateReport', 'id' => $data->id), 'Generate WIG Meeting Report'); ?></li>
+                <li><?php echo ApplicationUtils::generateLink(array('report/wigMeeting', 'id' => $data->id), 'Generate WIG Meeting Report'); ?></li>
                 <li><?php echo ApplicationUtils::generateLink('#', 'Refresh Data', array('id' => 'refresh')); ?></li>
             <?php endif; ?>
 

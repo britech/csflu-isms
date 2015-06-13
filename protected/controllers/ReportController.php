@@ -5,9 +5,9 @@ namespace org\csflu\isms\controllers;
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
+use org\csflu\isms\controllers\support\WigSessionControllerSupport;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl;
 use org\csflu\isms\service\alignment\StrategyAlignmentServiceSimpleImpl;
-use org\csflu\isms\models\indicator\LeadOffice;
 
 /**
  * Description of ReportController
@@ -20,10 +20,12 @@ class ReportController extends Controller {
     private $initiativeService;
     private $alignmentService;
     private $modelLoaderUtil;
+    private $wigSessionControllerSupport;
 
     public function __construct() {
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
+        $this->wigSessionControllerSupport = WigSessionControllerSupport::getInstance($this);
         $this->initiativeService = new InitiativeManagementServiceSimpleImpl();
         $this->alignmentService = new StrategyAlignmentServiceSimpleImpl();
     }
@@ -146,6 +148,19 @@ class ReportController extends Controller {
             'baselineCount' => count($baselineYears),
             'targetsCount' => count($targetYears),
             'perspectives' => $perspectives
+        ));
+    }
+
+    public function wigMeeting($id) {
+        $wigSession = $this->modelLoaderUtil->loadWigSessionModel($id);
+        $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel(null, null, $wigSession);
+
+        $this->render('report/wig-meeting', array(
+            'accounts' => $this->wigSessionControllerSupport->listEmployees(),
+            'collatedCommitments' => $this->wigSessionControllerSupport->collateCommitments($wigSession),
+            'wigData' => $wigSession,
+            'ubtData' => $unitBreakthrough,
+            'timeDifference' => $wigSession->wigMeeting->meetingTimeStart->diff($wigSession->wigMeeting->meetingTimeEnd)
         ));
     }
 

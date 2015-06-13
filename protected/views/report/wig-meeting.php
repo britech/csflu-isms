@@ -2,6 +2,8 @@
 
 namespace org\csflu\isms\views;
 
+use org\csflu\isms\models\ubt\LeadMeasure;
+
 ob_end_clean();
 error_reporting(0);
 
@@ -101,14 +103,15 @@ $html = <<<TABLE
         <tr>
             <td style="font-weight: bold; border: 1px solid #000000;">Scoreboard Update</td>
             <td style="border: 1px solid #000000;" colspan="2">
-                Unit Breakthrough:&nbsp;{$ubtFigure} {$ubtData->uom->getAppropriateUomDisplay()}<br/>
-                Lead Measure 1:&nbsp;{$lm1Figure} {$lm1Data->uom->getAppropriateUomDisplay()}<br/>
-                Lead Measure 2:&nbsp;{$lm2Figure} {$lm2Data->uom->getAppropriateUomDisplay()}<br/>
+                Unit Breakthrough:&nbsp;{$ubtData->resolveUnitBreakthroughMovement($wigData->endingPeriod)}<br/>
+                Lead Measure 1:&nbsp;{$ubtData->resolveLeadMeasuresMovement($wigData->endingPeriod, LeadMeasure::DESIGNATION_1)}<br/>
+                Lead Measure 2:&nbsp;{$ubtData->resolveLeadMeasuresMovement($wigData->endingPeriod, LeadMeasure::DESIGNATION_2)}<br/>
             </td>
         </tr>
     </tfoot>
 </table>
 TABLE;
+                
 $pdf = new \mPDF('c', 'A4');
 $pdf->mirrorMargins = .5;
 $pdf->AddPage('L');
@@ -116,4 +119,4 @@ $css = file_get_contents('assets/ink/css/ink.css');
 $pdf->writeHTML($css, 1);
 $pdf->writeHTML($html);
 
-$pdf->Output("WIG-REPORT_{$wigData->startingPeriod->format('Y-m-d')}_{$wigData->endingPeriod->format('Y-m-d')}.pdf", 'D');
+$pdf->Output("RPT_WIG_MEETING_{$wigData->startingPeriod->format('Y-m-d')}_{$wigData->endingPeriod->format('Y-m-d')}.pdf", 'D');
