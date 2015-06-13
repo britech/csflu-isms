@@ -67,6 +67,29 @@ class RevisionController extends Controller {
             'module' => $this->moduleCode
         ));
     }
+    
+    public function initiative($id) {
+        $this->moduleCode = ModuleAction::MODULE_INITIATIVE;
+        $this->actionCode = "INIM";
+
+        $initiative = $this->modelLoaderUtil->loadInitiativeModel($id);
+        $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, null, null, $initiative);
+        $this->render('revision/index', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Initiative Directory' => array('initiative/index', 'map' => $strategyMap->id),
+                'Initiative' => array('initiative/view', 'id' => $initiative->id),
+                'Revision History' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'revision/_navi'
+            ),
+            'id' => $initiative->id,
+            'module' => $this->moduleCode
+        ));
+    }
 
     public function retrieveList() {
         $this->validatePostData(array('module', 'id'));
