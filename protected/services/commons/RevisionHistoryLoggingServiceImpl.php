@@ -19,8 +19,8 @@ class RevisionHistoryLoggingServiceImpl implements RevisionHistoryLoggingService
         $this->daoSource = new RevisionHistoryLoggingDao();
     }
 
-    public function getRevisionHistoryList($moduleId) {
-        return $this->daoSource->getRevisionHistoryList($moduleId);
+    public function getRevisionHistoryList($moduleCode, $referenceId) {
+        return $this->daoSource->getRevisionHistoryList($moduleCode, $referenceId);
     }
 
     public function logNewAction($revisionHistory, $model) {

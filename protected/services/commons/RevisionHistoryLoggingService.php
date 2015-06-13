@@ -12,12 +12,13 @@ use org\csflu\isms\core\Model;
 interface RevisionHistoryLoggingService {
     
     /**
-     * Retrieves the revision history of the selected reference ID
-     * @param String $moduleId
+     * Retrieves the revision history of the selected Module and Reference ID
+     * @param string $moduleCode
+     * @param string $referenceId
      * @return RevisionHistory[]
      * @throws ServiceException
      */
-    public function getRevisionHistoryList($moduleId);
+    public function getRevisionHistoryList($moduleCode, $referenceId);
     
     /**
      * Logs initial registrations or Add actions

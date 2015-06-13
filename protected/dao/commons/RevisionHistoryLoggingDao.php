@@ -11,11 +11,12 @@ use org\csflu\isms\exceptions\DataAccessException;
 interface RevisionHistoryLoggingDao {
     
     /**
-     * @param String $moduleId
+     * @param string $moduleCode
+     * @param string $referenceId
      * @return RevisionHistory[]
      * @throws DataAccessException
      */
-    public function getRevisionHistoryList($moduleId);
+    public function getRevisionHistoryList($moduleCode, $referenceId);
     
     /**
      * @param RevisionHistory $revisionHistory
