@@ -26,6 +26,9 @@ class PerspectiveController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_SMAP;
+        $this->actionCode = "SMAPM";
         $this->mapService = new StrategyMapService();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
