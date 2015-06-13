@@ -26,6 +26,9 @@ class LeadMeasureController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_UBT;
+        $this->moduleCode = "UBTM";
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->ubtService = new UnitBreakthroughManagementServiceSimpleImpl();
         $this->logger = \Logger::getLogger(__CLASS__);

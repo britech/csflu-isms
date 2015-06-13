@@ -37,6 +37,9 @@ class UbtController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_UBT;
+        $this->actionCode = "UBTM";
         $this->ubtService = new UnitBreakthroughManagementService();
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->controllerSupport = UnitBreakthroughControllerSupport::getInstance($this);
@@ -45,8 +48,8 @@ class UbtController extends Controller {
     }
 
     public function index($map) {
+        $this->actionCode = "UBTV";
         $strategyMap = $this->loadMapModel($map);
-
         $this->title = ApplicationConstants::APP_NAME . ' - Manage UBTs';
         $this->layout = "column-2";
         $this->render('ubt/index', array(
@@ -65,8 +68,8 @@ class UbtController extends Controller {
     }
 
     public function manage() {
+        $this->actionCode = "UBTMOV";
         $userAccount = $this->modelLoaderUtil->loadAccountModel();
-
         $this->title = ApplicationConstants::APP_NAME . 'Manage Unit Breakthroughs';
         $this->render('ubt/manage', array(
             'breadcrumb' => array(
@@ -236,8 +239,8 @@ class UbtController extends Controller {
     }
 
     public function movements($id) {
+        $this->actionCode = "UBTMOV";
         $ubt = $this->loadUbtModel($id);
-
         $this->title = ApplicationConstants::APP_NAME . ' - UBT Movements';
         $this->layout = 'column-2';
         $this->render('ubt/movements', array(
@@ -282,6 +285,7 @@ class UbtController extends Controller {
         if (is_null($id)) {
             $this->enlistMovement();
         }
+        $this->actionCode = "UBTMOV";
         $ubt = $this->loadUbtModel($id);
         $this->title = ApplicationConstants::APP_NAME . ' - Record UBT Movement';
         $this->render('ubt/add-movement', array(

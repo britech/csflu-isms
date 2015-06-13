@@ -35,6 +35,9 @@ class WigController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_UBT;
+        $this->actionCode = "WIGM";
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->ubtService = new UnitBreakthroughManagementService();
         $this->userService = new SimpleUserManagementServiceImpl();
