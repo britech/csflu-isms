@@ -4,6 +4,7 @@ namespace org\csflu\isms\controllers;
 
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\util\ApplicationUtils;
+use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\controllers\support\WigSessionControllerSupport;
 use org\csflu\isms\service\initiative\InitiativeManagementServiceSimpleImpl;
@@ -23,6 +24,9 @@ class ReportController extends Controller {
     private $wigSessionControllerSupport;
 
     public function __construct() {
+        $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_KM;
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->wigSessionControllerSupport = WigSessionControllerSupport::getInstance($this);
@@ -46,6 +50,7 @@ class ReportController extends Controller {
             $teams.="-&nbsp;{$implementingOffice->department->name}\n";
         }
 
+        $this->actionCode = "RPTINIUPD";
         $this->render('report/initiative-update', array(
             'period' => $periodDate,
             'initiative' => $initiative,
@@ -77,6 +82,7 @@ class ReportController extends Controller {
             $teams.="-&nbsp;{$implementingOffice->department->name}\n";
         }
 
+        $this->actionCode = "RPTINIPOW";
         $this->render('report/initiative-pow', array(
             'initiative' => $initiative,
             'measures' => nl2br($measures),
@@ -88,6 +94,7 @@ class ReportController extends Controller {
     }
 
     public function scorecardUpdate($measure, $period) {
+        $this->actionCode = "RPTSCARDUPD";
         $date = ApplicationUtils::generateEndingPeriodDate(\DateTime::createFromFormat('Y-m-d', "{$period}-1"));
         $measureProfile = $this->modelLoaderUtil->loadMeasureProfileModel($measure);
         $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, $measureProfile->objective);
@@ -102,6 +109,7 @@ class ReportController extends Controller {
     }
 
     public function measureProfile($id) {
+        $this->actionCode = "RPTMP";
         $measureProfile = $this->modelLoaderUtil->loadMeasureProfileModel($id);
         $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, $measureProfile->objective);
 
@@ -119,6 +127,7 @@ class ReportController extends Controller {
     }
 
     public function scorecardTemplate($map) {
+        $this->actionCode = "RPTSCARDTMP";
         $strategyMap = $this->modelLoaderUtil->loadMapModel($map);
 
         $startingTargetYear = intval($strategyMap->startingPeriodDate->format('Y'));
@@ -152,6 +161,7 @@ class ReportController extends Controller {
     }
 
     public function wigMeeting($id) {
+        $this->actionCode = "RPTWIGMT";
         $wigSession = $this->modelLoaderUtil->loadWigSessionModel($id);
         $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel(null, null, $wigSession);
 
