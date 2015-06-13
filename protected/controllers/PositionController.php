@@ -7,6 +7,7 @@ use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\service\commons\PositionServiceSimpleImpl as PositionService;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\commons\Position;
+use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\exceptions\ControllerException;
 
 /**
@@ -20,6 +21,9 @@ class PositionController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_SYS;
+        $this->actionCode = "MP";
         $this->positionService = new PositionService();
     }
 
