@@ -30,6 +30,9 @@ class ActivityController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_INITIATIVE;
+        $this->actionCode = "INIUPD";
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->controllerSupport = ActivityControllerSupport::getInstance($this);
