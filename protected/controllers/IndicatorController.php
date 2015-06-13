@@ -12,6 +12,7 @@ use org\csflu\isms\service\indicator\IndicatorManagementServiceSimpleImpl as Ind
 use org\csflu\isms\models\indicator\Indicator;
 use org\csflu\isms\models\indicator\Baseline;
 use org\csflu\isms\models\commons\UnitOfMeasure;
+use org\csflu\isms\models\uam\ModuleAction;
 
 class IndicatorController extends Controller {
 
@@ -20,6 +21,9 @@ class IndicatorController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_KM;
+        $this->actionCode = "INDM";
         $this->layout = 'column-2';
         $this->indicatorService = new IndicatorManagementService();
         $this->logger = \Logger::getLogger(__CLASS__);

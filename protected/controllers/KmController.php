@@ -10,6 +10,7 @@ use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\exceptions\ServiceException;
 use org\csflu\isms\service\indicator\IndicatorManagementServiceSimpleImpl as IndicatorManagementService;
 use org\csflu\isms\models\indicator\Indicator;
+use org\csflu\isms\models\uam\ModuleAction;
 
 class KmController extends Controller {
 
@@ -17,6 +18,9 @@ class KmController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_KM;
+        $this->actionCode = "INDM";
         $this->indicatorService = new IndicatorManagementService();
         $this->layout = 'column-2';
     }
