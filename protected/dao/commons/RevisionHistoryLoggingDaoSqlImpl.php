@@ -26,7 +26,7 @@ class RevisionHistoryLoggingDaoSqlImpl implements RevisionHistoryLoggingDao {
     public function getRevisionHistoryList($moduleCode, $referenceId) {
         try {
             $db = ConnectionManager::getConnectionInstance();
-            $dbst = $db->prepare('SELECT module_code, module_id, user_ref, notes, rev_type, rev_stamp FROM rev_history WHERE module_code=:code AND module_id=:id');
+            $dbst = $db->prepare('SELECT module_code, module_id, user_ref, notes, rev_type, rev_stamp FROM rev_history WHERE module_code=:code AND module_id=:id ORDER BY rev_stamp DESC');
             $dbst->execute(array(
                 'code' => $moduleCode,
                 'id' => $referenceId
