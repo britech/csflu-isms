@@ -30,7 +30,7 @@ class RevisionController extends Controller {
         $this->actionCode = "SMAPM";
 
         $strategyMap = $this->modelLoaderUtil->loadMapModel($id);
-        $this->render('revision/map', array(
+        $this->render('revision/index', array(
             self::COMPONENT_BREADCRUMB => array(
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
@@ -41,6 +41,29 @@ class RevisionController extends Controller {
                 self::SUB_COMPONENT_SIDEBAR_FILE => 'revision/_navi'
             ),
             'id' => $strategyMap->id,
+            'module' => $this->moduleCode
+        ));
+    }
+
+    public function measureProfile($id) {
+        $this->moduleCode = ModuleAction::MODULE_SCARD;
+        $this->actionCode = "MPM";
+
+        $measureProfile = $this->modelLoaderUtil->loadMeasureProfileModel($id);
+        $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, $measureProfile->objective);
+        $this->render('revision/index', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'Manage Measure Profile' => array('measure/index', 'map' => $strategyMap->id),
+                'Profile' => array('measure/view', 'id' => $measureProfile->id),
+                'Revision History' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'revision/_navi'
+            ),
+            'id' => $measureProfile->id,
             'module' => $this->moduleCode
         ));
     }

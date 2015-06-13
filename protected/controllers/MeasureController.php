@@ -227,6 +227,7 @@ class MeasureController extends Controller {
                 'data' => array(
                     'header' => 'Actions',
                     'links' => array(
+                        'Revision History' => array('revision/measureProfile', 'id' => $measureProfile->id),
                         'Update Profile' => array('measure/update', 'id' => $measureProfile->id),
                         'Manage Lead Offices' => array('measure/manageOffices', 'profile' => $measureProfile->id),
                         'Manage Targets' => array('measure/manageTargets', 'profile' => $measureProfile->id),
