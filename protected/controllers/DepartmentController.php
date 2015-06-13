@@ -9,6 +9,7 @@ use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\core\Model;
+use org\csflu\isms\models\uam\ModuleAction;
 
 /**
  * Description of DepartmentController
@@ -21,6 +22,9 @@ class DepartmentController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_SYS;
+        $this->actionCode = "MD";
         $this->layout = 'column-2';
         $this->departmentService = new DepartmentService();
     }
@@ -118,17 +122,17 @@ class DepartmentController extends Controller {
 
     public function updateDepartment() {
         $id = filter_input(INPUT_GET, 'id');
-        if(!isset($id) && empty($id)){
+        if (!isset($id) && empty($id)) {
             throw new ControllerException('Another parameter is needed to process this request');
         }
-        
-        $department = $this->departmentService->getDepartmentDetail(array('id'=>$id));
-        
-        if(is_null($department->id)){
-            $_SESSION['notif'] = array('class'=>'', 'message'=>'Department not found');
+
+        $department = $this->departmentService->getDepartmentDetail(array('id' => $id));
+
+        if (is_null($department->id)) {
+            $_SESSION['notif'] = array('class' => '', 'message' => 'Department not found');
             $this->redirect(array('department/index'));
         }
-        
+
         $this->layout = 'column-1';
         $this->title = ApplicationConstants::APP_NAME . ' - Enlist a Department';
         $this->render('department/update', array(
@@ -145,7 +149,7 @@ class DepartmentController extends Controller {
             unset($_SESSION['validation']);
         }
     }
-    
+
     public function update() {
         $departmentData = filter_input_array(INPUT_POST)['Department'];
 
@@ -164,17 +168,17 @@ class DepartmentController extends Controller {
         } else {
             $_SESSION['validation'] = $department->validationMessages;
             $_SESSION['data'] = $departmentData;
-            $this->redirect(array('department/updateDepartment', 'id'=>$department->id));
+            $this->redirect(array('department/updateDepartment', 'id' => $department->id));
         }
     }
-    
-    public function listDepartments(){
+
+    public function listDepartments() {
         $departments = $this->departmentService->listDepartments();
         $data = array();
-        foreach($departments as $department){
+        foreach ($departments as $department) {
             array_push($data, array(
-                'id'=>$department->id, 
-                'name'=>'&nbsp;'.$department->code.'&nbsp-&nbsp;'.$department->name));
+                'id' => $department->id,
+                'name' => '&nbsp;' . $department->code . '&nbsp-&nbsp;' . $department->name));
         }
         $this->renderAjaxJsonResponse($data);
     }
