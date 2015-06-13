@@ -7,6 +7,7 @@ use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\service\commons\UnitOfMeasureSimpleImpl as UnitOfMeasureService;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\models\commons\UnitOfMeasure;
+use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\exceptions\ControllerException;
 
 /**
@@ -20,6 +21,9 @@ class UomController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_SYS;
+        $this->actionCode = "MM";
         $this->layout = 'column-1';
         $this->uomService = new UnitOfMeasureService();
     }
