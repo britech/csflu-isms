@@ -48,7 +48,6 @@ class UbtController extends Controller {
     }
 
     public function index($map) {
-        $this->actionCode = "UBTV";
         $strategyMap = $this->loadMapModel($map);
         $this->title = ApplicationConstants::APP_NAME . ' - Manage UBTs';
         $this->layout = "column-2";
