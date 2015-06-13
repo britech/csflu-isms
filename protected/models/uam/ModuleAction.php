@@ -41,7 +41,7 @@ class ModuleAction {
         }
     }
 
-   public static function getModules(){
+    public static function getModules() {
         return array(
             self::MODULE_SMAP => 'Strategy Map',
             self::MODULE_SCARD => 'Scorecard',
@@ -52,8 +52,8 @@ class ModuleAction {
             self::MODULE_SYS => 'System Administration'
         );
     }
-    
-    public static function getModulesWithoutDescription(){
+
+    public static function getModulesWithoutDescription() {
         return array(
             self::MODULE_SMAP,
             self::MODULE_SCARD,
@@ -64,33 +64,39 @@ class ModuleAction {
             self::MODULE_SYS
         );
     }
-    
-    public function getModuleName($module){
+
+    public function getModuleName($module) {
         return $this->getModules()[$module];
     }
 
     private function getAllowableActionsForStrategyMapModule() {
-        return array('M' => 'Manage Strategy Map', 'V' => 'View Strategy Map');
+        return array('SMAPM' => 'Manage Strategy Map', 'SMAPV' => 'View Strategy Map');
     }
 
     private function getAllowableActionsForScorecardModule() {
-        return array('M' => 'Manage Scorecard Infra and Profile', 'U' => 'Update Movement of Scorecard Indicator', 'V' => 'View Scorecard Infra and Profile');
+        return array('MPM' => 'Manage Measure Profile', 'MPMOV' => 'Measure Profile Movement', 'MPV' => 'View Measure Profile');
     }
 
     private function getAllowableActionsForInitiativeModule() {
-        return array('MP' => 'Manage Initiative Profile', 'MU' => 'Manage Initiative Update', 'VP' => 'View Initiative Profile', 'VU' => 'View Initiative Update', 'GU' => 'Generate Initiative Update Template');
+        return array('INIM' => 'Manage Initiative Profile', 'INIUPD' => 'Initiative Update', 'INIV' => 'View Initiative Profile');
     }
 
     private function getAllowableActionsForUbtModule() {
-        return array('M' => 'Maintain UBT Declaration', 'U' => 'Update UBT Movement', 'VB' => 'View UBT Movement', 'G' => 'Generate WIG Meeting Template');
+        return array('UBTM' => 'Manage UBT', 'UBTMOV' => 'UBT Movements', 'WIGM' => 'Manage WIG Sessions');
     }
 
     private function getAllowableActionsForIpModule() {
-        return array('M' => 'Manage Commitments', 'V' => 'View Commitments', 'VC' => 'Validate Commitment Status');
+        return array('IPM' => 'Commitments', 'IPMRPT' => 'Individual Scorecard');
     }
 
     private function getAllowableActionsForKmModule() {
-        return array('MI' => 'Manage Indicators', 'GR' => 'Generate Reports');
+        return array('INDM' => 'Indicators',
+            'RPTSCARDTMP' => 'Generate Scorecard Template',
+            'RPTSCARDUPD' => 'Generate Scorecard Update',
+            'RPTMP' => 'Generate Measure Profile',
+            'RPTINIPOW' => "Generate Initiative's Program of Work",
+            'RPTINIUPD' => "Generate Initiative's Update Template",
+            'RPTWIGMT' => 'Generated WIG Meeting Report');
     }
 
     private function getAllowableActionsForAdminModule() {
