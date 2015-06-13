@@ -9,7 +9,7 @@ $titleHtml = <<<TITLE
 TITLE;
 
 $row1Data = <<<ROW1
-<div class="all-70" style="border: 1px solid black; font-size: 12px; margin-top: 10px; padding: 10px; border-radius: 20px; height: 20%;">
+<div class="all-70" style="border: 1px solid black; font-size: 12px; margin-top: 10px; padding: 10px; border-radius: 20px; height: 25%;">
     <h6 style="color: black; margin-bottom: 0px; font-weight: bold;">What is the objective?</h6>
     <span style="color: black;">{$measureProfile->objective->description}</span>
     
@@ -20,7 +20,7 @@ $row1Data = <<<ROW1
     <span style="color: black; font-size: 10px;">{$measureProfile->indicator->rationale}</span>
 </div>
 
-<div class="all-25" style="border: 1px solid black; font-size: 12px; margin-left: 10px; padding: 10px; border-radius: 20px; height: 20%;">
+<div class="all-25" style="border: 1px solid black; font-size: 12px; margin-left: 10px; padding: 10px; border-radius: 20px; height: 25%;">
     <h6 style="color: black; margin-bottom: 0px; font-weight: bold;">How often is the measure updated/calculated?</h6>
     <span style="color: black;">{$measureProfile->translateFrequencyTypeCode()}</span>
     
@@ -30,11 +30,11 @@ $row1Data = <<<ROW1
 ROW1;
 
 $row2Data = <<<ROW2
-<div class="all-50" style="border: 1px solid black; font-size: 12px; margin-top: 10px; padding: 10px; border-radius: 20px; height: 10%;">
+<div class="all-50" style="border: 1px solid black; font-size: 12px; margin-top: 10px; padding: 10px; border-radius: 20px; height: 12%;">
     <h6 style="color: black; margin-bottom: 0px; font-weight: bold;">How is the measure calculated? Clarify the terms in the formula</h6>
     <span style="color: black; font-size: 10px;">{$measureProfile->indicator->formula}</span>
 </div>
-<div class="all-45" style="border: 1px solid black; font-size: 12px; margin-left: 10px; padding: 10px; border-radius: 20px; height: 10%;">
+<div class="all-45" style="border: 1px solid black; font-size: 12px; margin-left: 10px; padding: 10px; border-radius: 20px; height: 12%;">
     <h6 style="color: black; margin-bottom: 0px; font-weight: bold;">What data is required in calculating the measure?<br/>Where/how is it acquired</h6>
     <span style="color: black; font-size: 10px;">{$dataSource}</span>
 </div>
@@ -67,18 +67,16 @@ STATUS;
 }
 
 $baselineHeader = "";
-$baselineYearWidth = count($baselineYears) / 50;
 foreach($baselineYears as $baselineYear){
     $baselineHeader .= <<<BASELINE_HEADER
-<th style="border: 1px solid #000000; width: {$baselineYearWidth}%">{$baselineYear}</th>
+<th style="border: 1px solid #000000;">{$baselineYear}</th>
 BASELINE_HEADER;
 }
 
 $targetsHeader = "";
-$targetYearWidth = count($targetYears) / 50;
 foreach($targetYears as $targetYear){
     $targetsHeader .= <<<TARGET_HEADER
-<th style="border: 1px solid #000000; width: {$targetYearWidth}%">{$targetYear}</th>
+<th style="border: 1px solid #000000;">{$targetYear}</th>
 TARGET_HEADER;
 }
 
@@ -113,16 +111,16 @@ $row3Data = <<<ROW3
 <div class="column-group quarter-gutters">
     <div class="all-50">
         <div class="column-group quarter-gutters">
-            <div class="all-50" style="border: 1px solid black; font-size: 12px; margin-top: 10px; padding: 10px; border-radius: 20px; height: 15%;">
+            <div class="all-50" style="border: 1px solid black; font-size: 12px; margin-top: 10px; padding: 10px; border-radius: 20px; height: 6%;">
                 <h6 style="color: black; margin-bottom: 0px; font-weight: bold;">Is the information about the measure available?</h6>
                 <span style="color: black;">{$dataSourceStatus}</span>
             </div>
-            <div class="all-40" style="border: 1px solid black; font-size: 12px; margin-left: 10px; padding: 10px; border-radius: 20px; height: 15%;">
+            <div class="all-40" style="border: 1px solid black; font-size: 12px; margin-left: 10px; padding: 10px; border-radius: 20px; height: 13%;">
                 <h6 style="color: black; margin-bottom: 0px; font-weight: bold;">When will this info be available?</h6>
                 <span style="color: black;">{$measureProfile->indicator->dataSourceAvailabilityDate}</span>
             </div>
         </div>
-        <div class="all-100" style="border: 1px solid black; font-size: 12px; padding: 10px; border-radius: 20px; margin-top: 10px; height: 35%;">
+        <div class="all-100" style="border: 1px solid black; font-size: 12px; padding: 10px; border-radius: 20px; margin-top: 10px; height: 30%;">
             <h6 style="color: black; margin-bottom: 0px; font-weight: bold;">Who is responsible for setting targets?</h6>
             <span style="color: black;">{$setters}</span>
             
@@ -134,7 +132,7 @@ $row3Data = <<<ROW3
         </div>
     </div>
     <div class="all-50">
-        <div style="border: 1px solid black; font-size: 12px; margin-top: 10px; margin-left: 10px; padding: 10px; border-radius: 20px; height: 100%;">
+        <div style="border: 1px solid black; font-size: 12px; margin-top: 10px; margin-left: 10px; padding: 10px; border-radius: 20px; height: 45%;">
             <table class="ink-table bordered" style="font-family: sans-serif; color: black; font-size: 12px;">
                 <tbody>
                     <tr>
