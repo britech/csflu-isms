@@ -3,6 +3,7 @@
 namespace org\csflu\isms\views;
 
 use org\csflu\isms\models\indicator\Indicator;
+use org\csflu\isms\models\indicator\LeadOffice;
 
 $titleHtml = <<<TITLE
 <div class="all-100" style="color: yellow; background-color: blue; text-align:center; font-size: 20px; text-outline: yellow 10px;">Measure Profile</div>
@@ -36,7 +37,7 @@ $row2Data = <<<ROW2
 </div>
 <div class="all-45" style="border: 1px solid black; font-size: 12px; margin-left: 10px; padding: 10px; border-radius: 20px; height: 12%;">
     <h6 style="color: black; margin-bottom: 0px; font-weight: bold;">What data is required in calculating the measure?<br/>Where/how is it acquired</h6>
-    <span style="color: black; font-size: 10px;">{$dataSource}</span>
+    <span style="color: black; font-size: 10px;">{$measureProfile->indicator->resolveDataSourceDescription()}</span>
 </div>
 ROW2;
 
@@ -66,46 +67,45 @@ STATUS;
         break;
 }
 
+$dataContainer = "";
 $baselineHeader = "";
-foreach($baselineYears as $baselineYear){
-    $baselineHeader .= <<<BASELINE_HEADER
+if ($baselineCount > 0) {
+    foreach ($baselineYears as $baselineYear) {
+        $baselineHeader .= <<<BASELINE_HEADER
 <th style="border: 1px solid #000000;">{$baselineYear}</th>
 BASELINE_HEADER;
+        $dataContainer .= <<<CONTAINER
+<td style="border: 1px solid #000000;">{$measureProfile->indicator->resolveBaselineValue($baselineYear)}</td>
+CONTAINER;
+    }
+} else {
+    $baselineHeader = <<<BASELINE_HEADER
+<th style="border: 1px solid #000000;">N/A</th>
+BASELINE_HEADER;
+    $dataContainer .= <<<CONTAINER
+<td style="border: 1px solid #000000;">N/A</td>
+CONTAINER;
 }
 
 $targetsHeader = "";
-foreach($targetYears as $targetYear){
-    $targetsHeader .= <<<TARGET_HEADER
+if ($targetsCount > 0) {
+    foreach ($targetYears as $targetYear) {
+        $targetsHeader .= <<<TARGET_HEADER
 <th style="border: 1px solid #000000;">{$targetYear}</th>
 TARGET_HEADER;
-}
-
-$dataContainer = "";
-foreach($dataGroups as $dataGroup){
-    $dataBody = "";
-    foreach($measureProfile->indicator->baselineData as $baseline){
-        if($baseline->dataGroup == $dataGroup){
-            $dataBody .= <<<BODY
-<td style="border: 1px solid #000000;">{$baseline->value}</td>
-BODY;
-        }
+        $dataContainer .= <<<CONTAINER
+<td style="border: 1px solid #000000;">{$measureProfile->resolveTargetValue($targetYear)}</td>
+CONTAINER;
     }
-    
-    foreach($measureProfile->targets as $target){
-        if($target->dataGroup == $dataGroup){
-            $dataBody.= <<<BODY
-<td style="border: 1px solid #000000;">{$target->value}</td>
-BODY;
-        }
-    }
-    
+} else {
+    $targetsHeader = <<<TARGET_HEADER
+<th style="border: 1px solid #000000;">N/A</th>
+TARGET_HEADER;
     $dataContainer .= <<<CONTAINER
-<tr>
-    <td style="border: 1px solid #000000;">{$dataGroup}</td>
-    {$dataBody}
-</tr>
+<td style="border: 1px solid #000000;">N/A</td>
 CONTAINER;
 }
+
 
 $row3Data = <<<ROW3
 <div class="column-group quarter-gutters">
@@ -122,13 +122,13 @@ $row3Data = <<<ROW3
         </div>
         <div class="all-100" style="border: 1px solid black; font-size: 12px; padding: 10px; border-radius: 20px; margin-top: 10px; height: 30%;">
             <h6 style="color: black; margin-bottom: 0px; font-weight: bold;">Who is responsible for setting targets?</h6>
-            <span style="color: black;">{$setters}</span>
+            <span style="color: black;">{$measureProfile->resolveLeadOffices(LeadOffice::RESPONSIBILITY_SETTER)}</span>
             
             <h6 style="color: black; margin-top:10px; margin-bottom: 0px; font-weight: bold;">Who is accountable for targets?</h6>
-            <span style="color: black;">{$owners}</span>
+            <span style="color: black;">{$measureProfile->resolveLeadOffices(LeadOffice::RESPONSIBILITY_ACCOUNTABLE)}</span>
             
             <h6 style="color: black; margin-top:10px; margin-bottom: 0px; font-weight: bold;">Who is responsible for tracking and reporting targets?</h6>
-            <span style="color: black;">{$trackers}</span>
+            <span style="color: black;">{$measureProfile->resolveLeadOffices(LeadOffice::RESPONSBILITY_TRACKER)}</span>
         </div>
     </div>
     <div class="all-50">
@@ -136,7 +136,6 @@ $row3Data = <<<ROW3
             <table class="ink-table bordered" style="font-family: sans-serif; color: black; font-size: 12px;">
                 <tbody>
                     <tr>
-                        <th style="border: 1px solid #000000; width: 20%;" rowspan="2">&nbsp;</th>
                         <th style="border: 1px solid #000000; width: 50%" colspan="{$baselineCount}">Baseline</th>
                         <th style="border: 1px solid #000000; width: 50%" colspan="{$targetsCount}">Targets</th>
                     </tr>
@@ -144,7 +143,9 @@ $row3Data = <<<ROW3
                         {$baselineHeader}
                         {$targetsHeader}
                     </tr>
-                    {$dataContainer}
+                    <tr>
+                        {$dataContainer}
+                    </tr>
                 </tbody>
             </table>
         </div>

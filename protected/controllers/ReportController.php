@@ -103,59 +103,16 @@ class ReportController extends Controller {
         $measureProfile = $this->modelLoaderUtil->loadMeasureProfileModel($id);
         $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, $measureProfile->objective);
 
-        $setters = array();
-        $owners = array();
-        $trackers = array();
-
-        foreach ($measureProfile->leadOffices as $leadOffice) {
-            $positions = explode("/", $leadOffice->designation);
-
-            if (in_array(LeadOffice::RESPONSBILITY_TRACKER, $positions)) {
-                $trackers = array_merge($trackers, array($leadOffice->department->name));
-            }
-
-            if (in_array(LeadOffice::RESPONSIBILITY_ACCOUNTABLE, $positions)) {
-                $owners = array_merge($owners, array($leadOffice->department->name));
-            }
-
-            if (in_array(LeadOffice::RESPONSIBILITY_SETTER, $positions)) {
-                $setters = array_merge($setters, array($leadOffice->department->name));
-            }
-        }
-
-        $baselineYears = array();
-        $targetYears = array();
-        foreach ($measureProfile->indicator->baselineData as $baseline) {
-            if (!in_array($baseline->coveredYear, $baselineYears)) {
-                $baselineYears = array_merge($baselineYears, array($baseline->coveredYear));
-            }
-        }
-
-        foreach ($measureProfile->targets as $target) {
-            if (!in_array($target->coveredYear, $targetYears)) {
-                $targetYears = array_merge($targetYears, array($target->coveredYear));
-            }
-        }
-
-        $dataGroups = array();
-        foreach ($measureProfile->targets as $target) {
-            if (!in_array($target->dataGroup, $dataGroups)) {
-                $dataGroups = array_merge($dataGroups, array($target->dataGroup));
-            }
-        }
+        $baselineYears = $measureProfile->indicator->getBaselineYears();
+        $targetYears = $measureProfile->getTargetYears();
 
         $this->render('report/measure-profile', array(
             'measureProfile' => $measureProfile,
             'strategyMap' => $strategyMap,
-            'setters' => implode(",", $setters),
-            'owners' => implode(", ", $owners),
-            'trackers' => implode(", ", $trackers),
             'baselineYears' => $baselineYears,
             'targetYears' => $targetYears,
-            'dataGroups' => $dataGroups,
             'baselineCount' => count($baselineYears),
-            'targetsCount' => count($targetYears),
-            'dataSource' => nl2br(implode("\n", explode("+", $measureProfile->indicator->dataSource)))
+            'targetsCount' => count($targetYears)
         ));
     }
 

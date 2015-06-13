@@ -158,6 +158,20 @@ class Indicator extends Model {
         }
         return nl2br(implode("\n", $baselineValues));
     }
+    
+    public function getBaselineYears(){
+        $baselineYears = array();
+        foreach($this->baselineData as $baseline){
+            if(!in_array($baseline->coveredYear, $baselineYears)){
+                $baselineYears = array_merge($baselineYears, array($baseline->coveredYear));
+            }
+        }
+        return $baselineYears;
+    }
+    
+    public function resolveDataSourceDescription(){
+        return nl2br(implode("\n", explode("+", $this->dataSource)));
+    }
 
     public function __clone() {
         $indicator = new Indicator();

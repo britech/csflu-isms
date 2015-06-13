@@ -298,6 +298,16 @@ class MeasureProfile extends Model {
         }
         return nl2br(implode("\n", $targets));
     }
+    
+    public function getTargetYears(){
+        $targetYears = array();
+        foreach($this->targets as $target){
+            if(!in_array($target->coveredYear, $targetYears)){
+                $targetYears = array_merge($targetYears, array($target->coveredYear));
+            }
+        }
+        return $targetYears;
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;
