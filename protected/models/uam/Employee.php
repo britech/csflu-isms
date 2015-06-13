@@ -54,6 +54,10 @@ class Employee extends Model {
         $firstName = substr($this->givenName, 0, 1);
         return "{$firstName}. {$this->lastName}";
     }
+    
+    public function getFullName(){
+        return "{$this->givenName} {$this->lastName}";
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;

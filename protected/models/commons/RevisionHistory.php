@@ -40,4 +40,16 @@ class RevisionHistory {
             self::TYPE_DELETE => 'Removed Entry');
     }
 
+    public function translateRevisionType($typeCode = null) {
+        $code = is_null($typeCode) ? $this->revisionType : $typeCode;
+        if (array_key_exists($code, self::getRevisionTypes())) {
+            return self::getRevisionTypes()[$code];
+        }
+        return "Undefined";
+    }
+    
+    public function resolveNotes(){
+        return nl2br($this->notes);
+    }
+
 }
