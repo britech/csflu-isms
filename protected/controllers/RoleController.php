@@ -23,7 +23,7 @@ class RoleController extends Controller {
         $this->checkAuthorization();
         $this->isRbacEnabled = true;
         $this->moduleCode = ModuleAction::MODULE_SYS;
-        $this->actionCode = "MU";
+        $this->actionCode = "MS";
         $this->layout = 'column-2';
         $this->userService = new UserManagementService();
     }
