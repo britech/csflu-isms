@@ -275,6 +275,29 @@ class MeasureProfile extends Model {
         }
         return "-";
     }
+    
+    public function resolveLeadOffices($designation, $useCode = false){
+        $offices = array();
+        foreach($this->leadOffices as $leadOffice){
+            $designations = explode("/", $leadOffice->designation);
+            if(in_array($designation, $designations)){
+                $offices = array_merge($offices, array(($useCode ? $leadOffice->department->code : $leadOffice->department->name)));
+            }
+        }
+        return implode(", ", $offices);
+    }
+    
+    public function resolveTargetValue($year){
+        $targets = array();
+        foreach($this->targets  as $target){
+            if($year == $target->coveredYear && strlen($target->dataGroup) > 0){
+                $targets = array_merge($targets, array("{$target->dataGroup}: {$target->value}"));
+            } elseif($year == $target->coveredYear && strlen($target->dataGroup) < 1){
+                $targets = array_merge($targets, array($target->value));
+            }
+        }
+        return nl2br(implode("\n", $targets));
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;

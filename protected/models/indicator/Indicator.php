@@ -147,6 +147,18 @@ class Indicator extends Model {
         return $counter;
     }
 
+    public function resolveBaselineValue($year) {
+        $baselineValues = array();
+        foreach ($this->baselineData as $baseline) {
+            if ($year == $baseline->coveredYear && strlen($baseline->baselineDataGroup) > 0) {
+                $baselineValues = array_merge($baselineValues, array("{$baseline->baselineDataGroup}: {$baseline->value}"));
+            } elseif($year == $baseline->coveredYear && strlen($baseline->baselineDataGroup) < 1){
+                $baselineValues = array_merge($baselineValues, array("$baseline->value"));
+            }
+        }
+        return nl2br(implode("\n", $baselineValues));
+    }
+
     public function __clone() {
         $indicator = new Indicator();
         $indicator->id = $this->id;
