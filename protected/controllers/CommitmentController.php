@@ -10,6 +10,7 @@ use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\ubt\Commitment;
 use org\csflu\isms\models\ubt\CommitmentMovement;
 use org\csflu\isms\models\ubt\WigSession;
+use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\controllers\support\CommitmentModuleSupport;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
 use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl;
@@ -30,6 +31,9 @@ class CommitmentController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_IP;
+        $this->actionCode = "IPM";
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->ubtService = new UnitBreakthroughManagementServiceSimpleImpl();
         $this->userService = new SimpleUserManagementServiceImpl();

@@ -10,6 +10,7 @@ use org\csflu\isms\service\reports\IpReportServiceImpl;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
 use org\csflu\isms\models\reports\IpReportInput;
 use org\csflu\isms\models\ubt\UnitBreakthrough;
+use org\csflu\isms\models\uam\ModuleAction;
 
 /**
  * Description of IpController
@@ -25,6 +26,9 @@ class IpController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_IP;
+        $this->actionCode = "IPMRPT";
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->commitmentModuleSupport = CommitmentModuleSupport::getInstance($this);
         $this->reportService = new IpReportServiceImpl();
@@ -36,6 +40,7 @@ class IpController extends Controller {
         $this->layout = "column-2";
 
         $account = $this->commitmentModuleSupport->loadAccountModel();
+        $this->actionCode = "IPM";
         $this->render('ip/index', array(
             'breadcrumb' => array(
                 'Home' => array('site/index'),
