@@ -30,6 +30,9 @@ class ProjectController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_INITIATIVE;
+        $this->actionCode = "INIM";
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->initiativeService = new InitiativeManagementService();

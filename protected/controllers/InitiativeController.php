@@ -38,6 +38,9 @@ class InitiativeController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_INITIATIVE;
+        $this->actionCode = "INIM";
         $this->logger = \Logger::getLogger(__CLASS__);
         $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->mapService = new StrategyMapManagementService();
@@ -47,6 +50,7 @@ class InitiativeController extends Controller {
     }
 
     public function index($map) {
+        $this->actionCode = "INIV";
         $strategyMap = $this->loadMapModel($map);
 
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Initiatives';
@@ -230,6 +234,7 @@ class InitiativeController extends Controller {
     }
 
     public function manage() {
+        $this->actionCode = "INIUPD";
         $account = $this->modelLoaderUtil->loadAccountModel();
         $this->title = ApplicationConstants::APP_NAME . ' - Manage Initiative';
         $this->layout = 'column-2';
@@ -270,6 +275,7 @@ class InitiativeController extends Controller {
     }
 
     public function view($id) {
+        $this->actionCode = "INIV";
         $initiative = $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $initiative);
 

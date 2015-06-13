@@ -30,6 +30,9 @@ class ImplementorController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_INITIATIVE;
+        $this->actionCode = "INIM";
         $this->initiativeService = new InitiativeManagementService();
         $this->mapService = new StrategyMapManagementService();
         $this->departmentService = new DepartmentService();

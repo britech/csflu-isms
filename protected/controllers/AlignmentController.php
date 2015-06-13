@@ -33,6 +33,7 @@ class AlignmentController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
         $this->initiativeService = new InitiativeManagementService();
         $this->mapService = new StrategyMapManagementService();
         $this->scorecardService = new ScorecardManagementService();
@@ -41,6 +42,8 @@ class AlignmentController extends Controller {
     }
 
     public function manageInitiative($id) {
+        $this->moduleCode = ModuleAction::MODULE_INITIATIVE;
+        $this->actionCode = "INIM";
         $initiative = $this->loadInitiativeModel($id);
         $strategyMap = $this->loadMapModel($initiative);
 
@@ -178,6 +181,8 @@ class AlignmentController extends Controller {
     }
 
     public function manageUnitBreakthrough($id) {
+        $this->moduleCode = ModuleAction::MODULE_UBT;
+        $this->actionCode = "UBTM";
         $unitBreakthrough = $this->loadUnitBreakthroughModel($id);
         $strategyMap = $this->loadMapModel(null, $unitBreakthrough);
 
