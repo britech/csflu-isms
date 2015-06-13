@@ -8,6 +8,8 @@ use org\csflu\isms\service\commons\RevisionHistoryLoggingServiceImpl as Revision
 use org\csflu\isms\models\commons\RevisionHistory;
 use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\core\Model;
+use org\csflu\isms\service\uam\RbacServiceImpl;
+use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl;
 
 /**
  * 
@@ -44,12 +46,28 @@ class Controller {
         extract($params);
 
         if (file_exists($fileLocation)) {
-            $body = $fileLocation;
+            if ($this->isRbacEnabled) {
+                $body = $this->initiateRbac($fileLocation);
+            } else {
+                $body = $fileLocation;
+            }
         } else {
             throw new \Exception("Resource does not exist ({$view}.php)");
         }
 
         require_once "protected/views/layouts/{$this->layout}.php";
+    }
+
+    private function initiateRbac($fileName) {
+        $rbacService = new RbacServiceImpl();
+
+        $userService = new SimpleUserManagementServiceImpl();
+        $userAccount = $userService->getAccountById($this->getSessionData('user'));
+        if($rbacService->validateRole($userAccount->securityRole, $this->moduleCode, $this->actionCode)) {
+            return $fileName;
+        } else {
+            return "protected/views/commons/forbidden.php";
+        }
     }
 
     public final function renderPartial($view, $params = []) {
