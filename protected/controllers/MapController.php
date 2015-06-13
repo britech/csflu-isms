@@ -23,12 +23,16 @@ class MapController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_SMAP;
+        $this->actionCode = "SMAPM";
         $this->layout = 'column-2';
         $this->mapService = new StrategyMapService();
         $this->logger = \Logger::getLogger(__CLASS__);
     }
 
     public function index() {
+        $this->actionCode = "SMAPV";
         $this->title = ApplicationConstants::APP_NAME . ' - Strategy Map Directory';
         $this->render('map/index', array(
             'breadcrumb' => array(
@@ -94,7 +98,7 @@ class MapController extends Controller {
         if (!isset($id) || empty($id)) {
             throw new ControllerException('Another parameter is needed to process this request');
         }
-
+        $this->actionCode = "SMAPV";
         $strategyMap = $this->mapService->getStrategyMap($id);
         if (is_null($strategyMap->id)) {
             $_SESSION['notif'] = array('class' => '', 'message' => 'Strategy Map not found');
