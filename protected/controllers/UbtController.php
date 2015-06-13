@@ -194,6 +194,7 @@ class UbtController extends Controller {
                 'data' => array(
                     'header' => 'Actions',
                     'links' => array(
+                        'Revision History' => array('revision/ubt', 'id' => $unitBreakthrough->id),
                         'Update Entry Data' => array('ubt/update', 'id' => $unitBreakthrough->id),
                         'Manage Lead Measures' => array('leadMeasure/index', 'ubt' => $unitBreakthrough->id),
                         'Manage Strategy Alignments' => array('alignment/manageUnitBreakthrough', 'id' => $unitBreakthrough->id),

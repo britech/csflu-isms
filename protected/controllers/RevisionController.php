@@ -90,6 +90,29 @@ class RevisionController extends Controller {
             'module' => $this->moduleCode
         ));
     }
+    
+    public function ubt($id) {
+        $this->moduleCode = ModuleAction::MODULE_UBT;
+        $this->actionCode = "UBTM";
+
+        $unitBreakthrough = $this->modelLoaderUtil->loadUnitBreakthroughModel($id);
+        $strategyMap = $this->modelLoaderUtil->loadMapModel(null, null, null, null, null, $unitBreakthrough);
+        $this->render('revision/index', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Home' => array('site/index'),
+                'Strategy Map Directory' => array('map/index'),
+                'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
+                'UBT Directory' => array('ubt/index', 'map' => $strategyMap->id),
+                'About Unit Breakthrough' => array('ubt/view', 'id' => $unitBreakthrough->id),
+                'Revision History' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'revision/_navi'
+            ),
+            'id' => $unitBreakthrough->id,
+            'module' => $this->moduleCode
+        ));
+    }
 
     public function retrieveList() {
         $this->validatePostData(array('module', 'id'));
