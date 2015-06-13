@@ -21,6 +21,9 @@ class RoleController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_SYS;
+        $this->actionCode = "MU";
         $this->layout = 'column-2';
         $this->userService = new UserManagementService();
     }

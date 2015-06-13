@@ -9,6 +9,7 @@ use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl as UserManagement
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\uam\Employee;
+use org\csflu\isms\models\uam\ModuleAction;
 
 /**
  * Description of UserController
@@ -21,6 +22,9 @@ class UserController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_SYS;
+        $this->actionCode = "MU";
         $this->layout = 'column-2';
         $this->userService = new UserManagementService();
     }
