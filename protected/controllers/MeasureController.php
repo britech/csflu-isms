@@ -36,6 +36,9 @@ class MeasureController extends Controller {
 
     public function __construct() {
         $this->checkAuthorization();
+        $this->isRbacEnabled = true;
+        $this->moduleCode = ModuleAction::MODULE_SCARD;
+        $this->actionCode = "MPM";
         $this->departmentService = new DepartmentService();
         $this->mapService = new StrategyMapManagementService();
         $this->indicatorService = new IndicatorManagementService();
@@ -44,6 +47,7 @@ class MeasureController extends Controller {
     }
 
     public function index($map) {
+        $this->actionCode = "MPV";
         $strategyMap = $this->loadMapModel($map);
         $this->layout = 'column-2';
         $this->title = ApplicationConstants::APP_NAME . ' - Measure Profiles';
@@ -206,7 +210,7 @@ class MeasureController extends Controller {
         if (!isset($id) || empty($id)) {
             throw new ControllerException("Another parameter is needed to process this request");
         }
-
+        $this->actionCode = "MPV";
         $measureProfile = $this->loadModel($id);
         $strategyMap = $this->loadMapModel(null, $measureProfile->objective);
         $this->layout = 'column-2';
