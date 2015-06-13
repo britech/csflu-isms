@@ -323,6 +323,7 @@ class UserController extends Controller {
         if (isset($_SESSION['employee']) && !is_null($_SESSION['employee'])) {
             $this->title = ApplicationConstants::APP_NAME . ' - Change Password';
             $this->layout = "column-1";
+            $this->isRbacEnabled = false;
             $this->render('user/changePassword', array(
                 'breadcrumb' => array('Home' => array('site/index'),
                     'Change Password' => 'active'),
