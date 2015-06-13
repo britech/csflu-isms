@@ -111,15 +111,15 @@ class ReportController extends Controller {
             $positions = explode("/", $leadOffice->designation);
 
             if (in_array(LeadOffice::RESPONSBILITY_TRACKER, $positions)) {
-                $trackers = array_merge($trackers, array("- {$leadOffice->department->name}"));
+                $trackers = array_merge($trackers, array($leadOffice->department->name));
             }
 
             if (in_array(LeadOffice::RESPONSIBILITY_ACCOUNTABLE, $positions)) {
-                $owners = array_merge($owners, array("- {$leadOffice->department->name}"));
+                $owners = array_merge($owners, array($leadOffice->department->name));
             }
 
             if (in_array(LeadOffice::RESPONSIBILITY_SETTER, $positions)) {
-                $setters = array_merge($setters, array("- {$leadOffice->department->name}"));
+                $setters = array_merge($setters, array($leadOffice->department->name));
             }
         }
 
@@ -147,15 +147,48 @@ class ReportController extends Controller {
         $this->render('report/measure-profile', array(
             'measureProfile' => $measureProfile,
             'strategyMap' => $strategyMap,
-            'setters' => nl2br(implode("\n", $setters)),
-            'owners' => nl2br(implode("\n", $owners)),
-            'trackers' => nl2br(implode("\n", $trackers)),
+            'setters' => implode(",", $setters),
+            'owners' => implode(", ", $owners),
+            'trackers' => implode(", ", $trackers),
             'baselineYears' => $baselineYears,
             'targetYears' => $targetYears,
             'dataGroups' => $dataGroups,
             'baselineCount' => count($baselineYears),
             'targetsCount' => count($targetYears),
             'dataSource' => nl2br(implode("\n", explode("+", $measureProfile->indicator->dataSource)))
+        ));
+    }
+
+    public function scorecardTemplate($map) {
+        $strategyMap = $this->modelLoaderUtil->loadMapModel($map);
+
+        $startingTargetYear = intval($strategyMap->startingPeriodDate->format('Y'));
+        $endingTargetYear = intval($strategyMap->endingPeriodDate->format('Y'));
+        $targetYears = array();
+        for ($i = $startingTargetYear; $i <= $endingTargetYear; $i++) {
+            $targetYears = array_merge($targetYears, array($i));
+        }
+
+        $baselineYears = array(
+            $startingTargetYear - 2,
+            $startingTargetYear - 1
+        );
+
+        $perspectives = array();
+        foreach ($strategyMap->objectives as $objective) {
+            if (!in_array($objective->perspective, $perspectives)) {
+                $perspectives = array_merge($perspectives, array($objective->perspective));
+            }
+        }
+
+        $this->render('report/scorecard-template', array(
+            'strategyMap' => $strategyMap,
+            'alignmentService' => $this->alignmentService,
+            'baselineYears' => $baselineYears,
+            'targetYears' => $targetYears,
+            'baselineCount' => count($baselineYears),
+            'targetsCount' => count($targetYears),
+            'perspectives' => $perspectives
         ));
     }
 
