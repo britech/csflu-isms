@@ -115,6 +115,7 @@ class MapController extends Controller {
                 'data' => array(
                     'header' => 'Actions',
                     'links' => array(
+                        'Revision History' => array('revision/strategyMap', 'id' => $strategyMap->id),
                         'Update Entry Data' => array('map/update', 'id' => $strategyMap->id),
                         'Manage Perspectives' => array('perspective/manage', 'map' => $id),
                         'Manage Strategic Themes' => array('theme/manage', 'map' => $id),
