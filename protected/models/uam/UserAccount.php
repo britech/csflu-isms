@@ -25,13 +25,19 @@ class UserAccount extends Model {
     }
 
     public function bindValuesUsingArray(array $valueArray) {
-        $this->employee = new Employee();
-        $this->employee->bindValuesUsingArray($valueArray);
+        if (array_key_exists('employee', $valueArray)) {
+            $this->employee = new Employee();
+            $this->employee->bindValuesUsingArray($valueArray);
+        }
 
-        $this->securityRole = new SecurityRole();
-        $this->securityRole->bindValuesUsingArray($valueArray, $this->securityRole);
-
-        parent::bindValuesUsingArray($valueArray, $this);
+        if (array_key_exists('securityRole', $valueArray)) {
+            $this->securityRole = new SecurityRole();
+            $this->securityRole->bindValuesUsingArray($valueArray, $this->securityRole);
+        }
+        
+        if(array_key_exists('useraccount', $valueArray)){
+            parent::bindValuesUsingArray($valueArray, $this);
+        }
     }
 
     public function getAttributeNames() {
