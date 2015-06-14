@@ -27,11 +27,32 @@ $(document).ready(function() {
         width: '100%',
         pageable: true,
         sortable: true
+    }).on("rowClick", function(event) {
+        var args = event.args;
+        var row = args.row;
+        $("[id^=unlink-]").click(function() {
+            var id = $(this).attr('id').split('-')[1];
+            $("#text").html("Unlinking the Security Role<br/><br/>Department:&nbsp;<strong>" + row.department + "</strong><br/>Role:&nbsp<strong>" + row.role + "</strong><br/><br/>Do you want to continue?");
+            $("#accept-delete").attr('id', "accept-delete-" + id);
+            $("#delete-account").jqxWindow('title', '<strong>Confirm Unlinking of Security Role</strong>');
+            $("#delete-account").jqxWindow('open');
+        });
     });
 
     $('#reset-password, #disable-account, #activate-account').jqxWindow({
         width: 300,
         height: 150,
+        resizable: false,
+        draggable: false,
+        isModal: true,
+        autoOpen: false,
+        theme: 'office',
+        animationType: 'none'
+    });
+
+    $('#delete-account').jqxWindow({
+        width: 500,
+        height: 200,
         resizable: false,
         draggable: false,
         isModal: true,
@@ -60,7 +81,7 @@ $(document).ready(function() {
                 window.location = response.url;
             } catch (e) {
                 console.log(e);
-                $("#reset").jqxWindow('close');
+                $("#reset-password").jqxWindow('close');
             }
 
         });
@@ -87,12 +108,12 @@ $(document).ready(function() {
                 window.location = response.url;
             } catch (e) {
                 console.log(e);
-                $("#reset").jqxWindow('close');
+                $("#disable-account").jqxWindow('close');
             }
 
         });
     });
-    
+
     $("#activate").click(function() {
         $("#activate-account").jqxWindow('title', '<strong>Confirm Activation of User Account</strong>');
         $("#activate-account").jqxWindow('open');
@@ -114,9 +135,30 @@ $(document).ready(function() {
                 window.location = response.url;
             } catch (e) {
                 console.log(e);
-                $("#reset").jqxWindow('close');
+                $("#activate-account").jqxWindow('close');
             }
 
+        });
+    });
+
+    $("#deny-delete").click(function() {
+        $("#accountList").jqxDataTable('updatebounddata');
+        $("#delete-account").jqxWindow('close');
+    });
+
+    $("[id^=accept-delete]").click(function() {
+        var id = $(this).attr('id').split('-')[2];
+        $.post("?r=user/deleteLink",
+                {id: id},
+        function(data) {
+            try {
+                var response = $.parseJSON(data);
+                window.location = response.url;
+            } catch (e) {
+                console.log(e);
+                $("#delete-account").jqxWindow('close');
+                $("[id^=accept-delete]").attr('id', 'accept-delete');
+            }
         });
     });
 });

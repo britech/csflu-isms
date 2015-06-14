@@ -37,3 +37,13 @@ $this->renderPartial('commons/_notification', array('notif' => $params['notif'])
         </div>
     </div>
 </div>
+
+<div id="delete-account">
+    <div id="content" style="overflow: hidden">
+        <p id="text"></p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept-delete">Yes</button>
+            <button class="ink-button green flat" id="deny-delete">No</button>
+        </div>
+    </div>
+</div>

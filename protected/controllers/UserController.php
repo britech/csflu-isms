@@ -153,26 +153,21 @@ class UserController extends Controller {
     }
 
     public function renderAccountGrid() {
-        $id = filter_input(INPUT_POST, 'id');
-        $employee = new Employee();
-        $employee->id = $id;
+        $this->validatePostData(array('id'));
+        $id = $this->getFormData('id');
+        $employee = $this->loadEmployeeModel($id);
+        $accounts = $this->userService->listAccounts($employee);
 
-        if (isset($id) && !empty($id)) {
-            $accounts = $this->userService->listAccounts($employee);
-
-            $accountsArray = array();
-            foreach ($accounts as $account) {
-                array_push($accountsArray, array('role' => $account->securityRole->description,
-                    'department' => $account->employee->department->name,
-                    'position' => $account->employee->position->name,
-                    'link' => ApplicationUtils::generateLink(array('user/updateLink', 'id' => $account->id), 'Update Link')
-                    . '&nbsp;|&nbsp;' .
-                    ApplicationUtils::generateLink(array('user/confirmDeleteLinkedRole', 'id' => $account->id), 'Unlink Role')));
-            }
-            $this->renderAjaxJsonResponse($accountsArray);
-        } else {
-            throw new ControllerException('Data is needed to process request');
+        $accountsArray = array();
+        foreach ($accounts as $account) {
+            array_push($accountsArray, array('role' => $account->securityRole->description,
+                'department' => $account->employee->department->name,
+                'position' => $account->employee->position->name,
+                'link' => ApplicationUtils::generateLink(array('user/updateLink', 'id' => $account->id), 'Update Link')
+                . '&nbsp;|&nbsp;' .
+                ApplicationUtils::generateLink('#', 'Unlink Role', array('id' => "unlink-{$account->id}"))));
         }
+        $this->renderAjaxJsonResponse($accountsArray);
     }
 
     public function resetPassword() {
@@ -196,50 +191,13 @@ class UserController extends Controller {
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('user/manageAccount', 'id' => $employee->id))));
     }
 
-    public function confirmDeleteLinkedRole() {
-        $this->title = ApplicationConstants::APP_NAME . ' - Manage Account';
-        $id = filter_input(INPUT_GET, 'id');
-
-        if (isset($id) && !empty($id)) {
-            $account = $this->userService->getAccountById($id);
-            if (is_null($account->employee->id)) {
-                $_SESSION['notif'] = "Account not found";
-                $this->redirect(array('user/index'));
-            }
-            $this->render('commons/confirm', array(
-                'breadcrumb' => array('Home' => array('site/index'),
-                    'Account Maintenance' => array('user/index'),
-                    'Manage Account' => array('user/manageAccount', 'id' => $account->employee->id),
-                    'Unlink Security Role' => 'active'),
-                'sidebar' => array('file' => 'user/_profile'),
-                'employee' => $account->employee->id,
-                'username' => $account->employee->loginAccount->username,
-                'name' => $account->employee->givenName . ' ' . $account->employee->lastName,
-                'status' => $account->employee->loginAccount->status,
-                'confirm' => array('class' => 'info',
-                    'header' => 'Delete Linked Security Role',
-                    'text' => "Do you want to remove the linked security role? Choosing 'Yes' will delete the link from this account.",
-                    'accept.class' => 'red',
-                    'accept.text' => 'Yes',
-                    'accept.url' => array('user/deleteLink', 'id' => $id),
-                    'deny.class' => 'green',
-                    'deny.text' => 'No',
-                    'deny.url' => array('user/manageAccount', 'id' => $account->employee->id))));
-        } else {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-    }
-
     public function deleteLink() {
-        $id = filter_input(INPUT_GET, 'id');
-        if (isset($id) && !empty($id)) {
-            $account = $this->userService->getAccountById($id);
-            $this->userService->unlinkSecurityRole($id);
-            $_SESSION['notif'] = array('class' => 'error', 'message' => "<b>{$account->securityRole->description}</b> designated at <b>{$account->employee->department->name}</b> was unlinked to this account.");
-            $this->redirect(array('user/manageAccount', 'id' => $account->employee->id));
-        } else {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
+        $this->validatePostData(array('id'));
+        $id = $this->getFormData('id');
+        $account = $this->loadAccountModel($id, array(ModelLoaderUtil::KEY_REMOTE => true));
+        $this->userService->unlinkSecurityRole($id);
+        $this->setSessionData('notif', array('class' => 'error', 'message' => "<b>{$account->securityRole->description}</b> designated at <b>{$account->employee->department->name}</b> was unlinked to this account."));
+        $this->renderAjaxJsonResponse(array('url'=>  ApplicationUtils::resolveUrl(array('user/manageAccount', 'id' => $account->employee->id))));
     }
 
     public function viewChangePasswordForm() {
@@ -418,6 +376,10 @@ class UserController extends Controller {
 
     private function loadEmployeeModel($id, array $properties = array()) {
         return $this->modelLoaderUtil->loadEmployeeModel($id, $properties);
+    }
+
+    private function loadAccountModel($id, array $properties = array()) {
+        return $this->modelLoaderUtil->loadAccountModel($id, $properties);
     }
 
 }
