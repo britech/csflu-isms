@@ -30,7 +30,7 @@ class UserAccount extends Model {
             $this->employee->bindValuesUsingArray($valueArray);
         }
 
-        if (array_key_exists('securityRole', $valueArray)) {
+        if (array_key_exists('securityrole', $valueArray)) {
             $this->securityRole = new SecurityRole();
             $this->securityRole->bindValuesUsingArray($valueArray, $this->securityRole);
         }
