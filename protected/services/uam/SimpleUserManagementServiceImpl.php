@@ -74,8 +74,8 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
         $this->userDaoSource->resetPassword($employee);
     }
 
-    public function updateLoginAccountStatus($id, $status) {
-        $this->userDaoSource->updateLoginAccountStatus($id, $status);
+    public function updateLoginAccountStatus(Employee $employee) {
+        $this->userDaoSource->updateLoginAccountStatus($employee);
     }
 
     public function getAccountById($id) {

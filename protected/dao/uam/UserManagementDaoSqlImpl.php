@@ -115,7 +115,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
                         $employee->loginAccount->username,
                         $employee->loginAccount->status) = $data;
             }
-            
+
             $employee->position = $this->positionDao->getPositionData($position);
             $employee->department = $this->departmentDao->getDepartmentById($department);
 
@@ -226,12 +226,12 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
         }
     }
 
-    public function updateLoginAccountStatus($id, $status) {
+    public function updateLoginAccountStatus(Employee $employee) {
         $db = ConnectionManager::getConnectionInstance();
         try {
             $db->beginTransaction();
             $dbst = $db->prepare('UPDATE employees SET emp_stat=:stat WHERE emp_id=:id');
-            $dbst->execute(array('id' => $id, 'stat' => $status));
+            $dbst->execute(array('id' => $employee->id, 'stat' => $employee->loginAccount->status));
             $db->commit();
         } catch (\PDOException $ex) {
             $db->rollBack();
@@ -343,9 +343,9 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
             $dbst->execute(array(
                 'department' => $department->id
             ));
-            
+
             $accounts = array();
-            while($data = $dbst->fetch()){
+            while ($data = $dbst->fetch()) {
                 list($id) = $data;
                 $accounts = array_merge($accounts, array($this->getUserAccount($id)));
             }
@@ -361,9 +361,9 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
             $dbst->execute(array(
                 'employee' => $employee->id
             ));
-            
+
             $accounts = array();
-            while($data = $dbst->fetch()){
+            while ($data = $dbst->fetch()) {
                 list($id) = $data;
                 $accounts = array_merge($accounts, array($this->getUserAccount($id)));
             }

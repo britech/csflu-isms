@@ -76,11 +76,10 @@ interface UserManagementDao {
     public function resetPassword(Employee $employee);
 
     /**
-     * @param Integer $id
-     * @param Integer $status
+     * @param Employee $employee
      * @throws DataAccessException
      */
-    public function updateLoginAccountStatus($id, $status);
+    public function updateLoginAccountStatus(Employee $employee);
 
     /**
      * @param Integer $id

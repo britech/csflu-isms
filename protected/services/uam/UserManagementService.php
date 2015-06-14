@@ -77,17 +77,14 @@ interface UserManagementService {
     /**
      * Resets the password of the login account to default (username)
      * @param Employee $employee
-     * @throws ServiceException
      */
     public function resetPassword(Employee $employee);
 
     /**
      * Disable/Enable a login account
-     * @param Integer $id Employee ID
-     * @param Integer $status
-     * @throws ServiceException
+     * @param Employee $employee
      */
-    public function updateLoginAccountStatus($id, $status);
+    public function updateLoginAccountStatus(Employee $employee);
 
     /**
      * Retrieves the account information via User ID
