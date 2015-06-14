@@ -25,6 +25,7 @@ use org\csflu\isms\models\initiative\Component;
 use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\models\indicator\Indicator;
 use org\csflu\isms\models\indicator\Baseline;
+use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl;
 use org\csflu\isms\service\commons\UnitOfMeasureSimpleImpl;
@@ -173,7 +174,7 @@ class ModelLoaderUtil {
     public function loadObjectiveModel($id, array $properties = array()) {
         $objective = $this->mapService->getObjective($id);
         $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "No Objective found");
-        
+
         return $this->resolveModel($updatedProperties, $objective);
     }
 
@@ -190,7 +191,7 @@ class ModelLoaderUtil {
     public function loadMeasureProfileModel($id = null, LeadOffice $leadOffice = null, Target $target = null, array $properties = array()) {
         $measure = $this->scorecardService->getMeasureProfile($id, $leadOffice, $target);
         $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "No Measure Profile found");
-       
+
         return $this->resolveModel($updatedProperties, $measure);
     }
 
@@ -203,7 +204,7 @@ class ModelLoaderUtil {
     public function loadLeadMeasureModel($id, array $properties = array()) {
         $leadMeasure = $this->ubtService->retrieveLeadMeasure($id);
         $updatedProperties = $this->resolvePropertyValues($properties, array('map/index'), false, "No Lead Measure found");
-        
+
         return $this->resolveModel($updatedProperties, $leadMeasure);
     }
 
@@ -288,7 +289,7 @@ class ModelLoaderUtil {
 
         return $this->resolveModel($updatedProperties, $activity);
     }
-    
+
     /**
      * Retrieves the Indicator entity
      * @param String $id Retrieve through its identifier
@@ -296,24 +297,37 @@ class ModelLoaderUtil {
      * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
      * @return Indicator
      */
-    public function loadIndicatorModel($id = null, Baseline $baseline = null, array $properties = array()){
+    public function loadIndicatorModel($id = null, Baseline $baseline = null, array $properties = array()) {
         $indicator = $this->indicatorService->retrieveIndicator($id, $baseline);
         $updatedProperties = $this->resolvePropertyValues($properties, array('km/indicators'), false, "Indicator not found");
-        
+
         return $this->resolveModel($updatedProperties, $indicator);
     }
-    
+
     /**
      * Retrieves the Baseline entity
      * @param String $id Retrieve through its identifier
      * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
      * @return Baseline
      */
-    public function loadBaselineModel($id, array $properties = array()){
+    public function loadBaselineModel($id, array $properties = array()) {
         $baseline = $this->indicatorService->getBaseline($id);
         $updatedProperties = $this->resolvePropertyValues($properties, array('km/indicators'), false, "Baseline data not found");
-        
+
         return $this->resolveModel($updatedProperties, $baseline);
+    }
+
+    /**
+     * Retrieves the Employee entity
+     * @param string $id Retrieves through its identifier
+     * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
+     * @return Employee
+     */
+    public function loadEmployeeModel($id, array $properties = array()) {
+        $employee = $this->userService->getEmployeeData($id);
+        $updatedProperties = $this->resolvePropertyValues($properties, array('user/index'), false, "Employee Data not found");
+        
+        return $this->resolveModel($updatedProperties, $employee);
     }
 
     private function resolvePropertyValues(array $properties, $defaultUrl, $defaultRemoteIndicator, $defaultMessage) {
@@ -363,8 +377,8 @@ class ModelLoaderUtil {
 
     private function retrieveOtherAccountModel($id, array $properties) {
         $userAccount = $this->userService->getAccountById($id);
-        $updatedProperties = $this->resolvePropertyValues($properties,  array('user/index'), false, "User not found");
-        
+        $updatedProperties = $this->resolvePropertyValues($properties, array('user/index'), false, "User not found");
+
         return $this->resolveModel($updatedProperties, $userAccount);
     }
 
