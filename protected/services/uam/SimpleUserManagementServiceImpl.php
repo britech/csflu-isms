@@ -80,7 +80,9 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
     }
 
     public function resetPassword(Employee $employee) {
-        $this->userDaoSource->resetPassword($employee);
+        $password = password_hash($employee->loginAccount->username, PASSWORD_DEFAULT);
+        $employee->loginAccount->password = $password;
+        $this->userDaoSource->updateSecurityKey($employee);
     }
 
     public function updateLoginAccountStatus(Employee $employee) {

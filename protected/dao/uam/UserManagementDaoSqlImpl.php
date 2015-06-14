@@ -211,19 +211,6 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
         }
     }
 
-    public function resetPassword(Employee $employee) {
-        $db = ConnectionManager::getConnectionInstance();
-        try {
-            $db->beginTransaction();
-            $dbst = $db->prepare('UPDATE employees SET password = username WHERE emp_id=:id');
-            $dbst->execute(array('id' => $employee->id));
-            $db->commit();
-        } catch (\PDOException $ex) {
-            $db->rollBack();
-            throw new DataAccessException($ex->getMessage());
-        }
-    }
-
     public function updateLoginAccountStatus(Employee $employee) {
         $db = ConnectionManager::getConnectionInstance();
         try {

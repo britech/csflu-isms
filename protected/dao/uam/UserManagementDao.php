@@ -68,13 +68,7 @@ interface UserManagementDao {
      * @throws DataAccessException
      */
     public function getLoginAccountStatus($id);
-
-    /**
-     * @param Employee $employee
-     * @throws DataAccessException
-     */
-    public function resetPassword(Employee $employee);
-
+    
     /**
      * @param Employee $employee
      * @throws DataAccessException
