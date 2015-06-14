@@ -32,7 +32,11 @@ $(document).ready(function() {
                 {name: 'id'},
                 {name: 'name'}
             ],
-            url: '?r=department/listDepartments'
+            url: '?r=user/listDepartments',
+            type: 'POST',
+            data: {
+                'employee': $("#employee").val()
+            }
         }),
         selectedIndex: 0,
         displayMember: 'name',

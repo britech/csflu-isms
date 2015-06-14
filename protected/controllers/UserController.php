@@ -6,6 +6,7 @@ use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl as UserManagementService;
+use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\uam\Employee;
@@ -19,6 +20,8 @@ use org\csflu\isms\models\uam\ModuleAction;
 class UserController extends Controller {
 
     private $userService;
+    private $departmentService;
+    private $logger;
 
     public function __construct() {
         $this->checkAuthorization();
@@ -26,7 +29,9 @@ class UserController extends Controller {
         $this->moduleCode = ModuleAction::MODULE_SYS;
         $this->actionCode = "MU";
         $this->layout = 'column-2';
+        $this->logger = \Logger::getLogger(__CLASS__);
         $this->userService = new UserManagementService();
+        $this->departmentService = new DepartmentServiceSimpleImpl();
     }
 
     public function index() {
@@ -472,6 +477,25 @@ class UserController extends Controller {
 
         $_SESSION['notif'] = array('class' => 'info', 'message' => "Link update successfull");
         $this->redirect(array('user/manageAccount', 'id' => $account->employee->id));
+    }
+
+    public function listDepartments() {
+        $this->validatePostData(array('employee'));
+        $id = $this->getFormData('employee');
+
+        $employee = $this->userService->getEmployeeData($id);
+        $accounts = $this->userService->listAccounts($employee);
+        $departments = $this->departmentService->listDepartments(null, $accounts);
+
+        $data = array();
+
+        foreach ($departments as $department) {
+            array_push($data, array(
+                'id' => $department->id,
+                'name' => $department->name
+            ));
+        }
+        $this->renderAjaxJsonResponse($data);
     }
 
 }
