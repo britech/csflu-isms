@@ -17,7 +17,7 @@ use org\csflu\isms\models\uam\SecurityRole;
 use org\csflu\isms\models\uam\ModuleAction;
 
 /**
- * Description of UserController
+ * Description validof UserController
  *
  * @author britech
  */
@@ -223,20 +223,17 @@ class UserController extends Controller {
     }
 
     public function checkPassword() {
-        $password = filter_input(INPUT_POST, 'password');
-        if (isset($password) && !empty($password)) {
-            $currentPassword = $this->userService->getSecurityKey($_SESSION['employee']);
-            if ($currentPassword == $password) {
-                $responseCode = '00';
-                $responseMessage = "";
-            } else {
-                $responseCode = '20';
-                $responseMessage = "Invalid passsword. Please try again";
-            }
-            $this->renderAjaxJsonResponse(array('respCode' => $responseCode, 'respMessage' => $responseMessage));
+        $this->validatePostData(array('password'));
+        $password = $this->getFormData('password');
+        $employee = $this->modelLoaderUtil->loadAccountModel()->employee;
+        if ($this->userService->validateSecurityKey($employee, $password)) {
+            $responseCode = '00';
+            $responseMessage = "";
         } else {
-            throw new ControllerException('Another parameter is needed to process this request');
+            $responseCode = '20';
+            $responseMessage = "Invalid password. Please try again";
         }
+        $this->renderAjaxJsonResponse(array('respCode' => $responseCode, 'respMessage' => $responseMessage));
     }
 
     public function changePassword() {

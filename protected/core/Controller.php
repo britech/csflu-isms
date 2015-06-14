@@ -63,7 +63,7 @@ class Controller {
 
         $userService = new SimpleUserManagementServiceImpl();
         $userAccount = $userService->getAccountById($this->getSessionData('user'));
-        if($rbacService->validateRole($userAccount->securityRole, $this->moduleCode, $this->actionCode)) {
+        if ($rbacService->validateRole($userAccount->securityRole, $this->moduleCode, $this->actionCode)) {
             return $fileName;
         } else {
             return "protected/views/commons/forbidden.php";
@@ -108,7 +108,7 @@ class Controller {
 
     protected final function checkAuthorization() {
         if (empty($this->getSessionData('employee')) || empty($this->getSessionData('user'))) {
-            $_SESSION['login.notif'] = "Please enter your user credentials to continue.";
+            $this->setSessionData('notif', array('message' => "Please enter your user credentials to continue."));
             $this->redirect(array('site/login'));
         }
     }

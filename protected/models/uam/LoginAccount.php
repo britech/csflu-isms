@@ -22,7 +22,14 @@ class LoginAccount extends Model {
     private $status;
 
     public function validate() {
-        
+        if (strlen($this->username) < 1) {
+            array_push($this->validationMessages, '- Username should be defined');
+        }
+
+        if (strlen($this->password) < 1) {
+            array_push($this->validationMessages, '- Password should be defined');
+        }
+        return count($this->validationMessages) == 0;
     }
 
     public static function listStatusTypes() {
@@ -31,13 +38,20 @@ class LoginAccount extends Model {
             self::STATUS_DISABLED => 'Inactive'
         );
     }
-    
-    public static function translateStatusType($statusType = null){
+
+    public static function translateStatusType($statusType = null) {
         $type = is_null($statusType) ? $this->status : $statusType;
-        if(array_key_exists($type, self::listStatusTypes())){
+        if (array_key_exists($type, self::listStatusTypes())) {
             return self::listStatusTypes()[$type];
         }
         return "Undefined";
+    }
+
+    public function getAttributeNames() {
+        return array(
+            'username' => 'Username',
+            'password' => 'Password'
+        );
     }
 
     public function __set($name, $value) {

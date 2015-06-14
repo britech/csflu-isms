@@ -5,6 +5,7 @@ namespace org\csflu\isms\service\uam;
 use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\uam\UserAccount;
+use org\csflu\isms\models\uam\LoginAccount;
 use org\csflu\isms\dao\uam\UserManagementDaoSqlImpl as UserManagementDao;
 use org\csflu\isms\dao\uam\SecurityRoleDaoSqlImpl as SecurityRoleDao;
 use org\csflu\isms\service\uam\UserManagementService;
@@ -14,14 +15,21 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
 
     private $userDaoSource;
     private $securityRoleDaoSource;
-
+    
     public function __construct() {
+        $this->logger = \Logger::getLogger(__CLASS__);
         $this->userDaoSource = new UserManagementDao();
         $this->securityRoleDaoSource = new SecurityRoleDao();
     }
 
-    public function authenticate($login) {
-        return $this->userDaoSource->authenticate($login);
+    public function authenticate(LoginAccount $loginAccount) {
+        $output = $this->userDaoSource->authenticate($loginAccount);
+        $password = $output->loginAccount->password;
+
+        if(password_verify($loginAccount->password, $password)){
+            return $output;
+        }
+        return null;
     }
 
     public function listAccounts(Employee $employee = null, Department $department = null) {
@@ -98,11 +106,13 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
         $this->userDaoSource->unlinkSecurityRole($id);
     }
 
-    public function getSecurityKey($id) {
-        return $this->userDaoSource->getSecurityKey($id);
+    public function validateSecurityKey(Employee $employee, $clearPassword) {
+        $password = $this->userDaoSource->getSecurityKey($employee);
+        return password_verify($clearPassword, $password);
     }
-
-    public function updateSecurityKey($employee) {
+    
+    public function updateSecurityKey(Employee $employee) {
+        $employee->loginAccount->password = password_hash($employee->loginAccount->password, PASSWORD_DEFAULT);
         $this->userDaoSource->updateSecurityKey($employee);
     }
 

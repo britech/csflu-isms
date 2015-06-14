@@ -7,7 +7,6 @@ use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\models\commons\Department;
-use org\csflu\isms\models\commons\Position;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\uam\SecurityRole;
 use org\csflu\isms\models\uam\LoginAccount;
@@ -31,17 +30,16 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
         $this->hrDb = ConnectionManager::getHrConnectionInstance();
     }
 
-    public function authenticate($login) {
+    public function authenticate(LoginAccount $loginAccount) {
         try {
-            $db = ConnectionManager::getConnectionInstance();
-
-            $dbst = $db->prepare('SELECT emp_id FROM employees WHERE username=:username AND password=:password AND emp_stat=:stat');
-            $dbst->execute(array('username' => $login->username, 'password' => $login->password, 'stat' => 1));
-
+            $dbst = $this->db->prepare('SELECT emp_id, password FROM employees WHERE username=:username AND emp_stat=:stat');
+            $dbst->execute(array('username' => $loginAccount->username, 'stat' => LoginAccount::STATUS_ACTIVE));
+            
             $employee = new Employee();
+            $employee->loginAccount = new LoginAccount();
 
             while ($data = $dbst->fetch()) {
-                list($employee->id) = $data;
+                list($employee->id, $employee->loginAccount->password) = $data;
             }
 
             return $employee;
@@ -274,11 +272,11 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
         }
     }
 
-    public function getSecurityKey($id) {
+    public function getSecurityKey(Employee $employee) {
         $db = ConnectionManager::getConnectionInstance();
         try {
             $dbst = $db->prepare("SELECT password FROM employees WHERE emp_id=:id");
-            $dbst->execute(array('id' => $id));
+            $dbst->execute(array('id' => $employee->id));
 
             while ($data = $dbst->fetch()) {
                 list($password) = $data;

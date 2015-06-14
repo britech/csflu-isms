@@ -45,6 +45,10 @@ class UserAccount extends Model {
             'securityRole' => 'Security Role'
         );
     }
+    
+    public function getSecurityRoleDepartmentDisplay(){
+        return "{$this->securityRole->description} - {$this->employee->department->name}";
+    }
 
     public function __set($name, $value) {
         $this->$name = $value;

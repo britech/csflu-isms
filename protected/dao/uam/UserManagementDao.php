@@ -2,7 +2,7 @@
 
 namespace org\csflu\isms\dao\uam;
 
-use org\csflu\isms\models\uam\Login;
+use org\csflu\isms\models\uam\LoginAccount;
 use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\uam\SecurityRole;
@@ -13,11 +13,11 @@ interface UserManagementDao {
 
     /**
      * 
-     * @param Login $login
+     * @param LoginAccount $loginAccount
      * @return Employee
      * @throws DataAccessException
      */
-    public function authenticate($login);
+    public function authenticate(LoginAccount $loginAccount);
 
     /**
      * @param Department $department
@@ -95,11 +95,11 @@ interface UserManagementDao {
     public function unlinkSecurityRole($id);
 
     /**
-     * @param Integer $id
+     * @param Employee $employee
      * @return String
      * @throws DataAccessException
      */
-    public function getSecurityKey($id);
+    public function getSecurityKey(Employee $employee);
 
     /**
      * @param Employee $employee

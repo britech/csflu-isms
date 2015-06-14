@@ -47,7 +47,6 @@ require_once 'models/commons/Position.php';
 require_once 'models/commons/UnitOfMeasure.php';
 require_once 'models/commons/RevisionHistory.php';
 
-require_once 'models/uam/Login.php';
 require_once 'models/uam/Employee.php';
 require_once 'models/uam/UserAccount.php';
 require_once 'models/uam/LoginAccount.php';

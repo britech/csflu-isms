@@ -2,7 +2,7 @@
 
 namespace org\csflu\isms\service\uam;
 
-use org\csflu\isms\models\uam\Login;
+use org\csflu\isms\models\uam\LoginAccount;
 use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\uam\SecurityRole;
@@ -13,11 +13,11 @@ interface UserManagementService {
 
     /**
      * Authenticates the user credential (username and password)
-     * @param Login $login
+     * @param LoginAccount $loginAccount
      * @return Employee
      * @throws ServiceException
      */
-    public function authenticate($login);
+    public function authenticate(LoginAccount $loginAccount);
 
     /**
      * Retrieves the available account types for the employee to enter the system
@@ -100,21 +100,22 @@ interface UserManagementService {
      * @throws ServiceException
      */
     public function unlinkSecurityRole($id);
-
+ 
     /**
-     * Gets the security key (password)
-     * @param Integer $id Employee ID
-     * @return String
+     * Validates the security key
+     * @param Employee $employee
+     * @param string $clearPassword
+     * @return boolean
      * @throws ServiceException
      */
-    public function getSecurityKey($id);
+    public function validateSecurityKey(Employee $employee, $clearPassword);
 
     /**
      * Updates the security key (password)
      * @param Employee $employee
      * @throws ServiceException
      */
-    public function updateSecurityKey($employee);
+    public function updateSecurityKey(Employee $employee);
 
     /**
      * Links a security role on an UserAccount
