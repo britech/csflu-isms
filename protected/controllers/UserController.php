@@ -7,6 +7,7 @@ use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl as UserManagementService;
 use org\csflu\isms\service\commons\DepartmentServiceSimpleImpl;
+use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\uam\Employee;
@@ -21,6 +22,7 @@ class UserController extends Controller {
 
     private $userService;
     private $departmentService;
+    private $modelLoaderUtil;
     private $logger;
 
     public function __construct() {
@@ -30,6 +32,7 @@ class UserController extends Controller {
         $this->actionCode = "MU";
         $this->layout = 'column-2';
         $this->logger = \Logger::getLogger(__CLASS__);
+        $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
         $this->userService = new UserManagementService();
         $this->departmentService = new DepartmentServiceSimpleImpl();
     }
@@ -130,16 +133,11 @@ class UserController extends Controller {
     }
 
     public function manageAccount($id) {
-        $employee = $this->userService->getEmployeeData($id);
+        $employee = $this->loadEmployeeModel($id);
         if ($employee->id == $this->getSessionData('employee')) {
             $this->setSessionData('notif', array('message' => "You are not allowed to manage your own account"));
             $this->redirect(array('user/index'));
         } else {
-            if (is_null($employee->id)) {
-                $this->setSessionData('notif', array('message' => "Account not found"));
-                $this->redirect(array('user/index'));
-            }
-            $status = $this->userService->getLoginAccountStatus($id);
             $this->title = ApplicationConstants::APP_NAME . ' - Manage Account';
             $this->render('user/manage', array(
                 'breadcrumb' => array(
@@ -147,10 +145,7 @@ class UserController extends Controller {
                     'Account Maintenance' => array('user/index'),
                     'Manage Account' => 'active'),
                 'sidebar' => array('file' => 'user/_profile'),
-                'employee' => $id,
-                'name' => $employee->givenName . ' ' . $employee->lastName,
-                'username' => $employee->loginAccount->username,
-                'status' => $status,
+                'employee' => $employee,
                 'notif' => $this->getSessionData('notif')
             ));
             $this->unsetSessionData('notif');
@@ -180,49 +175,13 @@ class UserController extends Controller {
         }
     }
 
-    public function confirmResetPassword() {
-        $this->title = ApplicationConstants::APP_NAME . ' - Manage Account';
-        $id = filter_input(INPUT_GET, 'id');
-        if (isset($id) && !empty($id)) {
-            $employee = $this->userService->getEmployeeData($id);
-            if (is_null($employee->id)) {
-                $_SESSION['notif'] = "Account not found";
-                $this->redirect(array('user/index'));
-            }
-            $status = $this->userService->getLoginAccountStatus($id);
-            $this->render('commons/confirm', array(
-                'breadcrumb' => array('Home' => array('site/index'),
-                    'Account Maintenance' => array('user/index'),
-                    'Manage Account' => array('user/manageAccount', 'id' => $id),
-                    'Confirm Password Reset' => 'active'),
-                'sidebar' => array('file' => 'user/_profile'),
-                'employee' => $id,
-                'username' => $employee->loginAccount->username,
-                'name' => $employee->givenName . ' ' . $employee->lastName,
-                'status' => $status,
-                'confirm' => array('class' => 'info',
-                    'header' => 'Confirm password reset',
-                    'text' => 'Do you to reset the password of this account? Continuing on this action will replace the password with the account username.',
-                    'accept.class' => 'green',
-                    'accept.text' => 'Continue',
-                    'accept.url' => array('user/resetPassword', 'id' => $id),
-                    'deny.class' => '',
-                    'deny.text' => 'Back',
-                    'deny.url' => array('user/manageAccount', 'id' => $id))));
-        } else {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-    }
-
     public function resetPassword() {
-        $id = filter_input(INPUT_GET, 'id');
-        if (isset($id) && !empty($id)) {
-            $this->userService->resetPassword($id);
-            $_SESSION['notif'] = array('class' => 'info', 'message' => "Password reset successfull. Default password is the account username");
-            $this->redirect(array('user/manageAccount', 'id' => $id));
-        } else {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
+        $this->validatePostData(array('id'));
+        $id = $this->getFormData('id');
+        $employee = $this->loadEmployeeModel($id, array(ModelLoaderUtil::KEY_REMOTE => true));
+        $this->userService->resetPassword($employee);
+        $this->setSessionData('notif', array('class' => 'info', 'message' => "Password reset successful. Default password is the account username"));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('user/manageAccount', 'id' => $id))));
     }
 
     public function confirmStatusToggle() {
@@ -496,6 +455,10 @@ class UserController extends Controller {
             ));
         }
         $this->renderAjaxJsonResponse($data);
+    }
+    
+    private function loadEmployeeModel($id, array $properties = array()){
+        return $this->modelLoaderUtil->loadEmployeeModel($id, $properties);
     }
 
 }
