@@ -107,7 +107,7 @@ class FormGenerator extends Component {
             } elseif (!empty($disabled) && $disabled == true) {
                 return "<input type=\"password\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" disabled tabindex=\"{$this->tabIndex}\"/>";
             } else {
-                return "<input type=\"text\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\"/>";
+                return "<input type=\"password\" name=\"{$fieldName}\" class=\"{$class}\" id=\"{$id}\" style=\"{$style}\" tabindex=\"{$this->tabIndex}\"/>";
             }
         } else {
             return "<input type=\"password\" name=\"{$fieldName}\" tabindex=\"{$this->tabIndex}\"/>";

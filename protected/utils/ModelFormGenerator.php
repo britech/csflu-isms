@@ -65,6 +65,11 @@ class ModelFormGenerator extends FormGenerator {
         $properties = $this->validateAndRetrieve($model, $fieldName, $properties);
         return parent::renderHiddenField($this->generateFieldName($model, $fieldName), $properties);
     }
+    
+    public function renderPasswordField(Model $model, $fieldName, array $properties = []) {
+        $properties = $this->validateAndRetrieve($model, $fieldName, $properties);
+        return parent::renderPasswordField($this->generateFieldName($model, $fieldName), $properties);
+    }
 
     private function validateAndRetrieve(Model $model, $fieldName, array $properties) {
         if (!property_exists($model, $fieldName)) {
