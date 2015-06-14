@@ -64,7 +64,7 @@ interface UserManagementService {
      * @return String
      * @throws ServiceException
      */
-    public function createAccount($account);
+    public function createAccount(UserAccount $account);
 
     /**
      * Retrieves the current status of the login account
