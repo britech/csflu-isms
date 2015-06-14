@@ -18,9 +18,9 @@ use org\csflu\isms\models\uam\LoginAccount;
         <?php if ($employee->loginAccount->status == LoginAccount::STATUS_ACTIVE): ?>
             <span style="display: block;"><?php echo ApplicationUtils::generateLink(array('user/linkForm', 'id' => $employee->id), 'Link a Security Role') ?></span>
             <span style="display: block;"><?php echo ApplicationUtils::generateLink('#', 'Reset Password', array('id' => 'reset')) ?></span>
-            <span style="display: block;"><?php echo ApplicationUtils::generateLink(array('user/confirmStatusToggle', 'id' => $employee->id, 'stat' => 0), 'Disable Account') ?></span>
+            <span style="display: block;"><?php echo ApplicationUtils::generateLink('#', 'Disable Account', array('id' => 'disable')) ?></span>
         <?php elseif ($employee->loginAccount->status == LoginAccount::STATUS_DISABLED): ?>
-            <span style="display: block;"><?php echo ApplicationUtils::generateLink(array('user/confirmStatusToggle', 'id' => $employee->id, 'stat' => 1), 'Activate Account') ?></span>
+            <span style="display: block;"><?php echo ApplicationUtils::generateLink('#', 'Activate Account', array('id' => 'activate')) ?></span>
         <?php endif; ?>
     </p>
 </div>

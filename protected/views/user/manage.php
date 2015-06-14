@@ -10,10 +10,30 @@ $this->renderPartial('commons/_notification', array('notif' => $params['notif'])
 
 <div id="reset-password">
     <div id="content" style="overflow: hidden">
-        <p id="text-reset">Do you want to continue?</p>
+        <p>Do you want to continue?</p>
         <div class="all-50 push-center align-center">
             <button class="ink-button red flat" id="accept-reset">Yes</button>
             <button class="ink-button green flat" id="deny-reset">No</button>
+        </div>
+    </div>
+</div>
+
+<div id="disable-account">
+    <div id="content" style="overflow: hidden">
+        <p>Do you want to continue?</p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button red flat" id="accept-disable">Yes</button>
+            <button class="ink-button green flat" id="deny-disable">No</button>
+        </div>
+    </div>
+</div>
+
+<div id="activate-account">
+    <div id="content" style="overflow: hidden">
+        <p>Do you want to continue?</p>
+        <div class="all-50 push-center align-center">
+            <button class="ink-button green flat" id="accept-activate">Yes</button>
+            <button class="ink-button red flat" id="deny-activate">No</button>
         </div>
     </div>
 </div>

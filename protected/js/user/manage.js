@@ -29,8 +29,7 @@ $(document).ready(function() {
         sortable: true
     });
 
-    $('#reset-password').jqxWindow({
-        title: '<strong>Confirm Password Reset</strong>',
+    $('#reset-password, #disable-account, #activate-account').jqxWindow({
         width: 300,
         height: 150,
         resizable: false,
@@ -38,18 +37,77 @@ $(document).ready(function() {
         isModal: true,
         autoOpen: false,
         theme: 'office',
-        animationType: 'none',
-        cancelButton: $("#deny-reset")
+        animationType: 'none'
     });
 
     $("#reset").click(function() {
+        $("#reset-password").jqxWindow('title', '<strong>Confirm Password Reset</strong>');
         $("#reset-password").jqxWindow('open');
+    });
+
+    $("#deny-reset").click(function() {
+        $("#accountList").jqxDataTable('updatebounddata');
+        $("#reset-password").jqxWindow('close');
     });
 
     $("#accept-reset").click(function() {
         var id = $("#employee").val();
         $.post("?r=user/resetPassword",
                 {id: id},
+        function(data) {
+            try {
+                var response = $.parseJSON(data);
+                window.location = response.url;
+            } catch (e) {
+                console.log(e);
+                $("#reset").jqxWindow('close');
+            }
+
+        });
+    });
+
+    $("#disable").click(function() {
+        $("#disable-account").jqxWindow('title', '<strong>Confirm Deactivation of User Account</strong>');
+        $("#disable-account").jqxWindow('open');
+    });
+
+    $("#deny-disable").click(function() {
+        $("#accountList").jqxDataTable('updatebounddata');
+        $("#disable-account").jqxWindow('close');
+    });
+
+    $("#accept-disable").click(function() {
+        var id = $("#employee").val();
+        $.post("?r=user/toggleAccountStatus",
+                {id: id,
+                    status: '0'},
+        function(data) {
+            try {
+                var response = $.parseJSON(data);
+                window.location = response.url;
+            } catch (e) {
+                console.log(e);
+                $("#reset").jqxWindow('close');
+            }
+
+        });
+    });
+    
+    $("#activate").click(function() {
+        $("#activate-account").jqxWindow('title', '<strong>Confirm Activation of User Account</strong>');
+        $("#activate-account").jqxWindow('open');
+    });
+
+    $("#deny-activate").click(function() {
+        $("#accountList").jqxDataTable('updatebounddata');
+        $("#activate-account").jqxWindow('close');
+    });
+
+    $("#accept-activate").click(function() {
+        var id = $("#employee").val();
+        $.post("?r=user/toggleAccountStatus",
+                {id: id,
+                    status: '1'},
         function(data) {
             try {
                 var response = $.parseJSON(data);

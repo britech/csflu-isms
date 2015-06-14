@@ -184,57 +184,16 @@ class UserController extends Controller {
         $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('user/manageAccount', 'id' => $id))));
     }
 
-    public function confirmStatusToggle() {
-        $this->title = ApplicationConstants::APP_NAME . ' - Manage Account';
-        $id = filter_input(INPUT_GET, 'id');
-        $stat = filter_input(INPUT_GET, 'stat');
-
-        $condition = (isset($id) && !empty($id)) && (isset($stat));
-        if ($condition) {
-            $employee = $this->userService->getEmployeeData($id);
-            if (is_null($employee->id)) {
-                $_SESSION['notif'] = "Account not found";
-                $this->redirect(array('user/index'));
-            }
-            $status = $this->userService->getLoginAccountStatus($id);
-            $statusName = $stat == 1 ? "Active" : "Inactive";
-            $this->render('commons/confirm', array(
-                'breadcrumb' => array('Home' => array('site/index'),
-                    'Account Maintenance' => array('user/index'),
-                    'Manage Account' => array('user/manageAccount', 'id' => $id),
-                    'Confirm Status Update' => 'active'),
-                'sidebar' => array('file' => 'user/_profile'),
-                'employee' => $id,
-                'username' => $employee->loginAccount->username,
-                'name' => $employee->givenName . ' ' . $employee->lastName,
-                'status' => $status,
-                'confirm' => array('class' => 'info',
-                    'header' => 'Confirm update of login account status',
-                    'text' => "Do you want to update the login account status? Continuing this action will set the account status to {$statusName}",
-                    'accept.class' => 'black',
-                    'accept.text' => 'Continue',
-                    'accept.url' => array('user/toggleAccountStatus', 'id' => $id, 'stat' => $stat),
-                    'deny.class' => '',
-                    'deny.text' => 'Back',
-                    'deny.url' => array('user/manageAccount', 'id' => $id))));
-        } else {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-    }
-
     public function toggleAccountStatus() {
-        $id = filter_input(INPUT_GET, 'id');
-        $status = filter_input(INPUT_GET, 'stat');
+        $this->validatePostData(array('id', 'status'));
+        $id = $this->getFormData('id');
+        $status = $this->getFormData('status');
 
-        $condition = (isset($id) && !empty($id)) && (isset($status));
-        if ($condition) {
-            $this->userService->updateLoginAccountStatus($id, $status);
-            $statusName = $status == 1 ? "Active" : "Inactive";
-            $_SESSION['notif'] = array('class' => 'info', 'message' => "Account is now {$statusName}");
-            $this->redirect(array('user/manageAccount', 'id' => $id));
-        } else {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
+        $employee = $this->loadEmployeeModel($id, array(ModelLoaderUtil::KEY_REMOTE => true));
+        $employee->loginAccount->status = $status;
+        $this->userService->updateLoginAccountStatus($employee);
+        $this->setSessionData('notif', array('class' => 'info', 'message' => "Account is now {$employee->loginAccount->translateStatusType($status)}"));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('user/manageAccount', 'id' => $employee->id))));
     }
 
     public function confirmDeleteLinkedRole() {
@@ -456,8 +415,8 @@ class UserController extends Controller {
         }
         $this->renderAjaxJsonResponse($data);
     }
-    
-    private function loadEmployeeModel($id, array $properties = array()){
+
+    private function loadEmployeeModel($id, array $properties = array()) {
         return $this->modelLoaderUtil->loadEmployeeModel($id, $properties);
     }
 
