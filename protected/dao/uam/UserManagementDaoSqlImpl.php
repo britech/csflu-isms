@@ -99,18 +99,10 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
         try {
             $db = ConnectionManager::getConnectionInstance();
 
-            $dbst = $db->prepare('SELECT emp_id, emp_lname, emp_fname, emp_mname, position, main_dept, dept_name, username, emp_stat'
-                    . ' FROM employees'
-                    . ' LEFT JOIN departments ON main_dept=dept_id'
-                    . ' WHERE emp_id=:id');
+            $dbst = $db->prepare('SELECT emp_id, emp_lname, emp_fname, emp_mname, position, main_dept, username, emp_stat FROM employees WHERE emp_id=:id');
             $dbst->execute(array('id' => $id));
 
-            $department = new Department();
-            $position = new Position();
-
             $employee = new Employee();
-            $employee->department = $department;
-            $employee->position = $position;
             $employee->loginAccount = new LoginAccount();
 
             while ($data = $dbst->fetch()) {
@@ -118,12 +110,14 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
                         $employee->lastName,
                         $employee->givenName,
                         $employee->middleName,
-                        $employee->position->id,
-                        $employee->department->id,
-                        $employee->department->name,
+                        $position,
+                        $department,
                         $employee->loginAccount->username,
                         $employee->loginAccount->status) = $data;
             }
+            
+            $employee->position = $this->positionDao->getPositionData($position);
+            $employee->department = $this->departmentDao->getDepartmentById($department);
 
             return $employee;
         } catch (\PDOException $e) {
