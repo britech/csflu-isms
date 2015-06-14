@@ -50,12 +50,21 @@ class Employee extends Model {
         parent::bindValuesUsingArray($valueArray, $this);
     }
 
+    public function getAttributeNames() {
+        return array(
+            'lastName' => 'Last Name',
+            'givenName' => 'First Name',
+            'department' => 'Department',
+            'position' => 'Position'
+        );
+    }
+
     public function getShortName() {
         $firstName = substr($this->givenName, 0, 1);
         return "{$firstName}. {$this->lastName}";
     }
-    
-    public function getFullName(){
+
+    public function getFullName() {
         return "{$this->givenName} {$this->lastName}";
     }
 
