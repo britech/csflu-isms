@@ -13,6 +13,9 @@ use org\csflu\isms\core\Model;
  */
 class LoginAccount extends Model{
     
+    const STATUS_ACTIVE = 1;
+    const STATUS_DISABLED = 0;
+    
     private $username;
     private $password;
     private $status;
