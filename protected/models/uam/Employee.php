@@ -68,6 +68,12 @@ class Employee extends Model {
         return "{$this->givenName} {$this->lastName}";
     }
 
+    public function formulateUsername() {
+        $firstName = trim(substr($this->givenName, 0, 1));
+        $lastName = trim(implode("", explode(" ", $this->lastName)));
+        return strtolower(trim("{$firstName}{$lastName}"));
+    }
+
     public function __set($name, $value) {
         $this->$name = $value;
     }

@@ -62,7 +62,9 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
         return $roles;
     }
 
-    public function createAccount($account) {
+    public function createAccount(UserAccount $account) {
+        $password = password_hash($account->employee->loginAccount->username, PASSWORD_DEFAULT);
+        $account->employee->loginAccount->password = $password;
         $this->userDaoSource->insertAccount($account);
     }
 

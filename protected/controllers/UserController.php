@@ -106,7 +106,8 @@ class UserController extends Controller {
                     'givenName' => $result->givenName,
                     'lastName' => $result->lastName,
                     'middleName' => $result->middleName,
-                    'deptCode' => $result->department->code));
+                    'deptCode' => $result->department->code,
+                    'username' => $result->formulateUsername()));
             }
         } else {
             $respCode = '10';

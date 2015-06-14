@@ -45,8 +45,7 @@ $(document).ready(function() {
                             $("[name=department]").siblings("[name*=id]").val(response.id);
                         }
                     });
-                    $("[name*=username]").val((response.givenName.substring(0, 1) + "" + response.middleName.substring(0, 1) + "" + response.lastName).toLowerCase());
-                    $("[name*=password]").val($("[name*=username]").val());
+                    $("[name*=username]").val(response.username);
                     $("#securityRole").prop('disabled', false);
                     $("#position").prop('disabled', false);
                     $("[type=submit]").prop('disabled', false);

@@ -2,10 +2,9 @@
 namespace org\csflu\isms\views;
 
 use org\csflu\isms\util\FormGenerator as Form;
-use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
 ?>
 <script type="text/javascript" src="protected/js/user/create.js"></script>
-<h3 style="text-align: right;">Initial Registration&nbsp;|&nbsp;<?php echo ApplicationUtils::generateLink('#', 'Need Help?', array('id'=>'open-help'))?></h3>
+<h3 style="text-align: right;">Initial Registration</h3>
 <div class="ink-alert block info" id="help-dialog">
     <button class="ink-dismiss" title="Click this icon to close the dialog">&times;</button>
     <h4>User Accounts Help - Initial Registration</h4>
