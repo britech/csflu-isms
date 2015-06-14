@@ -121,7 +121,7 @@ interface UserManagementService {
      * @param UserAccount $account
      * @throws ServiceException
      */
-    public function linkSecurityRole($account);
+    public function linkSecurityRole(UserAccount $account);
 
     /**
      * Gets the information of the selected Security Role

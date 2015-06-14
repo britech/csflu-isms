@@ -303,7 +303,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
         }
     }
 
-    public function linkSecurityRole($userAccount) {
+    public function linkSecurityRole(UserAccount $userAccount) {
         $db = ConnectionManager::getConnectionInstance();
         try {
             $db->beginTransaction();

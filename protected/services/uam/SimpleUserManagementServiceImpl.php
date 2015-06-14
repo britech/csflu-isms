@@ -4,6 +4,7 @@ namespace org\csflu\isms\service\uam;
 
 use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\models\commons\Department;
+use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\dao\uam\UserManagementDaoSqlImpl as UserManagementDao;
 use org\csflu\isms\dao\uam\SecurityRoleDaoSqlImpl as SecurityRoleDao;
 use org\csflu\isms\service\uam\UserManagementService;
@@ -105,7 +106,7 @@ class SimpleUserManagementServiceImpl implements UserManagementService {
         $this->userDaoSource->updateSecurityKey($employee);
     }
 
-    public function linkSecurityRole($account) {
+    public function linkSecurityRole(UserAccount $account) {
         $this->userDaoSource->linkSecurityRole($account);
     }
 
