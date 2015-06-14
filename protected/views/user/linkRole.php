@@ -2,36 +2,42 @@
 
 namespace org\csflu\isms\views;
 
-use org\csflu\isms\util\FormGenerator as Form;
+use org\csflu\isms\util\ModelFormGenerator as Form;
 
-$form = new Form(array('action' => array('user/linkRole'), 'class' => 'ink-form'));
-echo $form->startComponent();
+$form = new Form(array(
+    'action' => array('user/linkRole'),
+    'class' => 'ink-form',
+    'hasFieldset' => true));
 ?>
 <script src="protected/js/user/linkRole.js" type="text/javascript"></script>
-<h3 style="text-align: right;">Link Security Role</h3>
+<?php echo $form->startComponent(); ?>
+<?php echo $form->constructHeader("Link Security Role"); ?>
+<div class="ink-alert basic info">
+    <strong>Important Note:</strong>&nbsp;Fields with * are required.
+</div>
 <div class="control-group column-group half-gutters">
-<?php echo $form->renderLabel('Security Role', array('class' => 'all-20 align-right')); ?>
+    <?php echo $form->renderLabel($model, 'securityRole', array('class' => 'all-20 align-right', 'required' => true)); ?>
     <div class="control all-80">
         <div id="securityRole-list"></div>
     </div>
 </div>
 <div class="control-group column-group half-gutters">
-<?php echo $form->renderLabel('Department', array('class' => 'all-20 align-right')); ?>
+    <?php echo $form->renderLabel($employee, 'department', array('class' => 'all-20 align-right', 'required' => true)); ?>
     <div class="control all-80">
         <div id="department-list"></div>
     </div>
 </div>
 <div class="control-group column-group half-gutters">
-<?php echo $form->renderLabel('Position', array('class' => 'all-20 align-right')); ?>
+    <?php echo $form->renderLabel($employee, 'position', array('class' => 'all-20 align-right', 'required' => true)); ?>
     <div class="control all-80">
         <div id="position-list"></div>
-<?php echo $form->renderSubmitButton('Link to Account', array('class' => 'ink-button green flat', 'style' => 'margin-top: 1em; margin-left: 0px;')); ?>
+        <?php echo $form->renderSubmitButton('Link to Account', array('class' => 'ink-button green flat', 'style' => 'margin-top: 1em; margin-left: 0px;')); ?>
     </div>
 </div>
 <?php
-echo $form->renderHiddenField('Employee[id]', array('value' => $params['employee'], 'id' => 'employee'));
-echo $form->renderHiddenField('SecurityRole[id]', array('id' => 'securityRole-id'));
-echo $form->renderHiddenField('Department[id]', array('id' => 'department-id'));
-echo $form->renderHiddenField('Position[id]', array('id' => 'position-id'));
+echo $form->renderHiddenField($employee, 'id', array('id' => 'employee'));
+echo $form->renderHiddenField($securityRole, 'id', array('id' => 'securityRole-id'));
+echo $form->renderHiddenField($department, 'id', array('id' => 'department-id'));
+echo $form->renderHiddenField($position, 'id', array('id' => 'position-id'));
 echo $form->endComponent();
 

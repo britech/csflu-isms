@@ -11,6 +11,9 @@ use org\csflu\isms\controllers\support\ModelLoaderUtil;
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\uam\Employee;
+use org\csflu\isms\models\commons\Department;
+use org\csflu\isms\models\commons\Position;
+use org\csflu\isms\models\uam\SecurityRole;
 use org\csflu\isms\models\uam\ModuleAction;
 
 /**
@@ -197,7 +200,7 @@ class UserController extends Controller {
         $account = $this->loadAccountModel($id, array(ModelLoaderUtil::KEY_REMOTE => true));
         $this->userService->unlinkSecurityRole($id);
         $this->setSessionData('notif', array('class' => 'error', 'message' => "<b>{$account->securityRole->description}</b> designated at <b>{$account->employee->department->name}</b> was unlinked to this account."));
-        $this->renderAjaxJsonResponse(array('url'=>  ApplicationUtils::resolveUrl(array('user/manageAccount', 'id' => $account->employee->id))));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('user/manageAccount', 'id' => $account->employee->id))));
     }
 
     public function viewChangePasswordForm() {
@@ -254,22 +257,18 @@ class UserController extends Controller {
         $id = filter_input(INPUT_GET, 'id');
         if (isset($id) && !empty($id)) {
             $this->title = ApplicationConstants::APP_NAME . ' - Link Security Role';
-            $employee = $this->userService->getEmployeeData($id);
-            if (is_null($employee->id)) {
-                $_SESSION['notif'] = "Account not found";
-                $this->redirect(array('user/index'));
-            }
-
+            $employee = $this->loadEmployeeModel($id);
             $this->render('user/linkRole', array(
                 'breadcrumb' => array('Home' => array('site/index'),
                     'Account Maintenance' => array('user/index'),
                     'Manage Account' => array('user/manageAccount', 'id' => $id),
                     'Link a Security Role' => 'active'),
                 'sidebar' => array('file' => 'user/_profile'),
-                'employee' => $id,
-                'username' => $employee->loginAccount->username,
-                'name' => $employee->givenName . ' ' . $employee->lastName,
-                'status' => $employee->loginAccount->status
+                'employee' => $employee,
+                'department' => new Department(),
+                'position' => new Position(),
+                'securityRole' => new SecurityRole(),
+                'model' => new UserAccount()
             ));
         } else {
             throw new ControllerException('Another parameter is needed to process this request');
@@ -277,25 +276,21 @@ class UserController extends Controller {
     }
 
     public function linkRole() {
-        $employeeData = filter_input_array(INPUT_POST)['Employee'];
-        $departmentData = filter_input_array(INPUT_POST)['Department'];
-        $positionData = filter_input_array(INPUT_POST)['Position'];
-        $securityRoleData = filter_input_array(INPUT_POST)['SecurityRole'];
+        $this->validatePostData(array('Employee', 'Department', 'Position', 'SecurityRole'));
+        $employeeData = $this->getFormData('Employee');
+        $departmentData = $this->getFormData('Department');
+        $positionData = $this->getFormData('Position');
+        $securityRoleData = $this->getFormData('SecurityRole');
 
-        $condition = isset($employeeData) && isset($departmentData) && isset($positionData) && isset($securityRoleData);
-        if ($condition) {
-            $account = new UserAccount();
-            $account->bindValuesUsingArray(array('employee' => $employeeData,
-                'department' => $departmentData,
-                'position' => $positionData,
-                'securityrole' => $securityRoleData,
-                'useraccount' => array()));
-            $this->userService->linkSecurityRole($account);
-            $_SESSION['notif'] = array('class' => 'info', 'message' => "Security role successfully linked to this account");
-            $this->redirect(array('user/manageAccount', 'id' => $employeeData['id']));
-        } else {
-            throw new ControllerException('Form data is needed to process this request');
-        }
+        $account = new UserAccount();
+        $account->bindValuesUsingArray(array(
+            'employee' => $employeeData,
+            'department' => $departmentData,
+            'position' => $positionData,
+            'securityrole' => $securityRoleData));
+        $this->userService->linkSecurityRole($account);
+        $this->setSessionData('notif', array('class' => 'info', 'message' => "Security role successfully linked to this account"));
+        $this->redirect(array('user/manageAccount', 'id' => $account->employee->id));
     }
 
     public function updateLink() {
