@@ -16,15 +16,15 @@ $(document).ready(function() {
         searchMode: 'containsignorecase',
         autoComplete: true,
         theme: 'office',
-        height: '35px'
+        height: '35px',
+        animationType: 'none'
+    });
+    $("#securityRole-list").on('select', function(event) {
+        if (event.args) {
+            $("#securityRole-id").val(event.args.item.value);
+        }
+    });
 
-    });
-    $("#securityRole-list").on('select', function(event){
-       if(event.args){
-           $("#securityRole-id").val(event.args.item.value);
-       } 
-    });
-    
     $("#department-list").jqxComboBox({
         source: new $.jqx.dataAdapter({
             datatype: 'json',
@@ -45,15 +45,15 @@ $(document).ready(function() {
         searchMode: 'containsignorecase',
         autoComplete: true,
         theme: 'office',
-        height: '35px'
+        height: '35px',
+        animationType: 'none'
+    });
+    $("#department-list").on('select', function(event) {
+        if (event.args) {
+            $("#department-id").val(event.args.item.value);
+        }
+    });
 
-    });
-    $("#department-list").on('select', function(event){
-       if(event.args){
-           $("#department-id").val(event.args.item.value);
-       } 
-    });
-    
     $("#position-list").jqxComboBox({
         source: new $.jqx.dataAdapter({
             datatype: 'json',
@@ -70,13 +70,13 @@ $(document).ready(function() {
         searchMode: 'containsignorecase',
         autoComplete: true,
         theme: 'office',
-        height: '35px'
-
+        height: '35px',
+        animationType: 'none'
     });
-    $("#position-list").on('select', function(event){
-       if(event.args){
-           $("#position-id").val(event.args.item.value);
-       } 
+    $("#position-list").on('select', function(event) {
+        if (event.args) {
+            $("#position-id").val(event.args.item.value);
+        }
     });
 });
 

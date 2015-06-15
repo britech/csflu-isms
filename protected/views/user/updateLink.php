@@ -1,29 +1,37 @@
 <?php
+
 namespace org\csflu\isms\views;
 
-use org\csflu\isms\util\FormGenerator as Form;
+use org\csflu\isms\util\ModelFormGenerator as Form;
 
-$form = new Form(array('action'=>array('user/linkUpdate'), 'class'=>'ink-form'));
-echo $form->startComponent();
+$form = new Form(array(
+    'action' => array('user/linkUpdate'),
+    'class' => 'ink-form',
+    'hasFieldset' => true));
 ?>
 <script src="protected/js/user/updateLink.js" type="text/javascript"></script>
-<h3 style="text-align: right;">Update Linked Security Role</h3>
-<div class="control-group column-group half-gutters">
-    <?php echo $form->renderLabel('Security Role', array('class'=>'all-20 align-right'));?>
-    <div class="control all-80">
-        <div id="securityRole-list"></div>
+<div class="column-group quarter-gutters">
+    <div class="all-60 push-center">
+        <?php echo $form->startComponent(); ?>
+        <?php echo $form->constructHeader("Update Linked Security Role") ?>
+        <div class="control-group column-group half-gutters">
+            <?php echo $form->renderLabel($model, 'securityRole', array('class' => 'all-20 align-right')); ?>
+            <div class="control all-80">
+                <div id="securityRole-list"></div>
+            </div>
+        </div>
+        <div class="control-group column-group half-gutters">
+            <?php echo $form->renderLabel($model->employee, 'position', array('class' => 'all-20 align-right')); ?>
+            <div class="control all-80">
+                <div id="position-list"></div>
+                <?php echo $form->renderSubmitButton('Update Link', array('class' => 'ink-button blue flat', 'style' => 'margin-top: 1em; margin-left: 0px;')); ?>
+            </div>
+        </div>
+        <?php echo $form->renderHiddenField($model, 'id'); ?>
+        <?php echo $form->renderHiddenField($model->employee, 'id'); ?>
+        <?php echo $form->renderHiddenField($model->securityRole, 'id', array('id' => 'securityRole-id')); ?>
+        <?php echo $form->renderHiddenField($model->employee->position, 'id', array('id' => 'position-id')); ?>
+        <?php echo $form->endComponent(); ?>
     </div>
 </div>
-<div class="control-group column-group half-gutters">
-    <?php echo $form->renderLabel('Position', array('class'=>'all-20 align-right'));?>
-    <div class="control all-80">
-        <div id="position-list"></div>
-        <?php echo $form->renderSubmitButton('Update Link', array('class'=>'ink-button blue flat', 'style'=>'margin-top: 1em; margin-left: 0px;'));?>
-    </div>
-</div>
-<?php
-echo $form->renderHiddenField('UserAccount[id]', array('value'=>$params['account']));
-echo $form->renderHiddenField('Employee[id]', array('value'=>$params['employee']));
-echo $form->renderHiddenField('SecurityRole[id]', array('id'=>'securityRole-id', 'value'=>$params['role']));
-echo $form->renderHiddenField('Position[id]', array('id'=>'position-id', 'value'=>$params['position']));
-echo $form->endComponent();
+

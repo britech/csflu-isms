@@ -291,34 +291,17 @@ class UserController extends Controller {
         $this->redirect(array('user/manageAccount', 'id' => $account->employee->id));
     }
 
-    public function updateLink() {
-        $id = filter_input(INPUT_GET, 'id');
-
-        if (!isset($id) || empty($id)) {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-
-        $account = $this->userService->getAccountById($id);
-        if (is_null($account->id)) {
-            $_SESSION['notif'] = array('class' => '', 'message' => 'Linked security role not found');
-            $this->redirect(array('user/index'));
-        } else {
-            $this->title = ApplicationConstants::APP_NAME . ' - Update Security Role';
-            $this->render('user/updateLink', array(
-                'breadcrumb' => array('Home' => array('site/index'),
-                    'Account Maintenance' => array('user/index'),
-                    'Manage Account' => array('user/manageAccount', 'id' => $account->employee->id),
-                    'Link a Security Role' => 'active'),
-                'sidebar' => array('file' => 'user/_profile'),
-                'account' => $account->id,
-                'employee' => $account->employee->id,
-                'username' => $account->employee->loginAccount->username,
-                'name' => $account->employee->givenName . ' ' . $account->employee->lastName,
-                'status' => $account->employee->loginAccount->status,
-                'role' => $account->securityRole->id,
-                'position' => $account->employee->position->id
-            ));
-        }
+    public function updateLink($id) {
+        $account = $this->loadAccountModel($id);
+        $this->title = ApplicationConstants::APP_NAME . ' - Update Security Role';
+        $this->layout = "column-1";
+        $this->render('user/updateLink', array(
+            'breadcrumb' => array('Home' => array('site/index'),
+                'Account Maintenance' => array('user/index'),
+                'Manage Account' => array('user/manageAccount', 'id' => $account->employee->id),
+                'Link a Security Role' => 'active'),
+            'model' => $account
+        ));
     }
 
     public function linkUpdate() {
