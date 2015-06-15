@@ -105,7 +105,7 @@ echo $form->startComponent();
                     <tr>
                         <td>
                             <?php
-                            echo $form->renderCheckBox('AllowableAction[module][' . ModuleAction::MODULE_IP . '][]', $name, array('value' => $value));
+                            echo $form->renderCheckBox('AllowableAction[module][' . ModuleAction::MODULE_IP . '][]', $name, array('value' => $value, 'checked' => true));
                             ?>
                         </td>
                     </tr>
