@@ -135,14 +135,14 @@ class SecurityRoleDaoSqlImpl implements SecurityRoleDao {
     public function getLinkedActionsBySecurityRole($securityRole) {
         try {
             $db = ConnectionManager::getConnectionInstance();
-            $dbst = $db->prepare('SELECT action_id, module_code, actions FROM user_actions WHERE type_ref=:id');
+            $dbst = $db->prepare('SELECT module_code, actions FROM user_actions WHERE type_ref=:id');
             $dbst->execute(array('id' => $securityRole->id));
 
             $allowableActions = array();
             while ($data = $dbst->fetch()) {
                 $allowableAction = new AllowableAction();
                 $allowableAction->module = new ModuleAction();
-                list($allowableAction->id, $allowableAction->module->module, $allowableAction->module->actions) = $data;
+                list($allowableAction->module->module, $allowableAction->module->actions) = $data;
                 array_push($allowableActions, $allowableAction);
             }
             return $allowableActions;

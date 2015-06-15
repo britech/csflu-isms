@@ -13,7 +13,6 @@ use org\csflu\isms\models\uam\ModuleAction;
  */
 class AllowableAction extends Model {
 
-    private $id;
     private $module;
     
     public function validate() {
