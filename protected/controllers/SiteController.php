@@ -19,10 +19,13 @@ class SiteController extends Controller {
     }
 
     public function index() {
-        $this->checkAuthorization();
-        $this->title = ApplicationConstants::APP_NAME . ' - Welcome';
-        $this->layout = 'column-1';
-        $this->render('site/index', array('breadcrumb' => array('Home' => 'active')));
+        if (empty($this->getSessionData('user'))) {
+            $this->redirect(array('site/login'));
+        } else {
+            $this->title = ApplicationConstants::APP_NAME . ' - Welcome';
+            $this->layout = 'column-1';
+            $this->render('site/index', array('breadcrumb' => array('Home' => 'active')));
+        }
     }
 
     public function login() {
@@ -49,7 +52,7 @@ class SiteController extends Controller {
         if ($loginAccount->validate()) {
             $employee = $this->userService->authenticate($loginAccount);
 
-            if (!is_null($employee->id)) { 
+            if (!is_null($employee->id)) {
                 $this->setSessionData('employee', $employee->id);
                 $this->redirect(array('site/loadAccounts', 'employee' => $employee->id));
             } else {
