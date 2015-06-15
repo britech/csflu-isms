@@ -32,7 +32,7 @@ class MapController extends Controller {
     }
 
     public function index() {
-        $this->actionCode = "SMAPV";
+        $this->isRbacEnabled = false;
         $this->title = ApplicationConstants::APP_NAME . ' - Strategy Map Directory';
         $this->render('map/index', array(
             'breadcrumb' => array(
