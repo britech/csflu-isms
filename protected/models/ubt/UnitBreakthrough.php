@@ -247,6 +247,11 @@ class UnitBreakthrough extends Model {
         return $translation;
     }
 
+    /**
+     * 
+     * @param \DateTime $period
+     * @return LeadMeasure[]
+     */
     public function filterLeadMeasures(\DateTime $period) {
         $filteredLeadMeasures = array();
 
@@ -278,7 +283,6 @@ class UnitBreakthrough extends Model {
 
     public function computeLeadMeasuresMovement(\DateTime $period, $designation) {
         $value = 0.00;
-        $this->filterLeadMeasures($period);
         foreach ($this->wigMeetings as $wigMeeting) {
             if ($wigMeeting->endingPeriod <= $period) {
                 $value += ($designation == LeadMeasure::DESIGNATION_1) ? $wigMeeting->computeFirstLeadMeasureMovement() : $wigMeeting->computeSecondLeadMeasureMovement();
@@ -288,11 +292,11 @@ class UnitBreakthrough extends Model {
     }
 
     public function resolveLeadMeasuresMovement(\DateTime $period, $designation) {
-        $this->filterLeadMeasures($period);
+        $leadMeasures = $this->filterLeadMeasures($period);
         $output = $this->computeLeadMeasuresMovement($period, $designation);
 
-        $uom1 = $this->leadMeasures[0]->uom->getAppropriateUomDisplay();
-        $uom2 = $this->leadMeasures[1]->uom->getAppropriateUomDisplay();
+        $uom1 = is_null($leadMeasures[0]->uom) ? "" : $leadMeasures[0]->uom->getAppropriateUomDisplay();
+        $uom2 = is_null($leadMeasures[1]->uom) ? "" : $leadMeasures[1]->uom->getAppropriateUomDisplay();
 
         if (empty($output)) {
             return "-";
