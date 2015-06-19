@@ -35,8 +35,7 @@ class KmController extends Controller {
                 'data' => array(
                     'header' => 'Knowledge Management',
                     'links' => array(
-                        'Indicators' => array('km/indicators'),
-                        'Generate Reports' => array('km/reportsList')
+                        'Indicators' => array('km/indicators')
                     )
                 ))
         ));
