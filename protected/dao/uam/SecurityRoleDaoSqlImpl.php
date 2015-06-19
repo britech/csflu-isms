@@ -62,48 +62,31 @@ class SecurityRoleDaoSqlImpl implements SecurityRoleDao {
      * @param SecurityRole $securityRole
      * @throws DataAccessException
      */
-    public function manageLinkedActions($securityRole) {
+    public function manageLinkedActions(SecurityRole $securityRole) {
         $db = ConnectionManager::getConnectionInstance();
         try {
             $actions = $this->getLinkedActionsBySecurityRole($securityRole);
             $db->beginTransaction();
-            if (count($actions) == 0) {
-                foreach ($securityRole->allowableActions as $allowableAction) {
-                    $dbst = $db->prepare('INSERT INTO user_actions(module_code, actions, type_ref) VALUES(:module, :actions, :type)');
-                    $dbst->execute(array('module' => $allowableAction->module->module, 'actions' => $allowableAction->module->actions, 'type' => $securityRole->id));
-                }
-            } else {
-                $whitelistModules = array();
-                foreach ($securityRole->allowableActions as $allowableAction) {
-                    $found = false;
-                    $id = 0;
-                    foreach ($actions as $action) {
-                        if ($action->module->module === $allowableAction->module->module) {
-                            $found = true;
-                            $id = $action->id;
-                            break;
-                        }
-                    }
 
-                    if ($found) {
-                        $dbst = $db->prepare('UPDATE user_actions SET actions=:actions WHERE action_id=:ref');
-                        $dbst->execute(array('actions' => $allowableAction->module->actions, 'ref' => $id));
-                    } else {
-                        $dbst = $db->prepare('INSERT INTO user_actions(module_code, actions, type_ref) VALUES(:module, :actions, :type)');
-                        $dbst->execute(array('module' => $allowableAction->module->module, 'actions' => $allowableAction->module->actions, 'type' => $securityRole->id));
-                    }
-                    array_push($whitelistModules, $allowableAction->module->module);
-                }
-
-
-                //do cleanup
-                $blackListedModules = array_diff(ModuleAction::getModulesWithoutDescription(), $whitelistModules);
-
-                foreach ($blackListedModules as $module) {
-                    $dbst = $db->prepare('DELETE FROM user_actions WHERE module_code=:code AND type_ref=:ref');
-                    $dbst->execute(array('code' => $module, 'ref' => $securityRole->id));
-                }
+            if (count($actions) > 0) {
+                /**
+                 * delete the inserted user actions of the selected security role
+                 */
+                $dbstClean = $db->prepare('DELETE FROM user_actions WHERE type_ref=:type');
+                $dbstClean->execute(array(
+                    'type' => $securityRole->id
+                ));
             }
+
+            foreach ($securityRole->allowableActions as $allowableAction) {
+                $dbst = $db->prepare('INSERT INTO user_actions VALUES(:module, :actions, :type)');
+                $dbst->execute(array(
+                    'module' => $allowableAction->module->module,
+                    'actions' => $allowableAction->module->actions,
+                    'type' => $securityRole->id
+                ));
+            }
+
             $db->commit();
         } catch (\PDException $ex) {
             $db->rollBack();
@@ -174,19 +157,19 @@ class SecurityRoleDaoSqlImpl implements SecurityRoleDao {
         $db = ConnectionManager::getConnectionInstance();
         try {
             $db->beginTransaction();
-            
+
             //cleanup linked actions
             $dbstActions = $db->prepare('DELETE FROM user_actions WHERE type_ref=:ref');
-            $dbstActions->execute(array('ref'=>$securityRole->id));
-            
+            $dbstActions->execute(array('ref' => $securityRole->id));
+
             // cleanup linked security roles
             $dbstUsers = $db->prepare('DELETE FROM user_main WHERE type_ref=:ref');
-            $dbstUsers->execute(array('ref'=>$securityRole->id));
-            
+            $dbstUsers->execute(array('ref' => $securityRole->id));
+
             // delete the security role
             $dbstRole = $db->prepare('DELETE FROM user_types WHERE utype_id=:id');
-            $dbstRole->execute(array('id'=>$securityRole->id));
-            
+            $dbstRole->execute(array('id' => $securityRole->id));
+
             $db->commit();
         } catch (\PDOException $ex) {
             $db->rollBack();

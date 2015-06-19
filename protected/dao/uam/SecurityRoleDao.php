@@ -34,7 +34,7 @@ interface SecurityRoleDao {
      * @param SecurityRole $securityRole
      * @throws DataAccessException
      */
-    public function manageLinkedActions($securityRole);
+    public function manageLinkedActions(SecurityRole $securityRole);
     
     /**
      * @param SecurityRole
