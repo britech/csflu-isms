@@ -278,7 +278,8 @@ class UnitBreakthrough extends Model {
 
     public function resolveUnitBreakthroughMovement(\DateTime $period) {
         $output = $this->computeUnitBreakthroughMovement($period);
-        return empty($output) ? "-" : number_format($output) . " {$this->uom->description}";
+        $uom = is_null($this->uom) ? $this->uom->getAppropriateUomDisplay() : "";
+        return empty($output) ? "-" : number_format($output) . " {$uom}";
     }
 
     public function computeLeadMeasuresMovement(\DateTime $period, $designation) {
