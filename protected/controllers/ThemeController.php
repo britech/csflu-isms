@@ -95,7 +95,7 @@ class ThemeController extends Controller {
                 'Home' => array('site/index'),
                 'Strategy Map Directory' => array('map/index'),
                 'Strategy Map' => array('map/view', 'id' => $strategyMap->id),
-                'Manage Themes' => array('map/manageThemes', 'map' => $strategyMap->id),
+                'Manage Themes' => array('theme/manage', 'map' => $strategyMap->id),
                 'Update Theme' => 'active'),
             'themes' => $this->mapService->listThemes($strategyMap),
             'model' => $theme,
