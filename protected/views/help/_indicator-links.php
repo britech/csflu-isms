@@ -10,6 +10,7 @@ use org\csflu\isms\util\ApplicationUtils;
             <li class="heading"><?php echo ApplicationUtils::generateLink('#', 'Contents', array('style' => 'padding-left:0px;')) ?></li>
             <li><?php echo ApplicationUtils::generateLink(array('site/index'), 'Back to Application'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#enlist', 'Indicator Enlistment'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink('#update', 'Update Indicator Data'); ?></li>
         </ul>
     </div>
 </div>
