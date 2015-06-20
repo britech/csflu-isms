@@ -1,13 +1,14 @@
 <?php
+
 namespace org\csflu\isms\views;
 
-use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
+use org\csflu\isms\util\ApplicationUtils;
 ?>
 <div id="navbar">
     <div class="ink-navigation ink-grid">
         <ul class="menu horizontal green flat push-left">
             <li><?php echo ApplicationUtils::generateLink(array('site/index'), 'City of San Fernando, La Union - Integrated Strategy Management System', array('style' => 'font-weight: bold;')); ?></li>
-        </ul>
+        </ul>   
         <ul class="menu horizontal green flat push-right">
             <li>
                 <a href="#"><i class="fa fa-cogs"></i>&nbsp;Modules</a>
@@ -35,6 +36,9 @@ use org\csflu\isms\util\ApplicationUtils as ApplicationUtils;
                     <li><?php echo ApplicationUtils::generateLink(array('user/viewChangePasswordForm'), 'Change Password'); ?></li>
                     <li><?php echo ApplicationUtils::generateLink(array('site/logout'), 'Logout'); ?></li>
                 </ul>
+            </li>
+            <li>
+                <?php echo ApplicationUtils::generateLink(array('help/index'), '<i class="fa fa-question-circle"></i>&nbsp;Help') ?>
             </li>
         </ul>
     </div>
