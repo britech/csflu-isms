@@ -11,6 +11,7 @@ use org\csflu\isms\util\ApplicationUtils;
             <li><?php echo ApplicationUtils::generateLink(array('site/index'), 'Back to Application'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#enlist', 'Indicator Enlistment'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#update', 'Update Indicator Data'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink('#baseline', 'Manage Baselines'); ?></li>
         </ul>
     </div>
 </div>
