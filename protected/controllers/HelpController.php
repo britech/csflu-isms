@@ -41,4 +41,16 @@ class HelpController extends Controller {
         ));
     }
 
+    public function indicator() {
+        $this->render('help/indicator', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Help Contents' => array('help/index'),
+                'Indicator' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'help/_indicator-links'
+            )
+        ));
+    }
+
 }
