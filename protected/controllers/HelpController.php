@@ -53,4 +53,16 @@ class HelpController extends Controller {
         ));
     }
 
+    public function strategyMap() {
+        $this->render('help/map', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Help Contents' => array('help/index'),
+                'Strategy Map' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'help/_map-links'
+            )
+        ));
+    }
+
 }
