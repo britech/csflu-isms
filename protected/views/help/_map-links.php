@@ -12,6 +12,8 @@ use org\csflu\isms\util\ApplicationUtils;
             <li><?php echo ApplicationUtils::generateLink('#create', 'Strategy Map Enlistment'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#entryUpdate', 'Update Strategy Map Entry Data'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#managePerspective', 'Manage Perspectives'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink('#manageTheme', 'Manage Themes'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink('#manageObjective', 'Manage Objectives'); ?></li>
         </ul>
     </div>
 </div>

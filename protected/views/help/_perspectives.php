@@ -33,14 +33,14 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         <img src="protected/views/help/images/map/manage-perspective.png" style="width: 50%; text-align: center;" alt="step-4"/>
     </li>
-    <li>DONE</li>
+    <li>DONE.</li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
 
 <a name="addPerspective" style="display: block; border-bottom: 1px solid black;">Add Perspective</a>
 <ol>
     <li>
-        Accomplish the input data form and click the <strong>Enlist</strong> button to insert the new perspective.
+        Accomplish the input data form and click the <strong>Add</strong> button to insert the new perspective.
         <br/>
         Please bear in mind that the <strong>Position Order</strong> field value cannot be repeated and limited to numbers <strong>1</strong> to <strong>5</strong>
         <br/>
