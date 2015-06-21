@@ -13,7 +13,7 @@ use org\csflu\isms\util\ApplicationUtils;
             <li><?php echo ApplicationUtils::generateLink('#entryUpdate', 'Update Measure Profile Entry Data'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#manageOffice', 'Manage Lead Offices'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#manageTarget', 'Manage Targets'); ?></li>
-            <li><?php echo ApplicationUtils::generateLink('#movement', 'Manage Objectives'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink('#movement', 'Measure Profile Movement'); ?></li>
         </ul>
     </div>
 </div>
