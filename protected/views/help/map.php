@@ -30,9 +30,9 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>MANAGE PERSPECTIVES</strong> of the strategy map, click <?php echo ApplicationUtils::generateLink('#mper-3', 'here'); ?>
         <br/>
-        To <strong>MANAGE OBJECTIVES</strong> of the strategy map, click here
+        To <strong>MANAGE OBJECTIVES</strong> of the strategy map, click <?php echo ApplicationUtils::generateLink('#mobj-3', 'here'); ?>
         <br/>
-        To <strong>MANAGE THEMES</strong> of the strategy map, click here
+        To <strong>MANAGE THEMES</strong> of the strategy map, click <?php echo ApplicationUtils::generateLink('#mtheme-3', 'here'); ?>
         <br/>
         <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-3"/>
     </li>
@@ -68,5 +68,7 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>DONE.</li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
-<?php $this->renderPartial('help/_perspectives');?>
-<?php $this->renderPartial('help/_themes');
+<?php $this->renderPartial('help/_perspectives'); ?>
+<?php $this->renderPartial('help/_themes'); ?>
+<?php
+$this->renderPartial('help/_objectives');
