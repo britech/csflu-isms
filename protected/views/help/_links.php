@@ -12,6 +12,12 @@ use org\csflu\isms\util\ApplicationUtils;
             <li><?php echo ApplicationUtils::generateLink(array('help/login'), 'Login'); ?></li>
             <li><?php echo ApplicationUtils::generateLink(array('help/indicator'), 'Indicators'); ?></li>
             <li><?php echo ApplicationUtils::generateLink(array('help/strategyMap'), 'Strategy Map'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink(array('help/measureProfile'), 'Measure Profiles'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink(array('help/initiative'), 'Initiatives'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink(array('help/ubt'), 'Unit Breakthroughs'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink(array('help/ip'), 'Individual Performance'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink(array('help/report'), 'Reports Generation'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink(array('help/admin'), 'System Administration'); ?></li>
         </ul>
     </div>
 </div>
