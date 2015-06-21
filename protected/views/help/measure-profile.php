@@ -23,7 +23,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-2"/>
     </li>
     <li>
-        Upon clicking the <strong>Manage Measure Profile</strong> link, you will be redirected to the directory listing of Measure Profiles. 
+        Upon clicking the <strong>Manage Measure Profiles</strong> link, you will be redirected to the directory listing of Measure Profiles. 
         <br/>
         Click the <strong>Create Measure Profile</strong> link.
         <br/>
@@ -99,4 +99,5 @@ use org\csflu\isms\util\ApplicationUtils;
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
 <?php $this->renderPartial('help/_lead-offices'); ?>
-<?php $this->renderPartial('help/_targets');
+<?php $this->renderPartial('help/_targets'); ?>
+<?php $this->renderPartial('help/_mp-movements'); ?>
