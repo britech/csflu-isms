@@ -98,4 +98,5 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>DONE.</li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
-<?php $this->renderPartial('help/_lead-offices');
+<?php $this->renderPartial('help/_lead-offices'); ?>
+<?php $this->renderPartial('help/_targets');
