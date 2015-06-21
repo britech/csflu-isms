@@ -10,6 +10,7 @@ use org\csflu\isms\util\ApplicationUtils;
             <li class="heading"><?php echo ApplicationUtils::generateLink('#', 'Contents', array('style' => 'padding-left:0px;')) ?></li>
             <li><?php echo ApplicationUtils::generateLink(array('site/index'), 'Back to Application'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#create', 'Strategy Map Enlistment'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink('#entryUpdate', 'Update Strategy Map Entry Data'); ?></li>
         </ul>
     </div>
 </div>
