@@ -64,4 +64,16 @@ class HelpController extends Controller {
         ));
     }
 
+    public function measureProfile() {
+        $this->render('help/measure-profile', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Help Contents' => array('help/index'),
+                'Measure Profile' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'help/_mp-links'
+            )
+        ));
+    }
+
 }
