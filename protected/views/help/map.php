@@ -28,7 +28,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/><br/>
         To <strong>UPDATE</strong> the strategy map, click <?php echo ApplicationUtils::generateLink('#supd-3', 'here'); ?>
         <br/>
-        To <strong>MANAGE PERSPECTIVES</strong> of the strategy map, click here
+        To <strong>MANAGE PERSPECTIVES</strong> of the strategy map, click <?php echo ApplicationUtils::generateLink('#mper-3', 'here'); ?>
         <br/>
         To <strong>MANAGE OBJECTIVES</strong> of the strategy map, click here
         <br/>
@@ -68,3 +68,4 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>DONE.</li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
+<?php $this->renderPartial('help/_perspectives');
