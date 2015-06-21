@@ -13,7 +13,6 @@ use org\csflu\isms\core\ApplicationConstants;
 class HelpController extends Controller {
 
     public function __construct() {
-        $this->checkAuthorization();
         $this->layout = "help-layout";
         $this->title = ApplicationConstants::APP_NAME . " - Help Module";
     }
