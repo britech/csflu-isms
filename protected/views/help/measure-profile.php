@@ -41,9 +41,9 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/><br/>
         To <strong>UPDATE</strong> the strategy map, click <?php echo ApplicationUtils::generateLink('#mpupd-5', 'here'); ?>
         <br/>
-        To <strong>MANAGE LEAD OFFICES</strong> of the strategy map, click <?php echo ApplicationUtils::generateLink('#mlead-3', 'here'); ?>
+        To <strong>MANAGE LEAD OFFICES</strong> of the strategy map, click <?php echo ApplicationUtils::generateLink('#mlead-5', 'here'); ?>
         <br/>
-        To <strong>MANAGE TARGET DATA</strong> of the strategy map, click <?php echo ApplicationUtils::generateLink('#mtarget-3', 'here'); ?>
+        To <strong>MANAGE TARGET DATA</strong> of the strategy map, click <?php echo ApplicationUtils::generateLink('#mtarget-5', 'here'); ?>
         <br/>
         <img src="protected/views/help/images/measure-profile/create-step-3.png" style="width: 50%; text-align: center;" alt="step-5"/>
     </li>
@@ -58,7 +58,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         If you are in the View page of selected Strategy Map, proceed to <?php echo ApplicationUtils::generateLink('#mpupd-3', 'Step 3'); ?>
         <br/>
-        If you are in the View page of selected Measure Profile, proceed to <?php echo ApplicationUtils::generateLink('#mpupd-5', 'Step 5')?>
+        If you are in the View page of selected Measure Profile, proceed to <?php echo ApplicationUtils::generateLink('#mpupd-5', 'Step 5') ?>
     </li>
     <li>
         <a name="mpupd-2"></a>
@@ -98,3 +98,4 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>DONE.</li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
+<?php $this->renderPartial('help/_lead-offices');
