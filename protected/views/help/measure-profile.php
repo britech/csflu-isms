@@ -39,11 +39,11 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>
         Upon successful validation and input data has been committed in the data source, you are redirected to the View page of the newly inserted Measure Profile.
         <br/><br/>
-        To <strong>UPDATE</strong> the strategy map, click <?php echo ApplicationUtils::generateLink('#mpupd-5', 'here'); ?>
+        To <strong>UPDATE</strong> the entry data, click <?php echo ApplicationUtils::generateLink('#mpupd-5', 'here'); ?>
         <br/>
-        To <strong>MANAGE LEAD OFFICES</strong> of the strategy map, click <?php echo ApplicationUtils::generateLink('#mlead-5', 'here'); ?>
+        To <strong>MANAGE LEAD OFFICES</strong>, click <?php echo ApplicationUtils::generateLink('#mlead-5', 'here'); ?>
         <br/>
-        To <strong>MANAGE TARGET DATA</strong> of the strategy map, click <?php echo ApplicationUtils::generateLink('#mtarget-5', 'here'); ?>
+        To <strong>MANAGE TARGET DATA</strong>, click <?php echo ApplicationUtils::generateLink('#mtarget-5', 'here'); ?>
         <br/>
         <img src="protected/views/help/images/measure-profile/create-step-3.png" style="width: 50%; text-align: center;" alt="step-5"/>
     </li>
