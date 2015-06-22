@@ -76,4 +76,16 @@ class HelpController extends Controller {
         ));
     }
 
+    public function initiative() {
+        $this->render('help/initiative', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Help Contents' => array('help/index'),
+                'Initiative' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'help/_initiative-links'
+            )
+        ));
+    }
+
 }
