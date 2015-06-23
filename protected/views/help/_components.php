@@ -4,7 +4,7 @@ namespace org\csflu\isms\views;
 
 use org\csflu\isms\util\ApplicationUtils;
 ?>
-<a name="manageComponent" style="display: block; border-bottom: 1px solid black;">Manage Phases</a>
+<a name="manageComponent" style="display: block; border-bottom: 1px solid black;">Manage Components</a>
 <ol>
     <li>
         If you are in the application's Home page, check the location of the <strong>Strategy Management</strong> module <?php echo ApplicationUtils::generateLink('#create', 'here') ?> and proceed to <?php echo ApplicationUtils::generateLink('#mcomp-2', 'Step 2'); ?>
