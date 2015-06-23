@@ -103,7 +103,7 @@ use org\csflu\isms\util\ApplicationUtils;
 <a name="deletePhase" style="display: block; border-bottom: 1px solid black;">Delete Phase Entry</a>
 <ol>
     <li>
-        Click the <strong>Update</strong> link beside the Phase entry you want to delete.
+        Click the <strong>Delete</strong> link beside the Phase entry you want to delete.
         <br/>
         <img src="protected/views/help/images/initiative/manage-phases.png" style="width: 50%; text-align: center;" alt="step-1"/>
     </li>
