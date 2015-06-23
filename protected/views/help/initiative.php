@@ -44,6 +44,8 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>MANAGE PHASES</strong>, click <?php echo ApplicationUtils::generateLink('#mphase-5', 'here'); ?>
         <br/>
+        To <strong>MANAGE COMPONENTS</strong>, click <?php echo ApplicationUtils::generateLink('#mcomp-5', 'here'); ?>
+        <br/>
         <img src="protected/views/help/images/initiative/create-step-3.png" style="width: 50%; text-align: center;" alt="step-5"/>
     </li>
     <li>DONE.</li>
@@ -97,4 +99,5 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>DONE.</li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
-<?php $this->renderPartial('help/_phases')?>
+<?php $this->renderPartial('help/_phases'); ?>
+<?php $this->renderPartial('help/_components'); ?>
