@@ -46,6 +46,8 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>MANAGE COMPONENTS</strong>, click <?php echo ApplicationUtils::generateLink('#mcomp-5', 'here'); ?>
         <br/>
+        To <strong>MANAGE ACTIVITIES</strong>, click <?php echo ApplicationUtils::generateLink('#mact-5', 'here'); ?>
+        <br/>
         <img src="protected/views/help/images/initiative/create-step-3.png" style="width: 50%; text-align: center;" alt="step-5"/>
     </li>
     <li>DONE.</li>
@@ -101,3 +103,4 @@ use org\csflu\isms\util\ApplicationUtils;
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
 <?php $this->renderPartial('help/_phases'); ?>
 <?php $this->renderPartial('help/_components'); ?>
+<?php $this->renderPartial('help/_activities'); ?>
