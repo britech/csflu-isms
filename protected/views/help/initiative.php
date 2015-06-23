@@ -110,3 +110,4 @@ use org\csflu\isms\util\ApplicationUtils;
 <?php $this->renderPartial('help/_phases'); ?>
 <?php $this->renderPartial('help/_components'); ?>
 <?php $this->renderPartial('help/_activities'); ?>
+<?php $this->renderPartial('help/_activity-dashboard');

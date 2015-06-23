@@ -72,7 +72,7 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>
         Upon successful validation, the new activity data is committed in the data source and you will be redirected to the management page of the Activities.
         <br/>
-        <strong>Important Note:&nbsp;</strong>Activities that are enlisted are set to <strong>PENDING</strong> status <strong>ONLY</strong>. To update the status of the activity entry, click <?php echo ApplicationUtils::generateLink('#movementUpdate', 'here'); ?>.
+        <strong>Important Note:&nbsp;</strong>Activities that are enlisted are set to <strong>PENDING</strong> status <strong>ONLY</strong>. To update the status of the activity entry, click <?php echo ApplicationUtils::generateLink('#activityDashboard', 'here'); ?>.
     </li>
     <li>DONE.</li>
 </ol>
