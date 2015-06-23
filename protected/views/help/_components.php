@@ -63,7 +63,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <img src="protected/views/help/images/initiative/manage-components.png" style="width: 50%; text-align: center;" alt="step-1"/>
     </li>
     <li>
-        Upon successful validation, the new phase data is committed in the data source and you will be redirected to the management page of the Components.
+        Upon successful validation, the new component data is committed in the data source and you will be redirected to the management page of the Components.
     </li>
     <li>DONE.</li>
 </ol>
@@ -88,7 +88,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <img src="protected/views/help/images/initiative/update-component.png" style="width: 50%; text-align: center;" alt="step-1"/>
     </li>
     <li>
-        Upon successful validation, the update phase data is committed in the data source and you will be redirected to the management page of the Components.
+        Upon successful validation, the updated component data is committed in the data source and you will be redirected to the management page of the Components.
     </li>
     <li>DONE.</li>
 </ol>
@@ -114,7 +114,7 @@ use org\csflu\isms\util\ApplicationUtils;
         Click the <strong>Yes</strong> button to confirm deletion of the Component entry
     </li>
     <li>
-        Upon successful validation, the phase data is removed in the data source and you will be redirected to the management page of the Components.
+        Upon successful validation, the component data is removed in the data source and you will be redirected to the management page of the Components.
     </li>
     <li>DONE.</li>
 </ol>

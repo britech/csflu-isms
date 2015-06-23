@@ -70,7 +70,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <img src="protected/views/help/images/initiative/manage-activities.png" style="width: 50%; text-align: center;" alt="step-1"/>
     </li>
     <li>
-        Upon successful validation, the new phase data is committed in the data source and you will be redirected to the management page of the Activities.
+        Upon successful validation, the new activity data is committed in the data source and you will be redirected to the management page of the Activities.
         <br/>
         <strong>Important Note:&nbsp;</strong>Activities that are enlisted are set to <strong>PENDING</strong> status <strong>ONLY</strong>. To update the status of the activity entry, click <?php echo ApplicationUtils::generateLink('#movementUpdate', 'here'); ?>.
     </li>
@@ -99,7 +99,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <img src="protected/views/help/images/initiative/update-activity.png" style="width: 50%; text-align: center;" alt="step-1"/>
     </li>
     <li>
-        Upon successful validation, the update phase data is committed in the data source and you will be redirected to the management page of the Components.
+        Upon successful validation, the updated activity data is committed in the data source and you will be redirected to the management page of the Components.
     </li>
     <li>DONE.</li>
 </ol>
@@ -125,7 +125,7 @@ use org\csflu\isms\util\ApplicationUtils;
         Click the <strong>Yes</strong> button to confirm deletion of the Activity entry
     </li>
     <li>
-        Upon successful validation, the phase data is removed in the data source and you will be redirected to the management page of the Activities.
+        Upon successful validation, the activity data is removed in the data source and you will be redirected to the management page of the Activities.
     </li>
     <li>DONE.</li>
 </ol>

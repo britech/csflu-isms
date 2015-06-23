@@ -90,7 +90,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <img src="protected/views/help/images/initiative/update-phase.png" style="width: 50%; text-align: center;" alt="step-1"/>
     </li>
     <li>
-        Upon successful validation, the update phase data is committed in the data source and you will be redirected to the management page of the Phases.
+        Upon successful validation, the updated phase data is committed in the data source and you will be redirected to the management page of the Phases.
     </li>
     <li>DONE.</li>
 </ol>
