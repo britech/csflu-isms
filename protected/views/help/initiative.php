@@ -42,6 +42,8 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>UPDATE</strong> the entry data, click <?php echo ApplicationUtils::generateLink('#iniupd-5', 'here'); ?>
         <br/>
+        To <strong>MANAGE IMPLEMENTING OFFICES</strong>, click <?php echo ApplicationUtils::generateLink('#moffice-5', 'here'); ?>
+        <br/>
         To <strong>MANAGE PHASES</strong>, click <?php echo ApplicationUtils::generateLink('#mphase-5', 'here'); ?>
         <br/>
         To <strong>MANAGE COMPONENTS</strong>, click <?php echo ApplicationUtils::generateLink('#mcomp-5', 'here'); ?>
@@ -101,6 +103,7 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>DONE.</li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
+<?php $this->renderPartial('help/_implem-offices'); ?>
 <?php $this->renderPartial('help/_phases'); ?>
 <?php $this->renderPartial('help/_components'); ?>
 <?php $this->renderPartial('help/_activities'); ?>
