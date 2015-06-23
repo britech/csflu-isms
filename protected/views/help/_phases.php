@@ -41,7 +41,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <img src="protected/views/help/images/initiative/create-step-3.png" style="width: 50%; text-align: center;" alt="step-5"/>
     </li>
     <li>
-        You will be redirected to the management page of the Measure Profile's Phases.
+        You will be redirected to the management page of the Initiative's Phases.
         <br/>
         To <strong>ADD</strong> a new Phase entry, click <?php echo ApplicationUtils::generateLink('#addPhase', 'here'); ?>
         <br/>
@@ -49,7 +49,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>DELETE</strong> an existing Phase entry, click <?php echo ApplicationUtils::generateLink('#deletePhase', 'here'); ?>
         <br/>
-        <img src="protected/views/help/images/measure-profile/manage-target.png" style="width: 50%; text-align: center;" alt="step-6"/>
+        <img src="protected/views/help/images/initiative/manage-phases.png" style="width: 50%; text-align: center;" alt="step-6"/>
     </li>
     <li>DONE.</li>
 </ol>
