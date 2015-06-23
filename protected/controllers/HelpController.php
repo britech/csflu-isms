@@ -88,4 +88,16 @@ class HelpController extends Controller {
         ));
     }
 
+    public function ubt() {
+        $this->render('help/ubt', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Help Contents' => array('help/index'),
+                'Unit Breakthrough' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'help/_ubt-links'
+            )
+        ));
+    }
+
 }
