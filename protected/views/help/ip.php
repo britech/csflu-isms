@@ -33,3 +33,33 @@ use org\csflu\isms\util\ApplicationUtils;
     </li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
+
+<a name="update" style="display: block; border-bottom: 1px solid black;">Update Commitment Entry</a>
+<div class="ink-alert basic info">
+    <strong>Important Note:&nbsp;</strong>You can only perform this action for commitments that are <strong>PENDING</strong>
+</div>
+<ol>
+    <li>
+        If you are in the application's Home page, check the location of the <strong>Performance Scorecard</strong> module <?php echo ApplicationUtils::generateLink('#create', 'here') ?> and proceed to <?php echo ApplicationUtils::generateLink('#cupd-2', 'Step 2'); ?>
+    </li>
+    <li>
+        <a name="cupd-2"></a>
+        Upon clicking the link, you will be redirected to the Commitments Dashboard page.
+        <br/>
+        Click the commitment that you want to update.
+        <img src="protected/views/help/images/ip/create-step-3.png" alt="step-1"/>
+    </li>
+    <li>
+        The application will then load the management page of the selected Commitment with the update description form. 
+        Update the commitment description if necessary and click the <strong>Update</strong> to apply the changes.
+        <br/>
+        <img src="protected/views/help/images/ip/update-commitment.png" alt="step-2"/>
+    </li>
+    <li>
+        Upon successful validation, the updated commitment entry is saved in the data source and you will be redirected to the management page of the updated commitment.
+    </li>
+    <li>
+        DONE.
+    </li>
+</ol>
+<?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
