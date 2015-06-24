@@ -113,3 +113,41 @@ use org\csflu\isms\util\ApplicationUtils;
     </li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
+
+<a name="iniPow" style="display: block; border-bottom: 1px solid black;">Program of Work</a>
+<ol>
+    <li>
+        From your application's Home page, click <strong>Modules&nbsp;&gt;&nbsp;<?php echo ApplicationUtils::generateLink(array('map/index'), 'Strategy Management'); ?></strong>
+        <img src="protected/views/help/images/commons/index.png" alt="step-1"/>
+    </li>
+    <li>
+        Upon clicking the link, you will be redirected to the Strategy Map directory page.
+        <br/>
+        Select the strategy map of the Initiative from the directory listing.
+        <img src="protected/views/help/images/map/create-step-1.png" alt="step-2"/>
+    </li>
+    <li>
+        You will be then redirected to the View page of the selected Strategy Map. Click the <strong>Manage Initiatives</strong> link.
+        <img src="protected/views/help/images/map/create-step-3.png" alt="step-3"/>
+    </li>
+    <li>
+        Upon clicking the <strong>Manage Initiatives</strong> link, you will be redirected to the directory listing of Initiatives. 
+        <br/>
+        Click the <strong>View</strong> link beside the initiative that you want to generate the report.
+        <img src="protected/views/help/images/initiative/create-step-1.png" alt="step-4"/>
+    </li>
+    <li>
+        Afterwards, you are redirected to the View page of the selected Initiative.
+        <br/>
+        Click the <strong>Generate Program of Work</strong> link to perform report generation.
+        <br/>
+        <img src="protected/views/help/images/initiative/create-step-3.png" alt="step-5"/>
+    </li>
+    <li>
+        Upon clicking the link, the application will process the request and create the report file.
+    </li>
+    <li>
+        DONE.
+    </li>
+</ol>
+<?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
