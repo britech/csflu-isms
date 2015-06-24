@@ -99,3 +99,4 @@ use org\csflu\isms\util\ApplicationUtils;
 <?php $this->renderPartial('help/_ubt-alignments'); ?>
 <?php $this->renderPartial('help/_lead-measures'); ?>
 <?php $this->renderPartial('help/_wig-session'); ?>
+<?php $this->renderPartial('help/_ubt-movement');
