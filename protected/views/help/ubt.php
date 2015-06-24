@@ -8,31 +8,31 @@ use org\csflu\isms\util\ApplicationUtils;
 <ol>
     <li>
         From your application's Home page, click <strong>Modules&nbsp;&gt;&nbsp;<?php echo ApplicationUtils::generateLink(array('map/index'), 'Strategy Management'); ?></strong>
-        <img src="protected/views/help/images/commons/index.png" style="width: 50%; text-align: center;" alt="index-page"/>
+        <img src="protected/views/help/images/commons/index.png" alt="index-page"/>
     </li>
     <li>
         Upon clicking the link, you will be redirected to the Strategy Map directory page.
         <br/>
         Select the strategy map to enlist the Unit Breakthrough from the directory listing.
         <br/>
-        <img src="protected/views/help/images/map/create-step-1.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/map/create-step-1.png" alt="step-1"/>
     </li>
     <li>
         You will be then redirected to the View page of the selected Strategy Map. Click the <strong>Manage Unit Breakthroughs</strong> link.
         <br/>
-        <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/create-step-3.png" alt="step-2"/>
     </li>
     <li>
         Upon clicking the <strong>Manage Unit Breakthroughs</strong> link, you will be redirected to the directory listing of Initiative. 
         <br/>
         Click the <strong>Add Unit Breakthrough</strong> link.
         <br/>
-        <img src="protected/views/help/images/ubt/create-step-1.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/ubt/create-step-1.png" alt="step-3"/>
     </li>
     <li>
         You will be redirected to the enlistment form for Unit Breakthroughs, accomplish the enlistment form and click the <strong>Create</strong> button to enlist the Unit Breakthrough.
         <br/>
-        <img src="protected/views/help/images/ubt/create-step-2.png" style="width: 50%; text-align: center;" alt="step-4"/>
+        <img src="protected/views/help/images/ubt/create-step-2.png" alt="step-4"/>
     </li>
     <li>
         After successful validation, the new Unit Breakthrough will be enlisted in the data source and you will be redirected to its View page.
@@ -43,7 +43,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>MANAGE LEAD MEASURES</strong>, click here.
         <br/>
-        <img src="protected/views/help/images/ubt/create-step-3.png" style="width: 50%; text-align: center;" alt="step-5"/>
+        <img src="protected/views/help/images/ubt/create-step-3.png" alt="step-5"/>
     </li>
     <li>DONE.</li>
 </ol>
@@ -62,20 +62,20 @@ use org\csflu\isms\util\ApplicationUtils;
         <a name="ubtupd-2"></a>
         Select the strategy map of the Unit Breakthrough from the directory listing.
         <br/>
-        <img src="protected/views/help/images/map/create-step-1.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/create-step-1.png" alt="step-2"/>
     </li>
     <li>
         <a name="ubtupd-3"></a>
         You will be then redirected to the View page of the selected Strategy Map. Click the <strong>Manage Unit Breakthroughs</strong> link.
         <br/>
-        <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/map/create-step-3.png" alt="step-3"/>
     </li>
     <li>
         Upon clicking the <strong>Manage Unit Breakthroughs</strong> link, you will be redirected to the directory listing of Unit Breakthrough. 
         <br/>
         Click the <strong>View</strong> link beside the Unit Breakthrough you want to update.
         <br/>
-        <img src="protected/views/help/images/ubt/create-step-1.png" style="width: 50%; text-align: center;" alt="step-4"/>
+        <img src="protected/views/help/images/ubt/create-step-1.png" alt="step-4"/>
     </li>
     <li>
         <a name="ubtupd-5"></a>
@@ -83,16 +83,17 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         Click the <strong>Update Entry Data</strong> link to perform entry data update.
         <br/>
-        <img src="protected/views/help/images/ubt/create-step-3.png" style="width: 50%; text-align: center;" alt="step-5"/>
+        <img src="protected/views/help/images/ubt/create-step-3.png" alt="step-5"/>
     </li>
     <li>
         You will be redirected to the Entry Data update form of the Unit Breakthrough.
         <br/>
         Input the necessary data that needs to be updated and click the <strong>Update</strong> to apply the changes.
         <br/>
-        <img src="protected/views/help/images/ubt/update-ubt.png" style="width: 50%; text-align: center;" alt="step-6"/>
+        <img src="protected/views/help/images/ubt/update-ubt.png" alt="step-6"/>
     </li>
     <li>Upon successful validation, the updated data will be committed and data source and you will be redirected to the View page of the Unit Breakthrough.</li>
     <li>DONE.</li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
+<?php $this->renderPartial('help/_ubt-alignments'); ?>
