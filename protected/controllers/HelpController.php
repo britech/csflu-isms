@@ -112,4 +112,16 @@ class HelpController extends Controller {
         ));
     }
 
+    public function report() {
+        $this->render('help/report', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Help Contents' => array('help/index'),
+                'Reports Generation' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'help/_report-links'
+            )
+        ));
+    }
+
 }
