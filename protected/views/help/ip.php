@@ -63,3 +63,40 @@ use org\csflu\isms\util\ApplicationUtils;
     </li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
+
+<a name="delete" style="display: block; border-bottom: 1px solid black;">Delete Commitment Entry</a>
+<div class="ink-alert basic info">
+    <strong>Important Note:&nbsp;</strong>You can only perform this action for commitments that are <strong>PENDING</strong> and with <strong>NO RECORD OF MOVEMENTS</strong>
+</div>
+<ol>
+    <li>
+        If you are in the application's Home page, check the location of the <strong>Performance Scorecard</strong> module <?php echo ApplicationUtils::generateLink('#create', 'here') ?> and proceed to <?php echo ApplicationUtils::generateLink('#cupd-2', 'Step 2'); ?>
+    </li>
+    <li>
+        <a name="cupd-2"></a>
+        Upon clicking the link, you will be redirected to the Commitments Dashboard page.
+        <br/>
+        Click the commitment that you want to delete.
+        <img src="protected/views/help/images/ip/create-step-3.png" alt="step-1"/>
+    </li>
+    <li>
+        The application will then load the management page of the selected Commitment. 
+        <br/>
+        Click the <strong>Delete Commitment</strong> link to delete the selected Commitment.
+        <img src="protected/views/help/images/ip/update-commitment.png" alt="step-2"/>
+    </li>
+    <li>
+        Upon clicking the link, the application will prompt for confirmation to delete the selected Commitment
+        <img src="protected/views/help/images/ip/delete-commitment.png" alt="step-2"/>
+    </li>
+    <li>
+        Click the <strong>Yes</strong> button to confirm the deletion of the Commitment.
+    </li>
+    <li>
+        The selected commitment will be deleted from the data source and you will be redirected to the Commitment Dashboard page.
+    </li>
+    <li>
+        DONE.
+    </li>
+</ol>
+<?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
