@@ -100,4 +100,16 @@ class HelpController extends Controller {
         ));
     }
 
+    public function ip() {
+        $this->render('help/ip', array(
+            self::COMPONENT_BREADCRUMB => array(
+                'Help Contents' => array('help/index'),
+                'Individual Performance' => 'active'
+            ),
+            self::COMPONENT_SIDEBAR => array(
+                self::SUB_COMPONENT_SIDEBAR_FILE => 'help/_ip-links'
+            )
+        ));
+    }
+
 }
