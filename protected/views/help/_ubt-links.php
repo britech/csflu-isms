@@ -14,6 +14,7 @@ use org\csflu\isms\util\ApplicationUtils;
             <li><?php echo ApplicationUtils::generateLink('#manageAlignment', 'Manage Strategy Alignments'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#manageLeadMeasure', 'Manage Lead Measures'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#manageWig', 'Managing WIG Sessions')?></li>
+            <li><?php echo ApplicationUtils::generateLink('#movementUpdate', 'Record Unit Breakthrough Movements')?></li>
         </ul>
     </div>
 </div>
