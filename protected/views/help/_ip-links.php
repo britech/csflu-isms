@@ -13,6 +13,7 @@ use org\csflu\isms\util\ApplicationUtils;
             <li><?php echo ApplicationUtils::generateLink('#update', 'Update Commitment Entry'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#delete', 'Delete Commitment Entry'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#manage', 'Managing the Commitment Dashboard'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink('#movementUpdate', 'Record Commitment Movement'); ?></li>
         </ul>
     </div>
 </div>

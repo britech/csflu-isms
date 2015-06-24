@@ -101,3 +101,4 @@ use org\csflu\isms\util\ApplicationUtils;
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
 <?php $this->renderPartial('help/_commitments'); ?>
+<?php $this->renderPartial('help/_commitment-update');
