@@ -20,6 +20,7 @@ use org\csflu\isms\models\ubt\Commitment;
             <li><?php echo ApplicationUtils::generateLink(array('commitment/finish', 'id' => $data->id), 'Set To Finished'); ?></li>
             <li><?php echo ApplicationUtils::generateLink(array('commitment/movementLog', 'commitment' => $data->id), 'Movement Log'); ?></li>
         <?php elseif ($data->commitmentEnvironmentStatus == Commitment::STATUS_FINISHED): ?>
+            <li><?php echo ApplicationUtils::generateLink('#', 'Set as Pending', array('id' => "pending-{$data->id}")); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#', 'Set as Ongoing', array('id' => "ongoing-{$data->id}")); ?></li>
         <?php endif; ?>
     </ul>
