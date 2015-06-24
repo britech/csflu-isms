@@ -151,3 +151,41 @@ use org\csflu\isms\util\ApplicationUtils;
     </li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
+
+<a name="iniUpdate" style="display: block; border-bottom: 1px solid black;">Initiative Update</a>
+<ol>
+    <li>
+        From your application's Home page, click <strong>Modules&nbsp;&gt;&nbsp;<?php echo ApplicationUtils::generateLink(array('initiative/manage'), 'Initiative'); ?></strong>
+        <br/>
+        <img src="protected/views/help/images/commons/index.png" alt="index-page"/>
+    </li>
+    <li>
+        You will be redirected to the initiatives that are assigned to the unit or department your account belongs.
+        <br/>
+        Click the <strong>Manage</strong> link beside the Initiative that you want to perform Initiative Movement update.
+        <br/>
+        <br/>
+        <strong>Important Note:&nbsp;</strong>The initiatives that are listed are based on the underlying unit or department of the your account. 
+        The unit or department should be assigned as an <strong>Implementing Office</strong> in order to perform Initiative update.
+        <br/>
+        <img src="protected/views/help/images/initiative/dashboard-step-1.png" alt="step-1"/>
+    </li>
+    <li>
+        Upon clicking the <strong>Manage</strong> link, the application will prompt for a period date to display the activities in the given Month and Year.
+        <br/>
+        <img src="protected/views/help/images/initiative/dashboard-step-2.png" alt="step-2"/>
+    </li>
+    <li>
+        Afterwards, you will be redirected to the <strong>Activity Dashboard</strong> which displays the activities for the selected Month and Year.
+        <br/>
+        Click the <strong>Initiative Update Report</strong> link to generate the report
+        <img src="protected/views/help/images/initiative/dashboard-step-3.png" alt="step-3"/>
+    </li>
+    <li>
+        Upon clicking the link, the application will process the request and create the report file.
+    </li>
+    <li>
+        DONE.
+    </li>
+</ol>
+<?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
