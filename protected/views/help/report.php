@@ -189,3 +189,40 @@ use org\csflu\isms\util\ApplicationUtils;
     </li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
+
+<a name="wigMeeting" style="display: block; border-bottom: 1px solid black;">WIG Meeting Template</a>
+<div class="ink-alert basic info">
+    <strong>Important Note:&nbsp;</strong>You can only perform this procedure for <strong>CLOSED</strong> WIG Session.
+</div>
+<ol>
+    <li>
+        From your application's Home page, click <strong>Modules&nbsp;&gt;&nbsp;<?php echo ApplicationUtils::generateLink(array('ubt/manage'), 'Unit Breakthrough'); ?></strong>
+        <br/>
+        <img src="protected/views/help/images/commons/index.png" alt="index-page"/>
+    </li>
+    <li>
+        You will be then redirected the assigned Unit Breakthroughs under the unit where your account belongs.
+        <br/>
+        Click the <strong>Manage WIG Sessions</strong> link beside the unit breakthrough you selected to manage the WIG Sessions.
+        <img src="protected/views/help/images/ubt/create-wig-1.png" alt="step-1"/>
+    </li>
+    <li>
+        Afterwards, the page will display the enlisted WIG Sessions under the selected unit breakthrough.
+        <br/>
+        Click the <strong>View</strong> link beside the WIG Session you want to generate the WIG Meeting report.
+        <img src="protected/views/help/images/ubt/create-wig-2.png" alt="step-2"/>
+    </li>
+    <li>
+        The application will load the movement log record of the selected WIG Session.
+        <br/>
+        Click the <strong>Generate WIG Meeting Report</strong> link to generate the report.
+        <img src="protected/views/help/images/ubt/close-wig-3.png" alt="step-3"/>
+    </li>
+    <li>
+        Upon clicking the link, the application will process the request and create the report file.
+    </li>
+    <li>
+        DONE.
+    </li>
+</ol>
+<?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
