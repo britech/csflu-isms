@@ -226,3 +226,30 @@ use org\csflu\isms\util\ApplicationUtils;
     </li>
 </ol>
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?>
+
+<a name="indScorecard" style="display: block; border-bottom: 1px solid black;">Individual Performance Scorecard</a>
+<ol>
+    <li>
+        From your application's Home page, click <strong>My Profile&nbsp;&gt;&nbsp;<?php echo ApplicationUtils::generateLink(array('ip/index'), 'Performance Scorecard'); ?></strong>
+        <img src="protected/views/help/images/commons/index.png" alt="index-page"/>
+    </li>
+    <li>
+        Upon clicking the link, you will be redirected to the Commitments Dashboard page.
+        <br/>
+        Click the <strong>Generate Scorecard</strong> link to proceed.
+        <img src="protected/views/help/images/ip/create-step-1.png" alt="step-1"/>
+    </li>
+    <li>
+        The application will display the form. Select the unit breakthrough and time period for the generation of the scorecard.
+        <br/>
+        Click the <strong>Generate Report</strong> button to create the report.
+        <img src="protected/views/help/images/ip/ip-scorecard.png" alt="step-1"/>
+    </li>
+    <li>
+        Upon clicking the link, the application will process the request and create the report file.
+    </li>
+    <li>
+        DONE.
+    </li>
+</ol>
+<?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;'));
