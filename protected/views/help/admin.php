@@ -38,3 +38,4 @@ use org\csflu\isms\util\ApplicationUtils;
 <?php echo ApplicationUtils::generateLink('#top', 'Back to Top', array('style' => 'display: block; margin-bottom: 50px;')); ?> 
 <?php $this->renderPartial('help/_manage-account'); ?>
 <?php $this->renderPartial('help/_manage-user-status'); ?>
+<?php $this->renderPartial('help/_account-reset'); ?>
