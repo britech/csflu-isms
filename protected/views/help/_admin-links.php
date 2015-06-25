@@ -10,7 +10,9 @@ use org\csflu\isms\util\ApplicationUtils;
             <li class="heading"><?php echo ApplicationUtils::generateLink('#', 'Contents', array('style' => 'padding-left:0px;')) ?></li>
             <li><?php echo ApplicationUtils::generateLink(array('site/index'), 'Back to Application'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#enlist', 'Account Enlistment'); ?></li>
-            <li><?php echo ApplicationUtils::generateLink('#manageAccount', 'Manage User Accounts'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink('#manageLink', 'Manage Account Linking'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink('#manageStatus', 'Manage Account Status'); ?></li>
+            <li><?php echo ApplicationUtils::generateLink('#resetAccount', 'Account Password Reset'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#manageRole', 'Manage Security Roles'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#manageDepartment', 'Manage Departments'); ?></li>
             <li><?php echo ApplicationUtils::generateLink('#managePosition', 'Manage Positions'); ?></li>
