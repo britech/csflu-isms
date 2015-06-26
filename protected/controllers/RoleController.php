@@ -9,6 +9,7 @@ use org\csflu\isms\service\uam\SimpleUserManagementServiceImpl as UserManagement
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\models\uam\ModuleAction;
 use org\csflu\isms\models\uam\SecurityRole;
+use org\csflu\isms\controllers\support\ModelLoaderUtil;
 
 /**
  * Description of RoleController
@@ -18,6 +19,7 @@ use org\csflu\isms\models\uam\SecurityRole;
 class RoleController extends Controller {
 
     private $userService;
+    private $modelLoaderUtil;
 
     public function __construct() {
         $this->checkAuthorization();
@@ -26,6 +28,7 @@ class RoleController extends Controller {
         $this->actionCode = "MS";
         $this->layout = 'column-2';
         $this->userService = new UserManagementService();
+        $this->modelLoaderUtil = ModelLoaderUtil::getInstance($this);
     }
 
     public function index() {
@@ -56,7 +59,7 @@ class RoleController extends Controller {
             array_push($data, array(
                 'id' => $role->id,
                 'name' => $role->description,
-                'action' => ApplicationUtils::generateLink(array('role/updateRole', 'id' => $role->id), 'Update Details').'&nbsp;|&nbsp;'.ApplicationUtils::generateLink(array('role/removeRole', 'id'=>$role->id), 'Remove')));
+                'action' => ApplicationUtils::generateLink(array('role/updateRole', 'id' => $role->id), 'Update Details') . '&nbsp;|&nbsp;' . ApplicationUtils::generateLink('#', 'Remove', array('id' => "remove-{$role->id}"))));
         }
         $this->renderAjaxJsonResponse($data);
     }
@@ -131,61 +134,34 @@ class RoleController extends Controller {
         $this->redirect(array('role/index', 'id' => $id));
     }
 
-    public function removeRole() {
-        $id = filter_input(INPUT_GET, 'id');
-        
-        $this->title = ApplicationConstants::APP_NAME . ' - Security Role';
-        if(!isset($id) && empty($id)) {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-        
-        $securityRole = $this->userService->getSecurityRoleData($id);
-        
-        $this->render('commons/confirm', array(
-            'breadcrumb' => array(
-                'Home' => array('site/index'),
-                'Security Roles' => 'active'),
-            'sidebar' => array('data' => $this->getSidebarData()),
-            'confirm' => array('class' => '',
-                    'header' => 'Confirm removal of Security Role',
-                    'text' => "Do you want to remove the security role <strong>{$securityRole->description}</strong>? Continuing this action will delete the linked accounts using this security role.",
-                    'accept.class' => 'red',
-                    'accept.text' => 'Yes',
-                    'accept.url' => array('role/remove', 'id' => $id),
-                    'deny.class' => 'green',
-                    'deny.text' => 'No',
-                    'deny.url' => array('role/index'))
-        ));
+    public function remove() {
+        $this->validatePostData(array('id'));
+
+        $id = $this->getFormData('id');
+        $securityRole = $this->modelLoaderUtil->loadSecurityRoleModel($id, array(ModelLoaderUtil::KEY_REMOTE => true));
+
+        $this->userService->removeSecurityRole($securityRole);
+        $this->setSessionData('notif', array('message' => "Security Role deleted", 'class' => 'error'));
+        $this->renderAjaxJsonResponse(array('url' => ApplicationUtils::resolveUrl(array('role/index'))));
     }
 
-    public function remove() {
-        $id = filter_input(INPUT_GET, 'id');
-        if(!isset($id) && empty($id)) {
-            throw new ControllerException('Another parameter is needed to process this request');
-        }
-        $securityRole = new SecurityRole();
-        $securityRole->id = $id;
-        $this->userService->removeSecurityRole($securityRole);
-        $_SESSION['notif'] = "Security Role successfully deleted";
-        $this->redirect(array('role/index', 'id' => $id));
-    }
-    
     public function getSecurityRole() {
         $id = filter_input(INPUT_POST, 'id');
-        
-        if(!isset($id) && empty($id)) {
+
+        if (!isset($id) && empty($id)) {
             throw new ControllerException('Another parameter is needed to process this request');
         }
         $securityRole = $this->userService->getSecurityRoleData($id);
         $this->renderPartial('user/_roleDetail', array('actions' => $securityRole->allowableActions));
     }
-    
-    public function listSecurityRoles(){
+
+    public function listSecurityRoles() {
         $roles = $this->userService->listSecurityRoles();
         $data = array();
-        foreach($roles as $role) {
-            array_push($data, array('id'=>$role->id, 'name'=>'&nbsp;'.$role->description));
+        foreach ($roles as $role) {
+            array_push($data, array('id' => $role->id, 'name' => '&nbsp;' . $role->description));
         }
         $this->renderAjaxJsonResponse($data);
     }
+
 }
