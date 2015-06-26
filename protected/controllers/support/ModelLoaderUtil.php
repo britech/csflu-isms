@@ -26,6 +26,7 @@ use org\csflu\isms\models\initiative\Activity;
 use org\csflu\isms\models\indicator\Indicator;
 use org\csflu\isms\models\indicator\Baseline;
 use org\csflu\isms\models\uam\Employee;
+use org\csflu\isms\models\uam\SecurityRole;
 use org\csflu\isms\service\ubt\UnitBreakthroughManagementServiceSimpleImpl;
 use org\csflu\isms\service\map\StrategyMapManagementServiceSimpleImpl;
 use org\csflu\isms\service\commons\UnitOfMeasureSimpleImpl;
@@ -326,8 +327,21 @@ class ModelLoaderUtil {
     public function loadEmployeeModel($id, array $properties = array()) {
         $employee = $this->userService->getEmployeeData($id);
         $updatedProperties = $this->resolvePropertyValues($properties, array('user/index'), false, "Employee Data not found");
-        
+
         return $this->resolveModel($updatedProperties, $employee);
+    }
+
+    /**
+     * Retrieves the SecurityRole entity
+     * @param string $id Retrives through its identifier
+     * @param array $properties Properties to set the redirection and session manipulation mechanisms of the underlying controller
+     * @return SecurityRole
+     */
+    public function loadSecurityRoleModel($id, array $properties = array()) {
+        $securityRole = $this->userService->getSecurityRoleData($id);
+        $updatedProperties = $this->resolvePropertyValues($properties, array('user/index'), false, "Security Role not found");
+        
+        return $this->resolveModel($updatedProperties, $securityRole);
     }
 
     private function resolvePropertyValues(array $properties, $defaultUrl, $defaultRemoteIndicator, $defaultMessage) {
