@@ -39,3 +39,4 @@ use org\csflu\isms\util\ApplicationUtils;
 <?php $this->renderPartial('help/_manage-account'); ?>
 <?php $this->renderPartial('help/_manage-user-status'); ?>
 <?php $this->renderPartial('help/_account-reset'); ?>
+<?php $this->renderPartial('help/_security-roles'); ?>
