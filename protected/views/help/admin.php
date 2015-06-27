@@ -42,3 +42,4 @@ use org\csflu\isms\util\ApplicationUtils;
 <?php $this->renderPartial('help/_security-roles'); ?>
 <?php $this->renderPartial('help/_departments'); ?>
 <?php $this->renderPartial('help/_positions'); ?>
+<?php $this->renderPartial('help/_uom'); ?>
