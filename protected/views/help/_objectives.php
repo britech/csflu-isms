@@ -15,12 +15,12 @@ use org\csflu\isms\util\ApplicationUtils;
         <a name="mobj-2"></a>
         Select the strategy map to update from the directory listing.
         <br/>
-        <img src="protected/views/help/images/map/create-step-1.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/create-step-1.png" style=";" alt="step-2"/>
     </li>
     <li>
         <a name="mobj-3"></a>
         Upon selection of the strategy map, you will be redirected to its View page. Click <strong>Manage Objectives</strong> link.
-        <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/map/create-step-3.png" style=";" alt="step-3"/>
     </li>
     <li>
         You will be then redirected to the management page of the Objectives.
@@ -31,7 +31,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>DELETE</strong> an existing objective, click <?php echo ApplicationUtils::generateLink('#deleteObjective', 'here'); ?>.
         <br/>
-        <img src="protected/views/help/images/map/manage-objectives.png" style="width: 50%; text-align: center;" alt="step-4"/>
+        <img src="protected/views/help/images/map/manage-objectives.png" style=";" alt="step-4"/>
     </li>
     <li>DONE.</li>
 </ol>
@@ -42,7 +42,7 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>
         Accomplish the input data form and click the <strong>Create</strong> button to insert the new objective.
         <br/>
-        <img src="protected/views/help/images/map/manage-objectives.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/map/manage-objectives.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon successful validation, the new objective is committed in the data source and you will redirected to the management page of the Objectives.
@@ -60,14 +60,14 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>
         Click the <strong>Update</strong> link beside the Objective that you want to update.
         <br/>
-        <img src="protected/views/help/images/map/manage-objectives.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/map/manage-objectives.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon clicking the link, you will be redirected to the Update Form of the objective.
         <br/>
         After inputting the updated data, click the <strong>Update</strong> button to apply the changes.
         <br/>
-        <img src="protected/views/help/images/map/update-objective.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/update-objective.png" style=";" alt="step-2"/>
     </li>
     <li>
         Upon successful validation, the updated theme will be committed in the data source and you will be redirected to management page of the Objectives.
@@ -85,12 +85,12 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>
         Click the <strong>Delete</strong> link beside the Objective that you want to delete.
         <br/>
-        <img src="protected/views/help/images/map/manage-objectives.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/map/manage-objectives.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon clicking the link, the application will prompt for confirmation to delete the selected objective.
         <br/>
-        <img src="protected/views/help/images/map/delete-objective.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/delete-objective.png" style=";" alt="step-2"/>
     </li>
     <li>
         Click <strong>Yes</strong> button to confirm deletion the selected objective.

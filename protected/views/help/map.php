@@ -8,19 +8,19 @@ use org\csflu\isms\util\ApplicationUtils;
 <ol>
     <li>
         From your application's Home page, click <strong>Modules&nbsp;&gt;&nbsp;<?php echo ApplicationUtils::generateLink(array('map/index'), 'Strategy Management'); ?></strong>
-        <img src="protected/views/help/images/commons/index.png" style="width: 50%; text-align: center;" alt="index-page"/>
+        <img src="protected/views/help/images/commons/index.png" style=";" alt="index-page"/>
     </li>
     <li>
         Upon clicking the link, you will be redirected to the Strategy Map directory page.
         <br/>
         Click the <?php echo ApplicationUtils::generateLink(array('map/create'), 'Create a Strategy Map', array('style' => 'font-weight: bold;')); ?> link.
         <br/>
-        <img src="protected/views/help/images/map/create-step-1.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/map/create-step-1.png" style=";" alt="step-1"/>
     </li>
     <li>
         Afterwards, you will be redirected to the form page of the <strong>NEW</strong> Strategy Map's entry data
         <br/>
-        <img src="protected/views/help/images/map/create-step-2.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/create-step-2.png" style=";" alt="step-2"/>
     </li>
     <li>After inputting the necessary data, click the <strong>Create</strong> button to insert the Strategy Map.</li>
     <li>
@@ -34,7 +34,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>MANAGE THEMES</strong> of the strategy map, click <?php echo ApplicationUtils::generateLink('#mtheme-3', 'here'); ?>
         <br/>
-        <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/map/create-step-3.png" style=";" alt="step-3"/>
     </li>
     <li>DONE.</li>
 </ol>
@@ -51,17 +51,17 @@ use org\csflu\isms\util\ApplicationUtils;
         <a name="supd-2"></a>
         Select the strategy map to update from the directory listing.
         <br/>
-        <img src="protected/views/help/images/map/create-step-1.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/create-step-1.png" style=";" alt="step-2"/>
     </li>
     <li>
         <a name="supd-3"></a>
         Upon selection of the strategy map, you will be redirected to its View page. Click <strong>Update Entry Data</strong> link.
-        <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/map/create-step-3.png" style=";" alt="step-3"/>
     </li>
     <li>
         The application will then redirect you to the Update Entry Data form of the Strategy Map.
         <br/>
-        <img src="protected/views/help/images/map/update-strategy-map.png" style="width: 50%; text-align: center;" alt="step-4"/>
+        <img src="protected/views/help/images/map/update-strategy-map.png" style=";" alt="step-4"/>
     </li>
     <li>After accomplishing the update data, click the <strong>Update</strong> button to apply the changes.</li>
     <li>Upon successful validation, the updated data will be committed and data source and you will be redirected to the View page of the Strategy Map.</li>

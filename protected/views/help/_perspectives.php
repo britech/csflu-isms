@@ -15,12 +15,12 @@ use org\csflu\isms\util\ApplicationUtils;
         <a name="mper-2"></a>
         Select the strategy map to update from the directory listing.
         <br/>
-        <img src="protected/views/help/images/map/create-step-1.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/create-step-1.png" style=";" alt="step-2"/>
     </li>
     <li>
         <a name="mper-3"></a>
         Upon selection of the strategy map, you will be redirected to its View page. Click <strong>Manage Perspectives</strong> link.
-        <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/map/create-step-3.png" style=";" alt="step-3"/>
     </li>
     <li>
         You will be then redirected to the management page of the Perspectives.
@@ -31,7 +31,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>DELETE</strong> an existing perspective, click <?php echo ApplicationUtils::generateLink('#deletePerspective', 'here'); ?>.
         <br/>
-        <img src="protected/views/help/images/map/manage-perspective.png" style="width: 50%; text-align: center;" alt="step-4"/>
+        <img src="protected/views/help/images/map/manage-perspective.png" style=";" alt="step-4"/>
     </li>
     <li>DONE.</li>
 </ol>
@@ -44,7 +44,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         Please bear in mind that the <strong>Position Order</strong> field value cannot be repeated and limited to numbers <strong>1</strong> to <strong>5</strong>
         <br/>
-        <img src="protected/views/help/images/map/manage-perspective.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/map/manage-perspective.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon successful validation, the new perspective is committed in the data source and you will redirected to the management page of the Perspectives.
@@ -62,7 +62,7 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>
         Click the <i class="fa fa-edit"></i> icon beside the Perspective that you want to update.
         <br/>
-        <img src="protected/views/help/images/map/manage-perspective.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/map/manage-perspective.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon clicking the icon, you will be redirected to the Update Form of the perspective.
@@ -71,7 +71,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To apply the changes, click the <strong>Update</strong> button.
         <br/>
-        <img src="protected/views/help/images/map/update-perspective.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/update-perspective.png" style=";" alt="step-2"/>
     </li>
     <li>
         After successful validation, the updated data will be committed to the data source and you will be redirected to the management page of the Perspective.
@@ -89,12 +89,12 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>
         Click the <i class="fa fa-trash-o"></i> icon beside the Perspective that you want to delete.
         <br/>
-        <img src="protected/views/help/images/map/manage-perspective.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/map/manage-perspective.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon clicking the icon, the application will prompt for confirmation to delete the selected perspective.
         <br/>
-        <img src="protected/views/help/images/map/delete-perspective.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/delete-perspective.png" style=";" alt="step-2"/>
     </li>
     <li>
         Click <strong>Yes</strong> button to confirm deletion the selected perspective.
