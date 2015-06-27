@@ -107,12 +107,12 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>
         Click the <strong>Enable</strong> link beside the Lead Measure entry you want to activate.
         <br/>
-        <img src="protected/views/help/images/ubt/manage-lead-measures.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/ubt/manage-lead-measures.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon clicking the link, the application will prompt for confirmation to activate the selected Lead Measure entry.
         <br/>
-        <img src="protected/views/help/images/ubt/enable-lead-measure.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/ubt/enable-lead-measure.png" style=";" alt="step-1"/>
     </li>
     <li>
         Click the <strong>Yes</strong> button to confirm activation of Lead Measure entry
@@ -133,12 +133,12 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>
         Click the <strong>Disable</strong> link beside the Lead Measure entry you want to disable.
         <br/>
-        <img src="protected/views/help/images/ubt/manage-lead-measures.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/ubt/manage-lead-measures.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon clicking the link, the application will prompt for confirmation to disable the selected Lead Measure entry.
         <br/>
-        <img src="protected/views/help/images/ubt/disable-lead-measure.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/ubt/disable-lead-measure.png" style=";" alt="step-1"/>
     </li>
     <li>
         Click the <strong>Yes</strong> button to confirm deactivation of Lead Measure entry
