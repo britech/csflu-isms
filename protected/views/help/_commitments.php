@@ -35,17 +35,17 @@ use org\csflu\isms\util\ApplicationUtils;
 <ol>
     <li>
         Select an Commitment which is flagged any of the following: <strong>ONGOING</strong>, <strong>FINISHED</strong>
-        <img src="protected/views/help/images/ip/create-step-3.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/ip/create-step-3.png" style=";" alt="step-1"/>
     </li>
     <li>
         Afterwards, you will be redirected to the overview page of the selected activity.
         <br/>
         Click the <strong>Set to Pending</strong> link to change the status of the commitment to <strong>PENDING</strong>
-        <img src="protected/views/help/images/ip/overview-ongoing.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/ip/overview-ongoing.png" style=";" alt="step-2"/>
     </li>
     <li>
         Upon clicking the link, the application will prompt for confirmation to set the selected commitment to <strong>PENDING</strong>.
-        <img src="protected/views/help/images/ip/commitment-pending.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/ip/commitment-pending.png" style=";" alt="step-3"/>
     </li>
     <li>
         Click the <strong>Yes</strong> button to confirm the status update.
@@ -65,17 +65,17 @@ use org\csflu\isms\util\ApplicationUtils;
 <ol>
     <li>
         Select an Commitment which is flagged any of the following: <strong>PENDING</strong>, <strong>FINISHED</strong>
-        <img src="protected/views/help/images/ip/create-step-3.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/ip/create-step-3.png" style=";" alt="step-1"/>
     </li>
     <li>
         Afterwards, you will be redirected to the overview page of the selected activity.
         <br/>
         Click the <strong>Set to Ongoing</strong> link to change the status of the commitment to <strong>ONGOING</strong>
-        <img src="protected/views/help/images/ip/update-commitment.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/ip/update-commitment.png" style=";" alt="step-2"/>
     </li>
     <li>
         Upon clicking the link, the application will prompt for confirmation to set the selected commitment to <strong>ONGOING</strong>.
-        <img src="protected/views/help/images/ip/commitment-ongoing.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/ip/commitment-ongoing.png" style=";" alt="step-3"/>
     </li>
     <li>
         Click the <strong>Yes</strong> button to confirm the status update.
@@ -95,19 +95,19 @@ use org\csflu\isms\util\ApplicationUtils;
 <ol>
     <li>
         Select an Commitment which is flagged any of the following: <strong>PENDING</strong>, <strong>ONGOING</strong>
-        <img src="protected/views/help/images/ip/create-step-3.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/ip/create-step-3.png" style=";" alt="step-1"/>
     </li>
     <li>
         Afterwards, you will be redirected to the overview page of the selected activity.
         <br/>
         Click the <strong>Set to Finished</strong> link to change the status of the commitment to <strong>FINISHED</strong>
-        <img src="protected/views/help/images/ip/update-commitment.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/ip/update-commitment.png" style=";" alt="step-2"/>
     </li>
     <li>
         Upon clicking the link, you will be redirected to movements record page of the selected Commitment.
         <br/>
         Accomplish the movement record form and click the <strong>Add</strong> button to insert the movement record and update its status.
-        <img src="protected/views/help/images/ip/commitment-finish.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/ip/commitment-finish.png" style=";" alt="step-3"/>
     </li>
     <li>
         The selected activity will be set to <strong>FINISHED</strong> and you will be redirected to the Commitment Dashboard.

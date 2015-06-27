@@ -23,6 +23,7 @@ use org\csflu\isms\util\ApplicationUtils;
         The application will load the commitments overview page with the movement update form.
         <br/>
         Accomplish the form and click the <strong>Add</strong> button to record the movement update.
+        <img src="protected/views/help/images/ip/overview-ongoing.png" alt="step-1"/>
     </li>
     <li>
         The movement update data will be saved in the data source and you will be redirected to the Commitment Dashboard page.
