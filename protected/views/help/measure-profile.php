@@ -8,33 +8,33 @@ use org\csflu\isms\util\ApplicationUtils;
 <ol>
     <li>
         From your application's Home page, click <strong>Modules&nbsp;&gt;&nbsp;<?php echo ApplicationUtils::generateLink(array('map/index'), 'Strategy Management'); ?></strong>
-        <img src="protected/views/help/images/commons/index.png" style="width: 50%; text-align: center;" alt="index-page"/>
+        <img src="protected/views/help/images/commons/index.png" style=";" alt="index-page"/>
     </li>
     <li>
         Upon clicking the link, you will be redirected to the Strategy Map directory page.
         <br/>
         Select the strategy map to enlist the Measure Profile from the directory listing.
         <br/>
-        <img src="protected/views/help/images/map/create-step-1.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/map/create-step-1.png" style=";" alt="step-1"/>
     </li>
     <li>
         You will be then redirected to the View page of the selected Strategy Map. Click the <strong>Manage Measure Profiles</strong> link.
         <br/>
-        <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/create-step-3.png" style=";" alt="step-2"/>
     </li>
     <li>
         Upon clicking the <strong>Manage Measure Profiles</strong> link, you will be redirected to the directory listing of Measure Profiles. 
         <br/>
         Click the <strong>Create Measure Profile</strong> link.
         <br/>
-        <img src="protected/views/help/images/measure-profile/create-step-1.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/measure-profile/create-step-1.png" style=";" alt="step-3"/>
     </li>
     <li>
         Afterwards, you are redirected to the enlistment form for the new Measure Profile.
         <br/>
         Input the entry data in the enlistment form and click the <strong>Create</strong> button to insert the Measure Profile.
         <br/>
-        <img src="protected/views/help/images/measure-profile/create-step-2.png" style="width: 50%; text-align: center;" alt="step-4"/>
+        <img src="protected/views/help/images/measure-profile/create-step-2.png" style=";" alt="step-4"/>
     </li>
     <li>
         Upon successful validation and input data has been committed in the data source, you are redirected to the View page of the newly inserted Measure Profile.
@@ -45,7 +45,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>MANAGE TARGET DATA</strong>, click <?php echo ApplicationUtils::generateLink('#mtarget-5', 'here'); ?>
         <br/>
-        <img src="protected/views/help/images/measure-profile/create-step-3.png" style="width: 50%; text-align: center;" alt="step-5"/>
+        <img src="protected/views/help/images/measure-profile/create-step-3.png" style=";" alt="step-5"/>
     </li>
     <li>DONE.</li>
 </ol>
@@ -64,20 +64,20 @@ use org\csflu\isms\util\ApplicationUtils;
         <a name="mpupd-2"></a>
         Select the strategy map of the Measure Profile from the directory listing.
         <br/>
-        <img src="protected/views/help/images/map/create-step-1.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/create-step-1.png" style=";" alt="step-2"/>
     </li>
     <li>
         <a name="mpupd-3"></a>
         You will be then redirected to the View page of the selected Strategy Map. Click the <strong>Manage Measure Profiles</strong> link.
         <br/>
-        <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/map/create-step-3.png" style=";" alt="step-3"/>
     </li>
     <li>
         Upon clicking the <strong>Manage Measure Profile</strong> link, you will be redirected to the directory listing of Measure Profiles. 
         <br/>
         Click the <strong>View</strong> link beside the Measure Profile you want to update.
         <br/>
-        <img src="protected/views/help/images/measure-profile/create-step-1.png" style="width: 50%; text-align: center;" alt="step-4"/>
+        <img src="protected/views/help/images/measure-profile/create-step-1.png" style=";" alt="step-4"/>
     </li>
     <li>
         <a name="mpupd-5"></a>
@@ -85,14 +85,14 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         Click the <strong>Update Profile</strong> link to perform entry data update.
         <br/>
-        <img src="protected/views/help/images/measure-profile/create-step-3.png" style="width: 50%; text-align: center;" alt="step-5"/>
+        <img src="protected/views/help/images/measure-profile/create-step-3.png" style=";" alt="step-5"/>
     </li>
     <li>
         You will be redirected to the Entry Data update form of the Measure Profile.
         <br/>
         Input the necessary data that needs to be updated and click the <strong>Update</strong> to apply the changes.
         <br/>
-        <img src="protected/views/help/images/measure-profile/update-profile.png" style="width: 50%; text-align: center;" alt="step-6"/>
+        <img src="protected/views/help/images/measure-profile/update-profile.png" style=";" alt="step-6"/>
     </li>
     <li>Upon successful validation, the updated data will be committed and data source and you will be redirected to the View page of the Measure Profile.</li>
     <li>DONE.</li>
