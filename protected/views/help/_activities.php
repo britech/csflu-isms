@@ -17,20 +17,20 @@ use org\csflu\isms\util\ApplicationUtils;
         <a name="mact-2"></a>
         Select the strategy map of the Initiative from the directory listing.
         <br/>
-        <img src="protected/views/help/images/map/create-step-1.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/create-step-1.png" style=";" alt="step-2"/>
     </li>
     <li>
         <a name="mact-3"></a>
         You will be then redirected to the View page of the selected Strategy Map. Click the <strong>Manage Initiative</strong> link.
         <br/>
-        <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/map/create-step-3.png" style=";" alt="step-3"/>
     </li>
     <li>
         Upon clicking the <strong>Manage Initiative</strong> link, you will be redirected to the directory listing of Initiatives. 
         <br/>
         Click the <strong>View</strong> link beside the Initiative you want to update.
         <br/>
-        <img src="protected/views/help/images/initiative/create-step-1.png" style="width: 50%; text-align: center;" alt="step-4"/>
+        <img src="protected/views/help/images/initiative/create-step-1.png" style=";" alt="step-4"/>
     </li>
     <li>
         <a name="mact-5"></a>
@@ -38,7 +38,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         Click the <strong>Manage Activities</strong> link to perform management of Activity data.
         <br/>
-        <img src="protected/views/help/images/initiative/create-step-3.png" style="width: 50%; text-align: center;" alt="step-5"/>
+        <img src="protected/views/help/images/initiative/create-step-3.png" style=";" alt="step-5"/>
     </li>
     <li>
         You will be redirected to the management page of the Initiative's Activities.
@@ -49,7 +49,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>DELETE</strong> an existing Activity entry, click <?php echo ApplicationUtils::generateLink('#deleteActivity', 'here'); ?>
         <br/>
-        <img src="protected/views/help/images/initiative/manage-activities.png" style="width: 50%; text-align: center;" alt="step-6"/>
+        <img src="protected/views/help/images/initiative/manage-activities.png" style=";" alt="step-6"/>
     </li>
     <li>DONE.</li>
 </ol>
@@ -67,7 +67,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         &ast;&nbsp;<strong>Activity Number</strong> can be repeated as long it is aligned in the <strong>Phase Number</strong> of the <strong>Component</strong> selected.
         <br/>
-        <img src="protected/views/help/images/initiative/manage-activities.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/initiative/manage-activities.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon successful validation, the new activity data is committed in the data source and you will be redirected to the management page of the Activities.
@@ -87,7 +87,7 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>
         Click the <strong>Update</strong> link beside the Activity entry you want to update.
         <br/>
-        <img src="protected/views/help/images/initiative/manage-activities.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/initiative/manage-activities.png" style=";" alt="step-1"/>
     </li>
     <li>
         You will be then redirected to the update form of the selected Activity entry.
@@ -96,10 +96,10 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         <strong>Note:&nbsp;</strong> Same rules for adding activity entry is applied.
         <br/>
-        <img src="protected/views/help/images/initiative/update-activity.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/initiative/update-activity.png" style=";" alt="step-1"/>
     </li>
     <li>
-        Upon successful validation, the updated activity data is committed in the data source and you will be redirected to the management page of the Components.
+        Upon successful validation, the updated activity data is committed in the data source and you will be redirected to the management page of the Activities.
     </li>
     <li>DONE.</li>
 </ol>
@@ -114,12 +114,12 @@ use org\csflu\isms\util\ApplicationUtils;
     <li>
         Click the <strong>Delete</strong> link beside the Activity entry you want to delete.
         <br/>
-        <img src="protected/views/help/images/initiative/manage-activities.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/initiative/manage-activities.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon clicking the link, the application will prompt for confirmation to delete the selected Activity entry.
         <br/>
-        <img src="protected/views/help/images/initiative/delete-activity.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/initiative/delete-activity.png" style=";" alt="step-1"/>
     </li>
     <li>
         Click the <strong>Yes</strong> button to confirm deletion of the Activity entry

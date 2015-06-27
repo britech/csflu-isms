@@ -17,20 +17,20 @@ use org\csflu\isms\util\ApplicationUtils;
         <a name="malign-2"></a>
         Select the strategy map of the Initiative from the directory listing.
         <br/>
-        <img src="protected/views/help/images/map/create-step-1.png" style="width: 50%; text-align: center;" alt="step-2"/>
+        <img src="protected/views/help/images/map/create-step-1.png" style=";" alt="step-2"/>
     </li>
     <li>
         <a name="malign-3"></a>
         You will be then redirected to the View page of the selected Strategy Map. Click the <strong>Manage Initiative</strong> link.
         <br/>
-        <img src="protected/views/help/images/map/create-step-3.png" style="width: 50%; text-align: center;" alt="step-3"/>
+        <img src="protected/views/help/images/map/create-step-3.png" style=";" alt="step-3"/>
     </li>
     <li>
         Upon clicking the <strong>Manage Initiative</strong> link, you will be redirected to the directory listing of Initiatives. 
         <br/>
         Click the <strong>View</strong> link beside the Initiative you want to update.
         <br/>
-        <img src="protected/views/help/images/initiative/create-step-1.png" style="width: 50%; text-align: center;" alt="step-4"/>
+        <img src="protected/views/help/images/initiative/create-step-1.png" style=";" alt="step-4"/>
     </li>
     <li>
         <a name="malign-5"></a>
@@ -38,7 +38,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         Click the <strong>Manage Strategy Alignment</strong> link to perform management of Strategy Alignments data.
         <br/>
-        <img src="protected/views/help/images/initiative/create-step-3.png" style="width: 50%; text-align: center;" alt="step-5"/>
+        <img src="protected/views/help/images/initiative/create-step-3.png" style=";" alt="step-5"/>
     </li>
     <li>
         You will be redirected to the management page of the Initiative's Strategy Alignments.
@@ -47,7 +47,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         To <strong>DELETE</strong> an existing strategy alignments, click <?php echo ApplicationUtils::generateLink('#deleteAlignment', 'here'); ?>
         <br/>
-        <img src="protected/views/help/images/initiative/manage-alignments.png" style="width: 50%; text-align: center;" alt="step-6"/>
+        <img src="protected/views/help/images/initiative/manage-alignments.png" style=";" alt="step-6"/>
     </li>
     <li>DONE.</li>
 </ol>
@@ -62,7 +62,7 @@ use org\csflu\isms\util\ApplicationUtils;
         <br/>
         <strong>Tip:&nbsp;</strong>You can select <strong>TWO or MORE</strong> strategic objectives and/or measure profiles.
         <br/>
-        <img src="protected/views/help/images/initiative/manage-alignments.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/initiative/manage-alignments.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon successful validation, the new strategy alignments is committed in the data source and you will be redirected to the management page of the Strategy Alignments.
@@ -75,17 +75,17 @@ use org\csflu\isms\util\ApplicationUtils;
     <?php echo ApplicationUtils::generateLink('#top', 'Back to Top'); ?>
 </span>
 
-<a name="deleteAlignment" style="display: block; border-bottom: 1px solid black;">Delete Implementing Office Entry</a>
+<a name="deleteAlignment" style="display: block; border-bottom: 1px solid black;">Delete Strategy Alignment Entry</a>
 <ol>
     <li>
         Click the <strong>Delete</strong> link beside the Strategic Objective or Measure Profile entry you want to delete.
         <br/>
-        <img src="protected/views/help/images/initiative/manage-alignments.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/initiative/manage-alignments.png" style=";" alt="step-1"/>
     </li>
     <li>
         Upon clicking the link, the application will prompt for confirmation to delete the selected Strategic Objective or Measure Profile.
         <br/>
-        <img src="protected/views/help/images/initiative/delete-alignment.png" style="width: 50%; text-align: center;" alt="step-1"/>
+        <img src="protected/views/help/images/initiative/delete-alignment.png" style=";" alt="step-1"/>
     </li>
     <li>
         Click the <strong>Yes</strong> button to confirm deletion of Strategic Objective or Measure Profile
