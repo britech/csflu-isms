@@ -6,6 +6,7 @@ use org\csflu\isms\dao\uam\UserManagementDao;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\models\uam\Employee;
+use org\csflu\isms\models\commons\Position;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\uam\SecurityRole;
@@ -114,8 +115,8 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
                         $employee->loginAccount->status) = $data;
             }
 
-            $employee->position = $this->positionDao->getPositionData($position);
-            $employee->department = $this->departmentDao->getDepartmentById($department);
+            $employee->position = isset($position) ? $this->positionDao->getPositionData($position) : null;
+            $employee->department = isset($department) ? $this->departmentDao->getDepartmentById($department) : null;
 
             return $employee;
         } catch (\PDOException $e) {

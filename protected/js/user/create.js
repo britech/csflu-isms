@@ -65,7 +65,7 @@ $(document).ready(function() {
             ],
             url: '?r=role/listSecurityRoles'
         }),
-        selectedIndex: 0,
+        selectedIndex: -1,
         displayMember: 'name',
         valueMember: 'id',
         width: '100%',
@@ -74,8 +74,7 @@ $(document).ready(function() {
         theme: 'office',
         height: '35px',
         disabled: true
-    });
-    $("#securityRole-list").on('select', function(event){
+    }).on('select', function(event){
        if(event.args){
            $("#securityRole-id").val(event.args.item.value);
        } 
@@ -90,7 +89,7 @@ $(document).ready(function() {
             ],
             url: '?r=position/listPositions'
         }),
-        selectedIndex: 0,
+        selectedIndex: -1,
         displayMember: 'name',
         valueMember: 'id',
         width: '100%',
@@ -99,8 +98,7 @@ $(document).ready(function() {
         theme: 'office',
         height: '35px',
         disabled: true
-    });
-    $("#position-list").on('select', function(event){
+    }).on('select', function(event){
        if(event.args){
            $("#position-id").val(event.args.item.value);
        } 
