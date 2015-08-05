@@ -3,6 +3,8 @@
 namespace org\csflu\isms\dao\commons;
 
 use org\csflu\isms\core\ConnectionManager;
+use org\csflu\isms\core\DatabaseConnectionManager;
+use org\csflu\isms\util\ApplicationLoggerUtils;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\dao\commons\PositionDao;
 use org\csflu\isms\models\commons\Position;
@@ -13,12 +15,22 @@ use org\csflu\isms\models\commons\Position;
  */
 class PositionDaoSqlImpl implements PositionDao{
     
+    private $logger;
+    private $db;
+
+    public function __construct() {
+        $this->logger = \Logger::getLogger(__CLASS__);
+
+        $connectionManager = DatabaseConnectionManager::getInstance();
+        $this->db = $connectionManager->getMainDbConnection();
+    }
+
     public function listPositions() {
-        $db = ConnectionManager::getConnectionInstance();
         try{
-            $dbst = $db->prepare("SELECT pos_id, pos_desc FROM positions ORDER BY pos_desc ASC");
+            $dbst = $this->db->prepare("SELECT pos_id, pos_desc FROM positions ORDER BY pos_desc ASC");
             $dbst->execute();
-            
+            ApplicationLoggerUtils::logSql($this->logger, $dbst);
+
             $positions = array();
             while($data = $dbst->fetch()){
                 $position = new Position();
@@ -27,30 +39,32 @@ class PositionDaoSqlImpl implements PositionDao{
             }
             return $positions;
         } catch (\PDOException $ex) {
-            throw new DataAccessException($ex->getMessage());
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
-    public function enlistPosition($position) {
-        $db = ConnectionManager::getConnectionInstance();
+    public function enlistPosition(Position $position) {
         try {
-            $db->beginTransaction();
+            $this->db->beginTransaction();
             
-            $dbst = $db->prepare('INSERT INTO positions(pos_desc) VALUES(:description)');
-            $dbst->execute(array('description'=>$position->name));
+            $params = array('description'=>$position->name);
+            $dbst = $this->db->prepare('INSERT INTO positions(pos_desc) VALUES(:description)');
+            $dbst->execute($params);
+            ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
             
-            $db->commit();
+            $this->db->commit();
         } catch (\PDOException $ex) {
-            $db->rollBack();
-            throw new DataAccessException($ex->getMessage());
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
     public function getPositionData($id) {
         try {
-            $db = ConnectionManager::getConnectionInstance();
-            $dbst = $db->prepare('SELECT pos_id, pos_desc FROM positions WHERE pos_id=:id');
-            $dbst->execute(array('id'=>$id));
+            $params = array('id'=>$id);
+            $dbst = $this->db->prepare('SELECT pos_id, pos_desc FROM positions WHERE pos_id=:id');
+            $dbst->execute($params);
+            ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
             
             $position = new Position();
             while($data = $dbst->fetch()){
@@ -58,22 +72,23 @@ class PositionDaoSqlImpl implements PositionDao{
             }
             return $position;
         } catch (\PDException $ex) {
-            throw new DataAccessException($ex->getMessage());
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
-    public function updatePosition($position) {
-        $db = ConnectionManager::getConnectionInstance();
+    public function updatePosition(Position $position) {
         try {
-            $db->beginTransaction();
+            $this->db->beginTransaction();
             
-            $dbst = $db->prepare('UPDATE positions SET pos_desc=:desc WHERE pos_id=:id');
-            $dbst->execute(array('desc'=>$position->name, 'id'=>$position->id));
+            $params = array('desc'=>$position->name, 'id'=>$position->id);
+            $dbst = $this->db->prepare('UPDATE positions SET pos_desc=:desc WHERE pos_id=:id');
+            $dbst->execute($params);
+            ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
             
-            $db->commit();
+            $this->db->commit();
         } catch (\PDOException $ex) {
-            $db->rollBack();
-            throw new DataAccessException($ex->getMessage());
+            $this->db->rollBack();
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 

@@ -26,11 +26,11 @@ interface PositionDao {
      * @param Position $position
      * @throws DataAccessException
      */
-    public function enlistPosition($position);
+    public function enlistPosition(Position $position);
     
     /**
      * @param Position $position
      * @throws DataAccessException
      */
-    public function updatePosition($position);
+    public function updatePosition(Position $position);
 }
