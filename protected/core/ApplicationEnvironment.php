@@ -10,34 +10,34 @@ use org\csflu\isms\exceptions\ApplicationException;
  */
 class ApplicationEnvironment {
 
-	public static function initialize($location) {
-		$fileName = dirname(__DIR__) . "/config/{$location}.json";
-		
-		if(!file_exists($fileName)){
-			throw new ApplicationException("Configuration file not found");
-		}
+    public static function initialize($location) {
+        $fileName = dirname(__DIR__) . "/config/{$location}.json";
 
-		$jsonStringData = file_get_contents($fileName);
+        if (!file_exists($fileName)) {
+            throw new ApplicationException("Configuration file not found");
+        }
 
-		if($jsonStringData == false){
-			throw new ApplicationException("Cannot load configuration file");
-		}
+        $jsonStringData = file_get_contents($fileName);
 
-		$configurationMap = json_decode($jsonStringData, true);
+        if ($jsonStringData == false) {
+            throw new ApplicationException("Cannot load configuration file");
+        }
 
-		if(!is_array($configurationMap) || $configurationMap == null){
-			throw new ApplicationException("Cannot parse configuration file");
-		}
+        $configurationMap = json_decode($jsonStringData, true);
 
-		foreach($configurationMap as $key => $value){
-			if(is_array($value)){
-				foreach($value as $name => $data){
-					define(strtoupper("{$key}_{$name}"), $data);
-				}
-			} else {
-				define(strtoupper($key), $value);
-			}
-		}
-	}
+        if (!is_array($configurationMap) || $configurationMap == null) {
+            throw new ApplicationException("Cannot parse configuration file");
+        }
+
+        foreach ($configurationMap as $key => $value) {
+            if (is_array($value)) {
+                foreach ($value as $name => $data) {
+                    define(strtoupper("{$key}_{$name}"), $data);
+                }
+            } else {
+                define(strtoupper($key), $value);
+            }
+        }
+    }
 
 }
