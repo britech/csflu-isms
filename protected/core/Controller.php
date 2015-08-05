@@ -2,6 +2,10 @@
 
 namespace org\csflu\isms\core;
 
+if(defined("EXT_PDF")){
+    require_once EXT_PDF;        
+}
+
 use org\csflu\isms\exceptions\ControllerException;
 use org\csflu\isms\util\ApplicationUtils;
 use org\csflu\isms\service\commons\RevisionHistoryLoggingServiceImpl as RevisionHistoryLoggingService;

@@ -2,9 +2,17 @@
 
 namespace org\csflu\isms\core;
 
+session_start();
+ob_start();
+
+require_once dirname(__FILE__) . '/ApplicationLoader.php';
+
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
+use org\csflu\isms\core\ApplicationEnvironment;
 use org\csflu\isms\exceptions\ApplicationException;
+
+\Logger::configure("protected/logs/logback.xml");
 
 class Application {
 
@@ -13,21 +21,24 @@ class Application {
     private $controller = 'site';
     private $action = 'index';
     private $logger;
+    private $configurationLocation;
     private static $instance;
 
-    private function __construct() {
+    private function __construct($configurationLocation) {
         $this->logger = \Logger::getLogger(__CLASS__);
+        $this->configurationLocation = $configurationLocation;
     }
 
-    public static function getInstance() {
+    public static function getInstance($configurationLocation) {
         if (empty(self::$instance)) {
-            self::$instance = new Application();
+            self::$instance = new Application($configurationLocation);
         }
         return self::$instance;
     }
 
     public function runApplication() {
         try {
+            ApplicationEnvironment::initialize($this->configurationLocation);
             $request = $this->retrieveRouteExpression();
             $this->resolveAndDispatchRequest($request);
         } catch (\Exception $e) {
