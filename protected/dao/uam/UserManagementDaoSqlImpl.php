@@ -5,6 +5,8 @@ namespace org\csflu\isms\dao\uam;
 use org\csflu\isms\dao\uam\UserManagementDao;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\core\ConnectionManager;
+use org\csflu\isms\core\DatabaseConnectionManager;
+use org\csflu\isms\util\ApplicationLoggerUtils;
 use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\models\commons\Position;
 use org\csflu\isms\models\commons\Department;
@@ -22,20 +24,28 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
     private $securityRoleDao;
     private $db;
     private $hrDb;
+    private $logger;
 
     public function __construct() {
+        $this->logger = \Logger::getLogger(__CLASS__);
         $this->positionDao = new PositionDao();
         $this->departmentDao = new DepartmentDao();
         $this->securityRoleDao = new SecurityRoleDaoSqlImpl();
-        $this->db = ConnectionManager::getConnectionInstance();
-        $this->hrDb = ConnectionManager::getHrConnectionInstance();
+
+        $connectionManager = DatabaseConnectionManager::getInstance();
+
+        $this->db = $connectionManager->getMainDbConnection();
+        $this->hrDb = $connectionManager->getHrDbConnection();
     }
 
     public function authenticate(LoginAccount $loginAccount) {
         try {
+            $params = array('username' => $loginAccount->username, 'stat' => LoginAccount::STATUS_ACTIVE);
             $dbst = $this->db->prepare('SELECT emp_id, password FROM employees WHERE username=:username AND emp_stat=:stat');
-            $dbst->execute(array('username' => $loginAccount->username, 'stat' => LoginAccount::STATUS_ACTIVE));
+            $dbst->execute($params);
             
+            ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
+
             $employee = new Employee();
             $employee->loginAccount = new LoginAccount();
 
