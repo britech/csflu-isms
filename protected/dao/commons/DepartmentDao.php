@@ -35,11 +35,11 @@ interface DepartmentDao {
      * @param Department $department
      * @throws DataAccessException
      */
-    public function insertDepartment($department);
+    public function insertDepartment(Department $department);
     
     /**
      * @param Department $department
      * @throws DataAccessException
      */
-    public function updateDepartment($department);
+    public function updateDepartment(Department $department);
 }

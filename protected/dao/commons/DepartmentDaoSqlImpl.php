@@ -38,7 +38,7 @@ class DepartmentDaoSqlImpl implements DepartmentDao {
             }
             return $department;
         } catch (\PDOException $ex) {
-            throw new DataAccessException($ex->getMessage());
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
@@ -55,7 +55,7 @@ class DepartmentDaoSqlImpl implements DepartmentDao {
             }
             return $department;
         } catch (\PDOException $ex) {
-            throw new DataAccessException($ex->getMessage());
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
@@ -81,11 +81,11 @@ class DepartmentDaoSqlImpl implements DepartmentDao {
             }
             return $departments;
         } catch (\PDOException $ex) {
-            throw new DataAccessException($ex->getMessage());
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
-    public function insertDepartment($department) {
+    public function insertDepartment(Department $department) {
         try {
             $this->db->beginTransaction();
             
@@ -97,11 +97,11 @@ class DepartmentDaoSqlImpl implements DepartmentDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
-            throw new DataAccessException($ex->getMessage());
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
-    public function updateDepartment($department) {
+    public function updateDepartment(Department $department) {
         try {
             $this->db->beginTransaction();
             
@@ -113,7 +113,7 @@ class DepartmentDaoSqlImpl implements DepartmentDao {
             $this->db->commit();
         } catch (\PDOException $ex) {
             $this->db->rollBack();
-            throw new DataAccessException($ex->getMessage());
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
