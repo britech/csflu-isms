@@ -1,7 +1,7 @@
 <configuration xmlns="http://logging.apache.org/log4php/">
     <appender name="default" class="LoggerAppenderDailyFile">
         <layout class="LoggerLayoutPattern">
-            <param name="conversionPattern" value="%date{M-d-Y H:i:s} %logger [%level] %msg %ex%n" />
+            <param name="conversionPattern" value="%date{M-d-Y H:i:s} %logger{0} [%level] %msg %ex%n" />
         </layout>
         <param name="file" value="protected/logs/isms-se-%s.log" />
         <param name="datePattern" value="Y-m-d" />
