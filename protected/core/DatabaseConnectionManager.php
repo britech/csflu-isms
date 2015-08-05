@@ -40,7 +40,7 @@ class DatabaseConnectionManager {
                                  \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION));
 			return $db;
 		} catch (\PDOException $ex) {
-			throw new DataAccessException($ex->getMessage());
+			throw new DataAccessException($ex->getMessage(), $ex);
 		}
 	}
 
@@ -57,7 +57,7 @@ class DatabaseConnectionManager {
                                  \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION));
 			return $db;
 		} catch (\PDOException $ex) {
-			throw new DataAccessException($ex->getMessage());
+			throw new DataAccessException($ex->getMessage(), $ex);
 		}
 	}
 }
