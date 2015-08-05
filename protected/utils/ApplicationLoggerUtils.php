@@ -15,7 +15,7 @@ class ApplicationLoggerUtils {
 			if($i == (count($parameters) - 1)){
 				$parameterString .= "{$key} => {$value}";
 			} else {
-				$parameterString .= "{$key} => {$value},";
+				$parameterString .= "{$key} => {$value}, ";
 			}
 			$i++;
 		}
