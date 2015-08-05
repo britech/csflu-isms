@@ -8,19 +8,8 @@ use org\csflu\isms\exceptions\DataAccessException;
 class DatabaseConnectionManager {
 
 	private static $instance;
-	private $logger;
-
+	
 	private function __construct(){
-		$this->logger = \Logger::getLogger(__CLASS__);
-
-		$this->logger->debug("Validating DB variables...");
-		$this->logger->debug("DB_DSN existing ==> ". (defined("DB_DSN") ? "YES" : "NO"));
-		$this->logger->debug("DB_USERNAME existing ==> ". (defined("DB_USERNAME") ? "YES" : "NO"));
-		$this->logger->debug("DB_PASSWORD existing ==> ". (defined("DB_PASSWORD") ? "YES" : "NO"));
-		$this->logger->debug("HRDB_DSN existing ==> ". (defined("HRDB_DSN") ? "YES" : "NO"));
-		$this->logger->debug("HRDB_USERNAME existing ==> ". (defined("HRDB_USERNAME") ? "YES" : "NO"));
-		$this->logger->debug("HRDB_PASSWORD existing ==> ". (defined("HRDB_PASSWORD") ? "YES" : "NO"));
-
 		if(!(defined("DB_DSN") && defined("DB_USERNAME") && defined("DB_PASSWORD") && 
 			defined("HRDB_DSN") && defined("HRDB_USERNAME") && defined("HRDB_PASSWORD"))){
 			throw new ApplicationException("Database variable setup failure. Check configuration file.");
