@@ -22,5 +22,5 @@ interface RevisionHistoryLoggingDao {
      * @param RevisionHistory $revisionHistory
      * @throws DataAccessException
      */
-    public function log($revisionHistory);
+    public function log(RevisionHistory $revisionHistory);
 }
