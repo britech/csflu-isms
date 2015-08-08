@@ -19,13 +19,13 @@ interface UnitOfMeasureDao {
      * @param UnitOfMeasure $uom
      * @throws DataAccessException
      */
-    public function enlistUom($uom);
+    public function enlistUom(UnitOfMeasure $uom);
     
     /**
      * @param UnitOfMeasure $uom
      * @throws DataAccessException
      */
-    public function updateUom($uom);
+    public function updateUom(UnitOfMeasure $uom);
     
     /**
      * @return UnitOfMeasure
