@@ -2,7 +2,6 @@
 
 namespace org\csflu\isms\dao\commons;
 
-use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\core\DatabaseConnectionManager;
 use org\csflu\isms\util\ApplicationLoggerUtils;
 use org\csflu\isms\exceptions\DataAccessException;
