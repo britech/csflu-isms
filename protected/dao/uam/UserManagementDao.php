@@ -60,7 +60,7 @@ interface UserManagementDao {
      * @return String
      * @throws DataAccessException
      */
-    public function insertAccount($account);
+    public function insertAccount(UserAccount $account);
 
     /**
      * @param Integer $id
@@ -99,7 +99,7 @@ interface UserManagementDao {
      * @param Employee $employee
      * @throws DataAccessException
      */
-    public function updateSecurityKey($employee);
+    public function updateSecurityKey(Employee $employee);
 
     /**
      * @param UserAccount $userAccount
@@ -111,5 +111,5 @@ interface UserManagementDao {
      * @param UserAccount $userAccount
      * @throws DataAccessException
      */
-    public function updateUserAccount($userAccount);
+    public function updateUserAccount(UserAccount $userAccount);
 }
