@@ -4,7 +4,6 @@ namespace org\csflu\isms\dao\commons;
 
 use org\csflu\isms\dao\commons\RevisionHistoryLoggingDao;
 use org\csflu\isms\dao\uam\UserManagementDaoSqlImpl;
-use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\core\DatabaseConnectionManager;
 use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\models\commons\RevisionHistory;
