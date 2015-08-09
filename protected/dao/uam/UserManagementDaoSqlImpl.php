@@ -169,7 +169,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
             PDOUtils::commitTransaction($this->db);
         } catch (\PDOException $ex) {
             PDOUtils::rollbackTransaction($this->db);
-            throw new DataAccessException($ex->getMessage());
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
@@ -274,15 +274,16 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
     }
 
     public function updateSecurityKey(Employee $employee) {
-        $db = ConnectionManager::getConnectionInstance();
         try {
-            $db->beginTransaction();
-            $dbst = $db->prepare("UPDATE employees SET password=:password WHERE emp_id=:id");
-            $dbst->execute(array('password' => $employee->loginAccount->password, 'id' => $employee->id));
-            $db->commit();
+            PDOUtils::initiateTransaction($this->db);
+            $dbst = $this->db->prepare("UPDATE employees SET password=:password WHERE emp_id=:id");
+            $params = array('password' => $employee->loginAccount->password, 'id' => $employee->id);
+            $dbst->execute($params);
+            ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
+            PDOUtils::commitTransaction($this->db);
         } catch (\PDOException $ex) {
-            $db->rollBack();
-            throw new DataAccessException($ex->getMessage());
+            PDOUtils::rollbackTransaction($this->db);
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
