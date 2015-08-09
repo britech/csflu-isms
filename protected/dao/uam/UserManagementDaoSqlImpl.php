@@ -258,11 +258,12 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
     }
 
     public function getSecurityKey(Employee $employee) {
-        $db = ConnectionManager::getConnectionInstance();
         try {
-            $dbst = $db->prepare("SELECT password FROM employees WHERE emp_id=:id");
-            $dbst->execute(array('id' => $employee->id));
-
+            $dbst = $this->db->prepare("SELECT password FROM employees WHERE emp_id=:id");
+            $params = array('id' => $employee->id);
+            $dbst->execute($params);
+            ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
+            
             while ($data = $dbst->fetch()) {
                 list($password) = $data;
             }
