@@ -7,6 +7,7 @@ use org\csflu\isms\exceptions\DataAccessException;
 use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\core\DatabaseConnectionManager;
 use org\csflu\isms\util\ApplicationLoggerUtils;
+use org\csflu\isms\util\PDOUtils;
 use org\csflu\isms\models\uam\Employee;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\uam\UserAccount;
@@ -149,12 +150,10 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
     }
 
     public function insertAccount(UserAccount $account) {
-        $db = ConnectionManager::getConnectionInstance();
         try {
-            $db->beginTransaction();
-
-            $dbst = $db->prepare('INSERT INTO employees VALUES(:id, :lname, :fname, :mname, :username, :password, :position, :department, :status)');
-            $dbst->execute(array('id' => $account->employee->id,
+            PDOUtils::initiateTransaction($this->db);
+            $dbst = $this->db->prepare('INSERT INTO employees VALUES(:id, :lname, :fname, :mname, :username, :password, :position, :department, :status)');
+            $params = array('id' => $account->employee->id,
                 'lname' => $account->employee->lastName,
                 'fname' => $account->employee->givenName,
                 'mname' => $account->employee->middleName,
@@ -162,11 +161,14 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
                 'password' => $account->employee->loginAccount->password,
                 'position' => $account->employee->position->id,
                 'department' => $account->employee->department->id,
-                'status' => '1'));
-            $db->commit();
+                'status' => '1');
+            $dbst->execute($params);
+            ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
+
             $this->linkSecurityRole($account);
+            PDOUtils::commitTransaction($this->db);
         } catch (\PDOException $ex) {
-            $db->rollBack();
+            PDOUtils::rollbackTransaction($this->db);
             throw new DataAccessException($ex->getMessage());
         }
     }
@@ -177,7 +179,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
             $params = array('id' => $id);
             $dbst->execute($params);
             ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
-            
+
             $employee = new Employee();
             $employee->department = new Department();
 
@@ -285,19 +287,19 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
     }
 
     public function linkSecurityRole(UserAccount $userAccount) {
-        $db = ConnectionManager::getConnectionInstance();
         try {
-            $db->beginTransaction();
-
-            $dbst = $db->prepare('INSERT INTO user_main(emp_ref, type_ref, dept_ref, pos_ref) VALUES(:employee, :type, :department, :position)');
-            $dbst->execute(array('employee' => $userAccount->employee->id,
+            PDOUtils::initiateTransaction($this->db);
+            $dbst = $this->db->prepare('INSERT INTO user_main(emp_ref, type_ref, dept_ref, pos_ref) VALUES(:employee, :type, :department, :position)');
+            $params = array('employee' => $userAccount->employee->id,
                 'type' => $userAccount->securityRole->id,
                 'department' => $userAccount->employee->department->id,
-                'position' => $userAccount->employee->position->id));
-            $db->commit();
+                'position' => $userAccount->employee->position->id);
+            $dbst->execute($params);
+            ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
+            PDOUtils::commitTransaction($this->db);
         } catch (\PDOException $ex) {
-            $db->rollBack();
-            throw new DataAccessException($ex->getMessage());
+            PDOUtils::rollbackTransaction($this->db);
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
