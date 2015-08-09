@@ -8,7 +8,6 @@ use org\csflu\isms\core\ConnectionManager;
 use org\csflu\isms\core\DatabaseConnectionManager;
 use org\csflu\isms\util\ApplicationLoggerUtils;
 use org\csflu\isms\models\uam\Employee;
-use org\csflu\isms\models\commons\Position;
 use org\csflu\isms\models\commons\Department;
 use org\csflu\isms\models\uam\UserAccount;
 use org\csflu\isms\models\uam\SecurityRole;
@@ -43,7 +42,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
             $params = array('username' => $loginAccount->username, 'stat' => LoginAccount::STATUS_ACTIVE);
             $dbst = $this->db->prepare('SELECT emp_id, password FROM employees WHERE username=:username AND emp_stat=:stat');
             $dbst->execute($params);
-            
+
             ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
 
             $employee = new Employee();
@@ -55,7 +54,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
 
             return $employee;
         } catch (\PDOException $e) {
-            throw new DataAccessException($e->getMessage());
+            throw new DataAccessException($e->getMessage(), $e);
         }
     }
 
@@ -83,33 +82,27 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
 
     public function listEmployees() {
         try {
-            $db = ConnectionManager::getConnectionInstance();
-
-            $dbst = $db->prepare('SELECT emp_id, emp_lname, emp_fname, emp_stat FROM employees ORDER BY emp_lname ASC, emp_fname ASC');
-            $dbst->execute();
-
+            $dbst = $this->db->query('SELECT emp_id FROM employees ORDER BY emp_lname ASC, emp_fname ASC');
+            ApplicationLoggerUtils::logSql($this->logger, $dbst);
             $employees = array();
-
+            
             while ($data = $dbst->fetch()) {
-                $employee = new Employee();
-                $employee->loginAccount = new LoginAccount();
-                list($employee->id, $employee->lastName, $employee->givenName, $employee->loginAccount->status) = $data;
-
-                array_push($employees, $employee);
+                list($id) = $data;
+                $employees = array_merge($employees, array($this->getEmployeeData($id)));
             }
-
+            
             return $employees;
         } catch (\PDOException $e) {
-            throw new DataAccessException($e->getMessage());
+            throw new DataAccessException($e->getMessage(), $e);
         }
     }
 
     public function getEmployeeData($id) {
         try {
-            $db = ConnectionManager::getConnectionInstance();
-
-            $dbst = $db->prepare('SELECT emp_id, emp_lname, emp_fname, emp_mname, position, main_dept, username, emp_stat FROM employees WHERE emp_id=:id');
-            $dbst->execute(array('id' => $id));
+            $dbst = $this->db->prepare('SELECT emp_id, emp_lname, emp_fname, emp_mname, position, main_dept, username, emp_stat FROM employees WHERE emp_id=:id');
+            $params = array('id' => $id);
+            $dbst->execute($params);
+            ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
 
             $employee = new Employee();
             $employee->loginAccount = new LoginAccount();
@@ -130,7 +123,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
 
             return $employee;
         } catch (\PDOException $e) {
-            throw new DataAccessException($e->getMessage());
+            throw new DataAccessException($e->getMessage(), $e);
         }
     }
 
@@ -155,13 +148,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
         }
     }
 
-    /**
-     * 
-     * @param UserAccount $account
-     * @return String
-     * @throws DataAccessException
-     */
-    public function insertAccount($account) {
+    public function insertAccount(UserAccount $account) {
         $db = ConnectionManager::getConnectionInstance();
         try {
             $db->beginTransaction();
@@ -286,7 +273,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
         }
     }
 
-    public function updateSecurityKey($employee) {
+    public function updateSecurityKey(Employee $employee) {
         $db = ConnectionManager::getConnectionInstance();
         try {
             $db->beginTransaction();
@@ -316,7 +303,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
         }
     }
 
-    public function updateUserAccount($userAccount) {
+    public function updateUserAccount(UserAccount $userAccount) {
         $db = ConnectionManager::getConnectionInstance();
         try {
             $db->beginTransaction();
