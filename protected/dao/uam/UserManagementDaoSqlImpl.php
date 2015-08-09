@@ -85,12 +85,12 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
             $dbst = $this->db->query('SELECT emp_id FROM employees ORDER BY emp_lname ASC, emp_fname ASC');
             ApplicationLoggerUtils::logSql($this->logger, $dbst);
             $employees = array();
-            
+
             while ($data = $dbst->fetch()) {
                 list($id) = $data;
                 $employees = array_merge($employees, array($this->getEmployeeData($id)));
             }
-            
+
             return $employees;
         } catch (\PDOException $e) {
             throw new DataAccessException($e->getMessage(), $e);
@@ -173,15 +173,13 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
 
     public function validateEmployee($id) {
         try {
-            $db = ConnectionManager::getHrConnectionInstance();
-
-            $dbst = $db->prepare('SELECT id, fname, mname, lname, dept_code FROM employee LEFT JOIN department ON dept_ref=dept_id WHERE id=:id');
-            $dbst->execute(array('id' => $id));
-
-            $department = new Department();
-
+            $dbst = $this->hrDb->prepare('SELECT id, fname, mname, lname, dept_code FROM employee LEFT JOIN department ON dept_ref=dept_id WHERE id=:id');
+            $params = array('id' => $id);
+            $dbst->execute($params);
+            ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
+            
             $employee = new Employee();
-            $employee->department = $department;
+            $employee->department = new Department();
 
             while ($data = $dbst->fetch()) {
                 list($employee->id, $employee->givenName, $employee->middleName, $employee->lastName, $employee->department->code) = $data;
@@ -189,7 +187,7 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
 
             return $employee;
         } catch (\PDOException $e) {
-            throw new DataAccessException($e->getMessage());
+            throw new DataAccessException($e->getMessage(), $e);
         }
     }
 
