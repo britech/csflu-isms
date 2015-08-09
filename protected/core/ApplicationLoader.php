@@ -27,6 +27,7 @@ class ApplicationLoader {
         'org\csflu\isms\util\ModelFormGenerator' => '/utils/ModelFormGenerator.php',
         'org\csflu\isms\util\ApplicationUtils' => '/utils/ApplicationUtils.php',
         'org\csflu\isms\util\ApplicationLoggerUtils' => '/utils/ApplicationLoggerUtils.php',
+        'org\csflu\isms\util\PDOUtils' => '/utils/PDOUtils.php',
         
         // controller support packages
         'org\csflu\isms\controllers\support\ModelLoaderUtil' => '/controllers/support/ModelLoaderUtil.php',
