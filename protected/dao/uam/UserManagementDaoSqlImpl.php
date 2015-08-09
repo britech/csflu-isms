@@ -210,15 +210,16 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
     }
 
     public function updateLoginAccountStatus(Employee $employee) {
-        $db = ConnectionManager::getConnectionInstance();
         try {
-            $db->beginTransaction();
-            $dbst = $db->prepare('UPDATE employees SET emp_stat=:stat WHERE emp_id=:id');
-            $dbst->execute(array('id' => $employee->id, 'stat' => $employee->loginAccount->status));
-            $db->commit();
+            PDOUtils::initiateTransaction($this->db);
+            $dbst = $this->db->prepare('UPDATE employees SET emp_stat=:stat WHERE emp_id=:id');
+            $params = array('id' => $employee->id, 'stat' => $employee->loginAccount->status);
+            $dbst->execute($params);
+            ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
+            PDOUtils::commitTransaction($this->db);
         } catch (\PDOException $ex) {
-            $db->rollBack();
-            throw new DataAccessException($ex->getMessage());
+            PDOUtils::rollbackTransaction($this->db);
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
@@ -263,14 +264,14 @@ class UserManagementDaoSqlImpl implements UserManagementDao {
             $params = array('id' => $employee->id);
             $dbst->execute($params);
             ApplicationLoggerUtils::logSql($this->logger, $dbst, $params);
-            
+
             while ($data = $dbst->fetch()) {
                 list($password) = $data;
             }
 
             return $password;
         } catch (\PDOException $ex) {
-            throw new DataAccessException($ex->getMessage());
+            throw new DataAccessException($ex->getMessage(), $ex);
         }
     }
 
