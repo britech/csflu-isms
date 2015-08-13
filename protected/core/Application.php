@@ -5,8 +5,6 @@ namespace org\csflu\isms\core;
 session_start();
 ob_start();
 
-require_once dirname(__FILE__) . '/ApplicationLoader.php';
-
 use org\csflu\isms\core\Controller;
 use org\csflu\isms\core\ApplicationConstants;
 use org\csflu\isms\core\ApplicationEnvironment;
@@ -29,6 +27,11 @@ class Application {
         $this->configurationLocation = $configurationLocation;
     }
 
+    /**
+     * Creates a singleton instance of the Application and initializes the configuration variables
+     * @param string $configurationLocation Configuration file name without the file extension (Application expects to be in json form)
+     * @return Application
+     */
     public static function getInstance($configurationLocation) {
         if (empty(self::$instance)) {
             self::$instance = new Application($configurationLocation);
@@ -85,7 +88,6 @@ class Application {
         $controllerClassName = 'org\csflu\isms\controllers\\' . $controller;
 
         if (file_exists($controllerLocation)) {
-            require_once $controllerLocation;
             return new $controllerClassName;
         } else {
             throw new \Exception('Controller does not exist');

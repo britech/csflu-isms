@@ -1,2 +1,4 @@
 /nbproject/
 /protected/logs/*.log
+/vendor/*
+composer.lock

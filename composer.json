@@ -1,0 +1,44 @@
+{
+    "name": "csflu/isms",
+    "version": "2.0",
+    "description": "CSFLU Integrated Strategy Management System",
+    "autoload": {
+        "psr-4": {
+            "org\\csflu\\isms\\core\\": "protected/core/",
+            "org\\csflu\\isms\\util\\": "protected/utils/",
+            "org\\csflu\\isms\\exceptions\\": "protected/exception/",
+            "org\\csflu\\isms\\controllers\\": "protected/controllers/",
+            "org\\csflu\\isms\\controllers\\support\\": "protected/controllers/support/",
+            "org\\csflu\\isms\\models\\commons\\": "protected/models/commons/",
+            "org\\csflu\\isms\\models\\uam\\": "protected/models/uam/",
+            "org\\csflu\\isms\\models\\indicator\\": "protected/models/indicator/",
+            "org\\csflu\\isms\\models\\map\\": "protected/models/map/",
+            "org\\csflu\\isms\\models\\initiative\\": "protected/models/initiative/",
+            "org\\csflu\\isms\\models\\ubt\\": "protected/models/ubt/",
+            "org\\csflu\\isms\\models\\reports\\": "protected/models/reports/",
+            "org\\csflu\\isms\\dao\\commons\\": "protected/dao/commons/",
+            "org\\csflu\\isms\\dao\\uam\\": "protected/dao/uam/",
+            "org\\csflu\\isms\\dao\\indicator\\": "protected/dao/indicator/",
+            "org\\csflu\\isms\\dao\\map\\": "protected/dao/map/",
+            "org\\csflu\\isms\\dao\\initiative\\": "protected/dao/initiative/",
+            "org\\csflu\\isms\\dao\\ubt\\": "protected/dao/ubt/",
+            "org\\csflu\\isms\\dao\\reports\\": "protected/dao/reports/",
+            "org\\csflu\\isms\\service\\commons\\": "protected/services/commons/",
+            "org\\csflu\\isms\\service\\uam\\": "protected/services/uam/",
+            "org\\csflu\\isms\\service\\indicator\\": "protected/services/indicator/",
+            "org\\csflu\\isms\\service\\map\\": "protected/services/map/",
+            "org\\csflu\\isms\\service\\initiative\\": "protected/services/initiative/",
+            "org\\csflu\\isms\\service\\ubt\\": "protected/services/ubt/",
+            "org\\csflu\\isms\\service\\reports\\": "protected/services/reports/",
+            "org\\csflu\\isms\\service\\alignment\\": "protected/services/alignment/"
+        }
+    },
+    "require": {
+        "php": ">=5.5",
+        "apache/log4php": "2.3.0",
+        "mpdf/mpdf": "6.0.0"
+    },
+    "require-dev": {
+        "phpunit/dbunit": "1.4.1"
+    }
+}

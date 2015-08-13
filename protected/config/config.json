@@ -1,19 +1,13 @@
 {
-	"db" : {
-		"dsn": "mysql:dbname=capstone;host=localhost",
-		"username": "root",
-		"password": ""
-	},
-
-	"hrdb": {
-		"dsn": "mysql:dbname=csflu_hr;host=localhost",
-		"username": "root",
-		"password": ""
-	},
-
-	"ext": {
-		"pdf": "/home/britech/mpdf60/mpdf.php"
-	},
-
-	"title": "CSFLU Integrated Strategy Management System"
+    "db": {
+        "dsn": "mysql:dbname=capstone;host=localhost",
+        "username": "root",
+        "password": ""
+    },
+    "hrdb": {
+        "dsn": "mysql:dbname=csflu_hr;host=localhost",
+        "username": "root",
+        "password": ""
+    },
+    "title": "CSFLU Integrated Strategy Management System"
 }

@@ -1,9 +1,8 @@
 <?php
 namespace org\csflu\isms\views;
 
-require_once dirname(__FILE__) . '/protected/core/Application.php';
+require_once dirname(__FILE__) . '/vendor/autoload.php';
 
 use org\csflu\isms\core\Application;
 
-$application = Application::getInstance("config");
-$application->runApplication();
+Application::getInstance("config")->runApplication();
